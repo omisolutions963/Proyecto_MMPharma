@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registro MMPharma - Selección de Negocio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#00210c",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed-dim": "#abc7ff",
+              "inverse-on-surface": "#e8f2ff",
+              "inverse-surface": "#1d3246",
+              "on-tertiary": "#ffffff",
+              "surface": "#f7f9ff",
+              "on-background": "#051d30",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "inverse-primary": "#abc7ff",
+              "error": "#ba1a1a",
+              "on-surface-variant": "#43474f",
+              "surface-container-high": "#d9eaff",
+              "on-secondary-container": "#004d77",
+              "on-primary-container": "#89a5dd",
+              "on-tertiary-container": "#39bb6c",
+              "secondary": "#006397",
+              "tertiary-container": "#004520",
+              "primary": "#002451",
+              "surface-variant": "#cfe5ff",
+              "tertiary-fixed": "#7efba4",
+              "error-container": "#ffdad6",
+              "surface-container-highest": "#cfe5ff",
+              "on-primary": "#ffffff",
+              "on-primary-fixed": "#001b3f",
+              "surface-bright": "#f7f9ff",
+              "secondary-fixed-dim": "#92ccff",
+              "primary-fixed": "#d7e2ff",
+              "surface-dim": "#c6dcf6",
+              "on-secondary-fixed-variant": "#004b73",
+              "tertiary-fixed-dim": "#61de8a",
+              "primary-container": "#1a3a6b",
+              "outline-variant": "#c4c6d0",
+              "on-primary-fixed-variant": "#284678",
+              "tertiary": "#002c13",
+              "on-surface": "#051d30",
+              "on-secondary-fixed": "#001d31",
+              "background": "#f7f9ff",
+              "outline": "#747780",
+              "on-error": "#ffffff",
+              "secondary-fixed": "#cce5ff",
+              "surface-container": "#e3efff",
+              "on-tertiary-fixed-variant": "#005228",
+              "surface-container-low": "#edf4ff",
+              "surface-tint": "#415e91",
+              "secondary-container": "#71c0fe"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- Navbar Minimal -->
+<nav class="bg-[#f7f9ff] dark:bg-slate-950 flex items-center w-full px-8 py-6 max-w-7xl mx-auto z-50 grid grid-cols-3">
+<button onclick="location.href='../SELECCIÓN_REGISTRO/selección_registro.html'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
+<span class="text-sm font-semibold">Volver</span>
+</button>
+<div class="text-xl font-bold tracking-tight text-[#051d30] dark:text-white justify-self-center">
+            MMPharma
+        </div>
+<div class="flex items-center gap-4 justify-self-end">
+<span class="text-on-surface-variant text-sm font-medium">¿Ya tienes cuenta?</span>
+<button class="text-primary font-semibold text-sm hover:underline">Iniciar sesión</button>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-12">
+<!-- Progress Stepper Section (Step 1 of 3) -->
+<div class="max-w-2xl mx-auto mb-16">
+<div class="flex justify-between items-center relative">
+<!-- Progress Line Background -->
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-high -translate-y-1/2 z-0"></div>
+<!-- Progress Line Active -->
+<div class="absolute top-1/2 left-0 w-1/3 h-0.5 bg-secondary -translate-y-1/2 z-0"></div>
+<!-- Step 1: Active -->
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white ring-4 ring-primary-fixed shadow-lg shadow-primary/20">
+<span class="text-sm font-bold">1</span>
+</div>
+<span class="text-xs font-bold text-primary tracking-wide uppercase">Datos generales</span>
+</div>
+<!-- Step 2: Future -->
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="text-sm font-bold">2</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant tracking-wide uppercase">Información empresarial</span>
+</div>
+<!-- Step 3: Future -->
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="text-sm font-bold">3</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant tracking-wide uppercase">Documentos</span>
+</div>
+</div>
+</div>
+<!-- Registration Card: Paso 1: Datos Generales -->
+<div class="max-w-2xl mx-auto">
+<div class="bg-surface-container-lowest rounded-xl p-10 shadow-sm border border-outline-variant/10 relative overflow-hidden">
+<!-- Subtle Gradient Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
+<header class="mb-10">
+<h1 class="text-2xl font-extrabold text-on-surface tracking-tight mb-2">Registro de Farmacia</h1>
+<p class="text-on-surface-variant text-sm leading-relaxed">Paso 1: Ingrese la información básica de contacto y datos fiscales para dar de alta su establecimiento.</p>
+</header>
+<form class="space-y-6">
+<!-- Razón Social -->
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Razón Social*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Ej. Farmacias de la Salud S.A. de C.V." type="text"/>
+</div>
+<!-- RFC & Régimen Fiscal -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">RFC*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="ABC010101XXX" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Régimen Fiscal (SAT)*</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all">
+<option disabled="" selected="" value="">Seleccione una opción</option>
+<option value="601">601 - General de Ley Personas Morales</option>
+<option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+<option value="612">612 - Personas Físicas con Actividades Empresariales</option>
+<option value="626">626 - Régimen Simplificado de Confianza</option>
+</select>
+</div>
+</div>
+<!-- Domicilio Fiscal -->
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Domicilio Fiscal*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Calle, número exterior e interior" type="text"/>
+</div>
+<!-- Colonia & CP -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Colonia*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Ej. Juárez" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">C.P.*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="00000" type="text"/>
+</div>
+</div>
+<!-- Ciudad / Estado -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ciudad / Municipio*</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Ej. Guadalajara" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Estado*</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all">
+<option disabled="" selected="" value="">Seleccione Estado</option>
+<option>Aguascalientes</option>
+<option>Baja California</option>
+<option>CDMX</option>
+<option>Jalisco</option>
+<option>Nuevo León</option>
+<option>Estado de México</option>
+<option>Yucatán</option>
+</select>
+</div>
+</div>
+<!-- Teléfono & Correo -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Teléfono*</label>
+<div class="relative">
+<span class="absolute left-3 top-3 text-outline material-symbols-outlined text-lg">call</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="10 dígitos" type="tel"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Correo Electrónico*</label>
+<div class="relative">
+<span class="absolute left-3 top-3 text-outline material-symbols-outlined text-lg">mail</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-3 text-on-surface focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="contacto@farmacia.com" type="email"/>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="pt-8 flex items-center justify-between border-t border-outline-variant/10">
+<p class="text-[10px] text-on-surface-variant/70 italic max-w-[240px]">
+                            Sus datos fiscales son validados ante el SAT de forma segura.
+                        </p>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-3.5 rounded-lg font-bold text-sm flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20" type="submit">
+                            Continuar
+                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Contextual Help -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 rounded-xl flex gap-4 items-start border border-outline-variant/5">
+<div class="bg-tertiary-container/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-on-tertiary-container">verified_user</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface mb-1">Validación SAT</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Sincronizamos con el SAT para asegurar que la información de facturación sea correcta.</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl flex gap-4 items-start border border-outline-variant/5">
+<div class="bg-secondary-container/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-secondary">help</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface mb-1">¿Falta algún dato?</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Podrá editar su perfil fiscal posteriormente en el panel de configuración.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-8 text-center border-t border-outline-variant/5">
+<p class="text-xs text-on-surface-variant font-medium opacity-60">© 2024 MMPharma Solutions. Todos los derechos reservados.</p>
+</footer>
+</body></html>

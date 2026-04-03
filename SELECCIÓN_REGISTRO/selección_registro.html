@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registro MMPharma - Selección de Negocio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-container": "#004d77",
+                        "secondary-fixed-dim": "#92ccff",
+                        "secondary-container": "#71c0fe",
+                        "on-surface-variant": "#43474f",
+                        "tertiary": "#002c13",
+                        "surface-bright": "#f7f9ff",
+                        "inverse-on-surface": "#e8f2ff",
+                        "surface-container-highest": "#cfe5ff",
+                        "primary-fixed-dim": "#abc7ff",
+                        "on-secondary-fixed-variant": "#004b73",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#001d31",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#61de8a",
+                        "surface-container-high": "#d9eaff",
+                        "on-background": "#051d30",
+                        "background": "#f7f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#89a5dd",
+                        "surface-tint": "#415e91",
+                        "on-primary-fixed": "#001b3f",
+                        "secondary-fixed": "#cce5ff",
+                        "on-tertiary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f7f9ff",
+                        "surface-container-low": "#edf4ff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#e3efff",
+                        "surface-dim": "#c6dcf6",
+                        "surface-variant": "#cfe5ff",
+                        "primary-fixed": "#d7e2ff",
+                        "primary": "#002451",
+                        "inverse-surface": "#1d3246",
+                        "on-surface": "#051d30",
+                        "secondary": "#006397",
+                        "on-tertiary-fixed-variant": "#005228",
+                        "on-tertiary-container": "#39bb6c",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#abc7ff",
+                        "outline-variant": "#c4c6d0",
+                        "outline": "#747780",
+                        "tertiary-container": "#004520",
+                        "primary-container": "#1a3a6b",
+                        "on-primary-fixed-variant": "#284678",
+                        "tertiary-fixed": "#7efba4"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#f7f9ff] dark:bg-slate-900 flex justify-between items-center w-full px-8 py-6 z-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Minimalist pharmaceutical brand logo with clean geometric shapes and medical navy blue color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJXrIClUXAdBWvBuz8ep-yc2nsDS0kiepxdE2UPL94u98Nxp67Nu_A2EQE2G3P67JkVZXWqLNge41IVT_sOlcMWVglBdAyHX6lIRUeBNfW1dRioidvM4Cf0J6p9abpruU2xC_35uOuiemMdvQcZNBfpju8ti-lfKBdh7kIkgsjGx7OopHxVm57K3R9w6ybpyMN6ET5BGbzLlLzKBZoRR5dYbmchAIBJQgWx6Pg8u6orsUner39O7sHVTmedFzn2KvrOd_8JWpO9Gw"/>
+</div>
+<span class="text-xl font-bold text-[#051d30] dark:text-white tracking-tighter">MMPharma</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-xl">help_outline</span>
+<span class="text-sm font-medium">Ayuda</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 py-12 max-w-7xl mx-auto w-full">
+<!-- Hero Header -->
+<div class="text-center mb-16 max-w-3xl">
+<h1 class="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-4">
+                Solicitar acceso al portal
+            </h1>
+<p class="text-lg text-on-surface-variant leading-relaxed">
+                Selecciona el tipo de negocio para el cual deseas solicitar una cuenta. Prepararemos tu entorno clínico personalizado.
+            </p>
+</div>
+<!-- Selection Grid: Asymmetric Bento Influence -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+<!-- TARJETA 1: FARMACIA -->
+<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+<div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-3xl">medication</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-3 font-display">Farmacia</h3>
+<p class="text-slate-600 text-sm mb-8 leading-relaxed">
+                    Para farmacias independientes o sucursales que requieren medicamentos de patente y genéricos.
+                </p>
+<div class="flex-grow">
+<h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Requisitos básicos:</h4>
+<ul class="space-y-3 mb-10">
+<li class="flex items-start gap-3 text-sm text-slate-600">
+<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Licencia Sanitaria</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-slate-600">
+<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Comprobante de domicilio</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-slate-600">
+<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Constancia de Situación Fiscal</span>
+</li>
+</ul>
+</div>
+<button onclick="location.href='../REGISTRO_FARMACIA/registro_farmacia.html'" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 text-sm">
+                    Registrarme como Farmacia
+                </button>
+</div>
+<!-- TARJETA 2: DISTRIBUIDORA (Featured) -->
+<div class="relative flex flex-col bg-primary text-white p-8 rounded-2xl shadow-2xl transform md:-translate-y-4 border border-primary/10 group">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#006397] px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
+                    Recomendado para Mayoristas
+                </div>
+<div class="mb-6 w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-3xl">local_shipping</span>
+</div>
+<h3 class="text-2xl font-bold mb-3 font-display">Distribuidora</h3>
+<p class="text-blue-100 text-sm mb-8 leading-relaxed">
+                    Para mayoristas y distribuidores regionales con volumen de compra masivo y logística propia.
+                </p>
+<div class="flex-grow">
+<h4 class="text-xs font-bold uppercase tracking-widest text-blue-200/60 mb-4">Requisitos especializados:</h4>
+<ul class="space-y-3 mb-10">
+<li class="flex items-start gap-3 text-sm text-blue-50">
+<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Licencia (Venta al por mayor)</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-blue-50">
+<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Acta constitutiva</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-blue-50">
+<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Identificación oficial representante</span>
+</li>
+</ul>
+</div>
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA/registro_distribuidora.html'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm shadow-xl">
+                    Registrarme como Distribuidora
+                </button>
+</div>
+<!-- TARJETA 3: EMPRESA -->
+<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+<div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-3xl">domain</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-3 font-display">Empresa</h3>
+<p class="text-slate-600 text-sm mb-8 leading-relaxed">
+                    Para clínicas, hospitales o corporativos que requieren insumos médicos para uso interno.
+                </p>
+<div class="flex-grow">
+<h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Requisitos corporativos:</h4>
+<ul class="space-y-3 mb-10">
+<li class="flex items-start gap-3 text-sm text-slate-600">
+<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Constancia de Situación Fiscal</span>
+</li>
+<li class="flex items-start gap-3 text-sm text-slate-600">
+<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Formato de alta empresarial</span>
+</li>
+</ul>
+</div>
+<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.html'" class="w-full py-4 border-2 border-slate-200 text-primary font-bold rounded-xl hover:bg-slate-50 hover:border-primary transition-all duration-300 text-sm">
+                    Registrarme como Empresa
+                </button>
+</div>
+</div>
+<!-- Support Section -->
+<div class="mt-20 flex flex-col items-center gap-4">
+<div class="bg-surface-container p-1 rounded-full px-6 py-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-sm">mail</span>
+<p class="text-sm font-medium text-on-surface">¿Necesitas ayuda personalizada? Contacta a <a class="text-secondary hover:underline font-bold" href="mailto:ventas@mmpharma.com">ventas@mmpharma.com</a></p>
+</div>
+</div>
+</main>
+<!-- Footer Space -->
+<footer class="py-12 px-6 flex flex-col items-center">
+<p class="text-xs text-on-surface-variant opacity-60">© 2024 MMPharma. Clinical Curator System. Todos los derechos reservados.</p>
+</footer>
+</body></html>
