@@ -89,23 +89,24 @@
     </style>
 </head>
 <body class="bg-surface font-body text-on-surface antialiased">
-<!-- TopNavBar -->
-<nav class="docked full-width top-0 sticky z-50 bg-[#f7f9ff] dark:bg-slate-950 font-['Inter'] antialiased tracking-tight">
-<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-<div class="text-xl font-bold tracking-tighter text-[#051d30] dark:text-white">
-            MMPharma
-        </div>
-<div class="hidden md:flex space-x-8 items-center">
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#051d30] transition-colors duration-200" href="../index.html">Inicio</a>
-<a class="text-[#002451] dark:text-blue-400 font-semibold border-b-2 border-[#002451] pb-1" href="quienes_somos.html">¿Quiénes somos?</a>
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#051d30] transition-colors duration-200" href="#">Catálogo</a>
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#1A3A6B] transition-colors duration-200" href="../CONTACTO/contacto.html">Contacto</a>
-</div>
-<button class="bg-primary text-white px-5 py-2 rounded-md font-medium hover:bg-primary-container transition-all active:scale-95">
-            Partner Login
-        </button>
-</div>
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-50 bg-[#f7f9ff] shadow-sm">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto font-['Inter'] font-medium text-sm antialiased">
+  <div class="flex items-center gap-12">
+    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+    <div class="hidden md:flex gap-8">
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../index.html">Inicio</a>
+      <a class="text-[#002451] font-semibold border-b-2 border-[#002451] pb-1" href="quienes_somos.html">¿Quiénes somos?</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="#">Catálogo</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../CONTACTO/Contacto.html">Contacto</a>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <a href="../LOGIN/login.html"><button class="px-4 py-2 text-[#1A3A6B] font-medium hover:bg-[#edf4ff] rounded-lg transition-all">Iniciar sesión</button></a>
+    <a href="../SELECCIÓN_REGISTRO/selección_registro.html"><button class="px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">Solicitar acceso</button></a>
+  </div>
 </nav>
+</header>
 <main>
 <!-- Hero Section -->
 <section class="relative min-h-[716px] flex items-center overflow-hidden">

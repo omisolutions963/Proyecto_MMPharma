@@ -90,12 +90,22 @@
     </style>
 </head>
 <body class="bg-surface text-on-surface">
-<!-- Top Navigation Bar -->
-<header class="bg-white border-b border-slate-100 sticky top-0 z-50">
-<nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-<div class="text-xl font-bold text-[#051d30] dark:text-white"><img alt="MMPharma Logo" class="h-12 w-auto" src="https://lh3.googleusercontent.com/aida/ADBb0ujWZaNCbuGVI2sC7z7g0VGpqDV3OR8cFlNmJoGu7pmFr2N9hHBxaT9z8EnAih0TnPY6DDN0ik1pQh6O438-rh0I60XjwTJ54J-cv5iJs3WYleVGvY1kG5IRayEM7aKmSIWgDxGJ23pvs550d83uDnyDtVtnBy5VhO4NiN0HMdaISAg86ojk8JpmrH4--m741Pdt-BfrgF5Zim6yqLkoIJ3jad7CLZx-d6sqGhXPtagcwVf_7av1Kf4cBXDSkkkY30ssBZzmsuu0"/></div>
-<div class="hidden md:flex items-center space-x-8"><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="../index.html">Inicio</a><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="../QUIENES_SOMOS/quienes_somos.html">¿Quiénes somos?</a><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">Catálogo</a><a class="text-sm font-bold text-primary border-b-2 border-primary pb-1" href="/CONTACTO/Contacto.html">Contacto</a></div>
-<div class="flex items-center gap-4"><button class="text-sm font-semibold text-primary px-4 py-2 hover:bg-slate-50 rounded-lg transition-colors">Iniciar sesión</button><button class="bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-opacity-90 transition-all shadow-sm">Solicitar acceso</button></div>
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-50 bg-[#f7f9ff] shadow-sm">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto font-['Inter'] font-medium text-sm antialiased">
+  <div class="flex items-center gap-12">
+    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+    <div class="hidden md:flex gap-8">
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../index.html">Inicio</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../QUIENES_SOMOS/quienes_somos.html">¿Quiénes somos?</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="#">Catálogo</a>
+      <a class="text-[#002451] font-semibold border-b-2 border-[#002451] pb-1" href="Contacto.html">Contacto</a>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <a href="../LOGIN/login.html"><button class="px-4 py-2 text-[#1A3A6B] font-medium hover:bg-[#edf4ff] rounded-lg transition-all">Iniciar sesión</button></a>
+    <a href="../SELECCIÓN_REGISTRO/selección_registro.html"><button class="px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">Solicitar acceso</button></a>
+  </div>
 </nav>
 </header>
 <main>
