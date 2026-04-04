@@ -87,18 +87,21 @@
 <body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
 <!-- TopAppBar -->
 <header class="bg-[#f7f9ff] dark:bg-slate-900 flex justify-between items-center w-full px-8 py-6 z-50">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="Minimalist pharmaceutical brand logo with clean geometric shapes and medical navy blue color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJXrIClUXAdBWvBuz8ep-yc2nsDS0kiepxdE2UPL94u98Nxp67Nu_A2EQE2G3P67JkVZXWqLNge41IVT_sOlcMWVglBdAyHX6lIRUeBNfW1dRioidvM4Cf0J6p9abpruU2xC_35uOuiemMdvQcZNBfpju8ti-lfKBdh7kIkgsjGx7OopHxVm57K3R9w6ybpyMN6ET5BGbzLlLzKBZoRR5dYbmchAIBJQgWx6Pg8u6orsUner39O7sHVTmedFzn2KvrOd_8JWpO9Gw"/>
-</div>
-<span class="text-xl font-bold text-[#051d30] dark:text-white tracking-tighter">MMPharma</span>
-</div>
-<div class="flex items-center gap-6">
-<button class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
-<span class="material-symbols-outlined text-xl">help_outline</span>
-<span class="text-sm font-medium">Ayuda</span>
-</button>
-</div>
+  <button onclick="location.href='../index.html'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
+    <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
+    <span class="text-sm font-semibold">Volver</span>
+  </button>
+
+  <a href="../index.html">
+    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+  </a>
+
+  <div class="flex items-center gap-6">
+    <button class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
+      <span class="material-symbols-outlined text-xl">help_outline</span>
+      <span class="text-sm font-medium">Ayuda</span>
+    </button>
+  </div>
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow flex flex-col items-center justify-center px-6 py-12 max-w-7xl mx-auto w-full">
