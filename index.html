@@ -102,7 +102,11 @@
 </nav>
 </header>
 <!-- Hero Section -->
-<section class="relative min-h-[580px] bg-gradient-to-br from-[#1A3A6B] to-[#2E86C1] text-white flex items-center overflow-hidden">
+<<section class="relative min-h-[580px] text-white flex items-center overflow-hidden">
+  <!-- Imagen de fondo -->
+  <img src="img/33.jpg" class="absolute inset-0 w-full h-full object-cover" alt="MMPharma bodega">
+  <!-- Overlay azul -->
+  <div class="absolute inset-0 bg-[#002451] opacity-80"></div>
 <div class="max-w-7xl mx-auto px-8 py-20 w-full grid md:grid-cols-2 gap-12 items-center">
 <div class="z-10">
 <h1 class="text-5xl md:text-6xl font-black tracking-tight leading-tight mb-6">
@@ -245,14 +249,18 @@
 </div>
 </section>
 <!-- Nuestros Productos Section -->
-<section class="py-24 bg-surface-container-low">
-<div class="max-w-7xl mx-auto px-8">
+<section class="py-24 relative overflow-hidden">
+  <!-- Imagen de fondo -->
+  <img src="img/23.jpg" class="absolute inset-0 w-full h-full object-cover" alt="MMPharma bodega">
+  <!-- Overlay con degradado -->
+  <div class="absolute inset-0 bg-gradient-to-br from-[#002451]/90 to-[#006397]/80"></div>
+<div class="max-w-7xl mx-auto px-8 relative z-10">
 <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
 <div>
-<h2 class="text-primary font-bold tracking-widest uppercase text-sm mb-2">Catálogo Especializado</h2>
-<h3 class="text-4xl font-black tracking-tight">Nuestros productos</h3>
+<h2 class="text-white/60 font-bold tracking-widest uppercase text-sm mb-2">Catálogo Especializado</h2>
+<h3 class="text-4xl font-black tracking-tight text-white">Nuestros productos</h3>
 </div>
-<a class="flex items-center gap-2 font-bold text-secondary hover:underline" href="#">
+<a class="flex items-center gap-2 font-bold text-white hover:underline" href="#">
                     Ver catálogo completo
                     <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
 </a>
@@ -509,7 +517,9 @@
 <div class="max-w-7xl mx-auto px-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100/40">
 <p class="">© 2026 MMPharma. Todos los derechos reservados.</p>
 <div class="flex gap-8">
-<a class="hover:text-white transition-colors" href="#">Facebook</a>
+<a href="https://www.facebook.com/share/1DpVKyDk9Q/" target="_blank">
+  <button>Facebook</button>
+</a>
 <a class="hover:text-white transition-colors" href="#">LinkedIn</a>
 <a class="hover:text-white transition-colors" href="#">Twitter</a>
 </div>
