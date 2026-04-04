@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#001b3f",
+                    "on-error": "#ffffff",
+                    "surface": "#f7f9ff",
+                    "on-tertiary-fixed": "#00210c",
+                    "surface-dim": "#c6dcf6",
+                    "secondary-fixed-dim": "#92ccff",
+                    "secondary": "#006397",
+                    "background": "#f7f9ff",
+                    "on-primary-fixed-variant": "#284678",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "tertiary-fixed": "#7efba4",
+                    "primary-fixed-dim": "#abc7ff",
+                    "inverse-on-surface": "#e8f2ff",
+                    "on-tertiary-container": "#39bb6c",
+                    "surface-container": "#e3efff",
+                    "surface-variant": "#cfe5ff",
+                    "on-surface-variant": "#43474f",
+                    "on-secondary-fixed": "#001d31",
+                    "tertiary": "#002c13",
+                    "primary-container": "#1a3a6b",
+                    "inverse-primary": "#abc7ff",
+                    "tertiary-fixed-dim": "#61de8a",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#004d77",
+                    "tertiary-container": "#004520",
+                    "on-surface": "#051d30",
+                    "outline": "#747780",
+                    "surface-tint": "#415e91",
+                    "surface-container-highest": "#cfe5ff",
+                    "on-tertiary-fixed-variant": "#005228",
+                    "surface-container-high": "#d9eaff",
+                    "outline-variant": "#c4c6d0",
+                    "secondary-container": "#71c0fe",
+                    "error-container": "#ffdad6",
+                    "on-background": "#051d30",
+                    "primary-fixed": "#d7e2ff",
+                    "primary": "#002451",
+                    "surface-container-low": "#edf4ff",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f7f9ff",
+                    "on-primary-container": "#89a5dd",
+                    "inverse-surface": "#1d3246",
+                    "secondary-fixed": "#cce5ff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(26, 58, 107, 0.85), rgba(26, 58, 107, 0.85)), url('https://images.unsplash.com/photo-1587854680352-936b22b91030?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+<nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="text-xl font-bold text-[#051d30] dark:text-white"><img alt="MMPharma Logo" class="h-12 w-auto" src="https://lh3.googleusercontent.com/aida/ADBb0ujWZaNCbuGVI2sC7z7g0VGpqDV3OR8cFlNmJoGu7pmFr2N9hHBxaT9z8EnAih0TnPY6DDN0ik1pQh6O438-rh0I60XjwTJ54J-cv5iJs3WYleVGvY1kG5IRayEM7aKmSIWgDxGJ23pvs550d83uDnyDtVtnBy5VhO4NiN0HMdaISAg86ojk8JpmrH4--m741Pdt-BfrgF5Zim6yqLkoIJ3jad7CLZx-d6sqGhXPtagcwVf_7av1Kf4cBXDSkkkY30ssBZzmsuu0"/></div>
+<div class="hidden md:flex items-center space-x-8"><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">Inicio</a><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">¿Quiénes somos?</a><a class="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">Catálogo</a><a class="text-sm font-bold text-primary border-b-2 border-primary pb-1" href="#">Contacto</a></div>
+<div class="flex items-center gap-4"><button class="text-sm font-semibold text-primary px-4 py-2 hover:bg-slate-50 rounded-lg transition-colors">Iniciar sesión</button><button class="bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-opacity-90 transition-all shadow-sm">Solicitar acceso</button></div>
+</nav>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="hero-bg py-24 border-b border-outline-variant/10">
+<div class="max-w-7xl mx-auto px-8 text-center">
+<h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6">Contacto</h1>
+<p class="text-white/90 mx-auto max-w-2xl text-lg md:text-xl font-medium">Soluciones logísticas farmacéuticas con precisión clínica. Estamos listos para atender los requerimientos de su institución.</p>
+</div>
+</section>
+<!-- Content Section: Two Columns -->
+<section class="max-w-7xl mx-auto px-8 py-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Column: Contact Info -->
+<div class="lg:col-span-5 space-y-8">
+<div>
+<h2 class="text-2xl font-bold text-on-surface mb-2">Canales Directos</h2>
+<p class="text-on-surface-variant">Nuestro equipo de atención B2B está disponible para asesoría técnica y comercial.</p>
+</div>
+<div class="space-y-4">
+<!-- Location Card -->
+<div class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary p-3 bg-white rounded-lg" data-icon="location_on">location_on</span>
+<div>
+<h3 class="font-semibold text-on-surface">Dirección Fiscal</h3>
+<p class="text-on-surface-variant text-sm mt-1 leading-relaxed">
+                                    Av. Obsidiana 3644,<br/>
+                                    Zapopan, Jalisco, CP 45080
+                                </p>
+</div>
+</div>
+<!-- Phone Card -->
+<div class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary p-3 bg-white rounded-lg" data-icon="call">call</span>
+<div>
+<h3 class="font-semibold text-on-surface">Teléfono de Atención</h3>
+<p class="text-on-surface-variant text-sm mt-1">3343480581</p>
+<p class="text-on-surface-variant text-xs mt-1 italic">Lun - Vie: 9:00 AM - 6:00 PM</p>
+</div>
+</div>
+<!-- Email Card -->
+<div class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary p-3 bg-white rounded-lg" data-icon="mail">mail</span>
+<div>
+<h3 class="font-semibold text-on-surface">Correo Electrónico</h3>
+<p class="text-on-surface-variant text-sm mt-1">ventas@mmpharma.com</p>
+</div>
+</div>
+</div>
+<!-- Clinical Status Graphic -->
+<div class="p-8 bg-tertiary-container/5 rounded-2xl border border-tertiary-container/10 flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="ac_unit" style="font-variation-settings: 'FILL' 1;">ac_unit</span>
+</div>
+<div>
+<span class="text-[10px] uppercase tracking-widest font-bold text-tertiary-container block mb-1">Estatus Red Fría</span>
+<p class="text-on-surface font-medium">Instalaciones Monitoreadas 24/7</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Contact Form (Centered Content) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 rounded-2xl shadow-sm ring-1 ring-outline-variant/10">
+<div class="text-center mb-8">
+<h2 class="text-2xl font-bold text-on-surface">Enviar un mensaje</h2>
+<p class="text-on-surface-variant text-sm mt-2">Complete el formulario y nos pondremos en contacto a la brevedad.</p>
+</div>
+<form action="#" class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Nombre Completo</label>
+<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Empresa / Institución</label>
+<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Razón Social" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Correo Corporativo</label>
+<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="contacto@empresa.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Teléfono</label>
+<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="10 dígitos" type="tel"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-on-surface-variant ml-1">Mensaje</label>
+<textarea class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed transition-all placeholder:text-outline/50" placeholder="Describa su requerimiento o solicitud de catálogo..." rows="4"></textarea>
+</div>
+<div class="pt-4 flex justify-center">
+<button class="w-full md:w-auto px-10 py-4 bg-primary-container text-white rounded-md font-bold text-lg hover:opacity-95 active:scale-[0.98] transition-all shadow-lg shadow-primary-container/20" type="submit">
+                                Enviar mensaje
+                            </button>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- Map Section -->
+<section class="w-full h-[500px] bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover grayscale opacity-40 mix-blend-multiply" data-alt="Modern minimalist stylized map of Zapopan Jalisco area with subtle blue markers and clean cartography style" data-location="Zapopan, Jalisco" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJmVtcgLLE0qvY1VoXvNLI6J9n5EQ-JDJpYBNG4HoanPRWgf5LbjGQJVyZvN1QEhbQyV3UyFAm5rdKenO_kiWha57ENMqd0QDsxXxSuMfMKt8tkD57mAQSKVn9jgPNLgOUeM-1qZ7u-l-6U3BL1Hkkxu5aBTDO4RS5PadXbdiaAB4HYKMDTKX1nh7LQg7Tifm0sfh3fMGOhvyeaEvKVxCWdmioljLlCDCwocyFVLHdgsQusZIqItXkneUdAL36LCKrDvseF6mNkH8"/>
+</div>
+<div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+<div class="glass-panel p-6 rounded-2xl text-center max-w-sm pointer-events-auto border border-white/40 shadow-2xl">
+<span class="material-symbols-outlined text-primary text-4xl mb-2 block" data-icon="distance">distance</span>
+<h3 class="text-xl font-bold text-on-surface mb-2">Visítenos</h3>
+<p class="text-on-surface-variant text-sm mb-4">Centro Logístico MMPharma Poniente</p>
+<a class="text-primary font-bold text-sm hover:underline flex items-center justify-center gap-1" href="https://maps.google.com" target="_blank">
+                        Abrir en Google Maps
+                        <span class="material-symbols-outlined text-xs" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Bottom Fade for transition to footer -->
+<div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#edf4ff] dark:bg-slate-900 w-full mt-auto tonal layering with surface shift">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-8 py-12 max-w-7xl mx-auto">
+<div class="space-y-4">
+<div class="text-lg font-bold text-[#051d30] dark:text-white">PharmaCare B2B</div>
+<p class="text-sm font-inter text-[#43474f] max-w-sm">Distribución farmacéutica especializada con los más altos estándares de calidad y cumplimiento regulatorio en México.</p>
+<div class="text-sm font-inter text-[#43474f] mt-8 opacity-80">
+                    © 2024 PharmaCare B2B. Todos los derechos reservados.
+                </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-3">
+<h4 class="font-bold text-[#002451] text-xs uppercase tracking-widest">Legal</h4>
+<ul class="space-y-2">
+<li><a class="text-[#43474f] dark:text-slate-400 text-sm hover:text-[#002451] dark:hover:text-white transition-colors" href="#">Aviso de Privacidad</a></li>
+<li><a class="text-[#43474f] dark:text-slate-400 text-sm hover:text-[#002451] dark:hover:text-white transition-colors" href="#">Términos y Condiciones</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<h4 class="font-bold text-[#002451] text-xs uppercase tracking-widest">Recursos</h4>
+<ul class="space-y-2">
+<li><a class="text-[#43474f] dark:text-slate-400 text-sm hover:text-[#002451] dark:hover:text-white transition-colors" href="#">Farmacovigilancia</a></li>
+<li><a class="text-[#43474f] dark:text-slate-400 text-sm hover:text-[#002451] dark:hover:text-white transition-colors" href="#">Mapa de Sitio</a></li>
+</ul>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
