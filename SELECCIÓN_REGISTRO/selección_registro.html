@@ -97,11 +97,39 @@
   </a>
 
   <div class="flex items-center gap-6">
-    <button class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
-      <span class="material-symbols-outlined text-xl">help_outline</span>
-      <span class="text-sm font-medium">Ayuda</span>
-    </button>
+  <button onclick="document.getElementById('popupAyuda').classList.remove('hidden')"
+    class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
+    <span class="material-symbols-outlined text-xl">help_outline</span>
+    <span class="text-sm font-medium">Ayuda</span>
+  </button>
+</div>
+<!-- Popup Ayuda -->
+<div id="popupAyuda" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-primary">¿Cómo elegir tu tipo de cuenta?</h3>
+      <button onclick="document.getElementById('popupAyuda').classList.add('hidden')" 
+        class="text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div class="p-4 bg-surface-container-low rounded-xl">
+        <p class="font-bold text-on-surface mb-1">💊 Farmacia</p>
+        <p class="text-sm text-on-surface-variant">Venta directa al público. Farmacias independientes o sucursales.</p>
+      </div>
+      <div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
+        <p class="font-bold text-on-surface mb-1">🚚 Distribuidora</p>
+        <p class="text-sm text-on-surface-variant">Mayoristas con volumen alto y logística propia.</p>
+      </div>
+      <div class="p-4 bg-surface-container-low rounded-xl">
+        <p class="font-bold text-on-surface mb-1">🏥 Empresa</p>
+        <p class="text-sm text-on-surface-variant">Clínicas, hospitales o corporativos que compran para uso interno.</p>
+      </div>
+    </div>
+    <p class="text-xs text-on-surface-variant mt-6 text-center">¿Sigues con dudas? Escríbenos a <span class="text-secondary font-bold">ventas@mmpharma.com</span></p>
   </div>
+</div>
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow flex flex-col items-center justify-center px-6 py-12 max-w-7xl mx-auto w-full">

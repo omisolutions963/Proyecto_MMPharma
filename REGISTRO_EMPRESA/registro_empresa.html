@@ -87,28 +87,22 @@
 </head>
 <body class="bg-background text-on-background min-h-screen">
 <!-- TopNavBar -->
-<nav class="bg-slate-50 dark:bg-slate-950 font-['Inter'] antialiased docked full-width top-0 bg-slate-100 dark:bg-slate-900 flat no shadows z-50 sticky">
-<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-<div class="flex items-center justify-between relative w-full">
-<!-- Volver Button -->
-<div class="flex-1 flex justify-start">
-<a class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium group" href="../SELECCIÓN_REGISTRO/selección_registro.html">
-<span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">west</span>
-            Volver
-        </a>
-</div>
-<!-- Centered Logo -->
-<div class="absolute left-1/2 -translate-x-1/2 text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100">
-        MMPharma
-    </div>
-<!-- Right Actions -->
-<div class="flex-1 flex justify-end items-center">
-<a class="text-slate-500 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm font-medium" href="#">
-            Iniciar sesión
-        </a>
-</div>
-</div>
-</div>
+<nav class="bg-[#f7f9ff] dark:bg-slate-950 flex justify-between items-center w-full px-8 py-6 max-w-7xl mx-auto z-50">
+  <div class="flex-1">
+    <button onclick="location.href='../SELECCIÓN_REGISTRO/selección_registro.html'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
+      <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
+      <span class="text-sm font-semibold">Volver</span>
+    </button>
+  </div>
+  <div class="flex-1 flex justify-center">
+    <a href="../index.html">
+      <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+    </a>
+  </div>
+  <div class="flex-1 flex items-center justify-end gap-4">
+    <span class="hidden sm:inline text-on-surface-variant text-sm font-medium">¿Ya tienes cuenta?</span>
+    <a href="../LOGIN/login.html" class="text-primary font-semibold text-sm hover:underline">Iniciar sesión</a>
+  </div>
 </nav>
 <main class="max-w-7xl mx-auto px-6 py-12 flex flex-col items-center">
 <!-- Progress Bar Section -->
