@@ -1,305 +1,359 @@
-<!DOCTYPE html>
-
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Registro MMPharma - Selección de Negocio</title>
+<!DOCTYPE html><html class="light" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Alta de Empresa - MMPharma</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "surface-container-lowest": "#ffffff",
-                "outline": "#747780",
-                "primary-fixed": "#d7e2ff",
-                "on-tertiary-container": "#39bb6c",
-                "surface-container": "#e3efff",
-                "primary-container": "#1a3a6b",
-                "secondary-fixed": "#cce5ff",
-                "on-primary-fixed-variant": "#284678",
-                "surface-tint": "#415e91",
-                "tertiary-fixed": "#7efba4",
-                "background": "#f7f9ff",
-                "secondary-container": "#71c0fe",
-                "inverse-primary": "#abc7ff",
-                "tertiary-container": "#004520",
-                "tertiary": "#002c13",
-                "primary-fixed-dim": "#abc7ff",
-                "on-primary-container": "#89a5dd",
-                "outline-variant": "#c4c6d0",
-                "on-secondary": "#ffffff",
-                "secondary": "#006397",
-                "on-secondary-fixed": "#001d31",
-                "surface-container-high": "#d9eaff",
-                "secondary-fixed-dim": "#92ccff",
-                "surface-dim": "#c6dcf6",
-                "surface-container-highest": "#cfe5ff",
-                "on-primary-fixed": "#001b3f",
-                "on-tertiary-fixed-variant": "#005228",
-                "surface": "#f7f9ff",
-                "on-surface": "#051d30",
-                "on-tertiary-fixed": "#00210c",
-                "error": "#ba1a1a",
-                "primary": "#002451",
-                "error-container": "#ffdad6",
-                "on-tertiary": "#ffffff",
-                "surface-variant": "#cfe5ff",
-                "on-surface-variant": "#43474f",
-                "on-secondary-fixed-variant": "#004b73",
-                "on-background": "#051d30",
-                "inverse-surface": "#1d3246",
-                "on-primary": "#ffffff",
-                "inverse-on-surface": "#e8f2ff",
-                "tertiary-fixed-dim": "#61de8a",
-                "on-error-container": "#93000a",
-                "on-error": "#ffffff",
-                "surface-container-low": "#edf4ff",
-                "on-secondary-container": "#004d77",
-                "surface-bright": "#f7f9ff"
-              },
-              fontFamily: {
-                "headline": ["Inter"],
-                "body": ["Inter"],
-                "label": ["Inter"]
-              },
-              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
-            },
-          },
-        }
-    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <style>
+        body { font-family: 'Inter', sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
         }
-        body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.8);
-        }
     </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#00210c",
+                      "primary-container": "#1a3a6b",
+                      "secondary-fixed": "#cce5ff",
+                      "primary-fixed-dim": "#abc7ff",
+                      "on-error-container": "#93000a",
+                      "primary-fixed": "#d7e2ff",
+                      "outline": "#747780",
+                      "on-secondary-container": "#004d77",
+                      "surface-dim": "#c6dcf6",
+                      "tertiary-fixed-dim": "#61de8a",
+                      "outline-variant": "#c4c6d0",
+                      "error-container": "#ffdad6",
+                      "surface": "#f7f9ff",
+                      "secondary-fixed-dim": "#92ccff",
+                      "on-error": "#ffffff",
+                      "surface-container": "#e3efff",
+                      "secondary-container": "#71c0fe",
+                      "on-primary-fixed": "#001b3f",
+                      "surface-bright": "#f7f9ff",
+                      "on-tertiary-fixed-variant": "#005228",
+                      "inverse-primary": "#abc7ff",
+                      "inverse-on-surface": "#e8f2ff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#89a5dd",
+                      "tertiary-container": "#004520",
+                      "background": "#f7f9ff",
+                      "error": "#ba1a1a",
+                      "tertiary": "#002c13",
+                      "surface-variant": "#cfe5ff",
+                      "primary": "#002451",
+                      "tertiary-fixed": "#7efba4",
+                      "on-secondary-fixed-variant": "#004b73",
+                      "surface-container-highest": "#cfe5ff",
+                      "surface-container-high": "#d9eaff",
+                      "inverse-surface": "#1d3246",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#edf4ff",
+                      "on-surface-variant": "#43474f",
+                      "on-secondary-fixed": "#001d31",
+                      "on-surface": "#051d30",
+                      "on-primary-fixed-variant": "#284678",
+                      "on-secondary": "#ffffff",
+                      "on-background": "#051d30",
+                      "surface-tint": "#415e91",
+                      "on-tertiary-container": "#39bb6c",
+                      "on-tertiary": "#ffffff",
+                      "secondary": "#006397"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.375rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              }
+            },
+          }
+        }
+    </script>
 </head>
-<body class="bg-background text-on-background min-h-screen">
-<!-- TopNavBar -->
-<nav class="bg-slate-50 dark:bg-slate-950 font-['Inter'] antialiased docked full-width top-0 bg-slate-100 dark:bg-slate-900 flat no shadows z-50 sticky">
-<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-<div class="flex items-center justify-between relative w-full">
-<!-- Volver Button -->
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top Navigation Bar -->
+ 
+<nav class="bg-surface-container-low sticky top-0 z-50 border-b border-outline-variant/30">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1440px] mx-auto font-['Inter'] tracking-tight antialiased">
+
+    <!-- Volver Button -->
 <div class="flex-1 flex justify-start">
 <a class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium group" href="../SELECCIÓN_REGISTRO/selección_registro.html">
 <span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">west</span>
             Volver
         </a>
 </div>
-<!-- Centered Logo -->
-<div class="absolute left-1/2 -translate-x-1/2 text-xl font-bold tracking-tight text-blue-900 dark:text-blue-100">
-        MMPharma
-    </div>
-<!-- Right Actions -->
-<div class="flex-1 flex justify-end items-center">
-<a class="text-slate-500 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm font-medium" href="#">
-            Iniciar sesión
-        </a>
-</div>
+
+<div class="text-2xl font-extrabold tracking-tighter text-primary" style="">Logo</div>
+
+<div class="flex items-center gap-8">
+<span class="text-on-surface-variant text-sm font-medium hidden sm:inline" style="">¿Ya tienes cuenta?</span>
+<a class="text-primary font-bold hover:text-primary-container transition-all duration-200" href="#" style="">Iniciar Sesión</a>
 </div>
 </div>
 </nav>
-<main class="max-w-7xl mx-auto px-6 py-12 flex flex-col items-center">
-<!-- Progress Bar Section -->
-<div class="w-full max-w-2xl mb-12">
-<div class="relative flex items-center justify-between">
-<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-high -translate-y-1/2 z-0"></div>
-<div class="relative z-10 flex flex-col items-center">
-<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white ring-8 ring-background shadow-lg shadow-primary/10">
-<span class="text-sm font-bold">1</span>
+<main class="max-w-[1440px] mx-auto px-6 py-16 flex flex-col items-center">
+<!-- Main Form Card -->
+<div class="w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden border border-outline-variant/20">
+<!-- Header Section -->
+<div class="px-12 py-10 border-b border-outline-variant/20">
+<h1 class="text-3xl font-extrabold tracking-tight text-on-surface mb-3" style="">Solicitud de Empresa</h1>
+<p class="text-on-surface-variant leading-relaxed max-w-2xl" style="">
+                Inicia tu proceso de registro corporativo. Toda la información será tratada bajo estrictos protocolos de confidencialidad y cumplimiento normativo.
+            </p>
 </div>
-<span class="absolute -bottom-8 text-xs font-semibold text-primary uppercase tracking-wider whitespace-nowrap">Datos de Empresa</span>
+<form class="px-12 py-12 space-y-16">
+<!-- Section 1: Datos Generales -->
+<section>
+<div class="flex items-center gap-3 mb-8">
+<div class="p-2 bg-primary/5 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl" style="">domain</span>
 </div>
-<div class="relative z-10 flex flex-col items-center">
-<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant ring-8 ring-background">
-<span class="text-sm font-bold">2</span>
+<h2 class="text-xl font-bold text-on-surface" style="">Sección 1: Datos Generales</h2>
 </div>
-<span class="absolute -bottom-8 text-xs font-semibold text-on-surface-variant uppercase tracking-wider whitespace-nowrap">Verificación</span>
+<div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+<div class="md:col-span-6">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Nombre o Razón Social</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all" placeholder="Ej. Grupo Empresarial del Norte S.A. de C.V." type="text">
 </div>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">RFC</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. GEN010101ABC" type="text">
 </div>
-</div>
-<!-- Registration Card -->
-<div class="w-full max-w-2xl mt-8">
-<div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border-t-4 border-primary">
-<div class="p-8 md:p-10">
-<div class="mb-10">
-<h1 class="text-2xl font-bold text-on-surface tracking-tight mb-2">Información de la Empresa</h1>
-<p class="text-on-surface-variant text-sm">Complete el formulario con los datos fiscales vigentes para dar de alta su cuenta comercial.</p>
-</div>
-<form class="space-y-8">
-<!-- Basic Info Section -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="col-span-2">
-<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Nombre o Razón Social</label>
-<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed text-on-surface placeholder:text-outline/50 transition-all" placeholder="Ej. Distribuidora Farmacéutica S.A. de C.V." type="text"/>
-</div>
-<div>
-<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">RFC</label>
-<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed text-on-surface" placeholder="ABC010101XYZ" type="text"/>
-</div>
-<div>
-<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Régimen Fiscal</label>
-<select class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed text-on-surface">
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Régimen Fiscal</label>
+<select class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl">
 <option>601 - General de Ley Personas Morales</option>
 <option>603 - Personas Morales con Fines no Lucrativos</option>
-<option>626 - Régimen Simplificado de Confianza</option>
 </select>
 </div>
+<div class="md:col-span-6">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Domicilio Fiscal (Calle y Número)</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Av. Juárez 1234, Local 5" type="text">
 </div>
-<!-- Fiscal Address -->
-<div class="pt-4">
-<h3 class="text-sm font-bold text-primary mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-lg">location_on</span> Domicilio Fiscal
-                            </h3>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 <div class="md:col-span-2">
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Calle y Número</label>
-<input class="w-full px-4 py-2 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" type="text"/>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Colonia</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Centro Histórico" type="text">
 </div>
-<div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">C.P.</label>
-<input class="w-full px-4 py-2 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" type="text"/>
+<div class="md:col-span-1">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">C.P.</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 44100" type="text">
 </div>
-<div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Colonia</label>
-<input class="w-full px-4 py-2 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" type="text"/>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Ciudad / Municipio</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Guadalajara" type="text">
 </div>
-<div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Ciudad</label>
-<input class="w-full px-4 py-2 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" type="text"/>
-</div>
-<div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Estado</label>
-<input class="w-full px-4 py-2 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" type="text"/>
-</div>
-</div>
-</div>
-<!-- Contact for Orders Divider -->
-<div class="relative py-4">
-<div aria-hidden="true" class="absolute inset-0 flex items-center">
-<div class="w-full border-t border-outline-variant/30"></div>
-</div>
-<div class="relative flex justify-start">
-<span class="pr-4 bg-surface-container-lowest text-xs font-bold text-on-surface-variant uppercase tracking-widest">Información de contacto para pedidos</span>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div>
-<label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Representante Legal</label>
-<input class="w-full px-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" placeholder="Nombre completo" type="text"/>
-</div>
-<div class="flex flex-col">
-<label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Teléfono</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="call">call</span>
-<input class="w-full pl-10 pr-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" placeholder="55 0000 0000" type="tel"/>
-</div>
-</div>
-<div class="col-span-2">
-<label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Email Corporativo</label>
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="mail">mail</span>
-<input class="w-full pl-10 pr-4 py-3 rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed" placeholder="contacto@empresa.com" type="email"/>
-</div>
-</div>
-</div>
-<!-- Invoicing Preferences Divider -->
-<div class="relative py-4">
-<div aria-hidden="true" class="absolute inset-0 flex items-center">
-<div class="w-full border-t border-outline-variant/30"></div>
-</div>
-<div class="relative flex justify-start">
-<span class="pr-4 bg-surface-container-lowest text-xs font-bold text-on-surface-variant uppercase tracking-widest">Preferencias de facturación</span>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Uso de CFDI</label>
-<select class="w-full px-3 py-2 text-sm rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed">
-<option>G01 - Adquisición de mercancías</option>
-<option>G03 - Gastos en general</option>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Estado</label>
+<select class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl">
+<option disabled="" selected="" value="">Selecciona tu estado</option>
+<option value="Jalisco">Jalisco — Estado frecuente —</option>
+<option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option><option>Campeche</option><option>Chiapas</option><option>Chihuahua</option><option>Ciudad de México</option><option>Coahuila</option><option>Colima</option><option>Durango</option><option>Estado de México</option><option>Guanajuato</option><option>Guerrero</option><option>Hidalgo</option><option>Michoacán</option><option>Morelos</option><option>Nayarit</option><option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option><option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option><option>Sinaloa</option><option>Sonora</option><option>Tabasco</option><option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option><option>Yucatán</option><option>Zacatecas</option>
 </select>
 </div>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Teléfono Institucional</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel">
+</div>
+<div class="md:col-span-6">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Representante Legal</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Juan García Martínez" type="text">
+</div>
+</div>
+</section>
+<!-- Section 2: Información Empresarial -->
+<section class="p-8 rounded-2xl bg-surface-container-low border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-8">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl" style="">analytics</span>
+</div>
+<h2 class="text-xl font-bold text-on-surface" style="">Sección 2: Información Empresarial</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Método de Pago</label>
-<select class="w-full px-3 py-2 text-sm rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed">
-<option>PPD - Pago en parcialidades</option>
-<option>PUE - Pago en una sola exhibición</option>
-</select>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Giro de la Empresa</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Empresa de servicios tecnológicos" type="text">
 </div>
 <div>
-<label class="block text-[10px] font-bold text-on-surface-variant uppercase mb-1">Documento</label>
-<select class="w-full px-3 py-2 text-sm rounded-lg bg-surface-container-low border-none focus:ring-2 focus:ring-primary-fixed">
-<option>Factura Electrónica</option>
-<option>Nota de Crédito</option>
-</select>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Nombre Comercial</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Grupo Norte" type="text">
 </div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Persona de contacto</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. María López Hernández" type="text">
 </div>
-<!-- Delivery Address Section -->
-<div class="pt-4">
-<div class="flex items-center justify-between mb-4">
-<h3 class="text-sm font-bold text-primary flex items-center gap-2">
-<span class="material-symbols-outlined text-lg">local_shipping</span> Dirección de Entrega
-                                </h3>
-<label class="flex items-center gap-2 cursor-pointer group">
-<input checked="" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary-fixed" type="checkbox"/>
-<span class="text-xs text-on-surface-variant group-hover:text-primary transition-colors">Misma que fiscal</span>
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<span class="material-symbols-outlined text-sm" style="">phone</span>Teléfono Local
+                        </label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel">
+</div>
+<div>
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<span class="material-symbols-outlined text-sm" style="">smartphone</span>Teléfono Celular
+                        </label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<span class="material-symbols-outlined text-sm" style="">mail</span>Correo electrónico institucional
+                        </label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. pedidos@empresa.com" type="email">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-4" style="">Método de pago preferente</label>
+<div class="flex flex-wrap gap-3">
+<label class="cursor-pointer group" style="">
+<input class="peer hidden" name="payment_method" type="radio" value="transferencia">
+<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Transferencia</span>
+</label>
+<label class="cursor-pointer group" style="">
+<input class="peer hidden" name="payment_method" type="radio" value="cheque">
+<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Cheque</span>
+</label>
+<label class="cursor-pointer group" style="">
+<input class="peer hidden" name="payment_method" type="radio" value="efectivo">
+<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Efectivo</span>
 </label>
 </div>
-<div class="p-4 bg-surface-container rounded-lg border border-dashed border-outline-variant/50">
-<p class="text-xs text-on-surface-variant flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">info</span>
-                                    La mercancía será entregada en el domicilio fiscal registrado anteriormente.
-                                </p>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Uso de CFDI</label>
+<select class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl">
+<option value="">Ej. G03 - Gastos en general</option>
+<option>G01 - Adquisición de mercancías</option>
+<option>G03 - Gastos en general</option>
+<option>P01 - Por definir</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Volumen de compra mensual</label>
+<input class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 25,000.00" type="text">
 </div>
 </div>
-<!-- Action Button -->
-<div class="pt-8 flex justify-end">
-<button class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-4 rounded-md font-bold text-sm flex items-center gap-3 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20" type="button">
-                                Continuar
-                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</section>
+<!-- Section 3: Dirección de Entrega -->
+<section>
+<div class="flex items-center gap-3 mb-8">
+<div class="p-2 bg-primary/5 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl" style="">local_shipping</span>
+</div>
+<h2 class="text-xl font-bold text-on-surface" style="">Sección 3: Dirección de Entrega</h2>
+</div>
+<div class="space-y-8">
+<label class="flex items-center gap-3 cursor-pointer group w-fit" style="">
+<input class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary" type="checkbox">
+<span class="text-sm font-semibold text-on-surface-variant group-hover:text-primary transition-colors" style="">La dirección de entrega es idéntica al domicilio fiscal</span>
+</label>
+<div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+<div class="md:col-span-6">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Domicilio de Entrega (Calle y Número)</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Calle Reforma 567, Local 2" type="text">
+</div>
+<div class="md:col-span-4">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Colonia</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Centro Histórico" type="text">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">C.P.</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 44100" type="text">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Ciudad *</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Guadalajara" required="" type="text">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Delegación o Municipio *</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Guadalajara" required="" type="text">
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Estado *</label>
+<select class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" required="">
+<option disabled="" selected="" value="">Selecciona tu estado</option>
+<option value="Jalisco">Jalisco — Estado frecuente —</option>
+<option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option><option>Campeche</option><option>Chiapas</option><option>Chihuahua</option><option>Ciudad de México</option><option>Coahuila</option><option>Colima</option><option>Durango</option><option>Estado de México</option><option>Guanajuato</option><option>Guerrero</option><option>Hidalgo</option><option>Michoacán</option><option>Morelos</option><option>Nayarit</option><option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option><option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option><option>Sinaloa</option><option>Sonora</option><option>Tabasco</option><option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option><option>Yucatán</option><option>Zacatecas</option>
+</select>
+</div>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Horario de entrega</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Lunes a viernes de 9:00am a 6:00pm" type="text">
+</div>
+<div class="md:col-span-3">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Receptor</label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Carlos Mendoza Ruiz" type="text">
+</div>
+<div class="md:col-span-6">
+<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<span class="material-symbols-outlined text-sm text-primary" style="">phone_in_talk</span>Teléfono de Contacto en Almacén
+                            </label>
+<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel">
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Contrato de Uso de Medicamento -->
+<section class="bg-amber-50 rounded-2xl p-8 border border-amber-200 shadow-sm">
+<div class="flex items-start gap-5">
+<div class="bg-amber-100 p-2.5 rounded-xl">
+<span class="material-symbols-outlined text-amber-700 text-2xl" style="">verified_user</span>
+</div>
+<div class="flex-1">
+<h2 class="text-xl font-extrabold text-amber-900 mb-3" style="">Cláusula de Uso de Medicamento</h2>
+<p class="text-sm text-amber-800 leading-relaxed mb-6 font-medium" style="">
+                            Declaro bajo protesta de decir verdad que los insumos médicos adquiridos serán destinados única y exclusivamente para los fines clínicos autorizados. Me comprometo al cumplimiento estricto de la Norma Oficial Mexicana respecto al manejo de insumos y Red Fría.
+                        </p>
+<label class="flex items-center gap-4 cursor-pointer group" style="">
+<input class="w-6 h-6 rounded border-amber-400 text-amber-700 focus:ring-amber-600 transition-all cursor-pointer" required="" type="checkbox">
+<span class="text-sm font-bold text-amber-950 group-hover:underline" style="">Acepto los términos y condiciones de uso de medicamento</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Final Section: Privacy and Submit -->
+<section class="pt-8 border-t border-outline-variant/20">
+<div class="space-y-8">
+<label class="flex items-start gap-4 cursor-pointer group" style="">
+<input class="mt-1 w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" required="" type="checkbox">
+<span class="text-sm text-on-surface-variant font-medium leading-relaxed" style="">
+                            Confirmo que he leído y acepto el <a class="text-primary font-bold hover:underline" href="#" style="">Aviso de Privacidad</a> de MMPharma para el tratamiento de mis datos corporativos y personales.
+                        </span>
+</label>
+<div class="flex flex-col items-center">
+<button class="w-full md:max-w-md py-4 bg-primary text-white font-extrabold text-lg rounded-2xl hover:bg-primary-container hover:shadow-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 shadow-md" type="submit" style="">
+<span class="" style="">Enviar Solicitud de Alta</span>
+<span class="material-symbols-outlined font-normal" style="">send</span>
 </button>
+<p class="text-center text-xs text-on-surface-variant mt-6 font-medium" style="">
+                            Su solicitud pasará por un proceso de verificación documental (24-48h hábiles).
+                        </p>
 </div>
+</div>
+</section>
 </form>
 </div>
-</div>
-<!-- Help Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-<div class="bg-surface-container-low p-5 rounded-xl flex items-start gap-4 border border-outline-variant/10">
-<div class="p-2 bg-tertiary-container rounded-lg">
-<span class="material-symbols-outlined text-on-tertiary-container" data-icon="encrypted" style="font-variation-settings: 'FILL' 1;">encrypted</span>
-</div>
-<div>
-<h4 class="text-sm font-bold text-on-surface mb-1">Datos encriptados</h4>
-<p class="text-xs text-on-surface-variant leading-relaxed">Su información está protegida bajo estándares bancarios SSL de 256 bits.</p>
-</div>
-</div>
-<div class="bg-surface-container-low p-5 rounded-xl flex items-start gap-4 border border-outline-variant/10">
-<div class="p-2 bg-secondary-container/20 rounded-lg">
-<span class="material-symbols-outlined text-secondary" data-icon="support_agent">support_agent</span>
-</div>
-<div>
-<h4 class="text-sm font-bold text-on-surface mb-1">¿Necesitas ayuda?</h4>
-<p class="text-xs text-on-surface-variant leading-relaxed">Contacta a nuestro equipo de soporte técnico: <span class="font-semibold text-primary">800-PHARMA</span></p>
-</div>
-</div>
-</div>
-</div>
 </main>
-<footer class="mt-20 py-10 border-t border-outline-variant/10 text-center">
-<p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-medium opacity-60">
-            © 2024 MMPharma Solutions S.A. de C.V. — Todos los derechos reservados
-        </p>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant/20 mt-16">
+<div class="w-full px-8 py-14 flex flex-col md:flex-row justify-between items-center gap-8 max-w-[1440px] mx-auto">
+<div class="flex flex-col items-center md:items-start gap-3">
+<span class="text-xl font-black text-primary tracking-tighter" style="">MMPharma</span>
+<p class="text-sm font-medium leading-relaxed text-on-surface-variant text-center md:text-left opacity-75" style="">
+                © 2024 MMPharma. Clinical Excellence in Pharmaceutical Distribution.
+            </p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Aviso Legal</a>
+<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Política de Privacidad</a>
+<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Soporte</a>
+<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Términos</a>
+</div>
+</div>
 </footer>
 </body></html>
