@@ -7,6 +7,7 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -89,29 +90,30 @@
     </style>
 </head>
 <body class="bg-surface font-body text-on-surface antialiased">
-<!-- TopNavBar -->
-<nav class="docked full-width top-0 sticky z-50 bg-[#f7f9ff] dark:bg-slate-950 font-['Inter'] antialiased tracking-tight">
-<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-<div class="text-xl font-bold tracking-tighter text-[#051d30] dark:text-white">
-            MMPharma
-        </div>
-<div class="hidden md:flex space-x-8 items-center">
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#051d30] transition-colors duration-200" href="#">Inicio</a>
-<a class="text-[#002451] dark:text-blue-400 font-semibold border-b-2 border-[#002451] pb-1" href="#">¿Quiénes somos?</a>
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#051d30] transition-colors duration-200" href="#">Catálogo</a>
-<a class="text-[#43474f] dark:text-slate-400 hover:text-[#1A3A6B] transition-colors duration-200" href="#">Contacto</a>
-</div>
-<button class="bg-primary text-white px-5 py-2 rounded-md font-medium hover:bg-primary-container transition-all active:scale-95">
-            Partner Login
-        </button>
-</div>
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-50 bg-[#f7f9ff] shadow-sm">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto font-['Inter'] font-medium text-sm antialiased">
+  <div class="flex items-center gap-12">
+    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+    <div class="hidden md:flex gap-8">
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../index.html">Inicio</a>
+      <a class="text-[#002451] font-semibold border-b-2 border-[#002451] pb-1" href="quienes_somos.html">¿Quiénes somos?</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="#">Catálogo</a>
+      <a class="text-[#43474f] hover:text-[#1A3A6B] transition-colors duration-200" href="../CONTACTO/Contacto.html">Contacto</a>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <a href="../LOGIN/login.html"><button class="px-4 py-2 text-[#1A3A6B] font-medium hover:bg-[#edf4ff] rounded-lg transition-all">Iniciar sesión</button></a>
+    <a href="../SELECCIÓN_REGISTRO/selección_registro.html"><button class="px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">Solicitar acceso</button></a>
+  </div>
 </nav>
+</header>
 <main>
 <!-- Hero Section -->
 <section class="relative min-h-[716px] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
 <img class="w-full h-full object-cover brightness-[0.85]" data-alt="Modern high-tech pharmaceutical laboratory interior with clean white surfaces, scientific equipment, and blue clinical lighting accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5bgbi2O_EnuK3gmBaHh6cPbKdlx4xqyyQtZeaBCo-k66RAzUwmWC-appXjMJuBrPpc-mjKy3ISGdXPqb8wxBwEMcTnfFteE4EI7uWPpdEkl_XuhedEBrWm6nRpK-1FODTdcx4UcwFuD92VRLsxgKPFqtjpsobRdu5q_iFBamw7i5N9GlDRvQicPrDXm9YsMyAJFjnu8dVR4N6N1xJEPu7Q2dX7xtkb3qaH7bxtd2gj5SmXxtE-VeG3HBtBEWW7bnbMGUxCfH1aEE"/>
-<div class="absolute inset-0 bg-gradient-to-r from-surface/95 via-surface/40 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/40 via-surface/60 to-transparent"></div>
 </div>
 <div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
 <div class="max-w-2xl">
@@ -278,33 +280,63 @@
 </section>
 </main>
 <!-- Footer -->
-<footer class="full-width py-12 px-8 bg-[#051d30] dark:bg-black font-['Inter'] text-sm tracking-wide">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
-<div class="space-y-6">
-<div class="text-lg font-bold text-white">MMPharma</div>
-<p class="text-slate-400 max-w-sm">
-                Líderes en distribución B2B con enfoque clínico. Especialistas en Red Fría y logística de alta integridad.
-            </p>
-<div class="text-slate-400">
-                © 2024 MMPharma B2B Distribution. Clinical Excellence &amp; Supply Integrity.
-            </div>
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div class="space-y-4">
-<h5 class="text-white font-semibold">Legal</h5>
-<ul class="space-y-2">
-<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Privacy Policy</a></li>
-<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Terms of Service</a></li>
-</ul>
-</div>
-<div class="space-y-4">
-<h5 class="text-white font-semibold">Certificaciones</h5>
-<ul class="space-y-2">
-<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Pharma Regulations</a></li>
-<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Red Fría Certification</a></li>
-</ul>
-</div>
-</div>
-</div>
+<footer class="bg-[#0D2137] text-white pt-20 pb-10">
+  <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+    <div class="space-y-6">
+      <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+      <p class="text-blue-100/60 text-sm leading-relaxed">Distribución farmacéutica con estándares de excelencia. Innovación y compromiso en cada entrega.</p>
+      <div class="flex gap-4">
+        <a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">share</span>
+        </a>
+        <a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">mail</span>
+        </a>
+      </div>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-6">Enlaces</h4>
+      <ul class="space-y-4 text-blue-100/60 text-sm">
+        <li><a class="hover:text-white transition-colors" href="../index.html">Inicio</a></li>
+        <li><a class="hover:text-white transition-colors" href="../QUIENES_SOMOS/quienes_somos.html">Nosotros</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Catálogo</a></li>
+        <li><a class="hover:text-white transition-colors" href="../CONTACTO/Contacto.html">Contacto</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-6">Legal</h4>
+      <ul class="space-y-4 text-blue-100/60 text-sm">
+        <li><a class="hover:text-white transition-colors" href="#">Aviso de Privacidad</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Términos y Condiciones</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Cumplimiento COFEPRIS</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Política de Devoluciones</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-6">Contacto</h4>
+      <ul class="space-y-4 text-blue-100/60 text-sm">
+        <li class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-secondary-container">location_on</span>
+          Av. Industrial Médica 450, Piso 8. Ciudad de México.
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary-container">call</span>
+          +52 (55) 4890-2200
+        </li>
+        <li class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary-container">support_agent</span>
+          Soporte 24/7
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100/40">
+    <p>© 2026 MMPharma. Todos los derechos reservados.</p>
+    <div class="flex gap-8">
+      <a class="hover:text-white transition-colors" href="#">Facebook</a>
+      <a class="hover:text-white transition-colors" href="#">LinkedIn</a>
+      <a class="hover:text-white transition-colors" href="#">Twitter</a>
+    </div>
+  </div>
 </footer>
 </body></html>

@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
 <script id="tailwind-config">
     
         tailwind.config = {
@@ -87,17 +88,48 @@
 <body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
 <!-- TopAppBar -->
 <header class="bg-[#f7f9ff] dark:bg-slate-900 flex justify-between items-center w-full px-8 py-6 z-50">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="Minimalist pharmaceutical brand logo with clean geometric shapes and medical navy blue color palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJXrIClUXAdBWvBuz8ep-yc2nsDS0kiepxdE2UPL94u98Nxp67Nu_A2EQE2G3P67JkVZXWqLNge41IVT_sOlcMWVglBdAyHX6lIRUeBNfW1dRioidvM4Cf0J6p9abpruU2xC_35uOuiemMdvQcZNBfpju8ti-lfKBdh7kIkgsjGx7OopHxVm57K3R9w6ybpyMN6ET5BGbzLlLzKBZoRR5dYbmchAIBJQgWx6Pg8u6orsUner39O7sHVTmedFzn2KvrOd_8JWpO9Gw"/>
+  <button onclick="location.href='../index.html'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
+    <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
+    <span class="text-sm font-semibold">Volver</span>
+  </button>
+
+  <a href="../index.html">
+    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+  </a>
+
+  <div class="flex items-center gap-6">
+  <button onclick="document.getElementById('popupAyuda').classList.remove('hidden')"
+    class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
+    <span class="material-symbols-outlined text-xl">help_outline</span>
+    <span class="text-sm font-medium">Ayuda</span>
+  </button>
 </div>
-<span class="text-xl font-bold text-[#051d30] dark:text-white tracking-tighter">MMPharma</span>
-</div>
-<div class="flex items-center gap-6">
-<button class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
-<span class="material-symbols-outlined text-xl">help_outline</span>
-<span class="text-sm font-medium">Ayuda</span>
-</button>
+<!-- Popup Ayuda -->
+<div id="popupAyuda" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-primary">¿Cómo elegir tu tipo de cuenta?</h3>
+      <button onclick="document.getElementById('popupAyuda').classList.add('hidden')" 
+        class="text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div class="p-4 bg-surface-container-low rounded-xl">
+        <p class="font-bold text-on-surface mb-1">💊 Farmacia</p>
+        <p class="text-sm text-on-surface-variant">Venta directa al público. Farmacias independientes o sucursales.</p>
+      </div>
+      <div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
+        <p class="font-bold text-on-surface mb-1">🚚 Distribuidora</p>
+        <p class="text-sm text-on-surface-variant">Mayoristas con volumen alto y logística propia.</p>
+      </div>
+      <div class="p-4 bg-surface-container-low rounded-xl">
+        <p class="font-bold text-on-surface mb-1">🏥 Empresa</p>
+        <p class="text-sm text-on-surface-variant">Clínicas, hospitales o corporativos que compran para uso interno.</p>
+      </div>
+    </div>
+    <p class="text-xs text-on-surface-variant mt-6 text-center">¿Sigues con dudas? Escríbenos a <span class="text-secondary font-bold">ventas@mmpharma.com</span></p>
+  </div>
 </div>
 </header>
 <!-- Main Content Canvas -->
