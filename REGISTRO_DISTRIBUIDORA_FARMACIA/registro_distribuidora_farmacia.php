@@ -99,7 +99,7 @@
 
     <!-- Volver Button -->
 <div class="flex-1 flex justify-start">
-<a class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium group" href="../SELECCIÓN_REGISTRO/selección_registro.html">
+<a class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium group" href="../SELECCIÓN_REGISTRO/selección_registro.php">
 <span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">west</span>
             Volver
         </a>

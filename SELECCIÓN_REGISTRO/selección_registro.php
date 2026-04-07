@@ -88,12 +88,12 @@
 <body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
 <!-- TopAppBar -->
 <header class="bg-[#f7f9ff] dark:bg-slate-900 flex justify-between items-center w-full px-8 py-6 z-50">
-  <button onclick="location.href='../index.html'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
+  <button onclick="location.href='../INDEX/index.php'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
     <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
     <span class="text-sm font-semibold">Volver</span>
   </button>
 
-  <a href="../index.html">
+  <a href="../INDEX/index.php">
     <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
   </a>
 
@@ -171,7 +171,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.html'" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 text-sm">
                     Registrarme como Farmacia
                 </button>
 </div>
@@ -204,7 +204,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.html'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm shadow-xl">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm shadow-xl">
                     Registrarme como Distribuidora
                 </button>
 </div>
@@ -230,7 +230,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.html'" class="w-full py-4 border-2 border-slate-200 text-primary font-bold rounded-xl hover:bg-slate-50 hover:border-primary transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 border-2 border-slate-200 text-primary font-bold rounded-xl hover:bg-slate-50 hover:border-primary transition-all duration-300 text-sm">
                     Registrarme como Empresa
                 </button>
 </div>
@@ -245,6 +245,6 @@
 </main>
 <!-- Footer Space -->
 <footer class="py-12 px-6 flex flex-col items-center">
-<p class="text-xs text-on-surface-variant opacity-60">© 2024 MMPharma. Clinical Curator System. Todos los derechos reservados.</p>
+<p class="text-xs text-on-surface-variant opacity-60"><p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p></p>
 </footer>
 </body></html>

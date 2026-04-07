@@ -92,8 +92,8 @@
 <div class="flex items-center gap-3 mb-24">
 <div class="bg-on-primary-fixed rounded-lg flex items-center justify-center">
 </div>
-<a href="../index.html">
-  <img src="../logos/MMPharma-Logotipo-Horizontal.png" 
+<a href="../INDEX/index.php">
+  <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" 
        alt="MMPharma" 
        class="h-8 w-auto">
 </a>
@@ -133,7 +133,7 @@
 </div>
 </div>
 <div class="relative z-10 text-primary-fixed-dim text-xs tracking-widest uppercase opacity-60">
-            © 2024 MMPharma Global Systems • Clinical Precision Engineering
+            <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
         </div>
 </div>
 <!-- Right Panel: Login Form (50% width, 100% height, Centered) -->
@@ -214,7 +214,7 @@
 <div class="text-center">
 <p class="text-on-surface-variant text-base font-medium">
                     ¿Eres un nuevo socio clínico? 
-                    <a class="ml-1 text-secondary font-bold hover:underline transition-all" href="../SELECCIÓN_REGISTRO/selección_registro.html">Solicita acceso aquí</a>
+                    <a class="ml-1 text-secondary font-bold hover:underline transition-all" href="../SELECCIÓN_REGISTRO/selección_registro.php">Solicita acceso aquí</a>
 </p>
 </div>
 <!-- Footer for Mobile -->
