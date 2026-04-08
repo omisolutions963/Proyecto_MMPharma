@@ -1,3 +1,10 @@
+<?php
+$titulo = 'MMPharma | Distribuidora Farmacéutica';
+$pagina_actual = 'inicio';
+$base = '../';
+require_once '../includes/header.php';
+?>
+
 <!DOCTYPE html><html class="light" lang="es"><head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -91,13 +98,6 @@
         </a>
 </div>
 
-<div class="text-2xl font-extrabold tracking-tighter text-primary" style="">Logo</div>
-
-<div class="flex items-center gap-8">
-<span class="text-on-surface-variant text-sm font-medium hidden sm:inline" style="">¿Ya tienes cuenta?</span>
-<a class="text-primary font-bold hover:text-primary-container transition-all duration-200" href="#" style="">Iniciar Sesión</a>
-</div>
-</div>
 </nav>
 <main class="max-w-[1440px] mx-auto px-6 py-16 flex flex-col items-center">
 <!-- Main Form Card -->
@@ -339,21 +339,9 @@
 </form>
 </div>
 </main>
-<!-- Footer -->
-<footer class="bg-surface-container-low border-t border-outline-variant/20 mt-16">
-<div class="w-full px-8 py-14 flex flex-col md:flex-row justify-between items-center gap-8 max-w-[1440px] mx-auto">
-<div class="flex flex-col items-center md:items-start gap-3">
-<span class="text-xl font-black text-primary tracking-tighter" style="">MMPharma</span>
-<p class="text-sm font-medium leading-relaxed text-on-surface-variant text-center md:text-left opacity-75" style="">
-                <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
-            </p>
-</div>
-<div class="flex flex-wrap justify-center gap-8">
-<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Aviso Legal</a>
-<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Política de Privacidad</a>
-<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Soporte</a>
-<a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#" style="">Términos</a>
-</div>
-</div>
-</footer>
+
+<!-- ═══ FOOTER ═══ -->
+<?php require_once '../includes/footer.php'; ?>
+
+
 </body></html>

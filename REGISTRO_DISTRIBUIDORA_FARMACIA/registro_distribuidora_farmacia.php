@@ -1,3 +1,10 @@
+<?php
+$titulo = 'MMPharma | Distribuidora Farmacéutica';
+$pagina_actual = 'inicio';
+$base = '../';
+require_once '../includes/header.php';
+?>
+
 <!DOCTYPE html><html class="light" lang="es"><head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -105,14 +112,6 @@
         </a>
 </div>
 
-<div class="text-xl font-bold tracking-tighter text-primary dark:text-white uppercase" style="">
-                Logo
-            </div>
-<div class="flex items-center gap-6">
-<span class="text-on-surface-variant font-medium text-sm hidden sm:inline" style="">¿Ya tienes cuenta?</span>
-<a class="text-primary font-semibold text-sm hover:text-primary-container transition-all" href="#" style="">Iniciar Sesión</a>
-</div>
-</div>
 </nav>
 <main class="max-w-7xl mx-auto px-4 py-8 md:py-12 flex flex-col items-center">
 <!-- Registration Card -->
@@ -357,19 +356,9 @@
 <p class="text-xs font-medium text-on-surface-variant" style="">¿Dudas con tu registro? <a class="text-primary font-bold underline" href="#" style="">Contactar Asistencia</a></p>
 </div>
 </main>
-<!-- Footer -->
-<footer class="bg-surface-container-low border-t border-outline-variant/30 text-primary text-sm font-['Inter'] leading-relaxed full-width mt-12">
-<div class="w-full px-8 py-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
-<div class="flex flex-col gap-1 items-center md:items-start text-center md:text-left">
-<div class="font-bold text-primary text-base" style="">MMPharma</div>
-<p class="text-on-surface-variant text-[11px] uppercase tracking-wider font-medium" style="">© 2026.</p>
-</div>
-<div class="flex flex-wrap justify-center gap-6">
-<a class="text-on-surface-variant text-xs hover:text-primary transition-colors font-medium" href="#" style="">Aviso Legal</a>
-<a class="text-on-surface-variant text-xs hover:text-primary transition-colors font-medium" href="#" style="">Privacidad</a>
-<a class="text-on-surface-variant text-xs hover:text-primary transition-colors font-medium" href="#" style="">Términos</a>
-<a class="text-on-surface-variant text-xs hover:text-primary transition-colors font-medium" href="#" style="">Contacto</a>
-</div>
-</div>
-</footer>
+
+
+<!-- ═══ FOOTER ═══ -->
+<?php require_once '../includes/footer.php'; ?>
+
 </body></html>
