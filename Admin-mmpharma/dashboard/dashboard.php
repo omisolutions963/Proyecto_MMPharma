@@ -18,7 +18,7 @@ include('../includes/sidebar.php');
                 <h4 class="text-on-error-container font-bold text-sm">Alerta de Inventario Crítico</h4>
                 <p class="text-on-error-container/80 text-xs mt-0.5">8 productos se encuentran por debajo del umbral de seguridad. Se requiere reabastecimiento inmediato.</p>
             </div>
-            <button class="px-4 py-1.5 bg-error text-white text-xs font-semibold rounded-md shadow-lg shadow-error/20">Gestionar Stock</button>
+            <a href="../G_Inventario/inventario.php" class="px-4 py-1.5 bg-error text-white text-xs font-semibold rounded-md shadow-lg shadow-error/20 block text-center">Gestionar Stock</a>
         </div>
     </div>
 
@@ -111,7 +111,7 @@ include('../includes/sidebar.php');
             <section class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/5 overflow-hidden">
                 <div class="p-6 border-b border-surface-container-low flex justify-between items-center">
                     <h2 class="text-lg font-bold text-on-surface">Últimos Pedidos</h2>
-                    <button class="text-primary text-sm font-semibold hover:underline">Ver todo el historial</button>
+                    <a href="../G_Pedidos/pedidos.php" class="text-primary text-sm font-semibold hover:underline">Ver todo el historial</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -188,9 +188,9 @@ include('../includes/sidebar.php');
                     </div>
                     <?php endforeach; ?>
                 </div>
-                <button class="w-full mt-8 py-3 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container-high transition-colors">
+                <a href="export_best_sellers.php" class="block text-center w-full mt-8 py-3 bg-surface-container-low text-primary text-xs font-bold rounded-lg hover:bg-surface-container-high transition-colors">
                     Descargar Reporte Completo
-                </button>
+                </a>
             </section>
 
             <!-- Status Card -->
