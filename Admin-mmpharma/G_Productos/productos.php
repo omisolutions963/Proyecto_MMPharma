@@ -84,8 +84,8 @@ include("../Includes/sidebar.php");
                     <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-tertiary/10 text-tertiary text-[11px] font-bold uppercase tracking-tighter">Activo</span></td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
                         </div>
                     </td>
                 </tr>
@@ -108,8 +108,8 @@ include("../Includes/sidebar.php");
                     <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-tertiary/10 text-tertiary text-[11px] font-bold uppercase tracking-tighter">Activo</span></td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
                         </div>
                     </td>
                 </tr>
@@ -132,8 +132,8 @@ include("../Includes/sidebar.php");
                     <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-outline-variant/30 text-on-surface-variant text-[11px] font-bold uppercase tracking-tighter">Inactivo</span></td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
+                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
+                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
                         </div>
                     </td>
                 </tr>
@@ -184,7 +184,7 @@ include("../Includes/sidebar.php");
                 <h4 class="text-lg font-bold mb-1">Estado de Stock</h4>
                 <p class="text-primary-fixed-dim text-sm">3 productos requieren atención inmediata por bajo inventario.</p>
             </div>
-            <button class="mt-4 w-fit px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium backdrop-blur-md transition-colors relative z-10">Ver Reporte de Faltantes</button>
+            <a href="export_faltantes.php" class="mt-4 block w-fit px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium backdrop-blur-md transition-colors relative z-10 text-center">Ver Reporte de Faltantes</a>
             <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         </div>
     </section>
@@ -405,12 +405,11 @@ function guardarProducto() {
     const stock     = document.getElementById('stock').value;
 
     if (!nombre || !sku || !categoria || !precio || !stock) {
-        alert('Por favor completa todos los campos obligatorios (*)');
+        mockAction('Error', 'Por favor completa todos los campos obligatorios (*)', 'error');
         return;
     }
 
-    // Aquí conectaremos con la base de datos en el siguiente paso
-    alert('✅ Producto "' + nombre + '" registrado.\n\n(Próximo paso: guardar en base de datos)');
+    mockAction('Producto Guardado', 'El producto "' + nombre + '" se ha registrado exitosamente.', 'success');
     cerrarModal();
 }
 

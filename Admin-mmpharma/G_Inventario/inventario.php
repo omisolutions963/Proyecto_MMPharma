@@ -13,7 +13,7 @@ include("../Includes/sidebar.php");
 <h3 class="text-on-error-container font-bold text-sm">Acción Requerida: Umbral Crítico Detectado</h3>
 <p class="text-on-error-container/80 text-xs mt-1">12 productos han cruzado el umbral mínimo de existencias. Se recomienda reposición inmediata para evitar interrupciones.</p>
 </div>
-<button class="bg-error text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-error/90 transition-colors">Revisar Alertas</button>
+<button onclick="mockAction('Revisando Alertas', 'Abriendo el panel de alertas de stock crítico.', 'info')" class="bg-error text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-error/90 transition-colors">Revisar Alertas</button>
 </div>
 <!-- KPI Summary Cards -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -90,10 +90,10 @@ include("../Includes/sidebar.php");
 <button class="p-2 bg-surface-container-lowest text-on-surface-variant rounded-lg hover:bg-surface-container-highest transition-colors">
 <span class="material-symbols-outlined">filter_list</span>
 </button>
-<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity">
+<a href="export_inventario.php" class="bg-primary text-white px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity">
 <span class="material-symbols-outlined text-sm">download</span>
                     Exportar Reporte
-                </button>
+                </a>
 </div>
 </div>
 <div class="grid grid-cols-12 gap-8">
@@ -350,7 +350,7 @@ include("../Includes/sidebar.php");
 </div>
 </div>
 <div class="mt-auto p-4 border-t border-surface-container">
-<button class="w-full text-center py-2 text-xs font-bold text-primary hover:bg-primary-fixed/20 rounded-lg transition-colors">
+<button onclick="mockAction('Historial', 'Cargando el historial completo de movimientos...', 'info')" class="w-full text-center py-2 text-xs font-bold text-primary hover:bg-primary-fixed/20 rounded-lg transition-colors">
                             Ver historial completo
                         </button>
 </div>
@@ -363,7 +363,7 @@ include("../Includes/sidebar.php");
 <div class="relative z-10">
 <h4 class="text-xl font-bold mb-2">Optimización de Stock IA</h4>
 <p class="text-sm text-white/80 mb-6 max-w-sm">Basado en el historial de demanda, se sugiere aumentar el stock de Analgésicos un 15% para el próximo trimestre.</p>
-<button class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-xl text-sm font-bold transition-all">Ver Proyecciones</button>
+<button onclick="mockAction('Proyecciones de IA', 'Generando gráficas predictivas basadas en IA...', 'info')" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-xl text-sm font-bold transition-all">Ver Proyecciones</button>
 </div>
 <span class="material-symbols-outlined absolute right-[-20px] bottom-[-20px] text-[160px] text-white/5 pointer-events-none">auto_awesome</span>
 </div>
@@ -380,7 +380,7 @@ include("../Includes/sidebar.php");
 </div>
 </main>
 <!-- FAB for quick action -->
-<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full clinical-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<button onclick="mockAction('Nuevo Ajuste de Stock', 'Abriendo formulario para registrar entradas o salidas de inventario.', 'info')" class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full clinical-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
 <span class="material-symbols-outlined" style="font-size: 28px;">add_box</span>
 </button>
 <?php include("../Includes/footer.php"); ?>

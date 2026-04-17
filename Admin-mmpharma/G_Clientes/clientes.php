@@ -18,7 +18,7 @@ include('../includes/sidebar.php');
             </nav>
             <h2 class="text-3xl font-extrabold tracking-tight text-on-surface">Gestión de Clientes</h2>
         </div>
-        <button class="bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-primary/10 flex items-center gap-2 hover:scale-[0.98] transition-transform">
+        <button onclick="mockAction('Nuevo Cliente', 'Abriendo formulario para registrar un nuevo cliente en el sistema.', 'info')" class="bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-primary/10 flex items-center gap-2 hover:scale-[0.98] transition-transform">
             <span class="material-symbols-outlined text-[20px]">person_add</span>
             Nuevo Cliente
         </button>
@@ -127,10 +127,10 @@ include('../includes/sidebar.php');
                         </td>
                         <td class="px-8 py-5 text-right">
                             <div class="flex justify-end gap-2">
-                                <button class="w-8 h-8 flex items-center justify-center rounded-md bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                                <button onclick="mockAction('Perfil del Cliente', 'Cargando datos completos e historial del cliente...', 'info')" class="w-8 h-8 flex items-center justify-center rounded-md bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-md bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                                <button onclick="mockAction('Editar Cliente', 'Abriendo editor de perfil de cliente.', 'info')" class="w-8 h-8 flex items-center justify-center rounded-md bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
                                     <span class="material-symbols-outlined text-[18px]">edit</span>
                                 </button>
                             </div>
@@ -273,7 +273,7 @@ include('../includes/sidebar.php');
         <div class="bg-surface-container-high/30 px-8 py-4 flex justify-between items-center">
             <p class="text-[10px] font-bold text-on-surface-variant">ÚLTIMA ACTUALIZACIÓN: HOY, <?= date('d/m/Y - h:i A') ?></p>
             <div class="flex gap-4">
-                <button class="text-[10px] font-black text-primary uppercase hover:underline">Exportar CSV</button>
+                <a href="export_clientes.php" class="text-[10px] font-black text-primary uppercase hover:underline">Exportar CSV</a>
                 <button class="text-[10px] font-black text-primary uppercase hover:underline">Imprimir Reporte</button>
             </div>
         </div>

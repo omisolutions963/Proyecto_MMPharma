@@ -12,10 +12,10 @@ include("../Includes/sidebar.php");
 <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Pedidos</h2>
 <p class="text-on-surface-variant text-sm">Control centralizado de transacciones y estados de envío de la red clínica.</p>
 </div>
-<button class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all">
+<a href="export_pedidos.php" class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all">
 <span class="material-symbols-outlined text-xl">download</span>
 <span>Descargar Reporte de Ventas (Excel)</span>
-</button>
+</a>
 </section>
 <!-- Filters Section -->
 <section class="bg-surface-container-low rounded-xl p-6 mb-8 flex flex-wrap items-end gap-6">
@@ -88,7 +88,7 @@ include("../Includes/sidebar.php");
                                 </span>
 </td>
 <td class="px-6 py-4 text-right">
-<button class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
+<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
 </td>
 </tr>
 <!-- Row 2 -->
@@ -115,7 +115,7 @@ include("../Includes/sidebar.php");
                                 </span>
 </td>
 <td class="px-6 py-4 text-right">
-<button class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
+<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
 </td>
 </tr>
 <!-- Row 3 -->
@@ -142,7 +142,7 @@ include("../Includes/sidebar.php");
                                 </span>
 </td>
 <td class="px-6 py-4 text-right">
-<button class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
+<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
 </td>
 </tr>
 <!-- Row 4 -->
@@ -169,7 +169,7 @@ include("../Includes/sidebar.php");
                                 </span>
 </td>
 <td class="px-6 py-4 text-right">
-<button class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
+<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
 </td>
 </tr>
 </tbody>

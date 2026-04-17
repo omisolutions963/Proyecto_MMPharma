@@ -21,7 +21,7 @@ include("../Includes/sidebar.php");
 <button class="px-4 py-2 bg-surface-container-highest text-on-secondary-container rounded-xl text-xs font-bold hover:bg-surface-variant transition-colors">
                         Export Report
                     </button>
-<button class="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl text-xs font-bold shadow-lg shadow-primary/10 hover:brightness-110 transition-all">
+<button onclick="mockAction('Registro Manual', 'Abriendo formulario para ingreso manual de solicitud.', 'info')" class="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-white rounded-xl text-xs font-bold shadow-lg shadow-primary/10 hover:brightness-110 transition-all">
                         Manual Registration
                     </button>
 </div>
@@ -108,7 +108,7 @@ include("../Includes/sidebar.php");
 </div>
 </td>
 <td class="px-6 py-5 text-right">
-<button class="text-xs font-bold text-primary group-hover:underline underline-offset-4 flex items-center justify-end gap-1">
+<button onclick="mockAction('Revisar Solicitud', 'Abriendo panel de revisión de documentos y aprobación...', 'info')" class="text-xs font-bold text-primary group-hover:underline underline-offset-4 flex items-center justify-end gap-1">
                                         Revisar <span class="material-symbols-outlined text-sm">arrow_forward</span>
 </button>
 </td>
@@ -228,7 +228,7 @@ include("../Includes/sidebar.php");
 <p class="text-sm opacity-80 max-w-md leading-relaxed mt-1">New registration requirements for distributors specializing in temperature-sensitive pharmaceuticals are now active. Ensure all "Red Fría" certifications are up to date.</p>
 </div>
 </div>
-<button class="px-6 py-3 bg-white text-tertiary font-black text-xs rounded-xl uppercase tracking-widest hover:scale-105 transition-transform">
+<button onclick="mockAction('Requisitos Red Fría', 'Mostrando checklist de cumplimiento para cadena de frío.', 'info')" class="px-6 py-3 bg-white text-tertiary font-black text-xs rounded-xl uppercase tracking-widest hover:scale-105 transition-transform">
     Ver Requisitos
 </button>
 </div>

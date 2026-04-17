@@ -87,6 +87,36 @@
         backdrop-filter: blur(20px);
     }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Funciones globales para mockear acciones
+    function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            confirmButtonColor: '#002451',
+            confirmButtonText: 'Aceptar'
+        });
+    }
+
+    function confirmAction(title, text, confirmText, callback) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ba1a1a',
+            cancelButtonColor: '#747780',
+            confirmButtonText: confirmText,
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                callback();
+            }
+        });
+    }
+</script>
 </head>
 <body class="bg-background text-on-background">
 

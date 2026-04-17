@@ -65,7 +65,7 @@ include("../Includes/sidebar.php");
 </div>
 </div>
 <div class="pt-4 flex justify-end">
-<button class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+<button onclick="event.preventDefault(); mockAction('Configuración Guardada', 'Se han actualizado los parámetros globales del sistema.', 'success')" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
                                 Guardar Cambios
                             </button>
 </div>
@@ -100,7 +100,7 @@ include("../Includes/sidebar.php");
 <div class="relative z-10">
 <h4 class="text-lg font-bold mb-2">Certificación Sanitaria</h4>
 <p class="text-emerald-100/70 text-sm mb-4 leading-relaxed">Su licencia de operación clínica vence en 45 días. Asegúrese de actualizar su documentación.</p>
-<button class="text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
+<button onclick="mockAction('Renovación Sanitaria', 'Iniciando proceso de renovación con la entidad regulatoria...', 'info')" class="text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
                             Renovar Ahora <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
 </button>
 </div>
@@ -117,7 +117,7 @@ include("../Includes/sidebar.php");
 <h3 class="text-xl font-bold text-on-surface tracking-tight">Usuarios Admin</h3>
 <p class="text-xs text-on-surface-variant">Control de acceso granular para el personal administrativo.</p>
 </div>
-<button class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-on-secondary-container rounded-lg text-sm font-bold hover:bg-surface-container-high transition-colors">
+<button onclick="mockAction('Nuevo Usuario', 'Abriendo formulario para crear una nueva cuenta administrativa.', 'info')" class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-on-secondary-container rounded-lg text-sm font-bold hover:bg-surface-container-high transition-colors">
 <span class="material-symbols-outlined text-sm" data-icon="person_add">person_add</span>
                             + Agregar Usuario Admin
                         </button>
@@ -148,10 +148,10 @@ include("../Includes/sidebar.php");
 <td class="px-8 py-5 text-sm text-on-surface-variant">Hoy, 09:42 AM</td>
 <td class="px-8 py-5 text-right">
 <div class="flex items-center justify-end gap-2">
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<button onclick="mockAction('Editar Permisos', 'Abriendo configuración de rol y accesos para este usuario.', 'info')" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
 </button>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<button onclick="confirmAction('Deshabilitar Usuario', '¿Estás seguro de que deseas revocar el acceso a este usuario?', 'Sí, deshabilitar', () => mockAction('Usuario Deshabilitado', 'Se ha revocado el acceso correctamente.', 'success'))" class="p-2 text-on-surface-variant hover:text-error transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="block">block</span>
 </button>
 </div>
@@ -171,10 +171,10 @@ include("../Includes/sidebar.php");
 <td class="px-8 py-5 text-sm text-on-surface-variant">Ayer, 18:15 PM</td>
 <td class="px-8 py-5 text-right">
 <div class="flex items-center justify-end gap-2">
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<button onclick="mockAction('Editar Permisos', 'Abriendo configuración de rol y accesos para este usuario.', 'info')" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
 </button>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<button onclick="confirmAction('Deshabilitar Usuario', '¿Estás seguro de que deseas revocar el acceso a este usuario?', 'Sí, deshabilitar', () => mockAction('Usuario Deshabilitado', 'Se ha revocado el acceso correctamente.', 'success'))" class="p-2 text-on-surface-variant hover:text-error transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="block">block</span>
 </button>
 </div>
@@ -194,10 +194,10 @@ include("../Includes/sidebar.php");
 <td class="px-8 py-5 text-sm text-on-surface-variant">12 May, 2024</td>
 <td class="px-8 py-5 text-right">
 <div class="flex items-center justify-end gap-2">
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<button onclick="mockAction('Editar Permisos', 'Abriendo configuración de rol y accesos para este usuario.', 'info')" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
 </button>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<button onclick="confirmAction('Deshabilitar Usuario', '¿Estás seguro de que deseas revocar el acceso a este usuario?', 'Sí, deshabilitar', () => mockAction('Usuario Deshabilitado', 'Se ha revocado el acceso correctamente.', 'success'))" class="p-2 text-on-surface-variant hover:text-error transition-colors">
 <span class="material-symbols-outlined text-xl" data-icon="block">block</span>
 </button>
 </div>
