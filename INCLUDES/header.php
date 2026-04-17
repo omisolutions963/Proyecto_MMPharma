@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -93,12 +98,23 @@
     </div>
   </div>
   <div class="flex items-center gap-4">
-    <a href="<?= $base ?? '' ?>LOGIN/login.php">
-      <button class="px-4 py-2 text-[#1A3A6B] font-medium hover:bg-[#edf4ff] rounded-lg transition-all">Iniciar sesión</button>
-    </a>
-    <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php">
-      <button class="px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">Solicitar acceso</button>
-    </a>
+    <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
+        <a href="<?= $base ?? '' ?>Admin-mmpharma/dashboard/dashboard.php">
+          <button class="px-6 py-2 bg-[#004520] text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">dashboard</span> Panel de Administrador
+          </button>
+        </a>
+        <a href="<?= $base ?? '' ?>LOGIN/logout.php">
+          <button class="px-4 py-2 text-[#ba1a1a] font-medium hover:bg-[#ffdad6] rounded-lg transition-all">Cerrar Sesión</button>
+        </a>
+    <?php else: ?>
+        <a href="<?= $base ?? '' ?>LOGIN/login.php">
+          <button class="px-4 py-2 text-[#1A3A6B] font-medium hover:bg-[#edf4ff] rounded-lg transition-all">Iniciar sesión</button>
+        </a>
+        <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php">
+          <button class="px-6 py-2 bg-primary text-white font-semibold rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all">Solicitar acceso</button>
+        </a>
+    <?php endif; ?>
   </div>
 </nav>
 </header>

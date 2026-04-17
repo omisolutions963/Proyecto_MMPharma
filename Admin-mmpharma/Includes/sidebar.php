@@ -46,8 +46,15 @@ $menuLinks = [
         <?php endforeach; ?>
     </nav>
 
-    <!-- User Profile -->
-    <div class="mt-auto px-4 pt-4 border-t border-white/10">
+    <!-- Action Buttons & User Profile -->
+    <div class="mt-auto px-4 pt-4 border-t border-white/10 flex flex-col gap-4">
+        <!-- Public Site Link -->
+        <a href="../../INDEX/index.php" class="flex items-center justify-center gap-2 w-full py-2.5 bg-white/5 text-emerald-100/80 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-white transition-all duration-200">
+            <span class="material-symbols-outlined text-lg">language</span>
+            <span>Ir al sitio público</span>
+        </a>
+
+        <!-- Profile -->
         <div class="flex items-center gap-3">
             <img class="w-10 h-10 rounded-full border-2 border-emerald-500/30"
                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC_0X0u9v11asl1lCIwu3Seb4tb5fDpZxFtgharPt-q1iB5VJ1WMtFcfudvUgjd43y0u8aOQCtsq3VeOBXBpRtKKG51Jq0Nnyk6-cjyEpkZ4DQ0C5pBt5wz1iZAnUNHEwRgE1iZqWKhMce1YhkIMDdxJZ7zXTxVme0go8Gj1kPoL2VIg2ukW76YSznA1tdp448RAyt3xsGdAZMa0dJgYihyP3od4rbaIxZBzn1RrJ9JyG0w3xR3-RA7Iyo-P-nVl7pv9sxzPU4-6g"

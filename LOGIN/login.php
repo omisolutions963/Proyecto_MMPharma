@@ -1,3 +1,20 @@
+<?php
+session_start();
+$error_login = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    
+    if ($email === 'admin@mmpharma.com' && $password === 'Admin123!') {
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_email'] = $email;
+        header("Location: ../INDEX/index.php");
+        exit;
+    } else {
+        $error_login = true;
+    }
+}
+?>
 <!DOCTYPE html>
 
 <html class="light" lang="es"><head>
@@ -149,7 +166,7 @@
 <p class="text-on-surface-variant text-lg font-medium">Ingresa con tu correo y contraseña registrados</p>
 </div>
 <!-- Form -->
-<form class="space-y-6" onsubmit="return false;">
+<form class="space-y-6" method="POST" action="">
 <!-- Email Input -->
 <div class="space-y-2">
 <label class="text-sm font-semibold text-on-surface tracking-wide" for="email">Correo electrónico</label>
@@ -183,18 +200,13 @@
 </div>
 <!-- Feedback States -->
 <div class="space-y-3">
-<!-- Pending State -->
-<div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-md">
-<div class="flex items-center">
-<span class="material-symbols-outlined text-amber-600 mr-3" data-icon="pending">pending</span>
-<p class="text-sm text-amber-700 font-medium">Validando sus credenciales con el servidor central...</p>
-</div>
-</div>
+<?php if ($error_login): ?>
 <!-- Error State -->
 <div class="bg-error-container p-4 rounded-lg flex items-center gap-3">
 <span class="material-symbols-outlined text-error" data-icon="error">error</span>
 <p class="text-sm text-on-error-container font-semibold">Credenciales incorrectas. Por favor, inténtelo de nuevo.</p>
 </div>
+<?php endif; ?>
 </div>
 <!-- Submit Button -->
 <button class="w-full py-4 px-6 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.98] transition-all text-lg tracking-wide mt-4" type="submit">
