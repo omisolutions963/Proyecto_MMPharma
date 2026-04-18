@@ -3,27 +3,38 @@ $titulo = 'Contacto | MMPharma';
 $pagina_actual = 'contacto';
 $base = '../';
 
-// ── Manejo del formulario ──
 $enviado = false;
-$error = false;
+$error   = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre   = trim($_POST['nombre'] ?? '');
-    $empresa  = trim($_POST['empresa'] ?? '');
-    $correo   = trim($_POST['correo'] ?? '');
+    $nombre   = trim($_POST['nombre']   ?? '');
+    $empresa  = trim($_POST['empresa']  ?? '');
+    $correo   = trim($_POST['correo']   ?? '');
     $telefono = trim($_POST['telefono'] ?? '');
-    $mensaje  = trim($_POST['mensaje'] ?? '');
+    $mensaje  = trim($_POST['mensaje']  ?? '');
 
     if ($nombre && $correo && filter_var($correo, FILTER_VALIDATE_EMAIL) && $mensaje) {
-        $para    = 'ventas@mmpharma.com';
-        $asunto  = "Nuevo mensaje de contacto — $nombre ($empresa)";
-        $cuerpo  = "Nombre: $nombre\nEmpresa: $empresa\nCorreo: $correo\nTeléfono: $telefono\n\nMensaje:\n$mensaje";
-        $headers = "From: $correo\r\nReply-To: $correo\r\nContent-Type: text/plain; charset=UTF-8";
-
-        if (mail($para, $asunto, $cuerpo, $headers)) {
+        // 1. Guardar en BD
+        try {
+            require_once '../INCLUDES/db.php';
+            $pdo = getDB();
+            $pdo->prepare(
+                "INSERT INTO contacto_mensajes (nombre, email, telefono, empresa, mensaje, ip_origen)
+                 VALUES (?, ?, ?, ?, ?, ?)"
+            )->execute([$nombre, $correo, $telefono, $empresa, $mensaje, $_SERVER['REMOTE_ADDR'] ?? null]);
             $enviado = true;
-        } else {
-            $error = true;
+        } catch (Exception $e) {
+            $enviado = false;
+            $error   = true;
+        }
+
+        // 2. Intentar enviar email (opcional, no bloquea si falla)
+        if ($enviado) {
+            $para    = 'ventas@mmpharma.com';
+            $asunto  = "Nuevo mensaje de contacto — $nombre ($empresa)";
+            $cuerpo  = "Nombre: $nombre\nEmpresa: $empresa\nCorreo: $correo\nTeléfono: $telefono\n\nMensaje:\n$mensaje";
+            $headers = "From: $correo\r\nReply-To: $correo\r\nContent-Type: text/plain; charset=UTF-8";
+            @mail($para, $asunto, $cuerpo, $headers);
         }
     } else {
         $error = true;
@@ -32,175 +43,170 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require_once '../includes/header.php';
 ?>
-
-<!-- ── HERO── -->
-<section class="relative min-h-[369px] flex items-center overflow-hidden">
-  <img src="../IMG/9.webp" class="absolute inset-0 w-full h-full object-cover" alt="MMPharma instalaciones">
-  <div class="absolute inset-0 bg-[#002451] opacity-80"></div>
-  <div class="relative z-10 max-w-7xl mx-auto px-8 py-20 w-full">
+<!-- ── HERO ── -->
+<section class="relative min-h-[369px] flex items-center overflow-hidden bg-gradient-to-br from-[#003e79] to-[#1e60aa]">
+  <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-20 w-full" data-aos="fade-up">
     <h1 class="text-5xl md:text-6xl font-black tracking-tight leading-tight text-white mb-4">Contáctanos</h1>
-    <p class="text-lg text-blue-100/90 max-w-xl leading-relaxed">
-      Nuestro equipo está listo para atender los requerimientos de tu institución, farmacia o distribuidora.
+    <p class="text-lg text-blue-100/90 max-w-xl leading-relaxed font-medium">
+      Nuestro equipo está listo para atender los requerimientos de tu institución, farmacia o distribuidora con la eficiencia que nos caracteriza.
     </p>
   </div>
 </section>
 
 <!-- ── CONTENIDO PRINCIPAL ── -->
-<main>
-<section class="max-w-7xl mx-auto px-8 py-20">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<main class="bg-[#f0f7ff] py-24">
+<section class="max-w-[1600px] mx-auto px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
 
     <!-- ─ Columna izquierda: datos de contacto ─ -->
-    <div class="lg:col-span-5 space-y-6">
+    <div class="lg:col-span-5 space-y-8" data-aos="fade-right">
 
       <div>
-        <h2 class="text-2xl font-bold text-on-surface mb-2">Canales directos</h2>
-        <p class="text-on-surface-variant text-sm leading-relaxed">Comunícate con nosotros por el canal que prefieras. Atendemos de lunes a viernes de 9:00 AM a 6:00 PM.</p>
+        <h2 class="text-3xl font-black text-primary mb-3">Canales directos</h2>
+        <p class="text-slate-900 text-base leading-relaxed">
+          Atendemos de lunes a viernes de <span class="text-primary font-bold">9:00 AM a 6:00 PM</span>. Selecciona el medio que más te convenga.
+        </p>
       </div>
 
-      <!-- Dirección → Google Maps -->
-      <a href="https://maps.google.com/?q=Av+Obsidiana+3644+Residencial+Loma+Bonita+Zapopan+Jalisco" target="_blank"
-         class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container transition-all group clinical-shadow">
-        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:bg-primary transition-colors">
-          <span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">location_on</span>
+      <div class="space-y-4">
+        <!-- Cobertura Nacional -->
+        <div class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1">
+          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary">
+            <span class="material-symbols-outlined text-3xl">public</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-primary text-lg mb-0.5">Presencia Nacional</h3>
+            <p class="text-slate-900 text-sm leading-relaxed font-medium">
+              Cobertura estratégica en toda la República Mexicana.
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 class="font-bold text-on-surface mb-1">Dirección</h3>
-          <p class="text-on-surface-variant text-sm leading-relaxed">
-            Av. Obsidiana 3644,<br>
-            Residencial Loma Bonita,<br>
-            Zapopan, Jalisco, CP 45088
+
+        <!-- Teléfonos -->
+        <a href="tel:3343480581"
+           class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
+          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary group-hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] group-hover:text-white transition-all">
+            <span class="material-symbols-outlined text-3xl">call</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-primary text-lg mb-0.5">Líneas Telefónicas</h3>
+            <p class="text-slate-900 text-sm font-medium tracking-tight">
+              33 4348 0581 <span class="mx-2 text-slate-300">|</span> 33 4348 0582
+            </p>
+          </div>
+        </a>
+
+        <!-- Correo -->
+        <a href="mailto:ventas@mmpharma.com"
+           class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
+          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary group-hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] group-hover:text-white transition-all">
+            <span class="material-symbols-outlined text-3xl">mail</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-primary text-lg mb-0.5">Correo electrónico</h3>
+            <p class="text-slate-900 text-sm font-medium">ventas@mmpharma.com</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Badge Red Fría Moderno -->
+      <div class="p-8 bg-gradient-to-br from-primary to-[#002451] rounded-3xl shadow-2xl relative overflow-hidden group">
+        <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
+           <span class="material-symbols-outlined text-[160px] text-white" style="font-variation-settings: 'FILL' 1">ac_unit</span>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="px-3 py-1 bg-secondary text-white text-xs font-black uppercase tracking-widest rounded-full">Activo 24/7</div>
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          </div>
+          <h4 class="text-white text-xl font-bold mb-2">Estatus Red Fría</h4>
+          <p class="text-blue-100/70 text-sm leading-relaxed max-w-xs font-medium">
+            Contamos con infraestructura de monitoreo constante para garantizar la integridad de cada insumo.
           </p>
-          <span class="text-xs font-bold text-secondary mt-2 inline-flex items-center gap-1 group-hover:underline">
-            Abrir en Google Maps
-            <span class="material-symbols-outlined text-xs">open_in_new</span>
-          </span>
-        </div>
-      </a>
-
-      <!-- Teléfonos → tel: -->
-      <a href="tel:3343480581"
-         class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container transition-all group clinical-shadow">
-        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:bg-primary transition-colors">
-          <span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">call</span>
-        </div>
-        <div>
-          <h3 class="font-bold text-on-surface mb-1">Teléfono</h3>
-          <p class="text-on-surface-variant text-sm">33 4348 0581</p>
-          <p class="text-on-surface-variant text-sm">33 4348 0582</p>
-          <p class="text-xs text-outline mt-1 italic">Lun - Vie: 9:00 AM - 6:00 PM</p>
-        </div>
-      </a>
-
-      <!-- Correo → mailto: -->
-      <a href="mailto:ventas@mmpharma.com"
-         class="flex items-start gap-4 p-6 bg-surface-container-low rounded-xl hover:bg-surface-container transition-all group clinical-shadow">
-        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:bg-primary transition-colors">
-          <span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">mail</span>
-        </div>
-        <div>
-          <h3 class="font-bold text-on-surface mb-1">Correo electrónico</h3>
-          <p class="text-on-surface-variant text-sm">ventas@mmpharma.com</p>
-          <span class="text-xs font-bold text-secondary mt-1 inline-block group-hover:underline">Enviar correo</span>
-        </div>
-      </a>
-
-      <!-- Badge Red Fría -->
-      <div class="p-6 bg-tertiary-container/5 rounded-2xl border border-tertiary-container/15 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1">ac_unit</span>
-        </div>
-        <div>
-          <span class="text-[10px] uppercase tracking-widest font-bold text-tertiary-container block mb-1">Estatus Red Fría</span>
-          <p class="text-on-surface font-medium text-sm">Instalaciones monitoreadas 24/7</p>
         </div>
       </div>
 
     </div>
 
     <!-- ─ Columna derecha: formulario ─ -->
-    <div class="lg:col-span-7">
-      <div class="bg-surface-container-lowest p-8 md:p-12 rounded-2xl clinical-shadow ring-1 ring-outline-variant/10">
+    <div class="lg:col-span-7" data-aos="fade-left">
+      <div class="bg-white p-10 md:p-14 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.06)]">
 
         <?php if ($enviado): ?>
-        <!-- Estado enviado exitosamente -->
-        <div class="text-center py-12">
-          <div class="w-20 h-20 bg-tertiary-container/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span class="material-symbols-outlined text-tertiary-container text-4xl" style="font-variation-settings: 'FILL' 1">check_circle</span>
+        <div class="text-center py-16">
+          <div class="w-24 h-24 bg-green-100 text-green-600 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce">
+            <span class="material-symbols-outlined text-5xl" style="font-variation-settings: 'FILL' 1">verified</span>
           </div>
-          <h2 class="text-2xl font-bold text-on-surface mb-3">¡Mensaje enviado!</h2>
-          <p class="text-on-surface-variant text-sm max-w-sm mx-auto leading-relaxed">
-            Gracias por contactarnos. Nuestro equipo te responderá a la brevedad en el correo que proporcionaste.
+          <h2 class="text-3xl font-black text-primary mb-4">¡Mensaje recibido!</h2>
+          <p class="text-slate-900 text-lg max-w-sm mx-auto leading-relaxed">
+            Hemos registrado tu solicitud correctamente. Un asesor se pondrá en contacto contigo muy pronto.
           </p>
-          <a href="contacto.php" class="mt-8 inline-block px-8 py-3 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all text-sm">
-            Enviar otro mensaje
+          <a href="contacto.php" class="mt-10 inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-black rounded-2xl hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all">
+            CERRAR Y VOLVER
           </a>
         </div>
 
         <?php else: ?>
 
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-on-surface mb-1">Envíanos un mensaje</h2>
-          <p class="text-on-surface-variant text-sm">Completa el formulario y te respondemos a la brevedad.</p>
+        <div class="mb-10">
+          <h2 class="text-4xl font-black text-primary mb-2">Envíanos un mensaje</h2>
+          <p class="text-slate-500 font-medium italic">Atención personalizada para tu empresa o institución.</p>
         </div>
 
         <?php if ($error): ?>
-        <div class="mb-6 flex items-center gap-3 bg-error-container p-4 rounded-xl">
-          <span class="material-symbols-outlined text-error">error</span>
-          <p class="text-sm text-on-error-container font-medium">Ocurrió un error. Verifica que todos los campos estén correctos e inténtalo de nuevo.</p>
+        <div class="mb-8 flex items-center gap-4 bg-red-50 border border-red-100 p-5 rounded-2xl text-red-600">
+          <span class="material-symbols-outlined">report_problem</span>
+          <p class="text-sm font-bold">Por favor, verifica que todos los campos requeridos estén llenos correctamente.</p>
         </div>
         <?php endif; ?>
 
-        <form method="POST" action="contacto.php" class="space-y-5">
+        <form method="POST" action="contacto.php" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nombre completo *</label>
-              <input type="text" name="nombre" required
-                value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>"
-                placeholder="Ej. Juan Pérez"
-                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface text-sm focus:ring-2 focus:ring-primary-fixed outline-none transition-all placeholder:text-outline/50">
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Empresa / Institución</label>
-              <input type="text" name="empresa"
-                value="<?= htmlspecialchars($_POST['empresa'] ?? '') ?>"
-                placeholder="Razón social"
-                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface text-sm focus:ring-2 focus:ring-primary-fixed outline-none transition-all placeholder:text-outline/50">
-            </div>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-primary uppercase tracking-wider ml-1">Nombre completo *</label>
+            <input type="text" name="nombre" required
+              value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>"
+              placeholder="Ej. Juan Pérez"
+              class="w-full h-14 bg-[#f0f7ff] border-none rounded-xl px-5 text-slate-900 font-medium focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary outline-none transition-all placeholder:text-slate-400">
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Correo electrónico *</label>
-              <input type="email" name="correo" required
-                value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>"
-                placeholder="contacto@empresa.com"
-                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface text-sm focus:ring-2 focus:ring-primary-fixed outline-none transition-all placeholder:text-outline/50">
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Teléfono</label>
-              <input type="tel" name="telefono"
-                value="<?= htmlspecialchars($_POST['telefono'] ?? '') ?>"
-                placeholder="10 dígitos"
-                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface text-sm focus:ring-2 focus:ring-primary-fixed outline-none transition-all placeholder:text-outline/50">
-            </div>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-primary uppercase tracking-wider ml-1">Empresa / Institución</label>
+            <input type="text" name="empresa"
+              value="<?= htmlspecialchars($_POST['empresa'] ?? '') ?>"
+              placeholder="Razón social"
+              class="w-full h-14 bg-[#f0f7ff] border-none rounded-xl px-5 text-slate-900 font-medium focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary outline-none transition-all placeholder:text-slate-400">
           </div>
 
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Mensaje *</label>
-            <textarea name="mensaje" required rows="5"
-              placeholder="Describe tu requerimiento, solicitud de catálogo o cualquier duda..."
-              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-on-surface text-sm focus:ring-2 focus:ring-primary-fixed outline-none transition-all placeholder:text-outline/50 resize-none"><?= htmlspecialchars($_POST['mensaje'] ?? '') ?></textarea>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-primary uppercase tracking-wider ml-1">Correo electrónico *</label>
+            <input type="email" name="correo" required
+              value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>"
+              placeholder="contacto@empresa.com"
+              class="w-full h-14 bg-[#f0f7ff] border-none rounded-xl px-5 text-slate-900 font-medium focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary outline-none transition-all placeholder:text-slate-400">
           </div>
 
-          <div class="pt-2">
-            <button type="submit"
-              class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-primary uppercase tracking-wider ml-1">Teléfono</label>
+            <input type="tel" name="telefono"
+              value="<?= htmlspecialchars($_POST['telefono'] ?? '') ?>"
+              placeholder="10 dígitos"
+              class="w-full h-14 bg-[#f0f7ff] border-none rounded-xl px-5 text-slate-900 font-medium focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary outline-none transition-all placeholder:text-slate-400">
+          </div>
+
+          <div class="md:col-span-2 space-y-2">
+            <label class="text-sm font-bold text-primary uppercase tracking-wider ml-1">Mensaje *</label>
+            <textarea name="mensaje" required rows="4"
+              placeholder="Describe tu requerimiento o dudas..."
+              class="w-full bg-[#f0f7ff] border-none rounded-xl p-5 text-slate-900 font-medium focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary outline-none transition-all placeholder:text-slate-400 resize-none"><?= htmlspecialchars($_POST['mensaje'] ?? '') ?></textarea>
+          </div>
+
+          <div class="md:col-span-2 pt-4">
+            <button type="submit" class="w-full h-16 bg-primary text-white font-black rounded-xl hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all flex items-center justify-center gap-3">
               <span class="material-symbols-outlined">send</span>
-              Enviar mensaje
+              ENVIAR MENSAJE
             </button>
-            <p class="text-xs text-on-surface-variant text-center mt-3">* Campos obligatorios</p>
+            <p class="text-xs text-slate-400 font-bold text-center mt-4 uppercase tracking-[0.2em]">* Los campos marcados son obligatorios</p>
           </div>
 
         </form>
@@ -212,28 +218,12 @@ require_once '../includes/header.php';
   </div>
 </section>
 
-<!-- ── MAPA ── -->
-<section class="w-full h-[420px] relative overflow-hidden">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3732.0!2d-103.4!3d20.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8428ae5e9b3f0001%3A0x1!2sAv.+Obsidiana+3644%2C+Residencial+Loma+Bonita%2C+Zapopan%2C+Jalisco!5e0!3m2!1ses!2smx!4v1"
-    width="100%"
-    height="100%"
-    style="border:0; filter: grayscale(20%) contrast(1.05);"
-    allowfullscreen=""
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
-  <!-- Card encima del mapa -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-    <div class="bg-white/95 backdrop-blur-sm px-8 py-5 rounded-2xl text-center clinical-shadow border border-outline-variant/20 pointer-events-auto">
-      <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">MM Pharma</p>
-      <p class="text-sm font-medium text-on-surface mb-3">Av. Obsidiana 3644, Loma Bonita, Zapopan</p>
-      <a href="https://maps.google.com/?q=Av+Obsidiana+3644+Residencial+Loma+Bonita+Zapopan+Jalisco"
-         target="_blank"
-         class="inline-flex items-center gap-1.5 px-5 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:opacity-90 transition-all">
-        <span class="material-symbols-outlined text-sm">map</span>
-        Abrir en Google Maps
-      </a>
+
+
+</main>
+
+<?php require_once '../includes/footer.php'; ?>      </div>
+      </div>
     </div>
   </div>
 </section>

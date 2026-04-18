@@ -2,6 +2,70 @@
 $titulo = 'MMPharma | Distribuidora Farmacéutica';
 $pagina_actual = 'inicio';
 $base = '../';
+
+// ── Guardar solicitud en BD ───────────────────────────────────────────────────
+$solicitud_ok    = false;
+$solicitud_error = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $campos = [
+        'tipo_cliente'     => strtoupper(trim($_POST['client_type']         ?? 'FARMACIA')),
+        'razon_social'     => trim($_POST['razon_social']                   ?? ''),
+        'rfc'              => trim($_POST['rfc']                            ?? ''),
+        'regimen_fiscal'   => trim($_POST['regimen_fiscal']                 ?? ''),
+        'domicilio_fiscal' => trim($_POST['domicilio_fiscal']               ?? ''),
+        'colonia'          => trim($_POST['colonia']                        ?? ''),
+        'cp'               => trim($_POST['cp']                             ?? ''),
+        'ciudad'           => trim($_POST['ciudad']                         ?? ''),
+        'estado'           => trim($_POST['estado']                         ?? ''),
+        'representante'    => trim($_POST['representante_legal']            ?? ''),
+        'nombre_comercial' => trim($_POST['nombre_comercial']               ?? ''),
+        'giro'             => trim($_POST['giro']                           ?? ''),
+        'persona_contacto' => trim($_POST['persona_contacto']               ?? ''),
+        'volumen_mensual'  => trim($_POST['volumen_mensual']                ?? ''),
+        'telefono_local'   => trim($_POST['telefono_local']                 ?? ''),
+        'telefono_celular' => trim($_POST['telefono_celular']               ?? ''),
+        'email'            => trim($_POST['email']                          ?? ''),
+        'documento_tipo'   => strtoupper(trim($_POST['doc_type']           ?? 'FACTURA')),
+        'metodo_pago'      => strtoupper(trim($_POST['payment_method_chip'] ?? 'TRANSFERENCIA')),
+        'uso_cfdi'         => trim($_POST['uso_cfdi']                       ?? ''),
+        'domicilio_entrega'=> trim($_POST['domicilio_entrega']              ?? ''),
+        'colonia_entrega'  => trim($_POST['colonia_entrega']                ?? ''),
+        'cp_entrega'       => trim($_POST['cp_entrega']                     ?? ''),
+        'ciudad_entrega'   => trim($_POST['ciudad_entrega']                 ?? ''),
+        'municipio_entrega'=> trim($_POST['municipio_entrega']              ?? ''),
+        'estado_entrega'   => trim($_POST['estado_entrega']                 ?? ''),
+        'receptor_entrega' => trim($_POST['receptor_entrega']               ?? ''),
+        'horario_entrega'  => trim($_POST['horario_entrega']                ?? ''),
+        'ip_origen'        => $_SERVER['REMOTE_ADDR'] ?? null,
+    ];
+
+    if ($campos['razon_social']) {
+        try {
+            require_once '../INCLUDES/db.php';
+            $pdo = getDB();
+            $sql = "INSERT INTO solicitudes_registro
+                    (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
+                     representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
+                     telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,
+                     colonia_entrega,cp_entrega,ciudad_entrega,municipio_entrega,estado_entrega,
+                     receptor_entrega,horario_entrega,ip_origen)
+                    VALUES
+                    (:tipo_cliente,:razon_social,:rfc,:regimen_fiscal,:domicilio_fiscal,:colonia,:cp,:ciudad,:estado,
+                     :representante,:nombre_comercial,:giro,:persona_contacto,:volumen_mensual,:telefono_local,
+                     :telefono_celular,:email,:documento_tipo,:metodo_pago,:uso_cfdi,:domicilio_entrega,
+                     :colonia_entrega,:cp_entrega,:ciudad_entrega,:municipio_entrega,:estado_entrega,
+                     :receptor_entrega,:horario_entrega,:ip_origen)";
+            $pdo->prepare($sql)->execute($campos);
+            $solicitud_ok = true;
+        } catch (Exception $e) {
+            $solicitud_error = true;
+        }
+    } else {
+        $solicitud_error = true;
+    }
+}
+
 require_once '../includes/header.php';
 ?>
 
@@ -17,53 +81,19 @@ require_once '../includes/header.php';
         theme: {
           extend: {
             "colors": {
-                    "on-tertiary-fixed": "#00210c",
-                    "primary-container": "#1a3a6b",
-                    "secondary-fixed": "#cce5ff",
-                    "primary-fixed-dim": "#abc7ff",
-                    "on-error-container": "#93000a",
-                    "primary-fixed": "#d7e2ff",
-                    "outline": "#747780",
-                    "on-secondary-container": "#004d77",
-                    "surface-dim": "#c6dcf6",
-                    "tertiary-fixed-dim": "#61de8a",
-                    "outline-variant": "#c4c6d0",
-                    "error-container": "#ffdad6",
-                    "surface": "#f7f9ff",
-                    "secondary-fixed-dim": "#92ccff",
-                    "on-error": "#ffffff",
-                    "surface-container": "#e3efff",
-                    "secondary-container": "#71c0fe",
-                    "on-primary-fixed": "#001b3f",
-                    "surface-bright": "#f7f9ff",
-                    "on-tertiary-fixed-variant": "#005228",
-                    "inverse-primary": "#abc7ff",
-                    "inverse-on-surface": "#e8f2ff",
-                    "surface-container-lowest": "#ffffff",
-                    "on-primary-container": "#89a5dd",
-                    "tertiary-container": "#004520",
-                    "background": "#f7f9ff",
-                    "error": "#ba1a1a",
-                    "tertiary": "#002c13",
-                    "surface-variant": "#cfe5ff",
-                    "primary": "#002451",
-                    "tertiary-fixed": "#7efba4",
-                    "on-secondary-fixed-variant": "#004b73",
-                    "surface-container-highest": "#cfe5ff",
-                    "surface-container-high": "#d9eaff",
-                    "inverse-surface": "#1d3246",
-                    "on-primary": "#ffffff",
-                    "surface-container-low": "#edf4ff",
-                    "on-surface-variant": "#43474f",
-                    "on-secondary-fixed": "#001d31",
-                    "on-surface": "#051d30",
-                    "on-primary-fixed-variant": "#284678",
-                    "on-secondary": "#ffffff",
-                    "on-background": "#051d30",
-                    "surface-tint": "#415e91",
-                    "on-tertiary-container": "#39bb6c",
-                    "on-tertiary": "#ffffff",
-                    "secondary": "#006397"
+                    "primary": "#003e79",
+                    "secondary": "#1e60aa",
+                    "tertiary": "#32b4ca",
+                    "primary-container": "#e0f2ff",
+                    "secondary-container": "#cfe5ff",
+                    "tertiary-container": "#d1e4ff",
+                    "on-surface": "#001d35",
+                    "on-surface-variant": "#003e79",
+                    "background": "#f0f7ff",
+                    "surface": "#ffffff",
+                    "surface-container-low": "#e1f0ff",
+                    "surface-container": "#cfe5ff",
+                    "surface-container-high": "#abc7ff",
             },
             "borderRadius": {
                     "DEFAULT": "0.125rem",
@@ -183,7 +213,7 @@ require_once '../includes/header.php';
 <label class="block text-xs font-semibold text-on-surface-variant mb-1" style="">Estado</label>
 <select class="w-full px-3 py-2 bg-surface-container-low border-none rounded focus:ring-2 focus:ring-primary/20 text-sm">
 <option disabled="" selected="">Selecciona tu estado</option>
-<option value="Jalisco">— Estado frecuente — Jalisco</option>
+<option value="Jalisco">Jalisco</option>
 <option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option><option>Campeche</option><option>Chiapas</option><option>Chihuahua</option><option>Ciudad de México</option><option>Coahuila</option><option>Colima</option><option>Durango</option><option>Estado de México</option><option>Guanajuato</option><option>Guerrero</option><option>Hidalgo</option><option>Michoacán</option><option>Morelos</option><option>Nayarit</option><option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option><option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option><option>Sinaloa</option><option>Sonora</option><option>Tabasco</option><option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option><option>Yucatán</option><option>Zacatecas</option>
 </select>
 </div>
@@ -313,7 +343,7 @@ require_once '../includes/header.php';
 <label class="block text-xs font-semibold text-on-surface-variant mb-1" style="">Estado <span class="text-error" style="">*</span></label>
 <select class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/10 rounded focus:ring-2 focus:ring-primary/20 text-sm" required="">
 <option disabled="" selected="">Selecciona tu estado</option>
-<option value="Jalisco">— Estado frecuente — Jalisco</option>
+<option value="Jalisco">Jalisco</option>
 <option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option><option>Campeche</option><option>Chiapas</option><option>Chihuahua</option><option>Ciudad de México</option><option>Coahuila</option><option>Colima</option><option>Durango</option><option>Estado de México</option><option>Guanajuato</option><option>Guerrero</option><option>Hidalgo</option><option>Michoacán</option><option>Morelos</option><option>Nayarit</option><option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option><option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option><option>Sinaloa</option><option>Sonora</option><option>Tabasco</option><option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option><option>Yucatán</option><option>Zacatecas</option>
 </select>
 </div>

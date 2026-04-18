@@ -1,232 +1,254 @@
 <?php
+require_once '../clinical_core/db.php';
+$pdo = getDB();
+
+// ── FILTROS Y PAGINACIÓN ──────────────────────────────────────────────────────
+$q      = trim($_GET['q'] ?? '');
+$estado = trim($_GET['estado'] ?? '');
+$pg     = max(1, (int)($_GET['pg'] ?? 1));
+$perPage = 15;
+$offset  = ($pg - 1) * $perPage;
+
+$where = "WHERE 1=1";
+$params = [];
+if ($q) {
+    $where .= " AND (p.folio LIKE ? OR c.razon_social LIKE ?)";
+    $l = "%$q%"; $params[]=$l; $params[]=$l;
+}
+if ($estado) {
+    $where .= " AND p.estado_envio = ?";
+    $params[] = $estado;
+}
+
+// Datos
+$sql = "SELECT p.*, c.razon_social as cliente_nombre 
+        FROM pedidos p 
+        JOIN clientes c ON p.cliente_id = c.id 
+        $where 
+        ORDER BY p.fecha_pedido DESC 
+        LIMIT $perPage OFFSET $offset";
+$st = $pdo->prepare($sql);
+$st->execute($params);
+$pedidos = $st->fetchAll();
+
+// ── RESPUESTA AJAX PARA INFINITE SCROLL ────────────────────────────────────────
+if (isset($_GET['ajax'])) {
+    if (empty($pedidos)) die("");
+    foreach ($pedidos as $p): ?>
+        <tr class="group hover:bg-surface-container-low/30 transition-colors">
+          <td class="px-8 py-4 text-center">
+            <div class="flex flex-col items-center">
+              <span class="text-sm font-black text-primary"><?= $p['folio'] ?></span>
+              <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= date('d/m/Y', strtotime($p['fecha_pedido'])) ?></span>
+            </div>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="text-sm font-bold text-on-surface"><?= htmlspecialchars($p['cliente_nombre']) ?></span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="text-sm font-black text-on-surface">$<?= number_format($p['monto_total'], 2) ?></span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <?php
+              $stColor = match($p['estado_envio']){
+                'ENTREGADO' => 'bg-tertiary-container/20 text-on-tertiary-container',
+                'CANCELADO' => 'bg-error-container/20 text-error',
+                'ENVIADO'   => 'bg-primary/10 text-primary border border-primary/20',
+                default     => 'bg-surface-container-high text-on-surface-variant'
+              };
+            ?>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase <?= $stColor ?>">
+              <?= $p['estado_envio'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4">
+            <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick="verDetalle(<?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
+              <form method="POST" onsubmit="return confirm('¿Eliminar pedido?')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+    <?php endforeach;
+    exit;
+}
+
+// ... Resto de lógica de pedidos ...
+
 $pageTitle = "MMPharma Portal - Gestión de Pedidos";
 $activePage = "pedidos";
 include("../Includes/header.php");
 include("../Includes/sidebar.php");
 ?>
 
-<main class="ml-64 p-8 min-h-[calc(100vh-4rem)]">
-<!-- Header & Action Row -->
-<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-<div class="space-y-1">
-<h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Pedidos</h2>
-<p class="text-on-surface-variant text-sm">Control centralizado de transacciones y estados de envío de la red clínica.</p>
+<main class="ml-64 p-8 min-h-screen" style="background:#071628">
+
+<!-- Header -->
+<div class="flex justify-between items-end mb-8">
+  <div>
+    <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Pedidos</h2>
+    <p class="text-on-surface-variant text-sm mt-1">Monitoreo de transacciones y logística en tiempo real.</p>
+  </div>
+  <div class="flex gap-3">
+    <a href="export_pedidos.php" class="bg-surface-container-low text-on-surface px-5 py-3 rounded-xl flex items-center gap-2 font-bold border border-outline-variant/10 hover:bg-surface-container-high transition-all">
+      <span class="material-symbols-outlined">download</span> Exportar
+    </a>
+  </div>
 </div>
-<a href="export_pedidos.php" class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all">
-<span class="material-symbols-outlined text-xl">download</span>
-<span>Descargar Reporte de Ventas (Excel)</span>
-</a>
-</section>
-<!-- Filters Section -->
-<section class="bg-surface-container-low rounded-xl p-6 mb-8 flex flex-wrap items-end gap-6">
-<div class="flex flex-col gap-2 flex-1 min-w-[200px]">
-<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Rango de Fechas</label>
-<div class="flex items-center gap-2 bg-surface-container-lowest p-2 rounded-lg border border-outline-variant/20 shadow-sm">
-<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-full" type="date"/>
-<span class="text-outline-variant">/</span>
-<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-full" type="date"/>
+
+<!-- KPIs Pedidos -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <?php
+    $tot_p = (int)$pdo->query("SELECT COUNT(*) FROM pedidos")->fetchColumn();
+    $tot_pend = (int)$pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado_envio='PENDIENTE'")->fetchColumn();
+    $tot_env = (int)$pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado_envio='ENVIADO'")->fetchColumn();
+    $ingresos = (float)$pdo->query("SELECT SUM(monto_total) FROM pedidos WHERE estado_envio!='CANCELADO'")->fetchColumn();
+    
+    $kpis = [
+        ['l'=>'Total Pedidos', 'v'=>$tot_p, 'i'=>'shopping_cart', 'b'=>'border-primary/40'],
+        ['l'=>'Pendientes', 'v'=>$tot_pend, 'i'=>'pending', 'b'=>'border-secondary/40'],
+        ['l'=>'En Camino', 'v'=>$tot_env, 'i'=>'local_shipping', 'b'=>'border-tertiary/40'],
+        ['l'=>'Ingresos Totales', 'v'=>'$'.number_format($ingresos,0), 'i'=>'payments', 'b'=>'border-amber-500/40'],
+    ];
+    foreach($kpis as $index => $k): ?>
+    <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 <?= $k['b'] ?> shadow-sm animate-reveal" style="animation-delay: <?= $index * 0.1 ?>s">
+        <div class="flex justify-between items-center mb-1">
+            <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant"><?= $k['l'] ?></span>
+            <span class="material-symbols-outlined text-on-surface-variant/30 scale-75"><?= $k['i'] ?></span>
+        </div>
+        <h3 class="text-2xl font-black text-on-surface"><?= $k['v'] ?></h3>
+    </div>
+    <?php endforeach; ?>
 </div>
+
+<!-- Filtros -->
+<form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8">
+    <div class="flex-1 relative">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+        <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por folio o cliente..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none shadow-sm"/>
+    </div>
+    <select name="estado" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none shadow-sm w-48 font-bold">
+        <option value="">Todos los estados</option>
+        <option value="PENDIENTE" <?= $estado==='PENDIENTE'?'selected':'' ?>>Pendiente</option>
+        <option value="PROCESANDO" <?= $estado==='PROCESANDO'?'selected':'' ?>>Procesando</option>
+        <option value="ENVIADO" <?= $estado==='ENVIADO'?'selected':'' ?>>Enviado</option>
+        <option value="ENTREGADO" <?= $estado==='ENTREGADO'?'selected':'' ?>>Entregado</option>
+        <option value="CANCELADO" <?= $estado==='CANCELADO'?'selected':'' ?>>Cancelado</option>
+    </select>
+    <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20">Filtrar</button>
+</form>
+
+<!-- Tabla Centrada con Infinite Scroll -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden animate-reveal" style="animation-delay: 0.4s">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low text-on-surface-variant text-[10px] font-black uppercase tracking-widest">
+          <th class="px-8 py-4 text-center">Folio / Fecha</th>
+          <th class="px-8 py-4 text-center">Cliente</th>
+          <th class="px-8 py-4 text-center">Monto</th>
+          <th class="px-8 py-4 text-center">Estado Envío</th>
+          <th class="px-8 py-4 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody" class="divide-y divide-outline-variant/10">
+        <?php if (empty($pedidos)): ?>
+        <tr><td colspan="5" class="px-8 py-20 text-center text-on-surface-variant text-sm font-medium italic animate-reveal">No se encontraron pedidos.</td></tr>
+        <?php else: ?>
+        <?php foreach ($pedidos as $p): ?>
+        <tr class="group hover:bg-surface-container-low/30 transition-colors">
+          <td class="px-8 py-4 text-center">
+            <div class="flex flex-col items-center">
+              <span class="text-sm font-black text-primary"><?= $p['folio'] ?></span>
+              <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= date('d/m/Y', strtotime($p['fecha_pedido'])) ?></span>
+            </div>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="text-sm font-bold text-on-surface"><?= htmlspecialchars($p['cliente_nombre']) ?></span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="text-sm font-black text-on-surface">$<?= number_format($p['monto_total'], 2) ?></span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <?php
+              $stColor = match($p['estado_envio']){
+                'ENTREGADO' => 'bg-tertiary-container/20 text-on-tertiary-container',
+                'CANCELADO' => 'bg-error-container/20 text-error',
+                'ENVIADO'   => 'bg-primary/10 text-primary border border-primary/20',
+                default     => 'bg-surface-container-high text-on-surface-variant'
+              };
+            ?>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase <?= $stColor ?>">
+              <?= $p['estado_envio'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4">
+            <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick="verDetalle(<?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
+              <form method="POST" onsubmit="return confirm('¿Eliminar pedido?')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+  <div id="loading" class="hidden px-8 py-6 text-center">
+     <div class="inline-block w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+  </div>
 </div>
-<div class="flex flex-col gap-2 flex-1 min-w-[200px]">
-<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Estado del Pedido</label>
-<select class="bg-surface-container-lowest border-none rounded-lg p-2.5 text-sm text-on-surface focus:ring-2 focus:ring-primary-fixed shadow-sm">
-<option value="">Todos los estados</option>
-<option value="pendiente">Pendiente</option>
-<option value="procesando">Procesando</option>
-<option value="enviado">Enviado</option>
-<option value="entregado">Entregado</option>
-</select>
-</div>
-<div class="flex flex-col gap-2 flex-1 min-w-[200px]">
-<label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant px-1">Tipo de Cliente</label>
-<div class="flex gap-2">
-<button class="flex-1 py-2 text-sm font-medium bg-surface-container-highest/40 text-on-secondary-container rounded-lg border border-transparent hover:border-primary-fixed">Farmacia</button>
-<button class="flex-1 py-2 text-sm font-medium bg-surface-container-highest/40 text-on-secondary-container rounded-lg border border-transparent hover:border-primary-fixed">Empresa</button>
-</div>
-</div>
-<button class="bg-surface-container-highest text-on-secondary-container p-2.5 rounded-lg hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined">filter_list</span>
-</button>
-</section>
-<!-- Orders Table Section -->
-<div class="bg-surface-container-lowest rounded-xl shadow-xl shadow-primary/5 overflow-hidden border border-outline-variant/10">
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-container-low text-[11px] uppercase tracking-widest font-bold text-on-surface-variant">
-<th class="px-6 py-4">ID Pedido</th>
-<th class="px-6 py-4">Cliente</th>
-<th class="px-6 py-4">Fecha</th>
-<th class="px-6 py-4">Monto Total</th>
-<th class="px-6 py-4">Método Pago</th>
-<th class="px-6 py-4">Estado Envío</th>
-<th class="px-6 py-4 text-right">Acciones</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant/10 text-sm">
-<!-- Row 1 -->
-<tr class="hover:bg-surface-bright transition-colors group">
-<td class="px-6 py-4 font-mono font-bold text-primary">#ORD-2024-8841</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1">
-<span class="font-semibold text-on-surface">Farmacias del Valle Central</span>
-<span class="inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container-highest text-on-secondary-fixed-variant">Farmacia</span>
-</div>
-</td>
-<td class="px-6 py-4 text-on-surface-variant">24 Oct 2023</td>
-<td class="px-6 py-4 font-bold text-on-surface">$12,450.00</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-on-surface-variant text-lg">credit_card</span>
-<span class="text-on-surface-variant">Transferencia</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-tertiary-container/10 text-on-tertiary-container border border-tertiary-container/20">
-<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
-                                    Entregado
-                                </span>
-</td>
-<td class="px-6 py-4 text-right">
-<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="bg-surface/50 hover:bg-surface-bright transition-colors group">
-<td class="px-6 py-4 font-mono font-bold text-primary">#ORD-2024-8902</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1">
-<span class="font-semibold text-on-surface">BioLab S.A. de C.V.</span>
-<span class="inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-primary-fixed-variant">Empresa</span>
-</div>
-</td>
-<td class="px-6 py-4 text-on-surface-variant">25 Oct 2023</td>
-<td class="px-6 py-4 font-bold text-on-surface">$8,290.50</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-on-surface-variant text-lg">payments</span>
-<span class="text-on-surface-variant">Crédito 30D</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-secondary-container/10 text-on-secondary-container border border-secondary-container/20">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
-                                    Enviado
-                                </span>
-</td>
-<td class="px-6 py-4 text-right">
-<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-surface-bright transition-colors group">
-<td class="px-6 py-4 font-mono font-bold text-primary">#ORD-2024-9011</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1">
-<span class="font-semibold text-on-surface">Botica Médica Universal</span>
-<span class="inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container-highest text-on-secondary-fixed-variant">Farmacia</span>
-</div>
-</td>
-<td class="px-6 py-4 text-on-surface-variant">26 Oct 2023</td>
-<td class="px-6 py-4 font-bold text-on-surface">$42,000.00</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-on-surface-variant text-lg">account_balance</span>
-<span class="text-on-surface-variant">Transferencia</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary-fixed/20 text-on-primary-fixed-variant border border-primary-fixed/30">
-<span class="w-1.5 h-1.5 rounded-full bg-on-primary-fixed-variant"></span>
-                                    Procesando
-                                </span>
-</td>
-<td class="px-6 py-4 text-right">
-<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
-</td>
-</tr>
-<!-- Row 4 -->
-<tr class="bg-surface/50 hover:bg-surface-bright transition-colors group">
-<td class="px-6 py-4 font-mono font-bold text-primary">#ORD-2024-9104</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1">
-<span class="font-semibold text-on-surface">Red Hospitalaria Norte</span>
-<span class="inline-flex w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-on-primary-fixed-variant">Empresa</span>
-</div>
-</td>
-<td class="px-6 py-4 text-on-surface-variant">27 Oct 2023</td>
-<td class="px-6 py-4 font-bold text-on-surface">$156,720.00</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-on-surface-variant text-lg">payments</span>
-<span class="text-on-surface-variant">Crédito 60D</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-error-container/20 text-on-error-container border border-error-container/40">
-<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                    Pendiente
-                                </span>
-</td>
-<td class="px-6 py-4 text-right">
-<button onclick="mockAction('Detalles del Pedido', 'Cargando información detallada del pedido y estatus logístico...', 'info')" class="text-primary font-semibold hover:underline text-xs bg-primary-fixed/30 px-3 py-1.5 rounded-md">Ver Detalle</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<!-- Pagination-like footer -->
-<div class="px-6 py-4 bg-surface-container-low flex items-center justify-between">
-<span class="text-xs text-on-surface-variant">Mostrando 10 de 1,240 pedidos</span>
-<div class="flex gap-2">
-<button class="p-1 rounded hover:bg-white transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="px-3 py-1 rounded bg-primary text-white text-xs font-bold shadow-sm">1</button>
-<button class="px-3 py-1 rounded bg-white text-on-surface text-xs hover:bg-primary-fixed/20 transition-colors">2</button>
-<button class="px-3 py-1 rounded bg-white text-on-surface text-xs hover:bg-primary-fixed/20 transition-colors">3</button>
-<button class="p-1 rounded hover:bg-white transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Cold Chain (Red Fría) Alert Section - Asymmetric Bento Component -->
-<section class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-<div class="lg:col-span-2 relative overflow-hidden bg-primary-container rounded-2xl p-8 text-white shadow-2xl">
-<div class="relative z-10">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-tertiary-fixed">ac_unit</span>
-<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-tertiary-fixed">Logística Crítica</span>
-</div>
-<h3 class="text-2xl font-bold mb-2">Monitoreo de "Red Fría"</h3>
-<p class="text-on-primary-container text-sm max-w-md mb-6 leading-relaxed">3 pedidos actuales contienen productos termolábiles. El sistema está monitoreando las rutas activas para asegurar la integridad clínica.</p>
-<div class="flex gap-4">
-<div class="glass-panel rounded-lg p-4 flex flex-col gap-1 border border-white/10 bg-white/5">
-<span class="text-xs text-white/60">Temp. Promedio</span>
-<span class="text-xl font-bold">4.2°C</span>
-</div>
-<div class="glass-panel rounded-lg p-4 flex flex-col gap-1 border border-white/10 bg-white/5">
-<span class="text-xs text-white/60">Integridad</span>
-<span class="text-xl font-bold text-tertiary-fixed">100%</span>
-</div>
-</div>
-</div>
-<!-- Abstract decorative element -->
-<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-tertiary opacity-20 blur-3xl rounded-full"></div>
-<div class="absolute right-10 top-10 w-20 h-20 bg-secondary opacity-10 blur-xl rounded-full"></div>
-</div>
-<div class="bg-surface-container-high rounded-2xl p-8 flex flex-col justify-center border border-outline-variant/10">
-<h4 class="text-sm font-bold text-on-surface uppercase tracking-widest mb-6">Eficiencia de Entrega</h4>
-<div class="relative h-4 w-full bg-surface-container rounded-full overflow-hidden mb-4">
-<div class="absolute top-0 left-0 h-full w-[94%] bg-gradient-to-r from-secondary to-primary-container shadow-[0_0_10px_rgba(0,99,151,0.3)]"></div>
-</div>
-<div class="flex justify-between items-end">
-<span class="text-3xl font-black text-primary">94%</span>
-<span class="text-xs text-on-surface-variant font-medium">+2.4% vs Mes Anterior</span>
-</div>
-<p class="mt-4 text-xs text-on-surface-variant leading-tight">Optimización basada en la gestión automatizada de inventarios MMPharma.</p>
-</div>
-</section>
+
 </main>
+
+<script>
+let currentPage = 1;
+let loading = false;
+let hasMore = true;
+
+window.addEventListener('scroll', () => {
+    if (loading || !hasMore) return;
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+        loadMore();
+    }
+});
+
+async function loadMore() {
+    loading = true;
+    document.getElementById('loading').classList.remove('hidden');
+    currentPage++;
+    try {
+        const response = await fetch(`pedidos.php?ajax=1&pg=${currentPage}&q=<?= urlencode($q) ?>&estado=<?= urlencode($estado) ?>`);
+        const html = await response.text();
+        if (html.trim() === "") { hasMore = false; } 
+        else { document.getElementById('tableBody').insertAdjacentHTML('beforeend', html); }
+    } catch (e) { console.error("Error", e); } 
+    finally {
+        loading = false;
+        document.getElementById('loading').classList.add('hidden');
+    }
+}
+function verDetalle(id) {
+    Swal.fire({ title: 'Cargando detalle...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    // Aquí iría el fetch real al modal de detalles
+    setTimeout(() => Swal.close(), 500);
+}
+</script>
+
+
 <?php include("../Includes/footer.php"); ?>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3307
--- Tiempo de generación: 05-04-2026 a las 09:18:39
+-- Tiempo de generación: 18-04-2026 a las 09:58:24
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,185 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `mm_pharma`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `administradores`
+--
+
+CREATE TABLE `administradores` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `password_hash` varchar(255) NOT NULL COMMENT 'Hash bcrypt del password',
+  `activo` tinyint(1) NOT NULL DEFAULT 1,
+  `foto_perfil` varchar(500) DEFAULT NULL,
+  `telefono` varchar(30) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `administradores`
+--
+
+INSERT INTO `administradores` (`id`, `nombre`, `email`, `password_hash`, `activo`, `foto_perfil`, `telefono`, `created_at`, `updated_at`) VALUES
+(1, 'Omar Alquicires Mendivil', 'omi.mendivil@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, '../uploads/perfiles/admin_1_1776484764.jpg', NULL, '2026-04-18 02:54:06', '2026-04-18 03:59:24');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `clientes`
+--
+
+CREATE TABLE `clientes` (
+  `id` int(11) NOT NULL,
+  `tipo` enum('FARMACIA','DISTRIBUIDORA','EMPRESA') NOT NULL DEFAULT 'FARMACIA',
+  `razon_social` varchar(300) NOT NULL COMMENT 'Nombre o Razón Social',
+  `nombre_comercial` varchar(300) DEFAULT NULL,
+  `rfc` varchar(20) DEFAULT NULL,
+  `regimen_fiscal` varchar(150) DEFAULT NULL,
+  `domicilio_fiscal` varchar(400) DEFAULT NULL,
+  `colonia_fiscal` varchar(150) DEFAULT NULL,
+  `cp_fiscal` varchar(10) DEFAULT NULL,
+  `ciudad_fiscal` varchar(100) DEFAULT NULL,
+  `estado_fiscal` varchar(60) DEFAULT NULL,
+  `representante_legal` varchar(200) DEFAULT NULL,
+  `giro` varchar(300) DEFAULT NULL,
+  `persona_contacto` varchar(200) DEFAULT NULL,
+  `volumen_mensual` decimal(12,2) DEFAULT 0.00,
+  `telefono_local` varchar(20) DEFAULT NULL,
+  `telefono_celular` varchar(20) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `documento_tipo` enum('NOTA','FACTURA') DEFAULT 'FACTURA',
+  `metodo_pago` enum('TRANSFERENCIA','CHEQUE','EFECTIVO') DEFAULT 'TRANSFERENCIA',
+  `uso_cfdi` varchar(100) DEFAULT NULL,
+  `domicilio_entrega` varchar(400) DEFAULT NULL,
+  `colonia_entrega` varchar(150) DEFAULT NULL,
+  `cp_entrega` varchar(10) DEFAULT NULL,
+  `ciudad_entrega` varchar(100) DEFAULT NULL,
+  `municipio_entrega` varchar(100) DEFAULT NULL,
+  `estado_entrega` varchar(60) DEFAULT NULL,
+  `receptor_entrega` varchar(200) DEFAULT NULL,
+  `horario_entrega` varchar(200) DEFAULT NULL,
+  `estatus` enum('ACTIVO','INACTIVO','DOCS_PENDIENTES') NOT NULL DEFAULT 'DOCS_PENDIENTES',
+  `agente_id` int(11) DEFAULT NULL COMMENT 'FK -> administradores.id',
+  `notas` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `configuracion`
+--
+
+CREATE TABLE `configuracion` (
+  `clave` varchar(100) NOT NULL,
+  `valor` text DEFAULT NULL,
+  `descripcion` varchar(300) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `configuracion`
+--
+
+INSERT INTO `configuracion` (`clave`, `valor`, `descripcion`, `updated_at`) VALUES
+('dias_respuesta', '2', 'Días hábiles de respuesta a solicitudes', '2026-04-18 02:54:07'),
+('empresa_email', 'contacto@mmpharma.com', 'Email principal de contacto', '2026-04-18 02:54:07'),
+('empresa_nombre', 'MMPharma', 'Nombre de la empresa', '2026-04-18 02:54:07'),
+('empresa_telefono', '', 'Teléfono de contacto', '2026-04-18 02:54:07'),
+('red_fria_temp_max', '8', 'Temperatura máxima red fría (°C)', '2026-04-18 02:54:07'),
+('red_fria_temp_min', '2', 'Temperatura mínima red fría (°C)', '2026-04-18 02:54:07'),
+('stock_alerta_minimo', '20', 'Cantidad mínima global para alerta de stock', '2026-04-18 02:54:07');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `contacto_mensajes`
+--
+
+CREATE TABLE `contacto_mensajes` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `telefono` varchar(30) DEFAULT NULL,
+  `empresa` varchar(300) DEFAULT NULL,
+  `mensaje` text NOT NULL,
+  `leido` tinyint(1) NOT NULL DEFAULT 0,
+  `ip_origen` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inventario_movimientos`
+--
+
+CREATE TABLE `inventario_movimientos` (
+  `id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL COMMENT 'FK -> productos.id',
+  `tipo` enum('ENTRADA','SALIDA','AJUSTE') NOT NULL,
+  `cantidad` int(11) NOT NULL COMMENT 'Positivo = entrada, negativo = salida/ajuste',
+  `referencia` varchar(150) DEFAULT NULL COMMENT 'Ej. Pedido #ORD-8821, Lote V23-01',
+  `motivo` varchar(300) DEFAULT NULL COMMENT 'Ej. Reabastecimiento, Merma por daño',
+  `responsable` varchar(150) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inventario_stock`
+--
+
+CREATE TABLE `inventario_stock` (
+  `producto_id` int(11) NOT NULL COMMENT 'FK -> productos.id',
+  `stock_actual` int(11) NOT NULL DEFAULT 0,
+  `stock_minimo` int(11) NOT NULL DEFAULT 0 COMMENT 'Umbral para alertas',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedidos`
+--
+
+CREATE TABLE `pedidos` (
+  `id` int(11) NOT NULL,
+  `folio` varchar(30) NOT NULL COMMENT 'Ej. ORD-2024-8841',
+  `cliente_id` int(11) NOT NULL COMMENT 'FK -> clientes.id',
+  `tipo_cliente` enum('FARMACIA','DISTRIBUIDORA','EMPRESA') NOT NULL,
+  `fecha_pedido` date NOT NULL,
+  `fecha_entrega` date DEFAULT NULL,
+  `monto_total` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `metodo_pago` enum('TRANSFERENCIA','CREDITO_30D','CREDITO_60D','EFECTIVO','CHEQUE') DEFAULT 'TRANSFERENCIA',
+  `estado_envio` enum('PENDIENTE','PROCESANDO','ENVIADO','ENTREGADO','CANCELADO') NOT NULL DEFAULT 'PENDIENTE',
+  `notas` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedidos_detalle`
+--
+
+CREATE TABLE `pedidos_detalle` (
+  `id` int(11) NOT NULL,
+  `pedido_id` int(11) NOT NULL COMMENT 'FK -> pedidos.id',
+  `producto_id` int(11) NOT NULL COMMENT 'FK -> productos.id',
+  `nombre_producto` varchar(500) NOT NULL COMMENT 'Snapshot del nombre en el momento de venta',
+  `cantidad` int(11) NOT NULL DEFAULT 1,
+  `precio_unitario` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `subtotal` decimal(14,2) NOT NULL DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -819,9 +998,114 @@ INSERT INTO `productos` (`id`, `codigo`, `nombre`, `sustancia`, `precio_empresa`
 (769, 7502251890414, 'ZURIXOL 80 MG CON 1 FCO AMPULA DOCETAXEL DILUYENTE 6 ML(RF)', 'DOCETAXEL 80 MG/2 ML Y DILUYENTE DE 6 ML', 1.00, 1.00, 1.00, 1.00, 917, 'RED FRIA', 'PENDIENTE', '2026-04-05 06:48:18'),
 (770, 7502251891374, 'ZURMEZ 400MG/4ML SOLUCION INYECTABLE CON 5 FRASCOS', 'MESNA', 0.00, 0.00, 0.00, 0.00, 918, 'SECO', 'PENDIENTE', '2026-04-05 06:48:18');
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `solicitudes_registro`
+--
+
+CREATE TABLE `solicitudes_registro` (
+  `id` int(11) NOT NULL,
+  `tipo_cliente` enum('FARMACIA','DISTRIBUIDORA','EMPRESA') NOT NULL,
+  `razon_social` varchar(300) NOT NULL,
+  `rfc` varchar(20) DEFAULT NULL,
+  `regimen_fiscal` varchar(150) DEFAULT NULL,
+  `domicilio_fiscal` varchar(400) DEFAULT NULL,
+  `colonia` varchar(150) DEFAULT NULL,
+  `cp` varchar(10) DEFAULT NULL,
+  `ciudad` varchar(100) DEFAULT NULL,
+  `estado` varchar(60) DEFAULT NULL,
+  `representante` varchar(200) DEFAULT NULL,
+  `nombre_comercial` varchar(300) DEFAULT NULL,
+  `giro` varchar(300) DEFAULT NULL,
+  `persona_contacto` varchar(200) DEFAULT NULL,
+  `volumen_mensual` varchar(50) DEFAULT NULL,
+  `telefono_local` varchar(20) DEFAULT NULL,
+  `telefono_celular` varchar(20) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `documento_tipo` varchar(20) DEFAULT 'FACTURA',
+  `metodo_pago` varchar(30) DEFAULT 'TRANSFERENCIA',
+  `uso_cfdi` varchar(100) DEFAULT NULL,
+  `domicilio_entrega` varchar(400) DEFAULT NULL,
+  `colonia_entrega` varchar(150) DEFAULT NULL,
+  `cp_entrega` varchar(10) DEFAULT NULL,
+  `ciudad_entrega` varchar(100) DEFAULT NULL,
+  `municipio_entrega` varchar(100) DEFAULT NULL,
+  `estado_entrega` varchar(60) DEFAULT NULL,
+  `receptor_entrega` varchar(200) DEFAULT NULL,
+  `horario_entrega` varchar(200) DEFAULT NULL,
+  `estatus` enum('PENDIENTE','APROBADA','RECHAZADA') NOT NULL DEFAULT 'PENDIENTE',
+  `notas_admin` text DEFAULT NULL,
+  `ip_origen` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `administradores`
+--
+ALTER TABLE `administradores`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indices de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tipo` (`tipo`),
+  ADD KEY `idx_estatus` (`estatus`),
+  ADD KEY `idx_rfc` (`rfc`);
+
+--
+-- Indices de la tabla `configuracion`
+--
+ALTER TABLE `configuracion`
+  ADD PRIMARY KEY (`clave`);
+
+--
+-- Indices de la tabla `contacto_mensajes`
+--
+ALTER TABLE `contacto_mensajes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_leido` (`leido`);
+
+--
+-- Indices de la tabla `inventario_movimientos`
+--
+ALTER TABLE `inventario_movimientos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_producto_id` (`producto_id`),
+  ADD KEY `idx_tipo` (`tipo`),
+  ADD KEY `idx_created_at` (`created_at`);
+
+--
+-- Indices de la tabla `inventario_stock`
+--
+ALTER TABLE `inventario_stock`
+  ADD PRIMARY KEY (`producto_id`);
+
+--
+-- Indices de la tabla `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_folio` (`folio`),
+  ADD KEY `idx_cliente` (`cliente_id`),
+  ADD KEY `idx_estado_envio` (`estado_envio`),
+  ADD KEY `idx_fecha_pedido` (`fecha_pedido`);
+
+--
+-- Indices de la tabla `pedidos_detalle`
+--
+ALTER TABLE `pedidos_detalle`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_pedido_id` (`pedido_id`),
+  ADD KEY `idx_producto_id` (`producto_id`);
 
 --
 -- Indices de la tabla `productos`
@@ -830,14 +1114,93 @@ ALTER TABLE `productos`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `solicitudes_registro`
+--
+ALTER TABLE `solicitudes_registro`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_estatus` (`estatus`),
+  ADD KEY `idx_tipo_cliente` (`tipo_cliente`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `administradores`
+--
+ALTER TABLE `administradores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `contacto_mensajes`
+--
+ALTER TABLE `contacto_mensajes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inventario_movimientos`
+--
+ALTER TABLE `inventario_movimientos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pedidos`
+--
+ALTER TABLE `pedidos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `pedidos_detalle`
+--
+ALTER TABLE `pedidos_detalle`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=771;
+
+--
+-- AUTO_INCREMENT de la tabla `solicitudes_registro`
+--
+ALTER TABLE `solicitudes_registro`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `inventario_movimientos`
+--
+ALTER TABLE `inventario_movimientos`
+  ADD CONSTRAINT `fk_inv_mov_producto` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `inventario_stock`
+--
+ALTER TABLE `inventario_stock`
+  ADD CONSTRAINT `fk_inv_stock_producto` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD CONSTRAINT `fk_pedidos_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `pedidos_detalle`
+--
+ALTER TABLE `pedidos_detalle`
+  ADD CONSTRAINT `fk_detalle_pedido` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_detalle_producto` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

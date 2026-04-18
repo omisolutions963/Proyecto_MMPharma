@@ -1,3 +1,6 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,139 +9,173 @@
 <title><?= $pageTitle ?? 'MMPharma Portal' ?></title>
 <link rel="icon" type="image/png" href="../../logos/MMPharma-Isotipo.png">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Cropper.js para recorte de foto de perfil -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
 <script id="tailwind-config">
     tailwind.config = {
         darkMode: "class",
-        theme: {
-            extend: {
-                "colors": {
-                    "surface-container-lowest": "#ffffff",
-                    "error-container": "#ffdad6",
-                    "outline-variant": "#c4c6d0",
-                    "surface-bright": "#f7f9ff",
-                    "surface": "#f7f9ff",
-                    "on-tertiary-container": "#39bb6c",
-                    "background": "#f7f9ff",
-                    "surface-container-low": "#edf4ff",
-                    "on-tertiary-fixed": "#00210c",
-                    "on-secondary-fixed-variant": "#004b73",
-                    "on-secondary-container": "#004d77",
-                    "primary-fixed-dim": "#abc7ff",
-                    "on-primary": "#ffffff",
-                    "surface-container-highest": "#cfe5ff",
-                    "tertiary-container": "#004520",
-                    "secondary-fixed": "#cce5ff",
-                    "surface-container": "#e3efff",
-                    "on-error-container": "#93000a",
-                    "primary-fixed": "#d7e2ff",
-                    "outline": "#747780",
-                    "on-secondary": "#ffffff",
-                    "on-tertiary-fixed-variant": "#005228",
-                    "on-secondary-fixed": "#001d31",
-                    "secondary-fixed-dim": "#92ccff",
-                    "on-surface-variant": "#43474f",
-                    "primary": "#002451",
-                    "on-surface": "#051d30",
-                    "tertiary-fixed-dim": "#61de8a",
-                    "tertiary": "#002c13",
-                    "surface-dim": "#c6dcf6",
-                    "secondary-container": "#71c0fe",
-                    "primary-container": "#1a3a6b",
-                    "on-tertiary": "#ffffff",
-                    "error": "#ba1a1a",
-                    "surface-tint": "#415e91",
-                    "surface-variant": "#cfe5ff",
-                    "secondary": "#006397",
-                    "inverse-surface": "#1d3246",
-                    "inverse-primary": "#abc7ff",
-                    "on-primary-container": "#89a5dd",
-                    "on-error": "#ffffff",
-                    "surface-container-high": "#d9eaff",
-                    "on-background": "#051d30",
-                    "inverse-on-surface": "#e8f2ff",
-                    "on-primary-fixed-variant": "#284678",
-                    "tertiary-fixed": "#7efba4",
-                    "on-primary-fixed": "#001b3f"
-                },
-                "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-                },
-                "fontFamily": {
-                    "headline": ["Inter"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-                }
+        theme: { extend: {
+            colors: {
+                "surface-container-lowest": "#0d1f3c",
+                "surface-container-low":    "#102245",
+                "surface-container":        "#152a52",
+                "surface-container-high":   "#1a3260",
+                "surface-container-highest":"#1e3a6e",
+                "surface":                  "#0a1929",
+                "surface-bright":           "#112038",
+                "surface-dim":              "#061422",
+                "surface-variant":          "#1a3260",
+                "background":               "#071628",
+                "on-surface":               "#e8f0ff",
+                "on-surface-variant":       "#8aaad4",
+                "on-background":            "#e8f0ff",
+                "primary":                  "#4a90d9",
+                "primary-container":        "#1a3a6b",
+                "on-primary":               "#ffffff",
+                "on-primary-container":     "#abc7ff",
+                "on-primary-fixed":         "#001b3f",
+                "on-primary-fixed-variant": "#284678",
+                "primary-fixed":            "#1d3a70",
+                "primary-fixed-dim":        "#3a7abf",
+                "secondary":                "#5bb8f5",
+                "secondary-container":      "#0a3a5c",
+                "on-secondary":             "#ffffff",
+                "on-secondary-container":   "#9dd4f7",
+                "secondary-fixed":          "#1a4a72",
+                "secondary-fixed-dim":      "#4a9fd4",
+                "on-secondary-fixed":       "#d0eaff",
+                "on-secondary-fixed-variant":"#7bbfe0",
+                "tertiary":                 "#34c47a",
+                "tertiary-container":       "#0a3d20",
+                "on-tertiary":              "#ffffff",
+                "on-tertiary-container":    "#52e098",
+                "tertiary-fixed":           "#7efba4",
+                "tertiary-fixed-dim":       "#61de8a",
+                "on-tertiary-fixed":        "#00210c",
+                "on-tertiary-fixed-variant":"#005228",
+                "error":                    "#f28b82",
+                "error-container":          "#5c1010",
+                "on-error":                 "#ffffff",
+                "on-error-container":       "#ffb4ab",
+                "outline":                  "#3a5a8a",
+                "outline-variant":          "#1e3a6e",
+                "inverse-surface":          "#e8f0ff",
+                "inverse-on-surface":       "#071628",
+                "inverse-primary":          "#002451",
+                "surface-tint":             "#4a90d9",
             },
-        },
+            fontFamily: { headline: ["Inter"], body: ["Inter"], label: ["Inter"] },
+        }}
     }
 </script>
 <style>
-    body { font-family: 'Inter', sans-serif; }
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-    .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-    }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    // Funciones globales para mockear acciones
-    function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: icon,
-            confirmButtonColor: '#002451',
-            confirmButtonText: 'Aceptar'
-        });
-    }
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #071628; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a1929; }
+    ::-webkit-scrollbar-thumb { background: #1e3a6e; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4a90d9; }
+    .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
+    .card-glow { box-shadow: 0 0 30px rgba(74,144,217,0.08); }
 
+    /* --- ANIMACIONES NATIVAS --- */
+    @keyframes revealUp {
+        0% { opacity: 0; transform: translateY(5px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        0% { opacity: 0; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .animate-reveal, .animate-fade-up { animation: revealUp 0.6s ease-out forwards; opacity: 0; }
+    .animate-scale-in { animation: scaleIn 0.6s ease-out forwards; opacity: 0; }
+    
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+</style>
+
+<script>
+    function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
+        Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
+            background: '#102245', color: '#e8f0ff' });
+    }
+        Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
+            background: '#102245', color: '#e8f0ff' });
+    }
+        Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
+            background: '#102245', color: '#e8f0ff' });
+    }
     function confirmAction(title, text, confirmText, callback) {
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ba1a1a',
-            cancelButtonColor: '#747780',
-            confirmButtonText: confirmText,
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                callback();
-            }
-        });
+        Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#f28b82', cancelButtonColor: '#3a5a8a',
+            confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
+            background: '#102245', color: '#e8f0ff'
+        }).then(r => { if (r.isConfirmed) callback(); });
     }
 </script>
 </head>
-<body class="bg-background text-on-background">
+<body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
-<header class="h-16 sticky top-0 z-40 bg-[#f7f9ff] dark:bg-[#051d30] backdrop-blur-md flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)]">
-    <div class="flex items-center gap-4 flex-1">
-        <div class="relative w-96">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-            <input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest rounded-full border-none focus:ring-2 focus:ring-primary-fixed text-sm" placeholder="Buscar pedidos, lotes o productos..." type="text"/>
+<header style="background:rgba(7,22,40,0.97);border-bottom:1px solid rgba(74,144,217,0.15)"
+        class="h-16 sticky top-0 z-40 backdrop-blur-xl flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)]">
+    
+    <div class="flex items-center gap-5 flex-1">
+        <!-- Portal Label -->
+        <div class="flex items-center gap-3">
+            <div class="flex flex-col leading-none">
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
+                <span class="text-xl font-extrabold text-white tracking-tight uppercase">Portal de Administrador</span>
+            </div>
         </div>
     </div>
-    <div class="flex items-center gap-6">
-        <button class="text-on-surface-variant hover:bg-[#edf4ff] p-2 rounded-full transition-colors relative">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-        </button>
-        <button class="text-on-surface-variant hover:bg-[#edf4ff] p-2 rounded-full transition-colors">
-            <span class="material-symbols-outlined">help_outline</span>
-        </button>
-        <div class="h-8 w-[1px] bg-outline-variant/30"></div>
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-[#002451] font-inter">MMPharma Portal</span>
+
+    <div class="flex items-center gap-5">
+        <!-- Search -->
+        <div class="relative hidden md:block">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+            <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-outline-variant/50
+                          bg-surface-container-low/60 text-on-surface text-sm placeholder:text-outline
+                          focus:ring-1 focus:ring-primary focus:outline-none"
+                   placeholder="Buscar en el portal..." type="text"/>
         </div>
+        
+        <!-- Divider -->
+        <div class="h-6 w-px bg-outline-variant/30"></div>
+
+        <!-- User / Perfil Button -->
+        <button onclick="abrirPerfil()"
+                class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
+            <?php
+            $foto = $_SESSION['admin_foto'] ?? '';
+            $nombre = $_SESSION['admin_nombre'] ?? 'Admin';
+            ?>
+            <?php if ($foto): ?>
+            <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
+                 class="w-8 h-8 rounded-full object-cover border-2 border-primary/40"
+                 alt="Perfil">
+            <?php else: ?>
+            <div id="headerProfileImg"
+                 class="w-8 h-8 rounded-full flex items-center justify-center text-primary font-bold text-sm border-2 border-primary/30 group-hover:border-primary/60 transition-colors"
+                 style="background:rgba(74,144,217,0.2)">
+                <?= strtoupper(substr($nombre, 0, 1)) ?>
+            </div>
+            <?php endif; ?>
+            <div class="hidden lg:flex flex-col items-start leading-none">
+                <span class="text-sm font-semibold text-on-surface"><?= htmlspecialchars($nombre) ?></span>
+                <span class="text-[10px] text-on-surface-variant">Mi cuenta</span>
+            </div>
+            <span class="material-symbols-outlined text-outline text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
+        </button>
     </div>
 </header>

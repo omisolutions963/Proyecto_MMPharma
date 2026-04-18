@@ -6,48 +6,46 @@ require_once '../includes/header.php';
 ?>
 
 <!-- ── HERO ── -->
-<section class="relative min-h-[369px] flex items-center overflow-hidden">
-  <img src="../IMG/3.WEBP" class="absolute inset-0 w-full h-full object-cover" alt="MMPharma instalaciones">
-  <div class="absolute inset-0 bg-[#002451] opacity-80"></div>
-  <div class="relative z-10 max-w-7xl mx-auto px-8 py-24 w-full">
+<section class="relative min-h-[369px] flex items-center overflow-hidden bg-gradient-to-br from-[#003e79] to-[#1e60aa]">
+  <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-24 w-full" data-aos="fade-up">
     <h1 class="text-5xl md:text-6xl font-black tracking-tight leading-tight text-white mb-4">
       Quiénes somos
     </h1>
     <p class="text-lg text-blue-100/90 max-w-2xl leading-relaxed">
-      Más de 10 años conectando a la industria farmacéutica con soluciones de distribución de alta precisión desde Zapopan, Jalisco.
+      Más de 10 años conectando a la industria farmacéutica con soluciones de distribución de alta precisión a nivel nacional.
     </p>
   </div>
 </section>
 
-<main>
+<main class="bg-[#f0f7ff]">
 
 <!-- ── NUESTRA HISTORIA ── -->
-<section class="py-24 bg-surface">
-  <div class="max-w-7xl mx-auto px-8">
+<section class="py-24 bg-[#f0f7ff]">
+  <div class="max-w-[1600px] mx-auto px-8">
     <div class="grid md:grid-cols-2 gap-16 items-center">
 
       <!-- Imagen -->
-      <div class="relative">
-        <div class="aspect-square rounded-2xl overflow-hidden clinical-shadow">
+      <div class="relative" data-aos="fade-right">
+        <div class="aspect-square rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.06)]">
           <img class="w-full h-full object-cover"
                src="../IMG/1.WEBP"
                alt="Almacén MMPharma">
         </div>
-        <div class="absolute -bottom-6 -right-6 bg-white p-8 rounded-2xl clinical-shadow hidden md:block border border-outline-variant/10">
+        <div class="absolute -bottom-6 -right-6 bg-white p-8 rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.06)] hidden md:block">
           <div class="text-4xl font-black text-primary">+10</div>
           <div class="text-sm font-semibold text-on-surface-variant tracking-wide">años de trayectoria</div>
         </div>
       </div>
 
       <!-- Texto -->
-      <div>
-        <h2 class="text-3xl font-bold tracking-tight text-on-surface mb-6">Nuestra historia</h2>
-        <div class="space-y-5 text-on-surface-variant text-lg leading-relaxed">
+      <div data-aos="fade-left">
+        <h2 class="text-3xl font-bold tracking-tight text-primary mb-6">Nuestra historia</h2>
+        <div class="space-y-5 text-slate-900 text-lg leading-relaxed font-medium">
           <p>
             MMPharma nació de una necesidad real en el mercado mexicano: una distribución farmacéutica que entendiera que cada medicamento no es solo una unidad de inventario, sino una vida que depende de su integridad y puntualidad.
           </p>
           <p>
-            Desde Zapopan, Jalisco, hemos construido una red de distribución B2B que atiende a farmacias, distribuidoras y empresas del sector salud con precios diferenciados, atención personalizada y manejo especializado de cadena de frío.
+            Hemos construido una red de distribución B2B que atiende a farmacias, distribuidoras y empresas del sector salud en todo México con precios diferenciados, atención personalizada y manejo especializado de cadena de frío.
           </p>
           <p>
             Nuestro catálogo de más de 769 productos cubre desde medicamentos de patente hasta insumos médicos y soluciones de red fría, todo respaldado por un equipo comprometido con la precisión en cada entrega.
@@ -59,29 +57,25 @@ require_once '../includes/header.php';
 </section>
 
 <!-- ── MISIÓN Y VISIÓN ── -->
-<section class="py-24 bg-surface-container-low">
-  <div class="max-w-7xl mx-auto px-8">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl font-bold tracking-tight text-on-surface mb-4">Lo que nos mueve</h2>
-      <p class="text-on-surface-variant max-w-2xl mx-auto">La base que sustenta cada una de nuestras operaciones.</p>
+<section class="py-24 bg-gradient-to-br from-[#003e79] to-[#1e60aa] text-white overflow-hidden">
+  <div class="max-w-[1600px] mx-auto px-8">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <h2 class="text-3xl font-bold tracking-tight text-white mb-4">Lo que nos mueve</h2>
+      <p class="text-blue-100/70 max-w-2xl mx-auto">La base que sustenta cada una de nuestras operaciones.</p>
     </div>
     <div class="grid md:grid-cols-2 gap-8">
-      <div class="bg-surface-container-lowest p-12 rounded-2xl clinical-shadow border-l-4 border-secondary">
-        <div class="mb-6 inline-flex items-center justify-center w-12 h-12 bg-secondary-container/10 rounded-xl">
-          <span class="material-symbols-outlined text-secondary text-2xl" style="font-variation-settings: 'FILL' 1">flag</span>
-        </div>
-        <h3 class="text-2xl font-bold text-on-surface mb-4">Misión</h3>
-        <p class="text-on-surface-variant leading-relaxed">
+      <div class="bg-white/5 backdrop-blur-xl p-12 rounded-2xl" data-aos="fade-up" data-aos-delay="100">
+
+        <h3 class="text-2xl font-bold text-white mb-4">Misión</h3>
+        <p class="text-blue-100/70 leading-relaxed">
           Facilitar el acceso a insumos médicos y farmacéuticos con los más altos estándares de calidad, asegurando que los productos lleguen íntegros, a tiempo y al precio correcto para cada tipo de cliente.
         </p>
       </div>
-      <div class="bg-surface-container-lowest p-12 rounded-2xl clinical-shadow border-l-4 border-primary">
-        <div class="mb-6 inline-flex items-center justify-center w-12 h-12 bg-primary-fixed/30 rounded-xl">
-          <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1">visibility</span>
-        </div>
-        <h3 class="text-2xl font-bold text-on-surface mb-4">Visión</h3>
-        <p class="text-on-surface-variant leading-relaxed">
-          Ser la distribuidora de referencia en el occidente de México, reconocida por nuestra tecnología, transparencia en precios y compromiso inquebrantable con el sector salud.
+      <div class="bg-white/5 backdrop-blur-xl p-12 rounded-2xl" data-aos="fade-up" data-aos-delay="200">
+
+        <h3 class="text-2xl font-bold text-white mb-4">Visión</h3>
+        <p class="text-blue-100/70 leading-relaxed">
+          Ser la distribuidora de referencia en México, reconocida por nuestra tecnología, transparencia en precios y compromiso inquebrantable con el sector salud.
         </p>
       </div>
     </div>
@@ -89,103 +83,85 @@ require_once '../includes/header.php';
 </section>
 
 <!-- ── VALORES ── -->
-<section class="py-24 bg-surface">
-  <div class="max-w-7xl mx-auto px-8">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl font-bold tracking-tight text-on-surface mb-4">Valores fundamentales</h2>
-      <p class="text-on-surface-variant max-w-2xl mx-auto">Los principios que guían cada decisión dentro de MMPharma.</p>
+<section class="py-24 bg-[#f0f7ff]">
+  <div class="max-w-[1600px] mx-auto px-8">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <h2 class="text-3xl font-bold tracking-tight text-primary mb-4">Valores fundamentales</h2>
+      <p class="text-slate-900 font-medium max-w-2xl mx-auto">Los principios que guían cada decisión dentro de MMPharma.</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="group p-8 rounded-2xl bg-surface-container-low hover:bg-surface-container-lowest hover:shadow-xl transition-all duration-300 clinical-shadow">
-        <span class="material-symbols-outlined text-4xl text-primary mb-6 block" style="font-variation-settings: 'FILL' 1">verified_user</span>
-        <h4 class="text-xl font-bold text-on-surface mb-3">Integridad</h4>
-        <p class="text-sm text-on-surface-variant leading-relaxed">Transparencia absoluta en precios, inventarios y condiciones de entrega.</p>
+      <div class="group p-8 rounded-xl bg-white hover:shadow-[0_0_50px_rgba(0,0,0,0.08)] transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.04)]" data-aos="fade-up" data-aos-delay="100">
+        <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-symbols-outlined text-4xl text-primary group-hover:text-white transition-colors duration-300" style="font-variation-settings: 'FILL' 1">verified_user</span>
+        </div>
+        <h4 class="text-xl font-bold text-primary mb-3">Integridad</h4>
+        <p class="text-sm text-slate-900 leading-relaxed font-medium">Transparencia absoluta en precios, inventarios y condiciones de entrega.</p>
       </div>
-      <div class="group p-8 rounded-2xl bg-surface-container-low hover:bg-surface-container-lowest hover:shadow-xl transition-all duration-300 clinical-shadow">
-        <span class="material-symbols-outlined text-4xl text-secondary mb-6 block" style="font-variation-settings: 'FILL' 1">biotech</span>
-        <h4 class="text-xl font-bold text-on-surface mb-3">Precisión</h4>
-        <p class="text-sm text-on-surface-variant leading-relaxed">Manejo cuidadoso de cadena de frío y entrega exacta de inventarios especializados.</p>
+      <div class="group p-8 rounded-xl bg-white hover:shadow-[0_0_50px_rgba(0,0,0,0.08)] transition-all duration-300 shadow-[0_0_50px_rgba(0,0,0,0.06)]" data-aos="fade-up" data-aos-delay="200">
+        <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-symbols-outlined text-4xl text-primary group-hover:text-white transition-colors duration-300" style="font-variation-settings: 'FILL' 1">biotech</span>
+        </div>
+        <h4 class="text-xl font-bold text-primary mb-3">Precisión</h4>
+        <p class="text-sm text-slate-900 leading-relaxed font-medium">Manejo cuidadoso de cadena de frío y entrega exacta de inventarios especializados.</p>
       </div>
-      <div class="group p-8 rounded-2xl bg-surface-container-low hover:bg-surface-container-lowest hover:shadow-xl transition-all duration-300 clinical-shadow">
-        <span class="material-symbols-outlined text-4xl text-tertiary-container mb-6 block" style="font-variation-settings: 'FILL' 1">handshake</span>
-        <h4 class="text-xl font-bold text-on-surface mb-3">Compromiso</h4>
-        <p class="text-sm text-on-surface-variant leading-relaxed">Atención personalizada y lealtad total hacia nuestros socios comerciales.</p>
+      <div class="group p-8 rounded-xl bg-white hover:shadow-[0_0_50px_rgba(0,0,0,0.08)] transition-all duration-300 shadow-[0_0_50px_rgba(0,0,0,0.06)]" data-aos="fade-up" data-aos-delay="300">
+        <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-symbols-outlined text-4xl text-primary group-hover:text-white transition-colors duration-300" style="font-variation-settings: 'FILL' 1">handshake</span>
+        </div>
+        <h4 class="text-xl font-bold text-primary mb-3">Compromiso</h4>
+        <p class="text-sm text-slate-900 leading-relaxed font-medium">Atención personalizada y lealtad total hacia nuestros socios comerciales.</p>
       </div>
-      <div class="group p-8 rounded-2xl bg-surface-container-low hover:bg-surface-container-lowest hover:shadow-xl transition-all duration-300 clinical-shadow">
-        <span class="material-symbols-outlined text-4xl text-on-primary-fixed-variant mb-6 block" style="font-variation-settings: 'FILL' 1">memory</span>
-        <h4 class="text-xl font-bold text-on-surface mb-3">Innovación</h4>
-        <p class="text-sm text-on-surface-variant leading-relaxed">Portal B2B propio con inventario en tiempo real y cotizaciones automatizadas.</p>
+      <div class="group p-8 rounded-xl bg-white hover:shadow-[0_0_50px_rgba(0,0,0,0.08)] transition-all duration-300 shadow-[0_0_50px_rgba(0,0,0,0.06)]" data-aos="fade-up" data-aos-delay="400">
+        <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-300">
+          <span class="material-symbols-outlined text-4xl text-primary group-hover:text-white transition-colors duration-300" style="font-variation-settings: 'FILL' 1">memory</span>
+        </div>
+        <h4 class="text-xl font-bold text-primary mb-3">Innovación</h4>
+        <p class="text-sm text-slate-900 leading-relaxed font-medium">Portal B2B propio con inventario en tiempo real y cotizaciones automatizadas.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── LO QUE OFRECEMOS (reemplaza "Presencia Nacional") ── -->
-<section class="py-24 bg-gradient-to-br from-primary to-primary-container">
-  <div class="max-w-7xl mx-auto px-8">
-    <div class="grid md:grid-cols-2 gap-16 items-center">
-
-      <div>
-        <span class="inline-block py-1 px-3 mb-4 rounded-full bg-white/10 text-white font-semibold text-xs tracking-widest uppercase">Portal B2B</span>
-        <h2 class="text-3xl font-bold text-white mb-6">Tu operación, simplificada</h2>
-        <p class="text-primary-fixed-dim text-lg mb-8 leading-relaxed">
+<!-- ── LO QUE OFRECEMOS (Versión Simplificada) ── -->
+<section class="py-20 bg-gradient-to-br from-[#003e79] to-[#1e60aa] text-white relative overflow-hidden">
+  <div class="max-w-[1600px] mx-auto px-8 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+      
+      <!-- Lado Izquierdo: Contenido Directo -->
+      <div data-aos="fade-right">
+        <h2 class="text-4xl md:text-5xl font-black mb-6 tracking-tight">Tu operación, simplificada</h2>
+        <p class="text-blue-100/70 text-lg mb-10 leading-relaxed max-w-xl">
           Nuestro portal digital te da acceso a precios diferenciados por nivel de cliente, cotizaciones instantáneas y un catálogo de 769 productos siempre actualizado.
         </p>
-        <div class="space-y-4 mb-10">
-          <div class="flex items-center gap-4 text-white font-medium">
-            <div class="w-8 h-8 bg-tertiary-container rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-tertiary-fixed text-sm" style="font-variation-settings: 'FILL' 1">check</span>
-            </div>
-            4 niveles de precio: Empresa, Farmacia, Distribuidor y Red Fría
-          </div>
-          <div class="flex items-center gap-4 text-white font-medium">
-            <div class="w-8 h-8 bg-tertiary-container rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-tertiary-fixed text-sm" style="font-variation-settings: 'FILL' 1">check</span>
-            </div>
-            Cotizaciones en PDF y Excel con validez de 5 días
-          </div>
-          <div class="flex items-center gap-4 text-white font-medium">
-            <div class="w-8 h-8 bg-tertiary-container rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-tertiary-fixed text-sm" style="font-variation-settings: 'FILL' 1">check</span>
-            </div>
-            Manejo especializado de cadena de frío (27 productos)
-          </div>
-          <div class="flex items-center gap-4 text-white font-medium">
-            <div class="w-8 h-8 bg-tertiary-container rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-tertiary-fixed text-sm" style="font-variation-settings: 'FILL' 1">check</span>
-            </div>
-            Envíos a todo el país con umbrales de flete automáticos
-          </div>
-        </div>
+
         <div class="flex gap-4">
-          <a href="../SELECCIÓN_REGISTRO/selección_registro.html"
-             class="px-8 py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all">
+          <a href="../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php" class="inline-flex items-center justify-center px-10 py-5 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all">
             Solicitar acceso
           </a>
-          <a href="../CATALOGO/catalogo.php"
-             class="px-8 py-4 border-2 border-white/30 hover:border-white/60 text-white font-bold rounded-xl transition-all">
-            Ver catálogo
+          <a href="../CATALOGO/catalogo.php" class="inline-flex items-center gap-3 px-10 py-5 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all group/btn">
+            Ver catálogo completo
+            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
           </a>
         </div>
       </div>
 
-      <!-- Card de métricas -->
-      <div class="grid grid-cols-2 gap-4">
-        <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center">
-          <p class="text-5xl font-black text-white mb-2">+700</p>
-          <p class="text-primary-fixed-dim text-sm uppercase tracking-wider">Productos en catálogo</p>
+      <!-- Lado Derecho: Métricas (Cuadrícula 2x2) -->
+      <div class="grid grid-cols-2 gap-6" data-aos="fade-left">
+        <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl text-center hover:bg-white/20 hover:brightness-110 transition-all group shadow-[0_0_30px_rgba(0,0,0,0.15)]">
+          <p class="text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform">+700</p>
+          <p class="text-blue-100/60 text-xs uppercase tracking-widest font-black">Productos en catálogo</p>
         </div>
-        <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center">
-          <p class="text-5xl font-black text-white mb-2">+300</p>
-          <p class="text-primary-fixed-dim text-sm uppercase tracking-wider">Clientes activos</p>
+        <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl text-center hover:bg-white/20 hover:brightness-110 transition-all group shadow-[0_0_30px_rgba(0,0,0,0.15)]">
+          <p class="text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform">+300</p>
+          <p class="text-blue-100/60 text-xs uppercase tracking-widest font-black">Socios comerciales</p>
         </div>
-        <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20 text-center">
-          <p class="text-5xl font-black text-white mb-2">+20</p>
-          <p class="text-primary-fixed-dim text-sm uppercase tracking-wider">Productos red fría</p>
+        <div class="bg-[#32b4ca] p-10 rounded-3xl text-center shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:brightness-110 transition-all group">
+          <p class="text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform">+20</p>
+          <p class="text-white font-bold text-xs uppercase tracking-widest">Unidades de Red Fría</p>
         </div>
-        <div class="bg-tertiary-container/80 backdrop-blur-sm p-8 rounded-2xl border border-tertiary-fixed/30 text-center">
-          <p class="text-5xl font-black text-white mb-2">4</p>
-          <p class="text-tertiary-fixed/80 text-sm uppercase tracking-wider">Niveles de precio</p>
+        <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl text-center hover:bg-white/20 hover:brightness-110 transition-all group shadow-[0_0_30px_rgba(0,0,0,0.15)]">
+          <p class="text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform">4</p>
+          <p class="text-blue-100/60 text-xs uppercase tracking-widest font-black">Niveles de servicio</p>
         </div>
       </div>
 
@@ -194,20 +170,29 @@ require_once '../includes/header.php';
 </section>
 
 <!-- ── CTA FINAL ── -->
-<section class="py-20 bg-surface">
-  <div class="max-w-5xl mx-auto px-8">
-    <div class="bg-surface-container-lowest rounded-3xl p-12 md:p-16 text-center clinical-shadow border border-outline-variant/10">
-      <h2 class="text-3xl md:text-4xl font-bold text-on-surface mb-4">¿Listo para trabajar juntos?</h2>
-      <p class="text-on-surface-variant text-lg mb-10 max-w-2xl mx-auto">
-        Solicita tu acceso al portal B2B o contáctanos directamente. Nuestro equipo te asigna tu nivel de cliente y te da acceso al catálogo completo.
+<section class="py-24 bg-[#f0f7ff] relative overflow-hidden">
+  <!-- Círculos decorativos de fondo -->
+  <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-tertiary/5 rounded-full -ml-48 -mb-48 blur-3xl"></div>
+
+  <div class="max-w-[1600px] mx-auto px-12 relative z-10">
+    <div class="bg-white rounded-[2rem] p-12 md:p-20 text-center shadow-[0_20px_60px_rgba(0,62,121,0.05)] border border-blue-50 relative overflow-hidden group" data-aos="zoom-in">
+      
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-primary/5 rounded-3xl mb-8 group-hover:rotate-[360deg] transition-transform duration-700">
+        <span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1">handshake</span>
+      </div>
+
+      <h2 class="text-4xl md:text-5xl font-black text-primary tracking-tight mb-6">¿Listo para trabajar juntos?</h2>
+      <p class="text-slate-900 text-lg mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+        Únete a la red de distribución farmacéutica más confiable de México. Solicita tu acceso al portal B2B y comienza a optimizar tu abastecimiento hoy mismo.
       </p>
-      <div class="flex flex-wrap gap-4 justify-center">
-        <a href="../SELECCIÓN_REGISTRO/selección_registro.html"
-           class="px-10 py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+      <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+        <a href="../SELECCIÓN_REGISTRO/selección_registro.php"
+           class="px-12 py-5 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-lg flex items-center gap-2">
           Solicitar acceso al portal
         </a>
         <a href="../CONTACTO/contacto.php"
-           class="px-10 py-4 border-2 border-outline-variant/30 text-on-surface font-bold rounded-xl hover:bg-surface-container-low transition-all">
+           class="px-12 py-5 border-2 border-primary/10 text-primary font-bold rounded-xl hover:bg-primary/5 hover:-translate-y-1 transition-all text-lg">
           Contactar a ventas
         </a>
       </div>

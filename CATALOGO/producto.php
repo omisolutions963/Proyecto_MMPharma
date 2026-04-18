@@ -1,6 +1,6 @@
 <?php
 $host   = 'localhost';
-$port   = 3306;
+$port   = 3307;
 $dbname = 'mm_pharma';
 $user   = 'root';
 $pass   = '';
@@ -44,22 +44,22 @@ require_once '../includes/header.php';
 ?>
 
 <!-- ═══ BREADCRUMB ═══ -->
-<div class="max-w-7xl mx-auto px-8 py-4">
-  <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<div class="max-w-[1600px] mx-auto px-12 py-8" data-aos="fade-down">
+  <div class="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-400">
     <a href="../INDEX/index.php" class="hover:text-primary transition-colors">Inicio</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>
     <a href="catalogo.php" class="hover:text-primary transition-colors">Catálogo</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>
-    <span class="text-on-surface font-medium truncate max-w-xs"><?= htmlspecialchars($p['nombre']) ?></span>
+    <span class="text-primary font-bold"><?= htmlspecialchars($p['nombre']) ?></span>
   </div>
 </div>
 
 <!-- ═══ CONTENIDO PRINCIPAL ═══ -->
-<main class="max-w-7xl mx-auto px-8 pb-16">
+<main class="max-w-[1600px] mx-auto px-12 pb-24">
   <div class="grid md:grid-cols-2 gap-10 mb-16">
 
     <!-- Imagen del producto -->
-    <div class="bg-surface-container-lowest rounded-2xl clinical-shadow flex items-center justify-center min-h-[320px] p-10 relative">
+    <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-blue-50 flex items-center justify-center min-h-[400px] p-12 relative" data-aos="fade-right">
       <?php if ($p['tipo'] === 'RED FRIA'): ?>
       <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary-container text-white text-xs font-bold rounded-full">
         <span class="material-symbols-outlined text-sm">ac_unit</span>
@@ -80,7 +80,7 @@ require_once '../includes/header.php';
     </div>
 
     <!-- Información del producto -->
-    <div class="flex flex-col justify-between">
+    <div class="flex flex-col justify-between" data-aos="fade-left">
 
       <div>
         <!-- Código -->
@@ -118,46 +118,47 @@ require_once '../includes/header.php';
         <?php endif; ?>
 
         <!-- Precios por nivel de cliente -->
-        <div class="mb-6">
-          <p class="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-3">Precios por nivel de cliente</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-surface-container-low p-4 rounded-xl text-center clinical-shadow">
-              <p class="text-xs font-bold uppercase text-on-surface-variant mb-1">Empresa</p>
-              <p class="text-xl font-black text-primary">$<?= number_format($p['precio_empresa'], 2) ?></p>
+        <div class="mb-10">
+          <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Precios por nivel de cliente</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Empresa</p>
+              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_empresa'], 2) ?></p>
             </div>
-            <div class="bg-surface-container-low p-4 rounded-xl text-center clinical-shadow">
-              <p class="text-xs font-bold uppercase text-on-surface-variant mb-1">Farmacia</p>
-              <p class="text-xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
+            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Farmacia</p>
+              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
             </div>
-            <div class="bg-surface-container-low p-4 rounded-xl text-center clinical-shadow">
-              <p class="text-xs font-bold uppercase text-on-surface-variant mb-1">Distribuidor</p>
-              <p class="text-xl font-black text-primary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
+            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Distribuidor</p>
+              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
             </div>
-            <div class="bg-surface-container-low p-4 rounded-xl text-center clinical-shadow">
-              <p class="text-xs font-bold uppercase text-on-surface-variant mb-1">Red Fría</p>
-              <p class="text-xl font-black text-primary">$<?= number_format($p['precio_red_fria'], 2) ?></p>
+            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Red Fría</p>
+              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_red_fria'], 2) ?></p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Acciones -->
-      <div class="space-y-3">
-        <div class="bg-surface-container-low rounded-xl p-4 flex items-center gap-3">
-          <span class="material-symbols-outlined text-secondary">lock</span>
-          <p class="text-sm text-on-surface-variant">
-            <strong class="text-on-surface">¿Quieres cotizar este producto?</strong><br>
-            Inicia sesión o solicita acceso para generar cotizaciones.
+      <div class="space-y-4">
+        <div class="bg-blue-50/50 rounded-xl p-5 flex items-center gap-4 border border-blue-100">
+          <span class="material-symbols-outlined text-primary text-2xl">lock</span>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            <strong class="text-primary block mb-1">¿Quieres cotizar este producto?</strong>
+            Inicia sesión o solicita acceso para generar cotizaciones personalizadas.
           </p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-4">
           <a href="../LOGIN/login.php"
-             class="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl text-center hover:opacity-90 active:scale-95 transition-all text-sm">
+             class="flex-1 h-[58px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-base flex items-center justify-center">
             Iniciar sesión para cotizar
           </a>
           <a href="catalogo.php"
-             class="px-4 py-3.5 border border-outline-variant/30 text-on-surface-variant font-medium rounded-xl hover:bg-surface-container-low transition-all text-sm text-center">
-            ← Volver
+             class="px-8 h-[58px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:-translate-y-1 transition-all text-base flex items-center justify-center gap-2 border border-slate-100 shadow-sm">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Volver
           </a>
         </div>
       </div>
@@ -169,11 +170,11 @@ require_once '../includes/header.php';
   <?php if (!empty($relacionados)): ?>
   <div>
     <h2 class="text-lg font-bold text-on-surface mb-6">Productos con sustancia similar</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-aos="fade-up">
       <?php foreach ($relacionados as $r): ?>
       <a href="producto.php?id=<?= $r['id'] ?>"
-         class="bg-surface-container-lowest rounded-xl p-5 clinical-shadow hover:shadow-xl transition-all border border-transparent hover:border-outline-variant/20 group">
-        <div class="w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center mb-3">
+         class="bg-white rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all border border-blue-50 group flex flex-col">
+        <div class="w-14 h-14 bg-blue-50/50 rounded-xl flex items-center justify-center mb-4">
           <?php if (!empty($r['imagen']) && $r['imagen'] !== 'PENDIENTE'): ?>
             <img src="imagenes/productos/<?= htmlspecialchars($r['imagen']) ?>"
                  class="w-full h-full object-contain rounded-lg">

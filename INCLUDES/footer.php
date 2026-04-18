@@ -1,4 +1,4 @@
-<footer class="bg-[#0D2137] text-white pt-20 pb-10">
+<footer class="bg-[#003e79] text-white pt-20 pb-10">
 <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 <div class="space-y-6">
 <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" 
@@ -38,8 +38,8 @@
 <h4 class="font-bold text-lg mb-6">Contacto</h4>
 <ul class="space-y-4 text-blue-100/60 text-sm">
 <li class="flex items-start gap-3">
-<span class="material-symbols-outlined text-secondary-container" data-icon="location_on">location_on</span>
-                        Av Obsidiana 3644 Residencial Loma Bonita, Zapopan, Jalisco.
+<span class="material-symbols-outlined text-secondary-container" data-icon="public">public</span>
+                        Venta y Distribución a nivel nacional.
                     </li>
 <li class="flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary-container" data-icon="call">call</span>
@@ -52,12 +52,30 @@
 </ul>
 </div>
 </div>
-<div class="max-w-7xl mx-auto px-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100/40">
+<div class="max-w-[1600px] mx-auto px-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-blue-100/40">
 <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
 <div class="flex gap-8">
 <a class="hover:text-white transition-colors" href="https://www.facebook.com/share/1DpVKyDk9Q/">Facebook</a>
 </div>
 </div>
 </footer>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+    offset: 50,
+  });
+
+  // Prevenir saltos de scroll al refrescar
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.addEventListener('load', () => {
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  });
+</script>
 </body>
 </html>

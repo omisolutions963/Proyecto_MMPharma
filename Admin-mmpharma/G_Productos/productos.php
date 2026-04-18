@@ -1,419 +1,457 @@
 <?php
-$pageTitle = "MMPharma Portal - Gestión de Productos";
-$activePage = "productos";
+require_once '../clinical_core/db.php';
+$pdo = getDB();
+
+// ── FILTROS Y PAGINACIÓN ──────────────────────────────────────────────────────
+$q    = trim($_GET['q'] ?? '');
+$tipo = trim($_GET['tipo'] ?? '');
+$pg   = max(1, (int)($_GET['pg'] ?? 1));
+$perPage = 15;
+$offset  = ($pg - 1) * $perPage;
+
+$where = "WHERE 1=1";
+$params = [];
+if ($q) {
+    $where .= " AND (p.nombre LIKE ? OR p.codigo LIKE ?)";
+    $l = "%$q%"; $params[] = $l; $params[] = $l;
+}
+if ($tipo) {
+    $where .= " AND p.tipo = ?";
+    $params[] = $tipo;
+}
+
+// Datos
+$sql = "SELECT p.*, COALESCE(s.stock_actual, 0) as stock 
+        FROM productos p 
+        LEFT JOIN inventario_stock s ON p.id = s.producto_id 
+        $where 
+        ORDER BY p.nombre ASC 
+        LIMIT $perPage OFFSET $offset";
+$stData = $pdo->prepare($sql);
+$stData->execute($params);
+$productos = $stData->fetchAll();
+
+// ── RESPUESTA AJAX PARA INFINITE SCROLL ────────────────────────────────────────
+if (isset($_GET['ajax'])) {
+    if (empty($productos)) die(""); 
+    foreach ($productos as $p): ?>
+        <tr class="group hover:bg-surface-container-low/30 transition-colors animate-fade-in">
+          <td class="px-8 py-4 text-center">
+            <div class="flex flex-col items-center gap-3">
+              <div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-container-high border border-outline-variant/10">
+                <?php if($p['imagen']): ?>
+                  <img src="../assets/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+                <?php else: ?>
+                  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
+                    <span class="material-symbols-outlined text-[20px]">image</span>
+                  </div>
+                <?php endif; ?>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-on-surface leading-tight"><?= htmlspecialchars($p['nombre']) ?></span>
+                <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5">Sustancia activa aquí</span>
+              </div>
+            </div>
+          </td>
+          <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
+          <td class="px-8 py-4 text-center">
+            <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-tertiary-container/20 text-on-tertiary-container' : 'bg-secondary-container/20 text-on-secondary-container' ?>">
+              <?= $p['tipo'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black <?= $p['stock']>0 ? 'bg-tertiary-container/10 text-on-tertiary-container' : 'bg-error-container/10 text-error' ?>">
+              <?= $p['stock'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
+            $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+          </td>
+          <td class="px-8 py-4">
+            <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick='abrirEditar(<?= json_encode($p) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+              </button>
+              <form method="POST" onsubmit="return confirm('¿Eliminar producto?')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+    <?php endforeach;
+    exit;
+}
+
+// ── ACCIONES POST (UPSERT/DELETE) ────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+    $id = (int)($_POST['id'] ?? 0);
+
+    if ($action === 'delete' && $id) {
+        $pdo->prepare("DELETE FROM productos WHERE id = ?")->execute([$id]);
+        header("Location: productos.php?msg=deleted"); exit;
+    }
+
+    if ($action === 'upsert') {
+        $nombre = $_POST['nombre'] ?? ''; $codigo = $_POST['codigo'] ?? ''; $tipo = $_POST['tipo'] ?? 'SECO';
+        $p_f = (float)$_POST['precio_farmacia']; $p_d = (float)$_POST['precio_distribuidor']; $p_e = (float)$_POST['precio_empresa'];
+        $stock = (int)$_POST['stock'];
+        $foto_base64 = $_POST['foto_base64'] ?? '';
+        
+        $nombre_archivo = null;
+        if (!empty($foto_base64)) {
+            $data = explode(',', $foto_base64);
+            $img_content = base64_decode($data[1]);
+            $nombre_archivo = 'prod_' . time() . '_' . uniqid() . '.jpg';
+            $ruta = '../assets/productos/' . $nombre_archivo;
+            file_put_contents($ruta, $img_content);
+        }
+
+        if ($id > 0) {
+            $sql = "UPDATE productos SET nombre=?, codigo=?, tipo=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?";
+            $params = [$nombre, $codigo, $tipo, $p_f, $p_d, $p_e];
+            if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
+            $sql .= " WHERE id=?"; $params[] = $id;
+            $pdo->prepare($sql)->execute($params);
+        } else {
+            $sql = "INSERT INTO productos (nombre, codigo, tipo, precio_farmacia, precio_distribuidor, precio_empresa, imagen) VALUES (?,?,?,?,?,?,?)";
+            $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $p_f, $p_d, $p_e, $nombre_archivo]);
+            $id = $pdo->lastInsertId();
+        }
+        $pdo->prepare("INSERT INTO inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
+            ->execute([$id, $stock, $stock]);
+        header("Location: productos.php?msg=saved"); exit;
+    }
+}
+
+$pageTitle = "MMPharma Portal - Gestión de Inventario";
+$activePage = "inventario";
 include("../Includes/header.php");
 include("../Includes/sidebar.php");
 ?>
-<main class="ml-64 p-8 min-h-[calc(100vh-4rem)]">
-<div class="p-8 space-y-8">
 
-    <!-- Header Section -->
-    <section class="flex items-end justify-between">
-        <div>
-            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight leading-none mb-2">Catálogo de Productos</h2>
-            <p class="text-on-surface-variant">Gestión centralizada de inventario farmacéutico y suministros clínicos.</p>
-        </div>
-        <button onclick="abrirModal()" class="bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 rounded-md flex items-center gap-2 font-medium shadow-lg shadow-primary/10 hover:opacity-90 transition-opacity">
-            <span class="material-symbols-outlined text-lg">add</span>
-            Nuevo Producto
-        </button>
-    </section>
+<main class="ml-64 p-8 min-h-screen" style="background:#071628">
 
-    <!-- Filters Bar -->
-    <section class="bg-surface-container-low p-5 rounded-xl flex flex-wrap items-center gap-4">
-        <div class="flex-1 min-w-[240px] relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">filter_list</span>
-            <input class="w-full bg-surface-container-lowest border-none rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary-fixed text-sm text-on-surface" placeholder="Filtrar por nombre o SKU..." type="text"/>
-        </div>
-        <div class="w-48">
-            <select class="w-full bg-surface-container-lowest border-none rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-primary-fixed text-sm text-on-surface">
-                <option value="">Todas las Categorías</option>
-                <option value="antibioticos">Antibióticos</option>
-                <option value="red_fria">Red Fría</option>
-                <option value="analgesicos">Analgésicos</option>
-                <option value="oncologia">Oncología</option>
-            </select>
-        </div>
-        <div class="w-40">
-            <select class="w-full bg-surface-container-lowest border-none rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-primary-fixed text-sm text-on-surface">
-                <option value="">Cualquier Estado</option>
-                <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
-            </select>
-        </div>
-        <button class="px-4 py-2.5 text-on-surface-variant font-medium text-sm hover:bg-surface-container-high rounded-lg transition-colors">
-            Limpiar Filtros
-        </button>
-    </section>
-
-    <!-- Products Table -->
-    <section class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-surface-container-low text-on-surface-variant text-xs font-bold uppercase tracking-widest">
-                    <th class="px-6 py-4">Producto</th>
-                    <th class="px-6 py-4">SKU</th>
-                    <th class="px-6 py-4">Categoría</th>
-                    <th class="px-6 py-4">Precio</th>
-                    <th class="px-6 py-4">Stock</th>
-                    <th class="px-6 py-4">Estado</th>
-                    <th class="px-6 py-4 text-right">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-outline-variant/10">
-                <tr class="hover:bg-surface transition-colors group">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLXgphxQYPWa_xdPfKGL4qkKL905T1BJs1naHW4HsC9ka3AStRMx5MDwdNGknp5JuVFnrGbbFOxwl_YdfAP04SRnde8An5n_zGEsmffc86HYMhq-B69ilu6iNA_nmkAsmE7KBsQKXmqJhITgaMQb0OhL7vsKpHHJdjy2Mn9LPzGTZUFZBiPRAQsDkwDPnHRt88Xx6fMZZoHW8g8_CS65y7oAKd5I7_cB163er5zMJ8WtzwTbd93AtbvF_dFzuaY2IGF0EtcfRvjGA"/>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-on-surface">Insulina Humana NPH</div>
-                                <div class="text-xs text-on-surface-variant">100 UI/ml Suspensión</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-mono text-outline">PH-7821-XP</td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-container/10 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider">
-                            <span class="material-symbols-outlined text-[12px]">ac_unit</span> RED FRÍA
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-semibold text-on-surface">$1,420.00</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div><span class="text-sm text-on-surface">452 Unidades</span></div></td>
-                    <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-tertiary/10 text-tertiary text-[11px] font-bold uppercase tracking-tighter">Activo</span></td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="bg-surface/30 hover:bg-surface transition-colors group">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRjZ1y5FKXJ2E6q3AXx_vQS_iQVL_9F7UOsHFz-bk6KBTuJcQuRY5EYHzRq6paLkTIYqUtlkF7F-rvHY7t9wgSWdgHWO_ynLTAeW7gfRKZ9yW7PzBWKtU1ZEo9QBSPtL65Cj00_Ot6iO3qv0J2OGxzIX9Qw6ZO3guCAV1gKr-gaI2XJoBHZLypb1Lk-7f3LBpafjpH76dho5WaYr4G0O-pFi4cphlsqnihnnj7EkBTr2XPxqr_QGFQhmvl2TZJyonDmpd8LHT9r8M"/>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-on-surface">Amoxicilina 500mg</div>
-                                <div class="text-xs text-on-surface-variant">Cápsulas Caja c/20</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-mono text-outline">PH-1044-AM</td>
-                    <td class="px-6 py-4 text-sm text-on-surface-variant">Antibióticos</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-on-surface">$285.50</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-error"></div><span class="text-sm text-error font-medium">12 Unidades</span></div></td>
-                    <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-tertiary/10 text-tertiary text-[11px] font-bold uppercase tracking-tighter">Activo</span></td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="hover:bg-surface transition-colors group">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCjtjsgOIBomp_08BCVezhrWKNNkVMPtyTFJHapSxBzYI3CfaJphSOkbbJTZJe8dus3u-xZ7-rvWaPStczg-D2BPWNYQngDnU9uoXVaK3C6Gc79MPrNmV275OK8qxHY0DhUUGVfm7tOZd3hIo1CQKpXDF26j_kdzgLKJRv8HutyNeFe9NgGkLFy99B7ICEIyDYG8tGyxFfKGbGdLZ1ZNh0y2OgWM0Fykw9rrE9zeZ84iryTtOoYUiP8AatiD2ywvG3frFnP4XbdYU"/>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-on-surface">Vincristina 1mg/ml</div>
-                                <div class="text-xs text-on-surface-variant">Solución Inyectable</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-mono text-outline">PH-3319-ON</td>
-                    <td class="px-6 py-4 text-sm text-on-surface-variant">Oncología</td>
-                    <td class="px-6 py-4 text-sm font-semibold text-on-surface">$5,890.00</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div><span class="text-sm text-on-surface">84 Unidades</span></div></td>
-                    <td class="px-6 py-4"><span class="inline-flex px-2.5 py-1 rounded-md bg-outline-variant/30 text-on-surface-variant text-[11px] font-bold uppercase tracking-tighter">Inactivo</span></td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="mockAction('Editar Producto', 'Abriendo formulario de edición para este producto.', 'info')" class="p-2 hover:bg-primary-container/10 text-primary rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">edit</span></button>
-                            <button onclick="confirmAction('Eliminar Producto', '¿Estás seguro de que deseas eliminar este producto del inventario?', 'Sí, eliminar', () => mockAction('Eliminado', 'El producto ha sido eliminado exitosamente.', 'success'))" class="p-2 hover:bg-error-container/20 text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-xl">delete</span></button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="px-6 py-5 bg-surface-container-low flex items-center justify-between border-t border-outline-variant/10">
-            <div class="text-xs text-on-surface-variant font-medium">Mostrando <span class="text-on-surface">1-3</span> de <span class="text-on-surface">124</span> productos</div>
-            <div class="flex items-center gap-2">
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-surface-container-lowest transition-colors disabled:opacity-30" disabled>
-                    <span class="material-symbols-outlined text-lg">chevron_left</span>
-                </button>
-                <div class="flex gap-1">
-                    <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-xs">1</button>
-                    <button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-lowest font-bold text-xs">2</button>
-                    <button class="w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-lowest font-bold text-xs">3</button>
-                </div>
-                <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-surface-container-lowest transition-colors">
-                    <span class="material-symbols-outlined text-lg">chevron_right</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bento Cards -->
-    <section class="grid grid-cols-12 gap-6">
-        <div class="col-span-8 bg-gradient-to-br from-surface-container-lowest to-surface-container-low p-6 rounded-2xl shadow-sm border border-outline-variant/10">
-            <h4 class="text-lg font-bold text-on-surface mb-4">Métricas de Categoría</h4>
-            <div class="grid grid-cols-3 gap-6">
-                <div class="space-y-1">
-                    <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Antibióticos</p>
-                    <p class="text-2xl font-black text-primary tracking-tight">42% <span class="text-xs font-normal text-outline">del total</span></p>
-                    <div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden"><div class="h-full bg-primary w-[42%]"></div></div>
-                </div>
-                <div class="space-y-1">
-                    <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Red Fría</p>
-                    <p class="text-2xl font-black text-tertiary tracking-tight">18% <span class="text-xs font-normal text-outline">del total</span></p>
-                    <div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden"><div class="h-full bg-tertiary w-[18%]"></div></div>
-                </div>
-                <div class="space-y-1">
-                    <p class="text-xs text-on-surface-variant font-bold uppercase tracking-wider">Analgesia</p>
-                    <p class="text-2xl font-black text-secondary tracking-tight">30% <span class="text-xs font-normal text-outline">del total</span></p>
-                    <div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden"><div class="h-full bg-secondary w-[30%]"></div></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-span-4 bg-primary text-white p-6 rounded-2xl flex flex-col justify-between relative overflow-hidden">
-            <div class="relative z-10">
-                <h4 class="text-lg font-bold mb-1">Estado de Stock</h4>
-                <p class="text-primary-fixed-dim text-sm">3 productos requieren atención inmediata por bajo inventario.</p>
-            </div>
-            <a href="export_faltantes.php" class="mt-4 block w-fit px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium backdrop-blur-md transition-colors relative z-10 text-center">Ver Reporte de Faltantes</a>
-            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
-        </div>
-    </section>
+<!-- Header -->
+<div class="flex justify-between items-end mb-8">
+  <div>
+    <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Inventario</h2>
+    <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
+  </div>
+  <button onclick="abrirModal()" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+    <span class="material-symbols-outlined">add_box</span> Nuevo Producto
+  </button>
 </div>
 
-<footer class="mt-auto py-6 px-8 border-t border-outline-variant/10 text-[11px] text-outline flex justify-between items-center bg-surface">
-    <p>© 2024 MMPharma Clinical Systems. Todos los derechos reservados.</p>
-    <div class="flex gap-4">
-        <a class="hover:text-primary transition-colors" href="#">Política de Privacidad</a>
-        <a class="hover:text-primary transition-colors" href="#">Términos de Servicio</a>
+<!-- KPIs -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <?php
+    $total_p = (int)$pdo->query("SELECT COUNT(*) FROM productos")->fetchColumn();
+    $total_s = (int)$pdo->query("SELECT COUNT(*) FROM productos WHERE tipo='SECO'")->fetchColumn();
+    $total_f = (int)$pdo->query("SELECT COUNT(*) FROM productos WHERE tipo='RED FRIA'")->fetchColumn();
+    $total_k = (int)$pdo->query("SELECT SUM(stock_actual) FROM inventario_stock")->fetchColumn();
+    $kpis = [
+        ['l'=>'Productos', 'v'=>$total_p, 'i'=>'inventory_2', 'b'=>'border-primary/40'],
+        ['l'=>'Seco', 'v'=>$total_s, 'i'=>'wb_sunny', 'b'=>'border-secondary/40'],
+        ['l'=>'Frío', 'v'=>$total_f, 'i'=>'ac_unit', 'b'=>'border-tertiary/40'],
+        ['l'=>'Existencias', 'v'=>$total_k, 'i'=>'warehouse', 'b'=>'border-amber-500/40'],
+    ];
+    foreach($kpis as $index => $k): ?>
+    <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 <?= $k['b'] ?> shadow-sm animate-reveal" style="animation-delay: <?= $index * 0.1 ?>s">
+        <div class="flex justify-between items-center mb-1">
+            <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant"><?= $k['l'] ?></span>
+            <span class="material-symbols-outlined text-on-surface-variant/30 scale-75"><?= $k['i'] ?></span>
+        </div>
+        <h3 class="text-2xl font-black text-on-surface"><?= number_format($k['v']) ?></h3>
     </div>
-</footer>
+    <?php endforeach; ?>
+</div>
+
+<!-- Filtros -->
+<form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8">
+    <div class="flex-1 relative">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+        <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none shadow-sm"/>
+    </div>
+    <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none shadow-sm w-48 font-bold">
+        <option value="">Todos los Tipos</option>
+        <option value="SECO" <?= $tipo==='SECO'?'selected':'' ?>>Cadena Seca</option>
+        <option value="RED FRIA" <?= $tipo==='RED FRIA'?'selected':'' ?>>Red Fría</option>
+    </select>
+    <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20">Filtrar</button>
+</form>
+
+<!-- Tabla Centrada con Fotos -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/10 overflow-hidden animate-reveal" style="animation-delay: 0.4s">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low text-on-surface-variant text-[10px] font-black uppercase tracking-widest">
+          <th class="px-8 py-4 text-center">Producto</th>
+          <th class="px-8 py-4 text-center">Código</th>
+          <th class="px-8 py-4 text-center">Tipo</th>
+          <th class="px-8 py-4 text-center">Existencias</th>
+          <th class="px-8 py-4 text-center">Precios (F/D/E)</th>
+          <th class="px-8 py-4 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody" class="divide-y divide-outline-variant/10">
+        <?php if (empty($productos)): ?>
+        <tr><td colspan="6" class="px-8 py-20 text-center text-on-surface-variant text-sm font-medium italic animate-reveal">No se encontraron productos.</td></tr>
+        <?php else: ?>
+        <?php foreach ($productos as $p): ?>
+        <tr class="group hover:bg-surface-container-low/30 transition-colors">
+          <td class="px-8 py-4 text-center">
+            <div class="flex flex-col items-center gap-2">
+              <div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container-high border border-outline-variant/10">
+                <?php if($p['imagen']): ?>
+                  <img src="../assets/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+                <?php else: ?>
+                  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
+                    <span class="material-symbols-outlined text-[18px]">image</span>
+                  </div>
+                <?php endif; ?>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-on-surface leading-tight"><?= htmlspecialchars($p['nombre']) ?></span>
+                <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5">Sustancia activa</span>
+              </div>
+            </div>
+          </td>
+          <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
+          <td class="px-8 py-4 text-center">
+            <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-tertiary-container/20 text-on-tertiary-container' : 'bg-secondary-container/20 text-on-secondary-container' ?>">
+              <?= $p['tipo'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black <?= $p['stock']>0 ? 'bg-tertiary-container/10 text-on-tertiary-container' : 'bg-error-container/10 text-error' ?>">
+              <?= $p['stock'] ?>
+            </span>
+          </td>
+          <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
+            $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+          </td>
+          <td class="px-8 py-4">
+            <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick='abrirEditar(<?= json_encode($p) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+              </button>
+              <form method="POST" onsubmit="return confirm('¿Eliminar producto?')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+  <div id="loading" class="hidden px-8 py-6 text-center">
+     <div class="inline-block w-6 h-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+  </div>
+</div>
+
 </main>
 
-<!-- ===== MODAL NUEVO PRODUCTO (Panel lateral deslizante) ===== -->
+<!-- MODAL PRODUCTO CON FOTO -->
 <div id="modalProducto" class="fixed inset-0 z-[100] hidden">
-    <div onclick="cerrarModal()" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-2xl flex flex-col duration-300 transition-transform translate-x-full" id="modalPanel">
-
-        <!-- Header del modal -->
-        <div class="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-[#1A5632]">
-            <div>
-                <h3 class="text-xl font-bold text-white tracking-tight">Nuevo Producto</h3>
-                <p class="text-emerald-100/60 text-xs mt-0.5">Completa los campos para registrar el producto</p>
-            </div>
-            <button onclick="cerrarModal()" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+    <div onclick="cerrarModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div id="modalPanel" class="absolute right-0 top-0 h-full w-full max-w-lg bg-surface shadow-2xl transition-transform duration-300 translate-x-full flex flex-col">
+        <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
+            <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo Producto</h3>
+            <p class="text-on-surface-variant text-xs mt-1">Registra o actualiza la información del catálogo.</p>
         </div>
+        <form method="POST" class="flex-1 overflow-y-auto p-8 space-y-6">
+            <input type="hidden" name="action" value="upsert">
+            <input type="hidden" name="id" id="prod_id">
+            <input type="hidden" name="foto_base64" id="foto_base64">
 
-        <!-- Cuerpo del modal -->
-        <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
-
-            <!-- Foto -->
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Foto del Producto</label>
-                <div id="dropZone" onclick="document.getElementById('fotoInput').click()"
-                     class="border-2 border-dashed border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all group">
-                    <div id="previewContainer" class="hidden w-full flex flex-col items-center gap-3">
-                        <img id="fotoPreview" class="w-32 h-32 object-cover rounded-xl shadow-md"/>
-                        <p class="text-xs text-on-surface-variant" id="fotoNombre"></p>
-                        <button onclick="event.stopPropagation(); limpiarFoto()" class="text-xs text-error hover:underline">Cambiar foto</button>
+            <!-- Subir Foto -->
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative group cursor-pointer w-32 h-32 rounded-2xl overflow-hidden bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex items-center justify-center transition-all hover:border-primary/50" 
+                     onclick="document.getElementById('fotoInput').click()">
+                    <img id="previewModal" class="w-full h-full object-cover hidden">
+                    <div id="placeholderModal" class="flex flex-col items-center text-on-surface-variant/40">
+                        <span class="material-symbols-outlined text-3xl">add_a_photo</span>
+                        <span class="text-[10px] font-bold mt-1 uppercase">Subir Foto</span>
                     </div>
-                    <div id="uploadPlaceholder" class="flex flex-col items-center gap-3">
-                        <div class="w-14 h-14 rounded-full bg-surface-container-low flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                            <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-3xl">add_photo_alternate</span>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-sm font-semibold text-on-surface">Haz clic para subir una foto</p>
-                            <p class="text-xs text-on-surface-variant mt-1">PNG, JPG o WEBP · Máx. 5MB</p>
-                        </div>
-                    </div>
-                    <input type="file" id="fotoInput" accept="image/*" class="hidden" onchange="previsualizarFoto(event)"/>
-                </div>
-            </div>
-
-            <!-- Nombre y SKU -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Nombre del Producto *</label>
-                    <input type="text" id="nombre" placeholder="Ej. Amoxicilina 500mg"
-                           class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none"/>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">SKU *</label>
-                    <input type="text" id="sku" placeholder="Ej. PH-1044-AM"
-                           class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none font-mono"/>
-                </div>
-            </div>
-
-            <!-- Descripción -->
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Descripción</label>
-                <textarea id="descripcion" rows="3" placeholder="Presentación, dosis, indicaciones, etc."
-                          class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none resize-none"></textarea>
-            </div>
-
-            <!-- Categoría y Tipo Cadena -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Categoría *</label>
-                    <select id="categoria" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none">
-                        <option value="">Seleccionar...</option>
-                        <option value="antibioticos">Antibióticos</option>
-                        <option value="analgesicos">Analgésicos</option>
-                        <option value="oncologia">Oncología</option>
-                        <option value="antiinflamatorios">Antiinflamatorios</option>
-                        <option value="antihipertensivos">Antihipertensivos</option>
-                        <option value="vitaminas">Vitaminas y Suplementos</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Tipo de Cadena *</label>
-                    <div class="flex gap-3 mt-1">
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="cadena" value="seca" class="peer hidden" checked/>
-                            <div class="peer-checked:bg-primary peer-checked:text-white bg-surface-container-low text-on-surface-variant rounded-lg px-3 py-3 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-all border-2 border-transparent peer-checked:border-primary">
-                                <span class="material-symbols-outlined text-base">light_mode</span> Seca
-                            </div>
-                        </label>
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="cadena" value="fria" class="peer hidden"/>
-                            <div class="peer-checked:bg-primary peer-checked:text-white bg-surface-container-low text-on-surface-variant rounded-lg px-3 py-3 text-sm font-semibold text-center flex items-center justify-center gap-1.5 transition-all border-2 border-transparent peer-checked:border-primary">
-                                <span class="material-symbols-outlined text-base">ac_unit</span> Red Fría
-                            </div>
-                        </label>
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
                     </div>
                 </div>
+                <input type="file" id="fotoInput" accept="image/*" class="hidden" onchange="procesarFoto(this)">
             </div>
 
-            <!-- Precio y Stock -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Precio Unitario *</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-outline font-bold text-sm">$</span>
-                        <input type="number" id="precio" placeholder="0.00" min="0" step="0.01"
-                               class="w-full bg-surface-container-low border-none rounded-lg pl-8 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none"/>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre del Producto</label>
+                        <input type="text" name="nombre" id="prod_nombre" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Código</label>
+                        <input type="text" name="codigo" id="prod_codigo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo / Cadena</label>
+                        <select name="tipo" id="prod_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+                            <option value="SECO">Cadena Seca</option>
+                            <option value="RED FRIA">Red Fría</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 p-4 bg-surface-container-low rounded-2xl">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Farmacia</label>
+                        <input type="number" step="0.01" name="precio_farmacia" id="prod_pf" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Distrib.</label>
+                        <input type="number" step="0.01" name="precio_distribuidor" id="prod_pd" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Empresa</label>
+                        <input type="number" step="0.01" name="precio_empresa" id="prod_pe" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Stock Inicial *</label>
-                    <input type="number" id="stock" placeholder="0" min="0"
-                           class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none"/>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en Inventario</label>
+                    <input type="number" name="stock" id="prod_stock" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm font-bold text-primary focus:ring-2 focus:ring-primary outline-none">
                 </div>
             </div>
+            <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
+                <button type="button" onclick="cerrarModal()" class="flex-1 py-4 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 py-4 bg-primary text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/30 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">save</span> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            <!-- Stock mínimo y Proveedor -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Stock Mínimo (alerta)</label>
-                    <input type="number" id="stock_minimo" placeholder="Ej. 20" min="0"
-                           class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none"/>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Proveedor</label>
-                    <input type="text" id="proveedor" placeholder="Nombre del laboratorio"
-                           class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed outline-none"/>
-                </div>
-            </div>
-
-            <!-- Estado -->
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Estado</label>
-                <div class="flex gap-3">
-                    <label class="cursor-pointer">
-                        <input type="radio" name="estado" value="activo" class="peer hidden" checked/>
-                        <div class="peer-checked:bg-tertiary/10 peer-checked:text-tertiary peer-checked:border-tertiary bg-surface-container-low text-on-surface-variant rounded-lg px-6 py-2.5 text-sm font-semibold transition-all border-2 border-transparent">
-                            ✓ Activo
-                        </div>
-                    </label>
-                    <label class="cursor-pointer">
-                        <input type="radio" name="estado" value="inactivo" class="peer hidden"/>
-                        <div class="peer-checked:bg-outline-variant/30 peer-checked:text-on-surface peer-checked:border-outline bg-surface-container-low text-on-surface-variant rounded-lg px-6 py-2.5 text-sm font-semibold transition-all border-2 border-transparent">
-                            ✕ Inactivo
-                        </div>
-                    </label>
-                </div>
-            </div>
+<!-- MODAL CROPPER -->
+<div id="cropperModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="bg-surface w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+        <div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center">
+            <h3 class="text-on-surface font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">crop</span> Recortar Foto del Producto
+            </h3>
+            <button onclick="cerrarCropper()" class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined">close</span></button>
         </div>
-
-        <!-- Footer del modal -->
-        <div class="px-8 py-5 border-t border-outline-variant/20 bg-surface-container-low flex items-center justify-between">
-            <button onclick="cerrarModal()" class="px-6 py-2.5 text-on-surface-variant font-semibold text-sm hover:bg-surface-container-high rounded-lg transition-colors">
-                Cancelar
-            </button>
-            <button onclick="guardarProducto()" class="px-8 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold text-sm rounded-lg shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg">save</span>
-                Guardar Producto
-            </button>
+        <div class="p-6">
+            <div class="aspect-square w-full overflow-hidden rounded-2xl bg-black/20 mb-6">
+                <img id="cropperImage" class="max-w-full block">
+            </div>
+            <div class="flex gap-3">
+                <button onclick="cerrarCropper()" class="flex-1 py-3 rounded-xl font-bold text-on-surface-variant bg-surface-container-low">Cancelar</button>
+                <button id="btnConfirmarRecorte" class="flex-1 py-3 rounded-xl font-bold text-white bg-primary">Aplicar Recorte</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+let currentPage = 1;
+let loading = false;
+let hasMore = true;
+let cropper = null;
+
+// Infinite Scroll
+window.addEventListener('scroll', () => {
+    if (loading || !hasMore) return;
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) { loadMore(); }
+});
+
+async function loadMore() {
+    loading = true; document.getElementById('loading').classList.remove('hidden'); currentPage++;
+    try {
+        const res = await fetch(`productos.php?ajax=1&pg=${currentPage}&q=<?= urlencode($q) ?>&tipo=<?= urlencode($tipo) ?>`);
+        const html = await res.text();
+        if (html.trim() === "") { hasMore = false; } else { document.getElementById('tableBody').insertAdjacentHTML('beforeend', html); }
+    } catch (e) { console.error(e); } finally { loading = false; document.getElementById('loading').classList.add('hidden'); }
+}
+
+// Cropper Logic
+function procesarFoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('cropperImage').src = e.target.result;
+            document.getElementById('cropperModal').classList.remove('hidden');
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(document.getElementById('cropperImage'), { aspectRatio: 1, viewMode: 2 });
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+document.getElementById('btnConfirmarRecorte').addEventListener('click', () => {
+    const canvas = cropper.getCroppedCanvas({ width: 600, height: 600 });
+    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+    document.getElementById('foto_base64').value = base64;
+    document.getElementById('previewModal').src = base64;
+    document.getElementById('previewModal').classList.remove('hidden');
+    document.getElementById('placeholderModal').classList.add('hidden');
+    cerrarCropper();
+});
+
+function cerrarCropper() { document.getElementById('cropperModal').classList.add('hidden'); if(cropper) cropper.destroy(); }
+
 function abrirModal() {
-    const modal = document.getElementById('modalProducto');
-    const panel = document.getElementById('modalPanel');
-    modal.classList.remove('hidden');
-    setTimeout(() => panel.classList.remove('translate-x-full'), 10);
-    document.body.style.overflow = 'hidden';
+    document.getElementById('modalTitle').textContent = "Nuevo Producto";
+    document.getElementById('prod_id').value = "0";
+    document.getElementById('foto_base64').value = "";
+    document.getElementById('previewModal').classList.add('hidden');
+    document.getElementById('placeholderModal').classList.remove('hidden');
+    document.getElementById('prod_nombre').value = "";
+    document.getElementById('prod_codigo').value = "";
+    document.getElementById('prod_tipo').value = "SECO";
+    document.getElementById('prod_pf').value = "0";
+    document.getElementById('prod_pd').value = "0";
+    document.getElementById('prod_pe').value = "0";
+    document.getElementById('prod_stock').value = "0";
+    document.getElementById('modalProducto').classList.remove('hidden');
+    setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
+}
+
+function abrirEditar(p) {
+    document.getElementById('modalTitle').textContent = "Editar Producto";
+    document.getElementById('prod_id').value = p.id;
+    document.getElementById('foto_base64').value = "";
+    if (p.imagen) {
+        document.getElementById('previewModal').src = "../assets/productos/" + p.imagen;
+        document.getElementById('previewModal').classList.remove('hidden');
+        document.getElementById('placeholderModal').classList.add('hidden');
+    } else {
+        document.getElementById('previewModal').classList.add('hidden');
+        document.getElementById('placeholderModal').classList.remove('hidden');
+    }
+    document.getElementById('prod_nombre').value = p.nombre;
+    document.getElementById('prod_codigo').value = p.codigo || '';
+    document.getElementById('prod_tipo').value = p.tipo;
+    document.getElementById('prod_pf').value = p.precio_farmacia;
+    document.getElementById('prod_pd').value = p.precio_distribuidor;
+    document.getElementById('prod_pe').value = p.precio_empresa;
+    document.getElementById('prod_stock').value = p.stock || 0;
+    document.getElementById('modalProducto').classList.remove('hidden');
+    setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
 }
 
 function cerrarModal() {
-    const panel = document.getElementById('modalPanel');
-    panel.classList.add('translate-x-full');
-    setTimeout(() => {
-        document.getElementById('modalProducto').classList.add('hidden');
-        document.body.style.overflow = '';
-    }, 300);
+    document.getElementById('modalPanel').classList.add('translate-x-full');
+    setTimeout(() => document.getElementById('modalProducto').classList.add('hidden'), 300);
 }
-
-function previsualizarFoto(event) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('fotoPreview').src = e.target.result;
-        document.getElementById('fotoNombre').textContent = archivo.name;
-        document.getElementById('previewContainer').classList.remove('hidden');
-        document.getElementById('uploadPlaceholder').classList.add('hidden');
-    };
-    reader.readAsDataURL(archivo);
-}
-
-function limpiarFoto() {
-    document.getElementById('fotoInput').value = '';
-    document.getElementById('previewContainer').classList.add('hidden');
-    document.getElementById('uploadPlaceholder').classList.remove('hidden');
-}
-
-function guardarProducto() {
-    const nombre    = document.getElementById('nombre').value.trim();
-    const sku       = document.getElementById('sku').value.trim();
-    const categoria = document.getElementById('categoria').value;
-    const precio    = document.getElementById('precio').value;
-    const stock     = document.getElementById('stock').value;
-
-    if (!nombre || !sku || !categoria || !precio || !stock) {
-        mockAction('Error', 'Por favor completa todos los campos obligatorios (*)', 'error');
-        return;
-    }
-
-    mockAction('Producto Guardado', 'El producto "' + nombre + '" se ha registrado exitosamente.', 'success');
-    cerrarModal();
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 </script>
+
 
 <?php include("../Includes/footer.php"); ?>

@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script id="tailwind-config">
     
         tailwind.config = {
@@ -47,22 +48,19 @@
                         "surface-dim": "#c6dcf6",
                         "surface-variant": "#cfe5ff",
                         "primary-fixed": "#d7e2ff",
-                        "primary": "#002451",
-                        "inverse-surface": "#1d3246",
-                        "on-surface": "#051d30",
-                        "secondary": "#006397",
-                        "on-tertiary-fixed-variant": "#005228",
-                        "on-tertiary-container": "#39bb6c",
-                        "on-primary": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "on-tertiary": "#ffffff",
-                        "inverse-primary": "#abc7ff",
-                        "outline-variant": "#c4c6d0",
-                        "outline": "#747780",
-                        "tertiary-container": "#004520",
-                        "primary-container": "#1a3a6b",
-                        "on-primary-fixed-variant": "#284678",
-                        "tertiary-fixed": "#7efba4"
+                        "primary": "#003e79",
+                        "secondary": "#1e60aa",
+                        "tertiary": "#32b4ca",
+                        "primary-container": "#e0f2ff",
+                        "secondary-container": "#cfe5ff",
+                        "tertiary-container": "#d1e4ff",
+                        "on-surface": "#001d35",
+                        "on-surface-variant": "#003e79",
+                        "background": "#f0f7ff",
+                        "surface": "#ffffff",
+                        "surface-container-low": "#e1f0ff",
+                        "surface-container": "#cfe5ff",
+                        "surface-container-high": "#abc7ff",
                     },
                     fontFamily: {
                         "headline": ["Inter"],
@@ -135,7 +133,7 @@
 <!-- Main Content Canvas -->
 <main class="flex-grow flex flex-col items-center justify-center px-6 py-12 max-w-7xl mx-auto w-full">
 <!-- Hero Header -->
-<div class="text-center mb-16 max-w-3xl">
+<div class="text-center mb-16 max-w-3xl" data-aos="fade-up">
 <h1 class="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-4">
                 Solicitar acceso al portal
             </h1>
@@ -146,7 +144,7 @@
 <!-- Selection Grid: Asymmetric Bento Influence -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
 <!-- TARJETA 1: FARMACIA -->
-<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay="100">
 <div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-3xl">medication</span>
 </div>
@@ -171,12 +169,12 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm shadow-lg shadow-secondary/20">
                     Registrarme como Farmacia
                 </button>
 </div>
 <!-- TARJETA 2: DISTRIBUIDORA (Featured) -->
-<div class="relative flex flex-col bg-primary text-white p-8 rounded-2xl shadow-2xl transform md:-translate-y-4 border border-primary/10 group">
+<div class="relative flex flex-col bg-primary text-white p-8 rounded-2xl shadow-2xl transform md:-translate-y-4 border border-primary/10 group" data-aos="fade-up" data-aos-delay="200">
 <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#006397] px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
                     Recomendado para Mayoristas
                 </div>
@@ -209,7 +207,7 @@
                 </button>
 </div>
 <!-- TARJETA 3: EMPRESA -->
-<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay="300">
 <div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
 <span class="material-symbols-outlined text-3xl">domain</span>
 </div>
@@ -230,13 +228,13 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 border-2 border-slate-200 text-primary font-bold rounded-xl hover:bg-slate-50 hover:border-primary transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary transition-all duration-300 text-sm shadow-lg shadow-primary/20">
                     Registrarme como Empresa
                 </button>
 </div>
 </div>
 <!-- Support Section -->
-<div class="mt-20 flex flex-col items-center gap-4">
+<div class="mt-20 flex flex-col items-center gap-4" data-aos="fade-in" data-aos-delay="400">
 <div class="bg-surface-container p-1 rounded-full px-6 py-2 flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary text-sm">mail</span>
 <p class="text-sm font-medium text-on-surface">¿Necesitas ayuda personalizada? Contacta a <a class="text-secondary hover:underline font-bold" href="mailto:ventas@mmpharma.com">ventas@mmpharma.com</a></p>
@@ -247,4 +245,11 @@
 <footer class="py-12 px-6 flex flex-col items-center">
 <p class="text-xs text-on-surface-variant opacity-60"><p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p></p>
 </footer>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+  });
+</script>
 </body></html>
