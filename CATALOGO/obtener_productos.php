@@ -12,6 +12,16 @@ if (!isset($vista)) {
     $vista = isset($_GET['vista']) ? $_GET['vista'] : 'lista';
 }
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
+$cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
+
+$precio_campo = 'precio_farmacia';
+if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
+elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
+
 $por_pagina = 30; 
 $offset  = ($pagina - 1) * $por_pagina;
 
@@ -33,8 +43,8 @@ if ($tipo === 'red_fria') {
 $where_sql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 $orden_sql = match($orden) {
     'nombre_desc' => 'ORDER BY nombre DESC',
-    'precio_asc'  => 'ORDER BY precio_farmacia ASC',
-    'precio_desc' => 'ORDER BY precio_farmacia DESC',
+    'precio_asc'  => "ORDER BY $precio_campo ASC",
+    'precio_desc' => "ORDER BY $precio_campo DESC",
     default       => 'ORDER BY nombre ASC',
 };
 
@@ -67,7 +77,7 @@ foreach ($productos as $p) {
             <?= htmlspecialchars($p['sustancia'] ?? '—') ?>
           </td>
           <td class="px-8 py-5 text-center">
-            <p class="text-sm font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
+            <p class="text-sm font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
           </td>
           <td class="px-8 py-5 hidden md:table-cell text-center">
             <?php if ($p['tipo'] === 'RED FRIA'): ?>
@@ -79,9 +89,15 @@ foreach ($productos as $p) {
             <?php endif; ?>
           </td>
           <td class="px-8 py-5 text-right">
-            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary group-hover:bg-secondary group-hover:text-white transition-all">
-              <span class="material-symbols-outlined text-xl">chevron_right</span>
-            </div>
+            <?php if ($is_cliente): ?>
+            <button type="button" onclick="event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= (float)$p[$precio_campo] ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>')" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary hover:bg-secondary hover:text-white transition-all shadow-sm" title="Añadir al carrito">
+              <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+            </button>
+            <?php else: ?>
+            <button type="button" onclick="event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../LOGIN/login_cliente.php';" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all shadow-sm" title="Añadir al carrito">
+              <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+            </button>
+            <?php endif; ?>
           </td>
         </tr>
         <?php
@@ -107,9 +123,17 @@ foreach ($productos as $p) {
           <p class="text-[10px] text-slate-900 mb-4 line-clamp-1 font-bold">
             <?= htmlspecialchars($p['sustancia'] ?? '') ?>
           </p>
-          <div class="flex items-center justify-between">
-            <p class="text-base font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
-            <span class="material-symbols-outlined text-slate-300 group-hover:text-secondary transition-colors">add_circle</span>
+          <div class="flex items-center justify-between mt-auto">
+            <p class="text-base font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
+            <?php if ($is_cliente): ?>
+            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= (float)$p[$precio_campo] ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/5 text-primary hover:bg-secondary hover:text-white transition-all shadow-sm" title="Añadir al carrito">
+              <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+            </button>
+            <?php else: ?>
+            <button type="button" onclick="event.preventDefault(); event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../LOGIN/login_cliente.php';" class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/5 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all shadow-sm" title="Añadir al carrito">
+              <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+            </button>
+            <?php endif; ?>
           </div>
         </a>
         <?php

@@ -56,6 +56,7 @@
 <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
 <div class="flex gap-8">
 <a class="hover:text-white transition-colors" href="https://www.facebook.com/share/1DpVKyDk9Q/">Facebook</a>
+<a class="hover:text-white transition-colors" href="<?= $base ?? '../' ?>LOGIN/login.php">Acceso Administrativo</a>
 </div>
 </div>
 </footer>

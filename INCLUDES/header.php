@@ -67,7 +67,26 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 
   <div class="flex-1 flex items-center justify-end gap-4">
-    <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
+    <?php if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true): ?>
+        <!-- Icono de carrito (Solo para clientes logueados) -->
+        <button id="cart-icon-btn" onclick="toggleCartDrawer()" class="relative w-10 h-10 flex items-center justify-center text-slate-600 hover:text-primary hover:bg-slate-100 rounded-xl transition-all mr-2" aria-label="Carrito de compras">
+          <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+          <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
+        </button>
+        
+        <!-- Perfil de cliente -->
+        <div class="flex items-center gap-3">
+          <div class="hidden md:flex flex-col text-right">
+            <span class="text-xs font-bold text-slate-900"><?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?></span>
+            <span class="text-[10px] font-bold text-primary uppercase tracking-widest"><?= htmlspecialchars($_SESSION['cliente_tipo'] ?? 'FARMACIA') ?></span>
+          </div>
+          <a href="<?= $base ?? '' ?>LOGIN/logout.php" title="Cerrar Sesión">
+            <button class="w-10 h-10 flex items-center justify-center text-[#ba1a1a] hover:bg-[#ffdad6] rounded-xl transition-all group" aria-label="Cerrar Sesión">
+              <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">logout</span>
+            </button>
+          </a>
+        </div>
+    <?php elseif (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
         <a href="<?= $base ?? '' ?>Admin-mmpharma/dashboard/dashboard.php">
           <button class="px-6 py-2 bg-gradient-to-br from-[#005132] to-[#008151] text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,129,81,0.2)] active:scale-95 transition-all flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">dashboard</span> Panel de Administrador
@@ -79,8 +98,8 @@ if (session_status() === PHP_SESSION_NONE) {
           </button>
         </a>
     <?php else: ?>
-        <a href="<?= $base ?? '' ?>LOGIN/login.php">
-          <button class="px-4 py-2 text-[#1A3A6B] font-bold hover:bg-[#edf4ff] rounded-xl transition-all">Iniciar sesión</button>
+        <a href="<?= $base ?? '' ?>LOGIN/login_cliente.php">
+          <button class="px-4 py-2 text-[#1A3A6B] font-bold hover:bg-[#edf4ff] rounded-xl transition-all">Acceso Clientes</button>
         </a>
         <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php">
           <button class="px-6 py-2 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,0,0,0.1)] active:scale-95 transition-all">Solicitar acceso</button>
@@ -89,3 +108,277 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 </nav>
 </header>
+
+<!-- ═══ CART DRAWER ═══ -->
+<div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer()"></div>
+<div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-[70] translate-x-full transition-transform duration-300 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col">
+  
+  <!-- Header -->
+  <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-primary/5">
+    <div class="flex items-center gap-3 text-primary">
+      <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+      <h2 class="text-lg font-black tracking-tight">Mi Carrito</h2>
+    </div>
+    <button onclick="toggleCartDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Items -->
+  <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+    <!-- El contenido se genera con JS -->
+  </div>
+
+  <!-- Footer -->
+  <div class="p-6 border-t border-slate-100 bg-slate-50">
+    <div class="flex justify-between items-end mb-4">
+      <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Subtotal</p>
+      <p id="cart-subtotal" class="text-2xl font-black text-primary">$0.00</p>
+    </div>
+    <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+      *Los precios mostrados son de lista. Si eres distribuidor o empresa, el precio final se ajustará al generar la cotización formal.
+    </p>
+    <button onclick="confirmarPedido()" id="btn-confirmar-pedido" class="w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined text-lg">receipt_long</span>
+      Confirmar Pedido
+    </button>
+  </div>
+</div>
+
+<script>
+let carrito = [];
+try {
+    const parsed = JSON.parse(localStorage.getItem('mm_carrito'));
+    carrito = Array.isArray(parsed) ? parsed : [];
+} catch (e) {
+    carrito = [];
+    localStorage.removeItem('mm_carrito');
+}
+
+function guardarCarrito() {
+    localStorage.setItem('mm_carrito', JSON.stringify(carrito));
+    actualizarBadge();
+}
+
+function actualizarBadge() {
+    const badge = document.getElementById('cart-badge');
+    const icon = document.getElementById('cart-icon-btn'); // Necesitamos darle un id al boton
+    if (!badge) return;
+    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    
+    if (totalItems > 0) {
+        badge.textContent = totalItems;
+        badge.classList.remove('hidden');
+        // Animacion
+        badge.classList.remove('animate-bounce');
+        void badge.offsetWidth; // trigger reflow
+        badge.classList.add('animate-bounce');
+        setTimeout(() => badge.classList.remove('animate-bounce'), 1000);
+        
+        if(icon) {
+            icon.classList.add('scale-110', 'text-primary');
+            setTimeout(() => icon.classList.remove('scale-110', 'text-primary'), 300);
+        }
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+function formatCurrency(amount) {
+    return '$' + parseFloat(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+function renderCartItems() {
+    const container = document.getElementById('cart-items-container');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    if (!container) return;
+    
+    if (carrito.length === 0) {
+        container.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 opacity-60">
+            <span class="material-symbols-outlined text-6xl mb-4">remove_shopping_cart</span>
+            <p class="text-sm font-bold">Tu carrito está vacío</p>
+          </div>
+        `;
+        subtotalEl.textContent = '$0.00';
+        return;
+    }
+
+    let html = '';
+    let subtotal = 0;
+
+    carrito.forEach((item, index) => {
+        const totalLinea = item.precio * item.cantidad;
+        subtotal += totalLinea;
+        
+        let imagenHtml = '';
+        if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
+            imagenHtml = `<img src="<?= $base ?? '' ?>CATALOGO/imagenes/productos/${item.imagen}" class="w-full h-full object-contain p-1">`;
+        } else {
+            imagenHtml = `<span class="material-symbols-outlined text-slate-300 text-2xl">medication</span>`;
+        }
+
+        html += `
+        <div class="flex gap-4 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm relative group">
+          <div class="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            ${imagenHtml}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-primary leading-tight mb-1 truncate pr-6" title="${item.nombre}">${item.nombre}</h4>
+            <p class="text-sm font-black text-secondary mb-2">${formatCurrency(item.precio)}</p>
+            
+            <div class="flex items-center gap-3">
+              <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200">
+                <button onclick="cambiarCantidad(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+                <span class="w-6 text-center text-xs font-bold text-slate-700">${item.cantidad}</span>
+                <button onclick="cambiarCantidad(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">add</span></button>
+              </div>
+            </div>
+          </div>
+          <button onclick="eliminarDelCarrito(${index})" class="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors w-6 h-6 flex items-center justify-center rounded-md hover:bg-red-50">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+          </button>
+        </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    subtotalEl.textContent = formatCurrency(subtotal);
+}
+
+function agregarAlCarrito(id, nombre, precio, imagen) {
+    console.log("agregarAlCarrito llamado con:", {id, nombre, precio, imagen});
+    const itemIndex = carrito.findIndex(item => item.id == id);
+    
+    if (itemIndex > -1) {
+        carrito[itemIndex].cantidad += 1;
+    } else {
+        carrito.push({
+            id: id,
+            nombre: nombre,
+            precio: parseFloat(precio),
+            imagen: imagen,
+            cantidad: 1
+        });
+    }
+    
+    guardarCarrito();
+    renderCartItems();
+    
+    // Mostramos una alerta visual (toast) en su lugar para indicar éxito sin interrumpir
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            toast: true,
+            position: 'bottom-end',
+            icon: 'success',
+            title: 'Producto añadido',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+    }
+}
+
+function cambiarCantidad(index, delta) {
+    if (carrito[index]) {
+        carrito[index].cantidad += delta;
+        if (carrito[index].cantidad <= 0) {
+            eliminarDelCarrito(index);
+        } else {
+            guardarCarrito();
+            renderCartItems();
+        }
+    }
+}
+
+function eliminarDelCarrito(index) {
+    carrito.splice(index, 1);
+    guardarCarrito();
+    renderCartItems();
+}
+
+function toggleCartDrawer() {
+    const drawer = document.getElementById('cart-drawer');
+    const overlay = document.getElementById('cart-overlay');
+    if (!drawer || !overlay) return;
+    
+    if (drawer.classList.contains('translate-x-full')) {
+        // Abrir
+        drawer.classList.remove('translate-x-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        renderCartItems(); // Renderizar al abrir para estar seguros
+    } else {
+        // Cerrar
+        drawer.classList.add('translate-x-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+    }
+}
+
+// Inicializar el badge al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    actualizarBadge();
+});
+function confirmarPedido() {
+    if (carrito.length === 0) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('Carrito vacío', 'Añade productos antes de confirmar el pedido', 'warning');
+        } else {
+            alert('Añade productos antes de confirmar el pedido');
+        }
+        return;
+    }
+    
+    const btn = document.getElementById('btn-confirmar-pedido');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<div class="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Procesando...';
+    btn.disabled = true;
+
+    fetch('<?= $base ?? '' ?>CATALOGO/procesar_pedido.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carrito: carrito })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            carrito = [];
+            guardarCarrito();
+            renderCartItems();
+            toggleCartDrawer();
+            
+            let msg = 'Tu pedido ha sido registrado exitosamente y está pendiente de autorización.';
+            if (data.folio) {
+                msg = `Tu pedido <b>${data.folio}</b> ha sido registrado exitosamente y está pendiente de autorización.`;
+            }
+            
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Pedido Confirmado!',
+                    html: msg,
+                    confirmButtonColor: '#006397'
+                }).then(() => {
+                    window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
+                });
+            } else {
+                alert('¡Pedido Confirmado! ' + msg);
+                window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
+            }
+        } else {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire('Error', 'Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'), 'error');
+            } else {
+                alert('Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'));
+            }
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error de conexión al procesar el pedido.');
+    })
+    .finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+</script>

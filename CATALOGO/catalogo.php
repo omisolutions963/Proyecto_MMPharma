@@ -38,11 +38,21 @@ if ($tipo === 'red_fria') {
 
 $where_sql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
+$cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
+
+$precio_campo = 'precio_farmacia';
+if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
+elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
+
 // Orden
 $orden_sql = match($orden) {
     'nombre_desc' => 'ORDER BY nombre DESC',
-    'precio_asc'  => 'ORDER BY precio_farmacia ASC',
-    'precio_desc' => 'ORDER BY precio_farmacia DESC',
+    'precio_asc'  => "ORDER BY $precio_campo ASC",
+    'precio_desc' => "ORDER BY $precio_campo DESC",
     default       => 'ORDER BY nombre ASC',
 };
 
