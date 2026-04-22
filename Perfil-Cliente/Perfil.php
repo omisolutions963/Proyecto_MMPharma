@@ -1,259 +1,261 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMPharma - Perfil</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-deep: #05070a;
-            --sidebar-bg: #0d1117;
-            --card-bg: #161b22;
-            --accent-blue: #3b82f6;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --danger-bg: rgba(248, 81, 73, 0.1);
-            --danger-text: #f85149;
-        }
+<?php
+$pageTitle  = 'MMPharma Portal - Mi Perfil';
+$activePage = 'perfil';
+include('Includes/header.php');
+include('Includes/sidebar.php');
+?>
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
+    
+    <!-- Header -->
+    <div class="mb-6 animate-reveal">
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi Perfil</h1>
+    </div>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-        }
+    <!-- Hero Profile Card -->
+    <div class="bg-gradient-to-r from-surface-container-highest to-surface-container rounded-3xl p-8 mb-8 relative overflow-hidden shadow-xl shadow-black/20 animate-reveal delay-100 border border-outline-variant/30">
+        <!-- Abstract Decoration -->
+        <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 50;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--text-primary);
-            background-color: rgba(255, 255, 255, 0.03);
-            border-left-color: var(--accent-blue);
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 32px;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-blue);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-
-        .btn-outline {
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .input-group {
-            margin-bottom: 24px;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            margin-left: 4px;
-        }
-
-        .form-input {
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: var(--text-primary);
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .btn-danger-transparent {
-            background-color: var(--danger-bg);
-            color: var(--danger-text);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-    </style>
-</head>
-<body>
-    <aside class="sidebar">
-        <div class="p-8">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma Logo" class="h-10 w-auto object-contain">
-        </div>
-
-        <nav class="flex-1">
-            <a href="Dashboard.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/></svg>
-                Dashboard
-            </a>
-            <a href="Catalogo.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-                Catálogo
-            </a>
-            <a href="Cotizaciones.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Cotizaciones
-            </a>
-            <a href="Perfil.php" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Mi Perfil
-            </a>
-            <a href="Documentos.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                Documentos
-            </a>
-            <a href="Direcciones.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Direcciones
-            </a>
-            <a href="Contacto.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l4-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Contacto
-            </a>
-        </nav>
-
-        <div class="p-6 border-t border-border-subtle space-y-3">
-            <a href="http://localhost:8080/proyecto_mmpharma/INDEX/index.php" class="w-full btn-outline flex items-center justify-center gap-2">
-                Ir al sitio Público
-            </a>
-            <a href="http://localhost:8080/proyecto_mmpharma/LOGIN/logout.php" class="w-full btn-danger-transparent flex items-center justify-center gap-2">
-                Cerrar sesión
-            </a>
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+            <!-- Avatar -->
+            <div class="relative group">
+                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-surface shadow-lg">
+                    <img src="https://picsum.photos/seed/doctor/200/200" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <button class="absolute -bottom-3 -right-3 w-10 h-10 bg-surface text-primary rounded-xl flex items-center justify-center border border-outline-variant shadow-lg hover:text-white hover:bg-primary transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                </button>
+            </div>
             
-            <div class="pt-4 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center border border-border-subtle">
-                    <img src="https://picsum.photos/seed/company/100/100" alt="Logo" class="w-full h-full object-cover">
+            <!-- Info -->
+            <div class="flex-1 text-center md:text-left mt-2 md:mt-0">
+                <h2 class="text-3xl font-bold text-white mb-1">Dr. Alejandro Moreno</h2>
+                <p class="text-on-surface-variant text-sm flex items-center justify-center md:justify-start gap-2 mb-4">
+                    <span class="material-symbols-outlined text-primary text-[16px]">verified_user</span>
+                    Administrador Titular • Farmacias del Centro S.A.
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    <span class="px-3 py-1.5 bg-primary/20 border border-primary/30 text-primary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">star</span> Cliente VIP
+                    </span>
+                    <span class="px-3 py-1.5 bg-tertiary/20 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">ac_unit</span> Red Fría Activa
+                    </span>
                 </div>
-                <div>
-                    <p class="text-xs font-bold text-white">MMPharma</p>
-                    <p class="text-[10px] text-text-secondary">Portal Cliente</p>
-                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col gap-3 mt-4 md:mt-auto self-stretch md:self-end">
+                <button class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors">Ver Contratos</button>
+                <button class="px-6 py-2 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary/20">Editar Perfil</button>
             </div>
         </div>
-    </aside>
+    </div>
 
-    <main class="main-content">
-        <header class="mb-10">
-            <h2 class="text-2xl font-bold tracking-tight mb-2">Mi Perfil</h2>
-            <p class="text-text-secondary">Gestione los detalles de su establecimiento y la configuración de su cuenta.</p>
-        </header>
+    <!-- Tabs -->
+    <div class="flex items-center gap-8 border-b border-outline-variant/30 mb-8 overflow-x-auto animate-reveal delay-200">
+        <button class="pb-4 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap">Información personal</button>
+        <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap">Facturación</button>
+        <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap">Seguridad</button>
+        <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap">Notificaciones</button>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2">
-                <div class="card">
-                    <h3 class="text-lg font-bold mb-8 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent-blue"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Información del Establecimiento
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal delay-300">
+        
+        <!-- Left Column (General Data & Billing) -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- Datos Generales -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">person</span> Datos Generales
                     </h3>
-                    
-                    <form action="#" method="POST">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                            <div class="input-group">
-                                <label class="input-label">Razón Social</label>
-                                <input type="text" class="form-input" value="Farmacias del Centro S.A. de C.V.">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">RFC</label>
-                                <input type="text" class="form-input" value="FDC941012HG5">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">Email de Contacto</label>
-                                <input type="email" class="form-input" value="administracion@fsanjorge.mx">
-                            </div>
-                            <div class="input-group">
-                                <label class="input-label">Teléfono</label>
-                                <input type="tel" class="form-input" value="+52 55 1234 5678">
-                            </div>
-                        </div>
-                        
-                        <div class="pt-4">
-                            <button type="submit" class="btn-primary">Actualizar Información</button>
-                        </div>
-                    </form>
+                    <button class="text-[10px] font-black text-primary uppercase tracking-widest hover:text-primary-fixed-dim transition-colors">Actualizar datos</button>
                 </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="card p-6">
-                    <h3 class="text-[11px] font-bold text-text-secondary uppercase tracking-widest mb-6">Seguridad</h3>
-                    <div class="space-y-4">
-                        <button class="w-full flex items-center justify-between p-4 bg-white/2 rounded-lg border border-transparent hover:border-accent-blue/30 transition-all group">
-                            <span class="text-sm font-medium text-text-primary group-hover:text-accent-blue">Cambiar Contraseña</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-text-secondary group-hover:text-accent-blue"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        </button>
-                        <button class="w-full flex items-center justify-between p-4 bg-white/2 rounded-lg border border-transparent hover:border-accent-blue/30 transition-all group">
-                            <span class="text-sm font-medium text-text-primary group-hover:text-accent-blue">Configurar Notificaciones</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-text-secondary group-hover:text-accent-blue"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                        </button>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Nombre Completo</label>
+                        <input type="text" value="Alejandro Moreno Ruiz" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">RFC</label>
+                        <input type="text" value="MOR850412HB9" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Email Profesional</label>
+                        <input type="email" value="amoreno@farmaciascentro.mx" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Teléfono Directo</label>
+                        <input type="text" value="+52 55 4123 9088" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Régimen Fiscal</label>
+                        <div class="relative">
+                            <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
+                                <option>612 - Personas Físicas con Actividades Empresariales y Profesionales</option>
+                                <option>601 - General de Ley Personas Morales</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card p-6 border-red-500/20">
-                    <h3 class="text-[11px] font-bold text-red-500 uppercase tracking-widest mb-4">Zona de Peligro</h3>
-                    <p class="text-xs text-text-secondary mb-6 leading-relaxed">Una vez eliminada la cuenta, no hay marcha atrás. Por favor, esté seguro.</p>
-                    <button class="w-full btn-danger-transparent bg-red-500/5 hover:bg-red-500/10 transition-colors">Solicitar Baja de Portal</button>
+            <!-- Preferencias de Facturación -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 shadow-sm">
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-white mb-1">Preferencias de Facturación</h3>
+                    <p class="text-xs text-on-surface-variant">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de Documento</label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer bg-primary/10 border border-primary/30 px-4 py-2.5 rounded-xl">
+                                <input type="radio" name="tipo_doc" checked class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
+                                <span class="text-sm font-semibold text-white">Factura (CFDI 4.0)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer bg-surface-container-low border border-outline-variant/50 px-4 py-2.5 rounded-xl hover:border-outline-variant">
+                                <input type="radio" name="tipo_doc" class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
+                                <span class="text-sm font-semibold text-on-surface-variant">Nota de Crédito</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de Pago</label>
+                            <div class="relative">
+                                <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
+                                    <option>PPD - Pago en parcialidades o diferido</option>
+                                    <option>PUE - Pago en una sola exhibición</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Uso de CFDI</label>
+                            <div class="relative">
+                                <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
+                                    <option>G01 - Adquisición de mercancías</option>
+                                    <option>G03 - Gastos en general</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Danger Zone -->
+            <div class="bg-error-container/10 border border-error/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-error/20 text-error flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">delete</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white mb-0.5">Solicitar baja de cuenta</h4>
+                        <p class="text-xs text-on-surface-variant">Este proceso es irreversible y requiere validación legal.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
+                    <button class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto">Descartar</button>
+                    <button class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary/20 w-full md:w-auto">Guardar Cambios</button>
+                </div>
+            </div>
+
         </div>
-    </main>
-</body>
-</html>
+
+        <!-- Right Column (Security & Alerts) -->
+        <div class="space-y-8">
+            
+            <!-- Seguridad de la Cuenta -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">shield</span> Seguridad de la Cuenta
+                </h3>
+                
+                <div class="bg-surface-container-low border border-primary/30 rounded-xl p-4 mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">laptop_mac</span>
+                        <div>
+                            <p class="text-sm font-bold text-white">MacBook Pro 14"</p>
+                            <p class="text-[10px] text-on-surface-variant">CDMX, MX • Sesión activa</p>
+                        </div>
+                    </div>
+                    <span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(52,196,122,0.6)]"></span>
+                </div>
+
+                <div class="space-y-3">
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">key</span> Cambiar Contraseña
+                    </button>
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">security</span> Autenticación 2FA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Alertas y Avisos -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary text-[20px]">notifications_active</span> Alertas y Avisos
+                </h3>
+                
+                <div class="space-y-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-white">Estado de Pedidos</p>
+                            <p class="text-[10px] text-on-surface-variant">Alertas de surtido y envío</p>
+                        </div>
+                        <!-- Custom Toggle Checked -->
+                        <div class="w-10 h-6 bg-primary rounded-full relative cursor-pointer">
+                            <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-white">Stock & Disponibilidad</p>
+                            <p class="text-[10px] text-on-surface-variant">Aviso de productos agotados</p>
+                        </div>
+                        <!-- Custom Toggle Checked -->
+                        <div class="w-10 h-6 bg-primary rounded-full relative cursor-pointer">
+                            <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-white">Promociones MMPharma</p>
+                            <p class="text-[10px] text-on-surface-variant">Descuentos exclusivos B2B</p>
+                        </div>
+                        <!-- Custom Toggle Unchecked -->
+                        <div class="w-10 h-6 bg-surface-container-high rounded-full relative cursor-pointer border border-outline-variant">
+                            <div class="w-4 h-4 bg-on-surface-variant rounded-full absolute left-1 top-0.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soporte Técnico -->
+            <div class="bg-gradient-to-br from-tertiary-container/80 to-surface-container border border-tertiary/20 rounded-2xl p-6 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[100px] text-tertiary/10 rotate-[-15deg] pointer-events-none">support_agent</span>
+                <div class="relative z-10">
+                    <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
+                    <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
+                    <button class="w-full px-4 py-2.5 bg-white text-tertiary-container text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors shadow-sm">
+                        Contactar Soporte
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+<?php include('Includes/footer.php'); ?>

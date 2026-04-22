@@ -1,235 +1,137 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMPharma - Documentos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-deep: #05070a;
-            --sidebar-bg: #0d1117;
-            --card-bg: #161b22;
-            --accent-blue: #3b82f6;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --danger-bg: rgba(248, 81, 73, 0.1);
-            --danger-text: #f85149;
-        }
+<?php
+$pageTitle  = 'MMPharma Portal - Mis Documentos';
+$activePage = 'documentos';
+include('Includes/header.php');
+include('Includes/sidebar.php');
+?>
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
+    
+    <!-- Header -->
+    <div class="mb-8 animate-reveal">
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mis Documentos</h1>
+    </div>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 50;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--text-primary);
-            background-color: rgba(255, 255, 255, 0.03);
-            border-left-color: var(--accent-blue);
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 24px;
-        }
-
-        .btn-outline {
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .btn-outline:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-
-        .btn-danger-transparent {
-            background-color: var(--danger-bg);
-            color: var(--danger-text);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-
-        .badge-status {
-            padding: 2px 8px;
-            border-radius: 100px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .bg-success-subtle { background-color: rgba(35, 134, 54, 0.1); color: #3fb950; }
-        .bg-warning-subtle { background-color: rgba(187, 128, 9, 0.1); color: #d29922; }
-    </style>
-</head>
-<body>
-    <aside class="sidebar">
-        <div class="p-8">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma Logo" class="h-10 w-auto object-contain">
-        </div>
-
-        <nav class="flex-1">
-            <a href="Dashboard.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                Dashboard
-            </a>
-            <a href="Catalogo.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-                Catálogo
-            </a>
-            <a href="Cotizaciones.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Cotizaciones
-            </a>
-            <a href="Perfil.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Mi Perfil
-            </a>
-            <a href="Documentos.php" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                Documentos
-            </a>
-            <a href="Direcciones.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Direcciones
-            </a>
-            <a href="Contacto.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l4-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Contacto
-            </a>
-        </nav>
-
-        <div class="p-6 border-t border-border-subtle space-y-3">
-            <a href="http://localhost:8080/proyecto_mmpharma/INDEX/index.php" class="w-full btn-outline flex items-center justify-center gap-2">
-                Ir al sitio Público
-            </a>
-            <a href="http://localhost:8080/proyecto_mmpharma/LOGIN/logout.php" class="w-full btn-danger-transparent flex items-center justify-center gap-2">
-                Cerrar sesión
-            </a>
-            
-            <div class="pt-4 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center border border-border-subtle">
-                    <img src="https://picsum.photos/seed/company/100/100" alt="Logo" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-white">MMPharma</p>
-                    <p class="text-[10px] text-text-secondary">Portal Cliente</p>
-                </div>
+    <!-- Alert Banner -->
+    <div class="bg-tertiary-container/20 border border-tertiary/40 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm animate-reveal delay-100">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(52,196,122,0.3)]">
+                <span class="material-symbols-outlined text-[24px]">check_circle</span>
             </div>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-                <h2 class="text-2xl font-bold tracking-tight mb-2">Expediente Digital</h2>
-                <p class="text-text-secondary">Documentación legal y regulatoria obligatoria de su establecimiento.</p>
+                <h3 class="text-lg font-bold text-white mb-0.5">Todos tus documentos están vigentes</h3>
+                <p class="text-sm text-tertiary/80">Tu cuenta se encuentra al día y autorizada para compras controladas.</p>
             </div>
-            <button class="bg-accent-blue text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                Subir Nuevo Documento
-            </button>
-        </header>
+        </div>
+        <button class="px-5 py-2.5 bg-tertiary hover:bg-tertiary-fixed-dim text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-tertiary/20 flex items-center gap-2 w-full md:w-auto justify-center">
+            <span class="material-symbols-outlined text-[18px]">download</span> Descargar Expediente
+        </button>
+    </div>
 
-        <div class="bg-emerald-500/5 border border-emerald-500/10 p-6 rounded-xl flex items-center justify-between shadow-sm mb-10">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                </div>
+    <!-- Documents Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-reveal delay-200">
+        
+        <!-- Doc 1 -->
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex flex-col shadow-sm relative group hover:border-outline-variant transition-colors">
+            <div class="absolute top-6 right-6">
+                <span class="px-2.5 py-1 bg-tertiary/10 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Vigente
+                </span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center mb-5">
+                <span class="material-symbols-outlined text-[20px]">medical_services</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">Licencia Sanitaria</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed mb-6 flex-1">Permiso federal para la comercialización de insumos de salud y psicotrópicos.</p>
+            
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-5">
                 <div>
-                    <h4 class="text-sm font-bold text-text-primary">Expediente Validado</h4>
-                    <p class="text-[11px] text-text-secondary mt-0.5">Su cuenta tiene permisos completos para compras controladas.</p>
+                    <span class="block text-on-surface-variant/70 mb-1">Última Carga</span>
+                    <span class="text-white">12 Oct 2023</span>
                 </div>
-            </div>
-            <button class="text-accent-blue text-xs font-bold hover:underline flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Descargar Todo
-            </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="card flex flex-col group hover:border-accent-blue/40 transition-all">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-10 h-10 bg-white/2 rounded-lg flex items-center justify-center text-text-secondary group-hover:text-accent-blue transition-all border border-border-subtle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                    </div>
-                    <span class="badge-status bg-success-subtle">Vigente</span>
-                </div>
-                <h3 class="font-bold text-text-primary text-sm mb-1 uppercase tracking-tight">Licencia Sanitaria</h3>
-                <p class="text-[11px] text-text-secondary mb-6 italic">Expira: 12 Oct 2025</p>
-                <div class="mt-auto flex gap-2">
-                    <button class="flex-1 py-2 rounded-lg bg-bg-deep border border-border-subtle text-text-primary text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">Ver</button>
-                    <button class="px-3 py-2 rounded-lg bg-bg-deep border border-border-subtle text-text-secondary hover:text-accent-blue transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    </button>
+                <div class="text-right">
+                    <span class="block text-on-surface-variant/70 mb-1">Vence</span>
+                    <span class="text-white">12 Oct 2025</span>
                 </div>
             </div>
 
-            <div class="card flex flex-col group hover:border-accent-blue/40 transition-all">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-10 h-10 bg-white/2 rounded-lg flex items-center justify-center text-text-secondary group-hover:text-accent-blue transition-all border border-border-subtle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l4-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <span class="badge-status bg-warning-subtle">Cerca de Vencer</span>
-                </div>
-                <h3 class="font-bold text-text-primary text-sm mb-1 uppercase tracking-tight">Cofepris: Aviso Funcionamiento</h3>
-                <p class="text-[11px] text-text-secondary mb-6 italic">Expira: 28 Jul 2024</p>
-                <div class="mt-auto flex gap-2">
-                    <button class="flex-1 py-2 rounded-lg bg-bg-deep border border-border-subtle text-text-primary text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors">Ver</button>
-                    <button class="px-3 py-2 rounded-lg bg-bg-deep border border-border-subtle text-text-secondary hover:text-accent-blue transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    </button>
-                </div>
+            <div class="flex gap-2">
+                <button class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary text-sm font-bold rounded-xl transition-colors">Ver Documento</button>
+                <button class="w-11 py-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-sm font-bold rounded-xl transition-colors flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">sync</span></button>
             </div>
         </div>
-    </main>
-</body>
-</html>
+
+        <!-- Doc 2 -->
+        <div class="bg-surface-container-lowest border border-secondary/30 rounded-2xl p-6 flex flex-col shadow-sm relative group hover:border-secondary/50 transition-colors">
+            <div class="absolute top-6 right-6">
+                <span class="px-2.5 py-1 bg-secondary/10 border border-secondary/30 text-secondary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Por Vencer
+                </span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center mb-5">
+                <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">Constancia Fiscal</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed mb-6 flex-1">Situación fiscal actualizada (SAT) para facturación y validación de RFC.</p>
+            
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-5">
+                <div>
+                    <span class="block text-on-surface-variant/70 mb-1">Última Carga</span>
+                    <span class="text-white">15 Ene 2024</span>
+                </div>
+                <div class="text-right">
+                    <span class="block text-secondary mb-1">Vence en 15 días</span>
+                    <span class="text-white">28 Mar 2024</span>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary text-sm font-bold rounded-xl transition-colors">Ver Documento</button>
+                <button class="flex-1 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-primary/20">Actualizar</button>
+            </div>
+        </div>
+
+        <!-- Doc 3 -->
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex flex-col shadow-sm relative group hover:border-outline-variant transition-colors">
+            <div class="absolute top-6 right-6">
+                <span class="px-2.5 py-1 bg-tertiary/10 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Vigente
+                </span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center mb-5">
+                <span class="material-symbols-outlined text-[20px]">storefront</span>
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">Aviso de Funcionamiento</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed mb-6 flex-1">Documentación de alta ante COFEPRIS para la operación del establecimiento.</p>
+            
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-5">
+                <div>
+                    <span class="block text-on-surface-variant/70 mb-1">Última Carga</span>
+                    <span class="text-white">22 Nov 2023</span>
+                </div>
+                <div class="text-right">
+                    <span class="block text-on-surface-variant/70 mb-1">Vence</span>
+                    <span class="text-white">N/A</span>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary text-sm font-bold rounded-xl transition-colors">Ver Documento</button>
+                <button class="w-11 py-2.5 bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-sm font-bold rounded-xl transition-colors flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">sync</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Area -->
+    <div class="border-2 border-dashed border-outline-variant/50 bg-surface-container/20 rounded-3xl p-12 flex flex-col items-center justify-center text-center transition-colors hover:bg-surface-container/40 animate-reveal delay-300">
+        <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary mb-6 shadow-md">
+            <span class="material-symbols-outlined text-[32px]">upload_file</span>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Cargar Nuevos Documentos</h3>
+        <p class="text-on-surface-variant text-sm mb-8 max-w-md">Arrastra y suelta tus archivos PDF aquí o haz clic para explorar. Formatos permitidos: PDF, JPG (Máx. 10MB).</p>
+        <button class="px-8 py-3 bg-surface-container-highest hover:bg-surface-dim border border-outline-variant text-white text-sm font-bold rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span> Seleccionar Archivos
+        </button>
+    </div>
+
+</main>
+<?php include('Includes/footer.php'); ?>

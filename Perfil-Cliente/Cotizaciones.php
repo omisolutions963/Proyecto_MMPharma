@@ -1,223 +1,211 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMPharma - Cotizaciones</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-deep: #05070a;
-            --sidebar-bg: #0d1117;
-            --card-bg: #161b22;
-            --accent-blue: #3b82f6;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --danger-bg: rgba(248, 81, 73, 0.1);
-            --danger-text: #f85149;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            margin: 0;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 50;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--text-primary);
-            background-color: rgba(255, 255, 255, 0.03);
-            border-left-color: var(--accent-blue);
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 24px;
-        }
-
-        .btn-outline {
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .btn-outline:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-
-        .btn-danger-transparent {
-            background-color: var(--danger-bg);
-            color: var(--danger-text);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-
-        .badge-status {
-            padding: 2px 8px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .bg-success-subtle { background-color: rgba(35, 134, 54, 0.15); color: #3fb950; }
-        .bg-pending-subtle { background-color: rgba(187, 128, 9, 0.15); color: #d29922; }
-    </style>
-</head>
-<body>
-    <aside class="sidebar">
-        <div class="p-8">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma Logo" class="h-10 w-auto object-contain">
+<?php
+$pageTitle  = 'MMPharma Portal - Cotizaciones';
+$activePage = 'cotizaciones';
+include('Includes/header.php');
+include('Includes/sidebar.php');
+?>
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
+    
+    <!-- Breadcrumb & Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 animate-reveal">
+        <div>
+            <nav class="flex text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3">
+                <a href="Dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
+                <span class="mx-2">›</span>
+                <span class="text-primary">Mis Cotizaciones</span>
+            </nav>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Historial de Cotizaciones</h1>
+            <p class="text-on-surface-variant mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
         </div>
+        <div class="mt-4 md:mt-0">
+            <a href="Cotizaciones.php?action=new" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">add</span> Nueva Cotización
+            </a>
+        </div>
+    </div>
 
-        <nav class="flex-1">
-            <a href="Dashboard.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                Dashboard
-            </a>
-            <a href="Catalogo.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-                Catálogo
-            </a>
-            <a href="Cotizaciones.php" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Cotizaciones
-            </a>
-            <a href="Perfil.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Mi Perfil
-            </a>
-            <a href="Documentos.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                Documentos
-            </a>
-            <a href="Direcciones.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Direcciones
-            </a>
-            <a href="Contacto.php" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l4-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Contacto
-            </a>
-        </nav>
-
-        <div class="p-6 border-t border-border-subtle space-y-3">
-            <a href="http://localhost:8080/proyecto_mmpharma/INDEX/index.php" class="w-full btn-outline flex items-center justify-center gap-2">
-                Ir al sitio Público
-            </a>
-            <a href="http://localhost:8080/proyecto_mmpharma/LOGIN/logout.php" class="w-full btn-danger-transparent flex items-center justify-center gap-2">
-                Cerrar sesión
-            </a>
-            
-            <div class="pt-4 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center border border-border-subtle">
-                    <img src="https://picsum.photos/seed/company/100/100" alt="Logo" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-white">MMPharma</p>
-                    <p class="text-[10px] text-text-secondary">Portal Cliente</p>
-                </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-reveal delay-100">
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex items-center gap-5 shadow-sm">
+            <div class="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-2xl">calendar_month</span>
+            </div>
+            <div>
+                <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Este mes</p>
+                <h3 class="text-3xl font-extrabold text-white leading-none">8</h3>
             </div>
         </div>
-    </aside>
-
-    <main class="main-content">
-        <header class="mb-10">
-            <h2 class="text-2xl font-bold tracking-tight mb-2">Historial de Cotizaciones</h2>
-            <p class="text-text-secondary">Consulte y gestione sus solicitudes previas de inventario.</p>
-        </header>
-
-        <div class="card overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="text-[11px] font-bold text-text-secondary uppercase tracking-widest border-b border-border-subtle">
-                        <tr>
-                            <th class="pb-5 px-4 font-extrabold">Folio</th>
-                            <th class="pb-5 px-4 font-extrabold">Fecha</th>
-                            <th class="pb-5 px-4 font-extrabold">Items</th>
-                            <th class="pb-5 px-4 font-extrabold text-right">Total</th>
-                            <th class="pb-5 px-4 font-extrabold text-center">Estatus</th>
-                            <th class="pb-5 px-4 font-extrabold text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border-subtle">
-                        <tr class="group hover:bg-white/2 transition-colors">
-                            <td class="py-5 px-4 text-sm font-semibold text-text-primary">COT-2023-142</td>
-                            <td class="py-5 px-4 text-sm text-text-secondary">18 Abr 2026</td>
-                            <td class="py-5 px-4 text-sm text-text-secondary">12 items</td>
-                            <td class="py-5 px-4 text-sm font-bold text-text-primary text-right">$12,450.00</td>
-                            <td class="py-5 px-4 text-center">
-                                <span class="badge-status bg-success-subtle">Aprobada</span>
-                            </td>
-                            <td class="py-5 px-4 text-right">
-                                <button class="p-2 hover:bg-white/5 rounded-lg text-text-secondary hover:text-accent-blue transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="group hover:bg-white/2 transition-colors">
-                            <td class="py-5 px-4 text-sm font-semibold text-text-primary">COT-2023-141</td>
-                            <td class="py-5 px-4 text-sm text-text-secondary">17 Abr 2026</td>
-                            <td class="py-5 px-4 text-sm text-text-secondary">8 items</td>
-                            <td class="py-5 px-4 text-sm font-bold text-text-primary text-right">$8,920.00</td>
-                            <td class="py-5 px-4 text-center">
-                                <span class="badge-status bg-pending-subtle">Pendiente</span>
-                            </td>
-                            <td class="py-5 px-4 text-right">
-                                <button class="p-2 hover:bg-white/5 rounded-lg text-text-secondary hover:text-accent-blue transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex items-center gap-5 shadow-sm">
+            <div class="w-14 h-14 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-2xl">payments</span>
+            </div>
+            <div>
+                <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Monto total</p>
+                <h3 class="text-3xl font-extrabold text-white leading-none">$89,340</h3>
             </div>
         </div>
-    </main>
-</body>
-</html>
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex items-center gap-5 shadow-sm">
+            <div class="w-14 h-14 rounded-xl bg-tertiary/10 text-tertiary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-2xl">verified</span>
+            </div>
+            <div>
+                <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Aprobadas</p>
+                <h3 class="text-3xl font-extrabold text-white leading-none">6</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-4 mb-6 animate-reveal delay-200">
+        <div class="relative flex-1 min-w-[250px]">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+            <input type="text" placeholder="Buscar por folio o agente..." class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+        </div>
+        <div class="relative w-48">
+            <select class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none">
+                <option>Todos los estados</option>
+                <option>Aprobada</option>
+                <option>Pendiente</option>
+                <option>Rechazada</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+        </div>
+        <div class="relative w-64">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">date_range</span>
+            <input type="text" value="01/10/2023 - 31/10/2023" readonly class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary outline-none cursor-pointer">
+        </div>
+        <button class="px-5 py-3 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-primary text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">filter_list</span> Filtros avanzados
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm overflow-hidden animate-reveal delay-300">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left whitespace-nowrap">
+                <thead class="bg-surface-container-low text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                    <tr>
+                        <th class="py-4 px-6">Folio</th>
+                        <th class="py-4 px-6">Fecha</th>
+                        <th class="py-4 px-6 text-center">Cant.</th>
+                        <th class="py-4 px-6 text-right">Subtotal</th>
+                        <th class="py-4 px-6 text-right">IVA</th>
+                        <th class="py-4 px-6 text-right">Total</th>
+                        <th class="py-4 px-6 text-center">Envío</th>
+                        <th class="py-4 px-6 text-center">Estado</th>
+                        <th class="py-4 px-6">Agente</th>
+                        <th class="py-4 px-6"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/10">
+                    <tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="py-4 px-6 text-sm font-bold text-primary">CT-8942</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">28 Oct 2023</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant text-center">12</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$12,450.00</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$1,992.00</td>
+                        <td class="py-4 px-6 text-sm font-bold text-white text-right">$14,442.00</td>
+                        <td class="py-4 px-6 text-center"><span class="material-symbols-outlined text-tertiary text-[18px]">local_shipping</span></td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="px-3 py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded-md uppercase tracking-wider">Aprobada</span>
+                        </td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">Lic. Mendoza</td>
+                        <td class="py-4 px-6 text-center">
+                            <button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="py-4 px-6 text-sm font-bold text-primary">CT-8941</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">27 Oct 2023</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant text-center">5</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$8,200.00</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$1,312.00</td>
+                        <td class="py-4 px-6 text-sm font-bold text-white text-right">$9,512.00</td>
+                        <td class="py-4 px-6 text-center"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">local_shipping</span></td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="px-3 py-1 bg-secondary/20 text-secondary text-[10px] font-bold rounded-md uppercase tracking-wider">Pendiente</span>
+                        </td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">Lic. Mendoza</td>
+                        <td class="py-4 px-6 text-center">
+                            <button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="py-4 px-6 text-sm font-bold text-primary">CT-8938</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">25 Oct 2023</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant text-center">45</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$45,000.00</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$7,200.00</td>
+                        <td class="py-4 px-6 text-sm font-bold text-white text-right">$52,200.00</td>
+                        <td class="py-4 px-6 text-center"><span class="material-symbols-outlined text-tertiary text-[18px]">local_shipping</span></td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="px-3 py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded-md uppercase tracking-wider">Aprobada</span>
+                        </td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">Ing. García</td>
+                        <td class="py-4 px-6 text-center">
+                            <button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="py-4 px-6 text-sm font-bold text-primary">CT-8935</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">22 Oct 2023</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant text-center">8</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$3,400.00</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$544.00</td>
+                        <td class="py-4 px-6 text-sm font-bold text-white text-right">$3,944.00</td>
+                        <td class="py-4 px-6 text-center"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">local_shipping</span></td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="px-3 py-1 bg-error/20 text-error text-[10px] font-bold rounded-md uppercase tracking-wider">Rechazada</span>
+                        </td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">Lic. Mendoza</td>
+                        <td class="py-4 px-6 text-center">
+                            <button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-surface-container/30 transition-colors group">
+                        <td class="py-4 px-6 text-sm font-bold text-primary">CT-8930</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">20 Oct 2023</td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant text-center">15</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$5,600.00</td>
+                        <td class="py-4 px-6 text-sm text-on-surface text-right">$896.00</td>
+                        <td class="py-4 px-6 text-sm font-bold text-white text-right">$6,496.00</td>
+                        <td class="py-4 px-6 text-center"><span class="material-symbols-outlined text-tertiary text-[18px]">local_shipping</span></td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="px-3 py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded-md uppercase tracking-wider">Aprobada</span>
+                        </td>
+                        <td class="py-4 px-6 text-xs text-on-surface-variant">Ing. García</td>
+                        <td class="py-4 px-6 text-center">
+                            <button class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container-low/50">
+            <span class="text-xs text-on-surface-variant">Mostrando 5 de 42 cotizaciones</span>
+            <div class="flex items-center gap-1">
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined text-sm">keyboard_double_arrow_left</span></button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white text-xs font-bold shadow-lg shadow-primary/20">1</button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container text-xs font-bold">2</button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface hover:bg-surface-container text-xs font-bold">3</button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                <button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined text-sm">keyboard_double_arrow_right</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Actions -->
+    <div class="flex justify-end gap-3 mt-6 animate-reveal delay-400">
+        <button class="px-5 py-2.5 bg-secondary/10 hover:bg-secondary/20 text-secondary text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">table_chart</span> Exportar Excel
+        </button>
+        <button class="px-5 py-2.5 bg-error/10 hover:bg-error/20 text-error text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar Reporte PDF
+        </button>
+    </div>
+
+</main>
+<?php include('Includes/footer.php'); ?>
