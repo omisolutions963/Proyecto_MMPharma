@@ -181,41 +181,19 @@ require_once '../includes/header.php';
         </script>
         
         <?php else: ?>
-        <div class="mb-10">
-          <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Precios por nivel de cliente</p>
-          <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Empresa</p>
-              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_empresa'], 2) ?></p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Farmacia</p>
-              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Distribuidor</p>
-              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-blue-50 shadow-[0_10px_30px_rgba(0,0,0,0.03)] text-center group hover:border-primary/20 transition-colors">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 group-hover:text-primary transition-colors">Red Fría</p>
-              <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_red_fria'], 2) ?></p>
-            </div>
-          </div>
-        </div>
-
         <!-- Acciones (Usuario no logueado) -->
         <div class="space-y-4">
           <div class="bg-blue-50/50 rounded-xl p-5 flex items-center gap-4 border border-blue-100">
             <span class="material-symbols-outlined text-primary text-2xl">lock</span>
             <p class="text-sm text-slate-600 leading-relaxed">
-              <strong class="text-primary block mb-1">¿Quieres cotizar este producto?</strong>
-              Inicia sesión como cliente para generar cotizaciones y realizar pedidos.
+              <strong class="text-primary block mb-1">¿Quieres ver precios y cotizar este producto?</strong>
+              Inicia sesión como cliente o solicita acceso para visualizar nuestro catálogo con precios.
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-4">
             <a href="../LOGIN/login_cliente.php"
                class="flex-1 h-[58px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-base flex items-center justify-center">
-              Iniciar sesión para cotizar
+              Iniciar sesión para acceder
             </a>
             <a href="catalogo.php"
                class="px-8 h-[58px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:-translate-y-1 transition-all text-base flex items-center justify-center gap-2 border border-slate-100 shadow-sm">
@@ -253,7 +231,11 @@ require_once '../includes/header.php';
           <span class="material-symbols-outlined text-xs">ac_unit</span> Red Fría
         </span>
         <?php endif; ?>
-        <p class="text-sm font-black text-primary mt-auto">$<?= number_format($r[$precio_campo] ?? $r['precio_farmacia'], 2) ?></p>
+        <?php if ($is_cliente): ?>
+          <p class="text-sm font-black text-primary mt-auto">$<?= number_format($r[$precio_campo] ?? $r['precio_farmacia'], 2) ?></p>
+        <?php else: ?>
+          <p class="text-[10px] font-bold text-slate-400 mt-auto">Inicia sesión para ver precio</p>
+        <?php endif; ?>
       </a>
       <?php endforeach; ?>
     </div>

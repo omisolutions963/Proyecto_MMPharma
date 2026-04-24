@@ -14,6 +14,8 @@ if (session_status() === PHP_SESSION_NONE) {
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link rel="icon" type="image/png" href="<?= $base ?? '' ?>logos/MMPharma-Isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- SweetAlert2 para alertas animadas -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script id="tailwind-config">
     tailwind.config = {
         darkMode: "class",
@@ -266,17 +268,15 @@ function agregarAlCarrito(id, nombre, precio, imagen) {
     renderCartItems();
     
     // Mostramos una alerta visual (toast) en su lugar para indicar éxito sin interrumpir
-    if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            toast: true,
-            position: 'bottom-end',
-            icon: 'success',
-            title: 'Producto añadido',
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true
-        });
-    }
+    Swal.fire({
+        toast: true,
+        position: 'bottom-end',
+        icon: 'success',
+        title: 'Producto añadido',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
 }
 
 function cambiarCantidad(index, delta) {
@@ -320,11 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function confirmarPedido() {
     if (carrito.length === 0) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire('Carrito vacío', 'Añade productos antes de confirmar el pedido', 'warning');
-        } else {
-            alert('Añade productos antes de confirmar el pedido');
-        }
+        Swal.fire('Carrito vacío', 'Añade productos antes de confirmar el pedido', 'warning');
         return;
     }
     
@@ -346,35 +342,62 @@ function confirmarPedido() {
             renderCartItems();
             toggleCartDrawer();
             
-            let msg = 'Tu pedido ha sido registrado exitosamente y está pendiente de autorización.';
-            if (data.folio) {
-                msg = `Tu pedido <b>${data.folio}</b> ha sido registrado exitosamente y está pendiente de autorización.`;
-            }
+            let folioText = data.folio ? `Folio: ${data.folio}` : '';
             
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Pedido Confirmado!',
-                    html: msg,
-                    confirmButtonColor: '#006397'
-                }).then(() => {
-                    window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
-                });
-            } else {
-                alert('¡Pedido Confirmado! ' + msg);
+            Swal.fire({
+                html: `
+                    <div class="flex flex-col items-center justify-center p-2">
+                        <div class="relative w-32 h-32 mb-8 mt-4">
+                            <!-- Círculos de fondo con animación -->
+                            <div class="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-70" style="animation-duration: 3s;"></div>
+                            <div class="absolute inset-2 bg-blue-200 rounded-full animate-pulse"></div>
+                            <!-- Contenedor del ícono -->
+                            <div class="absolute inset-4 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-xl z-10 border-4 border-white">
+                                <span class="material-symbols-outlined text-white text-4xl transform -rotate-12 animate-[bounce_2s_infinite]">send</span>
+                            </div>
+                            <!-- Pequeño reloj indicador -->
+                            <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-lg z-20">
+                                <div class="bg-amber-400 w-8 h-8 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white text-sm">schedule</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-3xl font-black text-on-surface tracking-tight mb-2">¡Pedido Enviado!</h2>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">${folioText}</p>
+                        
+                        <div class="bg-amber-50 border border-amber-100/50 rounded-2xl p-5 w-full text-left relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
+                            <div class="flex items-center gap-3 text-amber-700 mb-2">
+                                <span class="material-symbols-outlined text-xl">pending_actions</span>
+                                <span class="font-bold text-sm uppercase tracking-wider">En espera de autorización</span>
+                            </div>
+                            <p class="text-xs text-amber-900/70 leading-relaxed font-medium">
+                                Tu pedido ha sido recibido exitosamente y se encuentra en revisión. Te notificaremos en cuanto nuestro equipo autorice la solicitud para proceder.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido, volver al catálogo',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-[2rem] p-2 border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.1)]',
+                    confirmButton: 'w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 transition-all text-sm mt-4'
+                },
+                width: '32em',
+                allowOutsideClick: false,
+                backdrop: `rgba(0, 29, 53, 0.4)`
+            }).then(() => {
                 window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
-            }
+            });
         } else {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire('Error', 'Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'), 'error');
-            } else {
-                alert('Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'));
-            }
+            Swal.fire('Error', 'Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'), 'error');
         }
     })
     .catch(err => {
         console.error(err);
-        alert('Error de conexión al procesar el pedido.');
+        Swal.fire('Error de conexión', 'No se pudo procesar el pedido. Verifica tu conexión a internet.', 'error');
     })
     .finally(() => {
         btn.innerHTML = originalText;

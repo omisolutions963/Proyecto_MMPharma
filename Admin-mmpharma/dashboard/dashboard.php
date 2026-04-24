@@ -42,6 +42,47 @@ try { $contactoNuevos= (int)$pdo->query("SELECT COUNT(*) FROM contacto_mensajes 
 try { $topProductos  = $pdo->query("SELECT nombre, precio_farmacia FROM productos WHERE precio_farmacia > 0 ORDER BY precio_farmacia DESC LIMIT 6")->fetchAll(); } catch(Exception $e){}
 try { $ultimasSolicitudes = $pdo->query("SELECT razon_social, tipo_cliente, email, estatus, created_at FROM solicitudes_registro ORDER BY created_at DESC LIMIT 5")->fetchAll(); } catch(Exception $e){}
 
+$salesData = ['daily' => ['labels' => [], 'data' => []], 'monthly' => ['labels' => [], 'data' => []]];
+$topProductosVentas = [];
+try {
+    // Top 10 Productos
+    $sqlTop = "SELECT d.nombre_producto, SUM(d.cantidad) as total_vendido, SUM(d.subtotal) as ingresos 
+               FROM pedidos_detalle d 
+               JOIN pedidos p ON d.pedido_id = p.id 
+               WHERE p.estado_envio != 'CANCELADO' 
+               GROUP BY d.producto_id, d.nombre_producto 
+               ORDER BY total_vendido DESC LIMIT 10";
+    $topProductosVentas = $pdo->query($sqlTop)->fetchAll(PDO::FETCH_ASSOC);
+
+    // Sales Daily
+    $sqlDaily = "SELECT DATE(fecha_pedido) as d, SUM(monto_total) as t 
+                 FROM pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+                 GROUP BY DATE(fecha_pedido)";
+    $resDaily = $pdo->query($sqlDaily)->fetchAll(PDO::FETCH_ASSOC);
+    $dMap = []; foreach($resDaily as $r) $dMap[$r['d']] = (float)$r['t'];
+    for ($i = 29; $i >= 0; $i--) {
+        $date = date('Y-m-d', strtotime("-$i days"));
+        $salesData['daily']['labels'][] = date('d/m', strtotime("-$i days"));
+        $salesData['daily']['data'][] = $dMap[$date] ?? 0;
+    }
+
+    // Sales Monthly
+    $sqlMonthly = "SELECT DATE_FORMAT(fecha_pedido, '%Y-%m') as m, SUM(monto_total) as t 
+                   FROM pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 11 MONTH) 
+                   GROUP BY DATE_FORMAT(fecha_pedido, '%Y-%m')";
+    $resMonthly = $pdo->query($sqlMonthly)->fetchAll(PDO::FETCH_ASSOC);
+    $mMap = []; foreach($resMonthly as $r) $mMap[$r['m']] = (float)$r['t'];
+    
+    $mesesES = ['Jan'=>'Ene','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Abr','May'=>'May','Jun'=>'Jun','Jul'=>'Jul','Aug'=>'Ago','Sep'=>'Sep','Oct'=>'Oct','Nov'=>'Nov','Dec'=>'Dic'];
+    for ($i = 11; $i >= 0; $i--) {
+        $month = date('Y-m', strtotime("first day of -$i month"));
+        $mEn = date('M', strtotime("first day of -$i month"));
+        $label = $mesesES[$mEn] . ' ' . date('y', strtotime("first day of -$i month"));
+        $salesData['monthly']['labels'][] = $label;
+        $salesData['monthly']['data'][] = $mMap[$month] ?? 0;
+    }
+} catch (Exception $e) {}
+
 $pageTitle  = 'MMPharma Portal - Dashboard';
 $activePage = 'dashboard';
 include('../includes/header.php');
@@ -222,6 +263,23 @@ include('../includes/sidebar.php');
     </div>
 </div>
 
+<!-- ══ GRÁFICO DE VENTAS ═════════════════════════════════════════════════════ -->
+<div class="mb-8 p-6 rounded-2xl animate-fade-up" style="background:#102245;border:1px solid rgba(74,144,217,0.15); animation-delay: 0.35s">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">trending_up</span>
+            Rendimiento de Ventas
+        </h2>
+        <div class="flex bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10">
+            <button onclick="updateChart('daily')" id="btnChartDaily" class="px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-white shadow transition-all">Diario</button>
+            <button onclick="updateChart('monthly')" id="btnChartMonthly" class="px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all">Mensual</button>
+        </div>
+    </div>
+    <div class="w-full h-[300px]">
+        <canvas id="salesChart"></canvas>
+    </div>
+</div>
+
 <!-- ══ CONTENIDO PRINCIPAL ═══════════════════════════════════════════════════ -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -339,28 +397,41 @@ include('../includes/sidebar.php');
             </div>
         </div>
 
-        <!-- Top Productos -->
+        <!-- Top 10 Productos Más Vendidos -->
         <div class="p-6 rounded-2xl animate-fade-up" style="background:#102245;border:1px solid rgba(74,144,217,0.15); animation-delay: 0.4s">
             <h2 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-[18px]">stars</span>
-                Mayor Precio (Farmacia)
+                <span class="material-symbols-outlined text-tertiary text-[18px]">workspace_premium</span>
+                Top 10 Más Vendidos
             </h2>
             <div class="space-y-4">
-            <?php foreach ($topProductos as $i => $p): ?>
-            <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-[10px] font-black"
-                     style="background:rgba(74,144,217,0.15);color:#4a90d9">#<?= $i+1 ?></div>
-                <div class="flex-1 overflow-hidden">
-                    <p class="text-xs font-semibold text-white truncate"><?= htmlspecialchars($p['nombre']) ?></p>
-                    <p class="text-[10px] text-on-surface-variant">$<?= number_format($p['precio_farmacia'],2) ?> MXN</p>
+            <?php if (empty($topProductosVentas)): ?>
+                <p class="text-xs text-on-surface-variant text-center py-4">Aún no hay ventas registradas.</p>
+            <?php else: ?>
+                <?php 
+                // Encontrar el máximo vendido para la barra de progreso
+                $maxVendido = max(array_column($topProductosVentas, 'total_vendido'));
+                foreach ($topProductosVentas as $i => $p): 
+                    $pct = $maxVendido > 0 ? round(($p['total_vendido'] / $maxVendido) * 100) : 0;
+                ?>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <span class="text-[10px] font-black text-tertiary w-4">#<?= $i+1 ?></span>
+                            <span class="text-xs font-semibold text-white truncate" title="<?= htmlspecialchars($p['nombre_producto']) ?>"><?= htmlspecialchars($p['nombre_producto']) ?></span>
+                        </div>
+                        <span class="text-[10px] font-bold text-on-surface-variant ml-2 whitespace-nowrap"><?= number_format($p['total_vendido']) ?> uds</span>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full" style="background:rgba(255,255,255,0.05)">
+                        <div class="h-full rounded-full transition-all duration-1000" style="background:linear-gradient(90deg, #34c47a, #4a90d9); width:<?= $pct ?>%"></div>
+                    </div>
                 </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
             </div>
-            <?php endforeach; ?>
-            </div>
-            <a href="../G_Productos/productos.php"
-               class="block text-center w-full mt-6 py-2.5 rounded-xl text-xs font-bold text-primary transition-colors hover:bg-primary/10"
-               style="border:1px solid rgba(74,144,217,0.3)">
-                Ver catálogo completo →
+            <a href="../G_Pedidos/pedidos.php"
+               class="block text-center w-full mt-6 py-2.5 rounded-xl text-xs font-bold text-tertiary transition-colors hover:bg-tertiary/10"
+               style="border:1px solid rgba(52,196,122,0.3)">
+                Ir a Pedidos →
             </a>
         </div>
 
@@ -762,6 +833,98 @@ function togglePasswordVis(btn) {
     if (inp.type === 'password') { inp.type = 'text'; icon.textContent = 'visibility_off'; }
     else { inp.type = 'password'; icon.textContent = 'visibility'; }
 }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ── Gráfico de Ventas ────────────────────────────────────────────────────────
+const salesData = <?= json_encode($salesData) ?>;
+let salesChart = null;
+
+function initChart() {
+    const ctx = document.getElementById('salesChart');
+    if (!ctx) return;
+    
+    Chart.defaults.color = 'rgba(255, 255, 255, 0.5)';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    
+    salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: salesData.daily.labels,
+            datasets: [{
+                label: 'Ingresos (MXN)',
+                data: salesData.daily.data,
+                borderColor: '#4a90d9',
+                backgroundColor: 'rgba(74, 144, 217, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#071628',
+                pointBorderColor: '#4a90d9',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(7, 22, 40, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#4a90d9',
+                    borderColor: 'rgba(74, 144, 217, 0.3)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2}) + ' MXN';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: {
+                        callback: function(value) { return '$' + value.toLocaleString('es-MX'); }
+                    }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false }
+                }
+            }
+        }
+    });
+}
+
+function updateChart(period) {
+    if (!salesChart) return;
+    
+    const btnDaily = document.getElementById('btnChartDaily');
+    const btnMonthly = document.getElementById('btnChartMonthly');
+    
+    if (period === 'daily') {
+        btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-white shadow transition-all";
+        btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
+    } else {
+        btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-white shadow transition-all";
+        btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
+    }
+    
+    salesChart.data.labels = salesData[period].labels;
+    salesChart.data.datasets[0].data = salesData[period].data;
+    salesChart.update();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initChart();
+});
 </script>
 
 <?php include('../includes/footer.php'); ?>

@@ -1,10 +1,23 @@
 <?php
+$badgePedidos = 0;
+$badgeSolicitudes = 0;
+
+if (!isset($pdo)) {
+    require_once __DIR__ . '/../clinical_core/db.php';
+    $pdo = getDB();
+}
+
+try {
+    $badgePedidos = (int)$pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado_envio='PENDIENTE'")->fetchColumn();
+    $badgeSolicitudes = (int)$pdo->query("SELECT COUNT(*) FROM solicitudes_registro WHERE estatus='PENDIENTE'")->fetchColumn();
+} catch (Exception $e) {}
+
 $menuItems = [
-    ['icon' => 'dashboard',       'label' => 'Dashboard',   'page' => 'dashboard'],
-    ['icon' => 'inventory_2',     'label' => 'Inventario',  'page' => 'productos'],
-    ['icon' => 'group',           'label' => 'Clientes',    'page' => 'clientes'],
-    ['icon' => 'shopping_cart',   'label' => 'Pedidos',     'page' => 'pedidos'],
-    ['icon' => 'list_alt',        'label' => 'Solicitudes', 'page' => 'solicitudes'],
+    ['icon' => 'dashboard',       'label' => 'Dashboard',   'page' => 'dashboard',   'badge' => 0],
+    ['icon' => 'inventory_2',     'label' => 'Inventario',  'page' => 'productos',   'badge' => 0],
+    ['icon' => 'group',           'label' => 'Clientes',    'page' => 'clientes',    'badge' => 0],
+    ['icon' => 'shopping_cart',   'label' => 'Pedidos',     'page' => 'pedidos',     'badge' => $badgePedidos],
+    ['icon' => 'list_alt',        'label' => 'Solicitudes', 'page' => 'solicitudes', 'badge' => $badgeSolicitudes],
 ];
 
 $menuLinks = [
@@ -43,7 +56,11 @@ $menuLinks = [
                 <?= $item['icon'] ?>
             </span>
             <span><?= $item['label'] ?></span>
-            <?php if ($isActive): ?>
+            <?php if (!empty($item['badge']) && $item['badge'] > 0): ?>
+            <span class="ml-auto flex h-5 w-auto min-w-[20px] px-1.5 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white shadow-lg shadow-red-500/40">
+                <?= $item['badge'] > 99 ? '99+' : $item['badge'] ?>
+            </span>
+            <?php elseif ($isActive): ?>
             <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400"></span>
             <?php endif; ?>
         </a>

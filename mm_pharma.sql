@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3307
--- Tiempo de generación: 18-04-2026 a las 09:58:24
+-- Tiempo de generación: 24-04-2026 a las 21:02:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -71,6 +71,7 @@ CREATE TABLE `clientes` (
   `telefono_local` varchar(20) DEFAULT NULL,
   `telefono_celular` varchar(20) DEFAULT NULL,
   `email` varchar(150) DEFAULT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
   `documento_tipo` enum('NOTA','FACTURA') DEFAULT 'FACTURA',
   `metodo_pago` enum('TRANSFERENCIA','CHEQUE','EFECTIVO') DEFAULT 'TRANSFERENCIA',
   `uso_cfdi` varchar(100) DEFAULT NULL,
@@ -88,6 +89,13 @@ CREATE TABLE `clientes` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`id`, `tipo`, `razon_social`, `nombre_comercial`, `rfc`, `regimen_fiscal`, `domicilio_fiscal`, `colonia_fiscal`, `cp_fiscal`, `ciudad_fiscal`, `estado_fiscal`, `representante_legal`, `giro`, `persona_contacto`, `volumen_mensual`, `telefono_local`, `telefono_celular`, `email`, `password_hash`, `documento_tipo`, `metodo_pago`, `uso_cfdi`, `domicilio_entrega`, `colonia_entrega`, `cp_entrega`, `ciudad_entrega`, `municipio_entrega`, `estado_entrega`, `receptor_entrega`, `horario_entrega`, `estatus`, `agente_id`, `notas`, `created_at`, `updated_at`) VALUES
+(5, 'FARMACIA', 'Farmacia de Prueba S.A. de C.V.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, NULL, NULL, 'cliente@mmpharma.com', '$2y$10$nZ1gj27coIurg3kUfjUdj.oPpj1WUbQOHudhdT21rjkvxjPoexnte', 'FACTURA', 'TRANSFERENCIA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ACTIVO', NULL, NULL, '2026-04-22 22:06:48', '2026-04-22 22:06:48');
 
 -- --------------------------------------------------------
 
@@ -184,6 +192,18 @@ CREATE TABLE `pedidos` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`id`, `folio`, `cliente_id`, `tipo_cliente`, `fecha_pedido`, `fecha_entrega`, `monto_total`, `metodo_pago`, `estado_envio`, `notas`, `created_at`, `updated_at`) VALUES
+(5, 'ORD-2026-0001', 5, 'FARMACIA', '2026-04-22', NULL, 579.97, 'TRANSFERENCIA', 'PROCESANDO', NULL, '2026-04-22 22:57:01', '2026-04-22 22:57:47'),
+(6, 'ORD-2026-0006', 5, 'FARMACIA', '2026-04-22', NULL, 853.50, 'TRANSFERENCIA', 'PROCESANDO', NULL, '2026-04-23 03:55:31', '2026-04-23 23:56:23'),
+(7, 'ORD-2026-0007', 5, 'FARMACIA', '2026-04-23', NULL, 882.66, 'TRANSFERENCIA', 'CANCELADO', NULL, '2026-04-23 23:55:17', '2026-04-23 23:56:09'),
+(8, 'ORD-2026-0008', 5, 'FARMACIA', '2026-04-24', NULL, 98.60, 'TRANSFERENCIA', 'PROCESANDO', NULL, '2026-04-24 18:37:11', '2026-04-24 18:37:26'),
+(9, 'ORD-2026-0009', 5, 'FARMACIA', '2026-04-24', NULL, 525.00, 'TRANSFERENCIA', 'PENDIENTE', NULL, '2026-04-24 18:39:45', '2026-04-24 18:39:45'),
+(10, 'ORD-2026-0010', 5, 'FARMACIA', '2026-04-24', NULL, 1312.50, 'TRANSFERENCIA', 'PENDIENTE', NULL, '2026-04-24 18:41:33', '2026-04-24 18:41:33');
+
 -- --------------------------------------------------------
 
 --
@@ -199,6 +219,21 @@ CREATE TABLE `pedidos_detalle` (
   `precio_unitario` decimal(10,2) NOT NULL DEFAULT 0.00,
   `subtotal` decimal(14,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pedidos_detalle`
+--
+
+INSERT INTO `pedidos_detalle` (`id`, `pedido_id`, `producto_id`, `nombre_producto`, `cantidad`, `precio_unitario`, `subtotal`) VALUES
+(1, 5, 3, 'ABATELENGUAS DE MADERA (AMBIDERM) BOLSA CON 25 PZS.', 3, 7.75, 23.25),
+(2, 5, 2, 'A.S. COR 1 G/100 ML SOL. FCO. GOTERO CON 24 ML', 1, 262.50, 262.50),
+(3, 5, 8, 'ACCU-CHEK ACTIVE TIRAS REACTIVAS CAJA CON 50', 1, 294.22, 294.22),
+(4, 6, 8, 'ACCU-CHEK ACTIVE TIRAS REACTIVAS CAJA CON 50', 1, 294.22, 294.22),
+(5, 6, 9, 'ACCU-CHEK INSTANT TIRAS REACTIVAS CON 50 PIEZAS', 2, 279.64, 559.28),
+(6, 7, 8, 'ACCU-CHEK ACTIVE TIRAS REACTIVAS CAJA CON 50', 3, 294.22, 882.66),
+(7, 8, 18, 'ADRECORT 1 MG CON 20 TABLETAS', 4, 24.65, 98.60),
+(8, 9, 2, 'A.S. COR 1 G/100 ML SOL. FCO. GOTERO CON 24 ML', 2, 262.50, 525.00),
+(9, 10, 2, 'A.S. COR 1 G/100 ML SOL. FCO. GOTERO CON 24 ML', 5, 262.50, 1312.50);
 
 -- --------------------------------------------------------
 
@@ -1135,7 +1170,7 @@ ALTER TABLE `administradores`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `contacto_mensajes`
@@ -1153,13 +1188,13 @@ ALTER TABLE `inventario_movimientos`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos_detalle`
 --
 ALTER TABLE `pedidos_detalle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`

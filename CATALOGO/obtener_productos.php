@@ -77,7 +77,11 @@ foreach ($productos as $p) {
             <?= htmlspecialchars($p['sustancia'] ?? '—') ?>
           </td>
           <td class="px-8 py-5 text-center">
-            <p class="text-sm font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
+            <?php if ($is_cliente): ?>
+              <p class="text-sm font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
+            <?php else: ?>
+              <p class="text-[10px] font-bold text-slate-400 leading-tight">Inicia sesión<br>para ver precio</p>
+            <?php endif; ?>
           </td>
           <td class="px-8 py-5 hidden md:table-cell text-center">
             <?php if ($p['tipo'] === 'RED FRIA'): ?>
@@ -124,7 +128,11 @@ foreach ($productos as $p) {
             <?= htmlspecialchars($p['sustancia'] ?? '') ?>
           </p>
           <div class="flex items-center justify-between mt-auto">
-            <p class="text-base font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
+            <?php if ($is_cliente): ?>
+              <p class="text-base font-black text-primary">$<?= number_format($p[$precio_campo], 2) ?></p>
+            <?php else: ?>
+              <p class="text-[10px] font-bold text-slate-400">Inicia sesión<br>para ver precio</p>
+            <?php endif; ?>
             <?php if ($is_cliente): ?>
             <button type="button" onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= (float)$p[$precio_campo] ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/5 text-primary hover:bg-secondary hover:text-white transition-all shadow-sm" title="Añadir al carrito">
               <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
