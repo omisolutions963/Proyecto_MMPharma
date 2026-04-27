@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title><?= $titulo ?? 'MMPharma | Distribuidora Farmacéutica' ?></title>
+<title><?= $titulo ?? 'MMPharma | Distribuidora farmacéutica' ?></title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -24,7 +24,7 @@ if (session_status() === PHP_SESSION_NONE) {
                 colors: {
                     "primary": "#003e79",
                     "secondary": "#1e60aa",
-                    "tertiary": "#32b4ca",
+                    "tertiary": "#2ca1b5",
                     "primary-container": "#e0f2ff",
                     "secondary-container": "#cfe5ff",
                     "tertiary-container": "#d1e4ff",
@@ -49,6 +49,15 @@ if (session_status() === PHP_SESSION_NONE) {
         vertical-align: middle;
     }
     .clinical-shadow { box-shadow: 0 10px 40px -10px rgba(0, 62, 121, 0.1); }
+
+    /* Mobile Menu Transition */
+    #mobile-menu {
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(100%);
+    }
+    #mobile-menu.active {
+        transform: translateX(0);
+    }
 </style>
 </head>
 <body class="bg-[#f0f7ff] font-body text-on-surface antialiased">
@@ -62,54 +71,275 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 
   <div class="hidden md:flex gap-12 text-base">
-    <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary font-black border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>INDEX/index.php">Inicio</a>
-    <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary font-black border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php">¿Quiénes somos?</a>
-    <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary font-black border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">Catálogo</a>
-    <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary font-black border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
+    <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>INDEX/index.php">Inicio</a>
+    <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php">¿Quiénes somos?</a>
+    <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">Catálogo</a>
+    <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
   </div>
 
   <div class="flex-1 flex items-center justify-end gap-4">
     <?php if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true): ?>
+        
+        <!-- Lógica de colores por rol -->
+        <?php
+        $tipo_cliente = $_SESSION['cliente_tipo'] ?? '';
+        $role_ring = 'ring-slate-300';
+        $role_bg = 'bg-slate-500';
+        
+        $role_text = 'text-primary';
+        $role_hover_text = 'hover:text-primary';
+        $role_hover_bg = 'hover:bg-primary/5';
+        $role_icon_bg = 'group-hover/item:bg-primary';
+        
+        if ($tipo_cliente === 'EMPRESA') {
+            $role_ring = 'ring-secondary';
+            $role_bg = 'bg-secondary';
+            $role_text = 'text-secondary';
+            $role_hover_text = 'hover:text-secondary';
+            $role_hover_bg = 'hover:bg-secondary/10';
+            $role_icon_bg = 'group-hover/item:bg-secondary';
+        } elseif ($tipo_cliente === 'DISTRIBUIDORA') {
+            $role_ring = 'ring-tertiary';
+            $role_bg = 'bg-tertiary';
+            $role_text = 'text-tertiary';
+            $role_hover_text = 'hover:text-tertiary';
+            $role_hover_bg = 'hover:bg-tertiary/10';
+            $role_icon_bg = 'group-hover/item:bg-tertiary';
+        } elseif ($tipo_cliente === 'FARMACIA') {
+            $role_ring = 'ring-primary';
+            $role_bg = 'bg-primary';
+            $role_text = 'text-primary';
+            $role_hover_text = 'hover:text-primary';
+            $role_hover_bg = 'hover:bg-primary/5';
+            $role_icon_bg = 'group-hover/item:bg-primary';
+        }
+        ?>
+
+        <?php 
+        $foto_cliente_raw = $_SESSION['cliente_foto'] ?? ''; 
+        $foto_cliente = '';
+        if ($foto_cliente_raw && $foto_cliente_raw !== 'PENDIENTE') {
+            $foto_cliente = $base . 'DASHBOARD_CLIENTE/' . ltrim(str_replace('../', '', $foto_cliente_raw), '/');
+        }
+        ?>
+        <!-- Perfil de cliente con Dropdown -->
+        <div class="relative" id="profile-dropdown">
+          <button onclick="toggleProfileDropdown()" class="w-10 h-10 <?= $foto_cliente ? 'bg-white' : $role_bg ?> text-white rounded-full flex items-center justify-center shadow-md group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-white <?= $role_ring ?> focus:outline-none ml-2 overflow-hidden">
+            <?php if ($foto_cliente && $foto_cliente !== 'PENDIENTE'): ?>
+              <img src="<?= htmlspecialchars($foto_cliente) ?>" alt="Perfil" class="w-full h-full object-cover">
+            <?php else: ?>
+              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1">person</span>
+            <?php endif; ?>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="profile-menu" class="hidden absolute right-0 mt-4 w-72 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,62,121,0.15)] border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+            <div class="px-6 py-5 bg-slate-50/50 border-b border-slate-100">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Cuenta activa</p>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200 <?= $role_text ?> shadow-sm overflow-hidden flex-shrink-0">
+                  <?php if ($foto_cliente && $foto_cliente !== 'PENDIENTE'): ?>
+                    <img src="<?= htmlspecialchars($foto_cliente) ?>" alt="Perfil" class="w-full h-full object-cover">
+                  <?php else: ?>
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">business</span>
+                  <?php endif; ?>
+                </div>
+                <div class="flex-1 overflow-hidden flex flex-col justify-center gap-1">
+                  <p class="text-sm font-black <?= $role_text ?> leading-tight break-words whitespace-normal"><?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?></p>
+                  <p class="text-[9px] font-bold text-slate-500 uppercase leading-tight"><?= htmlspecialchars($_SESSION['cliente_tipo'] ?? 'FARMACIA') ?></p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="p-2">
+              <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center <?= $role_icon_bg ?> group-hover/item:text-white transition-colors">
+                  <span class="material-symbols-outlined text-lg">dashboard</span>
+                </div>
+                <span>Panel de control</span>
+              </a>
+              <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Perfil.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center <?= $role_icon_bg ?> group-hover/item:text-white transition-colors">
+                  <span class="material-symbols-outlined text-lg">manage_accounts</span>
+                </div>
+                <span>Mi perfil</span>
+              </a>
+            </div>
+            
+            <div class="p-2 bg-slate-50/50 border-t border-slate-100">
+              <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-[#ba1a1a] hover:bg-[#ffdad6] rounded-xl transition-all group/item">
+                <div class="w-8 h-8 bg-[#ffdad6]/50 rounded-lg flex items-center justify-center group-hover/item:bg-[#ba1a1a] group-hover/item:text-white transition-colors">
+                  <span class="material-symbols-outlined text-lg">logout</span>
+                </div>
+                <span>Cerrar sesión</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <!-- Icono de carrito (Solo para clientes logueados) -->
-        <button id="cart-icon-btn" onclick="toggleCartDrawer()" class="relative w-10 h-10 flex items-center justify-center text-slate-600 hover:text-primary hover:bg-slate-100 rounded-xl transition-all mr-2" aria-label="Carrito de compras">
+        <button id="cart-icon-btn" onclick="toggleCartDrawer()" class="relative w-10 h-10 flex items-center justify-center text-slate-600 hover:text-primary hover:bg-slate-100 rounded-xl transition-all ml-2" aria-label="Carrito de compras">
           <span class="material-symbols-outlined text-2xl">shopping_cart</span>
           <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-secondary text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
         </button>
-        
-        <!-- Perfil de cliente -->
-        <div class="flex items-center gap-3">
-          <div class="hidden md:flex flex-col text-right">
-            <span class="text-xs font-bold text-slate-900"><?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?></span>
-            <span class="text-[10px] font-bold text-primary uppercase tracking-widest"><?= htmlspecialchars($_SESSION['cliente_tipo'] ?? 'FARMACIA') ?></span>
-          </div>
-          <a href="<?= $base ?? '' ?>LOGIN/logout.php" title="Cerrar Sesión">
-            <button class="w-10 h-10 flex items-center justify-center text-[#ba1a1a] hover:bg-[#ffdad6] rounded-xl transition-all group" aria-label="Cerrar Sesión">
-              <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">logout</span>
-            </button>
-          </a>
-        </div>
+
+        <script>
+          function toggleProfileDropdown() {
+            const menu = document.getElementById('profile-menu');
+            menu.classList.toggle('hidden');
+          }
+
+          document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            const menu = document.getElementById('profile-menu');
+            if (dropdown && !dropdown.contains(event.target)) {
+              menu.classList.add('hidden');
+            }
+          });
+        </script>
+
     <?php elseif (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
-        <a href="<?= $base ?? '' ?>Admin-mmpharma/dashboard/dashboard.php">
-          <button class="px-6 py-2 bg-gradient-to-br from-[#005132] to-[#008151] text-white font-bold rounded-xl shadow-lg hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,129,81,0.2)] active:scale-95 transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined text-lg">dashboard</span> Panel de Administrador
+        <?php 
+        $foto_admin_raw = $_SESSION['admin_foto'] ?? ''; 
+        $foto_admin = '';
+        if ($foto_admin_raw && $foto_admin_raw !== 'PENDIENTE') {
+            $foto_admin = $base . 'DASHBOARD_ADMIN/' . ltrim(str_replace('../', '', $foto_admin_raw), '/');
+        }
+        ?>
+        <!-- Perfil de Admin con Dropdown -->
+        <div class="relative" id="profile-dropdown-admin">
+          <button onclick="toggleProfileDropdownAdmin()" class="w-10 h-10 <?= $foto_admin ? 'bg-white' : 'bg-[#005132]' ?> text-white rounded-full flex items-center justify-center shadow-md group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-white ring-[#005132] focus:outline-none ml-2 overflow-hidden">
+            <?php if ($foto_admin && $foto_admin !== 'PENDIENTE'): ?>
+              <img src="<?= htmlspecialchars($foto_admin) ?>" alt="Perfil" class="w-full h-full object-cover">
+            <?php else: ?>
+              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1">shield_person</span>
+            <?php endif; ?>
           </button>
-        </a>
-        <a href="<?= $base ?? '' ?>LOGIN/logout.php" title="Cerrar Sesión">
-          <button class="w-10 h-10 flex items-center justify-center text-[#ba1a1a] hover:bg-[#ffdad6] rounded-xl transition-all group" aria-label="Cerrar Sesión">
-            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">logout</span>
-          </button>
-        </a>
+
+          <!-- Dropdown Menu -->
+          <div id="profile-menu-admin" class="hidden absolute right-0 mt-4 w-72 bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,62,121,0.15)] border border-slate-100 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+            <div class="px-6 py-5 bg-slate-50/50 border-b border-slate-100">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Cuenta activa</p>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-[#005132] shadow-sm overflow-hidden flex-shrink-0">
+                  <?php if ($foto_admin && $foto_admin !== 'PENDIENTE'): ?>
+                    <img src="<?= htmlspecialchars($foto_admin) ?>" alt="Perfil" class="w-full h-full object-cover">
+                  <?php else: ?>
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">admin_panel_settings</span>
+                  <?php endif; ?>
+                </div>
+                <div class="flex-1 overflow-hidden flex flex-col justify-center gap-1">
+                  <p class="text-sm font-black text-[#005132] leading-tight break-words whitespace-normal"><?= htmlspecialchars($_SESSION['admin_nombre'] ?? 'Administrador') ?></p>
+                  <p class="text-[9px] font-bold text-slate-500 uppercase leading-tight">ADMINISTRADOR</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="p-2">
+              <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 hover:text-[#005132] hover:bg-[#005132]/5 rounded-xl transition-all group/item">
+                <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center group-hover/item:bg-[#005132] group-hover/item:text-white transition-colors">
+                  <span class="material-symbols-outlined text-lg">dashboard</span>
+                </div>
+                <span>Panel de control</span>
+              </a>
+            </div>
+            
+            <div class="p-2 bg-slate-50/50 border-t border-slate-100">
+              <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-[#ba1a1a] hover:bg-[#ffdad6] rounded-xl transition-all group/item">
+                <div class="w-8 h-8 bg-[#ffdad6]/50 rounded-lg flex items-center justify-center group-hover/item:bg-[#ba1a1a] group-hover/item:text-white transition-colors">
+                  <span class="material-symbols-outlined text-lg">logout</span>
+                </div>
+                <span>Cerrar sesión</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function toggleProfileDropdownAdmin() {
+            const menu = document.getElementById('profile-menu-admin');
+            menu.classList.toggle('hidden');
+          }
+
+          document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-dropdown-admin');
+            const menu = document.getElementById('profile-menu-admin');
+            if (dropdown && !dropdown.contains(event.target)) {
+              menu.classList.add('hidden');
+            }
+          });
+        </script>
+
     <?php else: ?>
-        <a href="<?= $base ?? '' ?>LOGIN/login_cliente.php">
-          <button class="px-4 py-2 text-[#1A3A6B] font-bold hover:bg-[#edf4ff] rounded-xl transition-all">Acceso Clientes</button>
+        <a href="<?= $base ?? '' ?>LOGIN/login.php">
+          <button class="px-4 py-2 text-[#1A3A6B] font-bold hover:bg-[#edf4ff] rounded-xl transition-all">Iniciar sesión</button>
         </a>
         <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php">
           <button class="px-6 py-2 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,0,0,0.1)] active:scale-95 transition-all">Solicitar acceso</button>
         </a>
     <?php endif; ?>
+
+    <!-- Mobile Toggle -->
+    <button id="menu-toggle" class="md:hidden text-primary p-2 ml-2">
+      <span class="material-symbols-outlined text-3xl">menu</span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Menu Sidebar -->
+<div id="mobile-menu" class="fixed inset-0 z-[100] bg-white md:hidden">
+    <div class="flex flex-col h-full">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100">
+            <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-7 w-auto">
+            <button id="menu-close" class="text-primary p-2">
+                <span class="material-symbols-outlined text-3xl">close</span>
+            </button>
+        </div>
+        <div class="flex flex-col items-center p-8 gap-10 overflow-y-auto">
+            <a href="<?= $base ?? '' ?>INDEX/index.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">Inicio</a>
+            <a href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">¿Quiénes somos?</a>
+            <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">Catálogo</a>
+            <a href="<?= $base ?? '' ?>CONTACTO/contacto.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">Contacto</a>
+            
+            <hr class="border-slate-100">
+            
+            <?php if (!isset($_SESSION['cliente_logged_in']) && !isset($_SESSION['admin_logged_in'])): ?>
+                <a href="<?= $base ?? '' ?>LOGIN/login.php" class="text-xl font-bold text-primary">Iniciar sesión</a>
+                <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php" class="text-xl font-bold text-secondary">Solicitar acceso</a>
+            <?php else: ?>
+                <p class="text-sm font-black text-slate-400 uppercase tracking-widest">Mi cuenta</p>
+                <?php if (isset($_SESSION['cliente_logged_in'])): ?>
+                    <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="text-xl font-bold text-primary">Panel de control</a>
+                <?php else: ?>
+                    <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="text-xl font-bold text-[#005132]">Panel admin</a>
+                <?php endif; ?>
+                <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="text-xl font-bold text-[#ba1a1a]">Cerrar sesión</a>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 </header>
+
+<script>
+// Mobile Menu Logic
+const menuToggle = document.getElementById('menu-toggle');
+const menuClose = document.getElementById('menu-close');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (menuToggle && mobileMenu) {
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+}
+
+if (menuClose && mobileMenu) {
+    menuClose.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+}
+</script>
 
 <!-- ═══ CART DRAWER ═══ -->
 <div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer()"></div>
@@ -119,7 +349,7 @@ if (session_status() === PHP_SESSION_NONE) {
   <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-primary/5">
     <div class="flex items-center gap-3 text-primary">
       <span class="material-symbols-outlined text-2xl">shopping_cart</span>
-      <h2 class="text-lg font-black tracking-tight">Mi Carrito</h2>
+      <h2 class="text-lg font-black tracking-tight">Mi carrito</h2>
     </div>
     <button onclick="toggleCartDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">
       <span class="material-symbols-outlined">close</span>
@@ -142,7 +372,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </p>
     <button onclick="confirmarPedido()" id="btn-confirmar-pedido" class="w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
       <span class="material-symbols-outlined text-lg">receipt_long</span>
-      Confirmar Pedido
+      Confirmar pedido
     </button>
   </div>
 </div>
@@ -404,4 +634,17 @@ function confirmarPedido() {
         btn.disabled = false;
     });
 }
+
+// --- Parallax Effect ---
+window.addEventListener('scroll', function() {
+    requestAnimationFrame(() => {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('.parallax-bg');
+        parallaxElements.forEach(el => {
+            const speed = el.dataset.speed || 0.2;
+            // IMPORTANTE: Incluir el scale(1.25) aquí para que no se pierda el estilo de Tailwind
+            el.style.transform = `scale(1.25) translateY(${scrolled * speed}px)`;
+        });
+    });
+});
 </script>

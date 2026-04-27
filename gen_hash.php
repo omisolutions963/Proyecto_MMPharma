@@ -4,4 +4,4 @@
 $hash = password_hash('Admin123!', PASSWORD_BCRYPT);
 echo "<pre>Hash generado:\n$hash\n\n";
 echo "Copia y pega esto en phpMyAdmin:\n\n";
-echo "UPDATE administradores SET password_hash = '$hash' WHERE email = 'admin@mmpharma.com';\n</pre>";
+echo "UPDATE admin_usuarios SET password_hash = '$hash' WHERE email = 'admin@mmpharma.com';\n</pre>";

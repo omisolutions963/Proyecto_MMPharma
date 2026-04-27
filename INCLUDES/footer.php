@@ -8,10 +8,10 @@
                     Distribución farmacéutica con estándares de excelencia. Innovación y compromiso en cada entrega.
                 </p>
 <div class="flex gap-4">
-<a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="tel:+526642937976">
+<a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="tel:3322207506">
 <span class="material-symbols-outlined text-xl" data-icon="phone">phone</span>
 </a>
-<a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="mailto:mmpharmamarketing4@gmail.com">
+<a class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" href="mailto:atencionclientes@mmpharma.mx">
 <span class="material-symbols-outlined text-xl" data-icon="mail">mail</span>
 </a>
 </div>
@@ -43,7 +43,7 @@
                     </li>
 <li class="flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary-container" data-icon="call">call</span>
-                        33 4348 0581 / 33 4348 0582
+                        33 2220 7506 <span class="mx-1">·</span> 33 4348 0581 <span class="mx-1">·</span> 33 4348 0582
                     </li>
 <li class="flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary-container" data-icon="support_agent">support_agent</span>
@@ -56,7 +56,6 @@
 <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
 <div class="flex gap-8">
 <a class="hover:text-white transition-colors" href="https://www.facebook.com/share/1DpVKyDk9Q/">Facebook</a>
-<a class="hover:text-white transition-colors" href="<?= $base ?? '../' ?>LOGIN/login.php">Acceso Administrativo</a>
 </div>
 </div>
 </footer>

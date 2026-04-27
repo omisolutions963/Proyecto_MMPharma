@@ -3,6 +3,7 @@ session_start();
 require_once '../INCLUDES/db.php';
 
 $error_login = false;
+$error_msg   = "Correo o contraseña incorrectos.";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email']    ?? '');
@@ -10,33 +11,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($email && $password) {
         try {
-            $pdo  = getDB();
-            $stmt = $pdo->prepare(
-                "SELECT id, nombre, password_hash, activo FROM administradores WHERE email = ? LIMIT 1"
-            );
-            $stmt->execute([$email]);
-            $admin = $stmt->fetch();
+            $pdo = getDB();
+            
+            // 1. Intentar como ADMINISTRADOR
+            $stmt_admin = $pdo->prepare("SELECT id, nombre, password_hash, activo, foto_perfil FROM admin_usuarios WHERE email = ? LIMIT 1");
+            $stmt_admin->execute([$email]);
+            $admin = $stmt_admin->fetch();
 
-            if ($admin && $admin['activo'] && password_verify($password, $admin['password_hash'])) {
-                $_SESSION['admin_logged_in'] = true;
-                $_SESSION['admin_id']        = $admin['id'];
-                $_SESSION['admin_email']     = $email;
-                $_SESSION['admin_nombre']    = $admin['nombre'];
-                header("Location: ../Admin-mmpharma/dashboard/dashboard.php");
-                exit;
-            } else {
-                $error_login = true;
+            if ($admin && password_verify($password, $admin['password_hash'])) {
+                if ($admin['activo']) {
+                    $_SESSION['admin_logged_in'] = true;
+                    $_SESSION['admin_id']        = $admin['id'];
+                    $_SESSION['admin_email']     = $email;
+                    $_SESSION['admin_nombre']    = $admin['nombre'];
+                    $_SESSION['admin_foto']      = $admin['foto_perfil'];
+                    header("Location: ../INDEX/index.php");
+                    exit;
+                } else {
+                    $error_login = true;
+                    $error_msg   = "Tu cuenta de administrador está inactiva.";
+                }
+            } 
+            
+            // 2. Intentar como CLIENTE (si no se encontró admin o falló el password de admin)
+            if (!$error_login) {
+                $stmt_cli = $pdo->prepare("SELECT id, razon_social, password_hash, estatus, tipo, foto_perfil FROM clientes_usuarios WHERE email = ? LIMIT 1");
+                $stmt_cli->execute([$email]);
+                $cliente = $stmt_cli->fetch();
+
+                if ($cliente && password_verify($password, $cliente['password_hash'])) {
+                    if ($cliente['estatus'] === 'ACTIVO') {
+                        $_SESSION['cliente_logged_in'] = true;
+                        $_SESSION['cliente_id']        = $cliente['id'];
+                        $_SESSION['cliente_email']     = $email;
+                        $_SESSION['cliente_nombre']    = $cliente['razon_social'];
+                        $_SESSION['cliente_tipo']      = $cliente['tipo'];
+                        $_SESSION['cliente_foto']      = $cliente['foto_perfil'];
+                        
+                        header("Location: ../INDEX/index.php");
+                        exit;
+                    } else {
+                        $error_login = true;
+                        $error_msg   = "Tu cuenta aún no ha sido activada o está suspendida.";
+                    }
+                }
             }
-        } catch (Exception $e) {
-            // Fallback: si la BD no responde, usar credenciales de emergencia
-            if ($email === 'omi.mendivil@gmail.com' && $password === 'MMPharma2024!') {
+
+            // 3. Credenciales de emergencia (Admin)
+            if (!$error_login && $email === 'omi.mendivil@gmail.com' && $password === 'MMPharma2024!') {
                 $_SESSION['admin_logged_in'] = true;
                 $_SESSION['admin_email']     = $email;
                 $_SESSION['admin_nombre']    = 'Omar Alexis Alquicires Mendivil';
-                header("Location: ../Admin-mmpharma/dashboard/dashboard.php");
+                header("Location: ../INDEX/index.php");
                 exit;
             }
+
             $error_login = true;
+
+        } catch (Exception $e) {
+            $error_login = true;
+            $error_msg = "Error de conexión al servidor.";
         }
     } else {
         $error_login = true;
@@ -44,11 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-
 <html class="light" lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Iniciar Sesión — MMPharma Portal</title>
+<title>Iniciar sesión — MMPharma</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -70,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "on-surface-variant":"#43474f","surface-container-high":"#d9eaff",
             "on-secondary-container":"#004d77","on-primary-container":"#89a5dd",
             "on-tertiary-container":"#39bb6c","secondary":"#006397",
-            "tertiary-container":"#004520","primary":"#002451",
+            "tertiary-container":"#004520","primary":"#003e79",
             "surface-variant":"#cfe5ff","tertiary-fixed":"#7efba4",
             "error-container":"#ffdad6","surface-container-highest":"#cfe5ff",
             "on-primary":"#ffffff","on-primary-fixed":"#001b3f",
@@ -93,47 +126,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="flex h-screen w-screen overflow-hidden">
     <!-- Panel izquierdo: Branding -->
-    <div class="hidden lg:flex w-1/2 bg-[#002451] flex-col justify-between p-12 relative overflow-hidden" data-aos="fade-right">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#001a3d] via-[#002451] to-[#003878]"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+    <div class="hidden lg:flex w-1/2 bg-[#003e79] flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="../IMG/37.webp" class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-primary/60"></div>
+        </div>
+
         <div class="relative z-10">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.svg" alt="MMPharma" class="h-10 object-contain">
+            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-12 object-contain">
         </div>
         <div class="relative z-10">
-            <h1 class="text-4xl font-black text-white leading-tight mb-4">Portal Administrativo<br><span class="text-blue-300">MMPharma</span></h1>
-            <p class="text-blue-200/70 text-sm leading-relaxed max-w-sm">Gestión centralizada de productos farmacéuticos, inventario, clientes y pedidos de tu red clínica.</p>
+            <h1 class="text-6xl font-black text-white leading-tight mb-6">Bienvenido a<br><span class="text-blue-300">MMPharma</span></h1>
+            <p class="text-blue-100/90 text-lg leading-relaxed max-w-md">Accede al portal unificado para gestionar tu cuenta, ver el catálogo y administrar pedidos con la mayor precisión clínica.</p>
         </div>
-        <div class="relative z-10 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-white text-sm">security</span>
+        <div class="relative z-10 flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-xl">security</span>
             </div>
-            <p class="text-blue-200/60 text-xs">Acceso restringido — Solo personal autorizado</p>
+            <p class="text-blue-100/80 text-sm font-medium">Acceso seguro y encriptado</p>
         </div>
     </div>
 
     <!-- Panel derecho: Formulario -->
     <div class="flex-1 flex items-center justify-center p-8 bg-surface">
         <div class="w-full max-w-md" data-aos="fade-left">
-            <div class="mb-10">
-                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight">Iniciar Sesión</h2>
-                <p class="text-on-surface-variant text-sm mt-1">Ingresa tus credenciales para acceder al portal.</p>
+            <div class="flex items-center gap-3 mb-10">
+                <a href="../INDEX/index.php" class="w-10 h-10 flex items-center justify-center bg-surface-container hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-on-surface tracking-tight">Iniciar sesión</h2>
+                    <p class="text-on-surface-variant text-sm mt-1">Ingresa para acceder a tu panel.</p>
+                </div>
             </div>
 
             <?php if ($error_login): ?>
             <div class="mb-6 flex items-center gap-3 bg-error-container/40 border border-error/20 text-on-error-container px-4 py-3 rounded-xl text-sm font-semibold">
                 <span class="material-symbols-outlined text-error text-lg">error</span>
-                Correo o contraseña incorrectos. Intenta de nuevo.
+                <?= htmlspecialchars($error_msg) ?>
             </div>
             <?php endif; ?>
 
             <form method="POST" class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Correo Electrónico</label>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Correo electrónico</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">mail</span>
                         <input type="email" name="email" required autocomplete="email"
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-                               placeholder="admin@mmpharma.com"
+                               placeholder="tu@correo.com"
                                class="w-full pl-11 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none">
                     </div>
                 </div>
@@ -149,15 +191,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </button>
                     </div>
                 </div>
-                <button type="submit"
-                        class="w-full py-3.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2">
-                    <span class="material-symbols-outlined text-lg">login</span>
-                    Entrar al Portal
-                </button>
+                
+                <div class="pt-2">
+                    <button type="submit"
+                            class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,0,0,0.1)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 mt-2">
+                        <span class="material-symbols-outlined text-lg">login</span>
+                        Entrar al portal
+                    </button>
+                </div>
             </form>
 
-            <p class="text-center text-xs text-on-surface-variant mt-8 opacity-60">
-                © <?= date('Y') ?> MMPharma Clinical Systems. Todos los derechos reservados.
+            <div class="mt-8 pt-8 border-t border-surface-container-highest text-center">
+                <p class="text-sm text-on-surface-variant mb-4">¿Aún no tienes cuenta?</p>
+                <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-primary font-bold hover:underline">
+                    Solicitar acceso al portal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+
+            <p class="text-center text-xs text-on-surface-variant mt-12 opacity-60">
+                © <?= date('Y') ?> MMPharma. Todos los derechos reservados.
             </p>
         </div>
     </div>

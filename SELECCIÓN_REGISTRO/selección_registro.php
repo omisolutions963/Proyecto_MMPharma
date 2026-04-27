@@ -169,7 +169,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm shadow-lg shadow-secondary/20">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm">
                     Registrarme como Farmacia
                 </button>
 </div>
@@ -202,7 +202,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm shadow-xl">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm">
                     Registrarme como Distribuidora
                 </button>
 </div>
@@ -228,7 +228,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary transition-all duration-300 text-sm shadow-lg shadow-primary/20">
+<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary transition-all duration-300 text-sm">
                     Registrarme como Empresa
                 </button>
 </div>

@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             require_once '../INCLUDES/db.php';
             $pdo = getDB();
-            $sql = "INSERT INTO solicitudes_registro
+            $sql = "INSERT INTO clientes_solicitudes_registro
                     (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
                      representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
                      telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,

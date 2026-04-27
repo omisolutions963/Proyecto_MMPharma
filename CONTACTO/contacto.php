@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once '../INCLUDES/db.php';
             $pdo = getDB();
             $pdo->prepare(
-                "INSERT INTO contacto_mensajes (nombre, email, telefono, empresa, mensaje, ip_origen)
+                "INSERT INTO clientes_contacto_mensajes (nombre, email, telefono, empresa, mensaje, ip_origen)
                  VALUES (?, ?, ?, ?, ?, ?)"
             )->execute([$nombre, $correo, $telefono, $empresa, $mensaje, $_SERVER['REMOTE_ADDR'] ?? null]);
             $enviado = true;
@@ -44,10 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once '../includes/header.php';
 ?>
 <!-- ── HERO ── -->
-<section class="relative min-h-[369px] flex items-center overflow-hidden bg-gradient-to-br from-[#003e79] to-[#1e60aa]">
-  <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-20 w-full" data-aos="fade-up">
+<section class="relative min-h-[369px] flex items-center overflow-hidden bg-primary">
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <img src="../IMG/60.webp" class="w-full h-full object-cover opacity-30 parallax-bg scale-125 origin-top" data-speed="0.2">
+    <div class="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/60 to-primary/90"></div>
+  </div>
+  <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-20 w-full text-center md:text-left" data-aos="fade-up">
     <h1 class="text-5xl md:text-6xl font-black tracking-tight leading-tight text-white mb-4">Contáctanos</h1>
-    <p class="text-lg text-blue-100/90 max-w-xl leading-relaxed font-medium">
+    <p class="text-lg text-blue-100/90 max-w-xl mx-auto md:mx-0 leading-relaxed font-medium">
       Nuestro equipo está listo para atender los requerimientos de tu institución, farmacia o distribuidora con la eficiencia que nos caracteriza.
     </p>
   </div>
@@ -61,7 +65,7 @@ require_once '../includes/header.php';
     <!-- ─ Columna izquierda: datos de contacto ─ -->
     <div class="lg:col-span-5 space-y-8" data-aos="fade-right">
 
-      <div>
+      <div class="text-center lg:text-left">
         <h2 class="text-3xl font-black text-primary mb-3">Canales directos</h2>
         <p class="text-slate-900 text-base leading-relaxed">
           Atendemos de lunes a viernes de <span class="text-primary font-bold">9:00 AM a 6:00 PM</span>. Selecciona el medio que más te convenga.
@@ -70,12 +74,12 @@ require_once '../includes/header.php';
 
       <div class="space-y-4">
         <!-- Cobertura Nacional -->
-        <div class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1">
-          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary">
+        <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
+          <div class="w-14 h-14 bg-[#f0f7ff] rounded-2xl flex items-center justify-center flex-shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-all">
             <span class="material-symbols-outlined text-3xl">public</span>
           </div>
           <div>
-            <h3 class="font-bold text-primary text-lg mb-0.5">Presencia Nacional</h3>
+            <h3 class="font-bold text-primary text-lg mb-0.5">Presencia nacional</h3>
             <p class="text-slate-900 text-sm leading-relaxed font-medium">
               Cobertura estratégica en toda la República Mexicana.
             </p>
@@ -83,34 +87,34 @@ require_once '../includes/header.php';
         </div>
 
         <!-- Teléfonos -->
-        <a href="tel:3343480581"
-           class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
-          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary group-hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] group-hover:text-white transition-all">
+        <a href="tel:3322207506"
+           class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
+          <div class="w-14 h-14 bg-[#f0f7ff] rounded-2xl flex items-center justify-center flex-shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-all">
             <span class="material-symbols-outlined text-3xl">call</span>
           </div>
           <div>
-            <h3 class="font-bold text-primary text-lg mb-0.5">Líneas Telefónicas</h3>
+            <h3 class="font-bold text-primary text-lg mb-0.5">Líneas telefónicas</h3>
             <p class="text-slate-900 text-sm font-medium tracking-tight">
-              33 4348 0581 <span class="mx-2 text-slate-300">|</span> 33 4348 0582
+              33 2220 7506 <span class="mx-2 text-slate-300">|</span> 33 4348 0581 <span class="mx-2 text-slate-300">|</span> 33 4348 0582
             </p>
           </div>
         </a>
 
         <!-- Correo -->
-        <a href="mailto:ventas@mmpharma.com"
-           class="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-1 group">
-          <div class="w-14 h-14 bg-secondary/5 rounded-2xl flex items-center justify-center flex-shrink-0 text-secondary group-hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] group-hover:text-white transition-all">
+        <a href="mailto:atencionclientes@mmpharma.mx"
+           class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 p-6 bg-white rounded-2xl transition-all hover:-translate-y-1 group">
+          <div class="w-14 h-14 bg-[#f0f7ff] rounded-2xl flex items-center justify-center flex-shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-all">
             <span class="material-symbols-outlined text-3xl">mail</span>
           </div>
           <div>
             <h3 class="font-bold text-primary text-lg mb-0.5">Correo electrónico</h3>
-            <p class="text-slate-900 text-sm font-medium">ventas@mmpharma.com</p>
+            <p class="text-slate-900 text-sm font-medium">atencionclientes@mmpharma.mx</p>
           </div>
         </a>
       </div>
 
       <!-- Badge Red Fría Moderno -->
-      <div class="p-8 bg-gradient-to-br from-primary to-[#002451] rounded-3xl shadow-2xl relative overflow-hidden group">
+      <div class="p-8 bg-primary rounded-3xl relative overflow-hidden group">
         <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
            <span class="material-symbols-outlined text-[160px] text-white" style="font-variation-settings: 'FILL' 1">ac_unit</span>
         </div>
@@ -130,7 +134,7 @@ require_once '../includes/header.php';
 
     <!-- ─ Columna derecha: formulario ─ -->
     <div class="lg:col-span-7" data-aos="fade-left">
-      <div class="bg-white p-10 md:p-14 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.06)]">
+      <div class="bg-white p-10 md:p-14 rounded-3xl">
 
         <?php if ($enviado): ?>
         <div class="text-center py-16">
@@ -141,8 +145,8 @@ require_once '../includes/header.php';
           <p class="text-slate-900 text-lg max-w-sm mx-auto leading-relaxed">
             Hemos registrado tu solicitud correctamente. Un asesor se pondrá en contacto contigo muy pronto.
           </p>
-          <a href="contacto.php" class="mt-10 inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-black rounded-2xl hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all">
-            CERRAR Y VOLVER
+          <a href="contacto.php" class="mt-10 inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover:-translate-y-1 transition-all">
+            Cerrar y volver
           </a>
         </div>
 
@@ -202,9 +206,9 @@ require_once '../includes/header.php';
           </div>
 
           <div class="md:col-span-2 pt-4">
-            <button type="submit" class="w-full h-16 bg-primary text-white font-black rounded-xl hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] hover:shadow-[0_0_30px_rgba(0,0,0,0.15)] transition-all flex items-center justify-center gap-3">
+            <button type="submit" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3">
               <span class="material-symbols-outlined">send</span>
-              ENVIAR MENSAJE
+              Enviar mensaje
             </button>
             <p class="text-xs text-slate-400 font-bold text-center mt-4 uppercase tracking-[0.2em]">* Los campos marcados son obligatorios</p>
           </div>

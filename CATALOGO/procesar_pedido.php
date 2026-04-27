@@ -31,18 +31,18 @@ try {
     }
 
     // Generar folio
-    $stmt = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC LIMIT 1");
+    $stmt = $pdo->query("SELECT id FROM clientes_pedidos ORDER BY id DESC LIMIT 1");
     $last_id = $stmt->fetchColumn();
     $next_id = $last_id ? $last_id + 1 : 1;
     $folio = 'ORD-' . date('Y') . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
     // Insertar pedido
-    $stmt = $pdo->prepare("INSERT INTO pedidos (folio, cliente_id, tipo_cliente, fecha_pedido, monto_total, estado_envio) VALUES (?, ?, ?, CURDATE(), ?, 'PENDIENTE')");
+    $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, fecha_pedido, monto_total, estado_envio) VALUES (?, ?, ?, CURDATE(), ?, 'PENDIENTE')");
     $stmt->execute([$folio, $cliente_id, $tipo_cliente, $monto_total]);
     $pedido_id = $pdo->lastInsertId();
 
     // Insertar detalles
-    $stmtDetalle = $pdo->prepare("INSERT INTO pedidos_detalle (pedido_id, producto_id, nombre_producto, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmtDetalle = $pdo->prepare("INSERT INTO clientes_pedidos_detalle (pedido_id, producto_id, nombre_producto, cantidad, precio_unitario, subtotal) VALUES (?, ?, ?, ?, ?, ?)");
     foreach ($carrito as $item) {
         $pid = (int)$item['id'];
         $nombre = $item['nombre'];

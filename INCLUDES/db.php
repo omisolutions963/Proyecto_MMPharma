@@ -19,3 +19,16 @@ if (!function_exists('getDB')) {
         return $pdo;
     }
 }
+
+if (!function_exists('roundStat')) {
+    /**
+     * Redondea un número hacia abajo al centenar o decena más cercana
+     * y añade un prefijo '+' si aplica.
+     */
+    function roundStat($n) {
+        if ($n < 10) return $n;
+        if ($n < 100) return '+' . (floor($n / 10) * 10);
+        return '+' . (floor($n / 100) * 100);
+    }
+}
+

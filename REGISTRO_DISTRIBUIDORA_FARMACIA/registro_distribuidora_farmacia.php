@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             require_once '../INCLUDES/db.php';
             $pdo = getDB();
-            $sql = "INSERT INTO solicitudes_registro
+            $sql = "INSERT INTO clientes_solicitudes_registro
                     (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
                      representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
                      telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,
@@ -147,7 +147,7 @@ require_once '../includes/header.php';
 <!-- Registration Card -->
 <div class="w-full max-w-4xl bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,36,81,0.05)] relative border border-outline-variant/30">
 <!-- Accent Line -->
-<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary-container"></div>
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
 <div class="p-6 md:p-10">
 <!-- Header -->
 <header class="mb-8 border-b border-outline-variant/20 pb-6">

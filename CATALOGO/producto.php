@@ -21,7 +21,12 @@ if (!$id) {
 }
 
 // Buscar el producto
-$stmt = $pdo->prepare("SELECT * FROM productos WHERE id = ?");
+$stmt = $pdo->prepare("
+    SELECT p.*, c.nombre as categoria_nombre 
+    FROM catalogo_productos p 
+    LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
+    WHERE p.id = ?
+");
 $stmt->execute([$id]);
 $p = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -30,15 +35,35 @@ if (!$p) {
     exit;
 }
 
+// Lógica de visibilidad por tipo de cliente
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$is_cliente_check = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
+$cliente_tipo_check = $is_cliente_check ? $_SESSION['cliente_tipo'] : 'FARMACIA';
+
+if ($cliente_tipo_check === 'EMPRESA' && $p['solo_empresa'] !== 'SI') {
+    header('Location: catalogo.php');
+    exit;
+}
+
 // Productos relacionados (misma sustancia, diferente id)
-$rel = $pdo->prepare("SELECT * FROM productos WHERE sustancia LIKE ? AND id != ? LIMIT 4");
-$rel->execute(['%' . explode(' ', $p['sustancia'])[0] . '%', $id]);
+$where_rel = ["sustancia LIKE ?", "id != ?"];
+$params_rel = ['%' . explode(' ', $p['sustancia'])[0] . '%', $id];
+
+if ($cliente_tipo_check === 'EMPRESA') {
+    $where_rel[] = "solo_empresa = 'SI'";
+}
+
+$rel_sql = "SELECT * FROM catalogo_productos WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
+$rel = $pdo->prepare($rel_sql);
+$rel->execute($params_rel);
 $relacionados = $rel->fetchAll(PDO::FETCH_ASSOC);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 $is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
+$is_admin   = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+$is_logged_in = $is_cliente || $is_admin;
 $cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
 $precio_campo = 'precio_farmacia';
@@ -67,11 +92,12 @@ require_once '../includes/header.php';
 </div>
 
 <!-- ═══ CONTENIDO PRINCIPAL ═══ -->
-<main class="max-w-[1600px] mx-auto px-12 pb-24">
+<main class="max-w-[1600px] mx-auto px-12 pb-24 relative">
+  <div class="<?= !$is_logged_in ? 'filter blur-[10px] opacity-40 select-none pointer-events-none' : '' ?>">
   <div class="grid md:grid-cols-2 gap-10 mb-16">
 
     <!-- Imagen del producto -->
-    <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-blue-50 flex items-center justify-center min-h-[400px] p-12 relative" data-aos="fade-right">
+    <div class="bg-white rounded-[2rem]   flex items-center justify-center min-h-[400px] p-12 relative" data-aos="fade-right">
       <?php if ($p['tipo'] === 'RED FRIA'): ?>
       <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary-container text-white text-xs font-bold rounded-full">
         <span class="material-symbols-outlined text-sm">ac_unit</span>
@@ -118,7 +144,7 @@ require_once '../includes/header.php';
 
         <!-- Aviso Red Fría -->
         <?php if ($p['tipo'] === 'RED FRIA'): ?>
-        <div class="bg-tertiary-container/10 border border-tertiary-container/20 rounded-xl p-4 mb-6 flex gap-3">
+        <div class="bg-tertiary-container/10  rounded-xl p-4 mb-6 flex gap-3">
           <span class="material-symbols-outlined text-tertiary-container text-xl flex-shrink-0">ac_unit</span>
           <div>
             <p class="text-sm font-bold text-tertiary-container mb-1">Producto de Red Fría</p>
@@ -129,17 +155,48 @@ require_once '../includes/header.php';
         </div>
         <?php endif; ?>
 
-        <!-- Precios por nivel de cliente -->
-        <?php if ($is_cliente): ?>
-        <div class="mb-10">
-          <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Tu precio especial (<?= htmlspecialchars($cliente_tipo) ?>)</p>
-          <div class="bg-white p-6 rounded-2xl border-2 border-secondary/20 shadow-[0_10px_30px_rgba(0,0,0,0.05)] flex items-center justify-between">
-            <p class="text-4xl font-black text-primary">$<?= number_format($precio_mostrar, 2) ?></p>
-            <span class="material-symbols-outlined text-secondary text-4xl opacity-20">verified</span>
+        <!-- Precios por nivel de cliente y Controles -->
+        <?php if ($is_admin || $is_cliente): ?>
+            <?php if ($is_admin): ?>
+            <div class="mb-10 animate-reveal">
+              <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">visibility</span> Vista de Administrador (Todos los niveles)
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-primary p-5 rounded-2xl    transition-transform hover:-translate-y-1">
+                <p class="text-[10px] font-black text-white uppercase tracking-widest mb-1 opacity-80">Farmacia</p>
+                <p class="text-2xl font-black text-white">$<?= number_format($p['precio_farmacia'], 2) ?></p>
+            </div>
+            <div class="bg-secondary p-5 rounded-2xl    transition-transform hover:-translate-y-1">
+                <p class="text-[10px] font-black text-white uppercase tracking-widest mb-1 opacity-80">Distribuidor</p>
+                <p class="text-2xl font-black text-white">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
+            </div>
+            <div class="bg-tertiary p-5 rounded-2xl    transition-transform hover:-translate-y-1">
+                <p class="text-[10px] font-black text-white uppercase tracking-widest mb-1 opacity-80">Empresa</p>
+                <p class="text-2xl font-black text-white">$<?= number_format($p['precio_empresa'], 2) ?></p>
+            </div>
           </div>
-        </div>
-        
-        <!-- Controles de Carrito -->
+            </div>
+            <?php else: ?>
+            <div class="mb-10 animate-reveal">
+              <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Tu precio especial (<?= htmlspecialchars($cliente_tipo) ?>)</p>
+              <?php 
+                $box_class = 'bg-primary ';
+                if ($cliente_tipo === 'DISTRIBUIDORA') $box_class = 'bg-secondary ';
+                elseif ($cliente_tipo === 'EMPRESA') $box_class = 'bg-tertiary ';
+              ?>
+              <div class="<?= $box_class ?> p-6 rounded-2xl   flex items-center justify-between transition-transform hover:-translate-y-1">
+                <div>
+                    <p class="text-[10px] font-black text-white uppercase tracking-widest mb-1 opacity-80"><?= htmlspecialchars($cliente_tipo) ?></p>
+                    <p class="text-4xl font-black text-white">$<?= number_format($precio_mostrar, 2) ?></p>
+                </div>
+                <span class="material-symbols-outlined text-white text-4xl opacity-30">verified</span>
+              </div>
+            </div>
+            <?php endif; ?>
+
+        <!-- Controles de Carrito (Solo para Clientes) -->
+        <?php if ($is_cliente): ?>
         <div class="space-y-4">
           <div class="flex items-end gap-4">
             <div class="flex flex-col">
@@ -155,12 +212,12 @@ require_once '../includes/header.php';
               </div>
             </div>
             
-            <button type="button" onclick="anadirMultipleAlCarrito()" class="flex-1 h-[58px] bg-secondary text-white font-bold rounded-xl shadow-lg hover:bg-primary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(30,96,170,0.3)] active:scale-95 transition-all text-base flex items-center justify-center gap-2">
+            <button type="button" onclick="anadirMultipleAlCarrito()" class="flex-1 h-[58px] bg-secondary text-white font-bold rounded-xl  hover:bg-primary hover:-translate-y-1 hover: active:scale-95 transition-all text-base flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
               Añadir al Carrito
             </button>
           </div>
-          <a href="catalogo.php" class="w-full h-[50px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-sm flex items-center justify-center gap-2 border border-slate-200">
+          <a href="catalogo.php" class="w-full h-[50px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-sm flex items-center justify-center gap-2 ">
             <span class="material-symbols-outlined text-lg">arrow_back</span>
             Volver al catálogo
           </a>
@@ -179,11 +236,26 @@ require_once '../includes/header.php';
             }
         }
         </script>
+        <?php elseif ($is_admin): ?>
+        <div class="space-y-4">
+          <div class="bg-primary/5 rounded-xl p-5 flex items-center gap-4 ">
+            <span class="material-symbols-outlined text-primary text-2xl">admin_panel_settings</span>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              <strong class="text-primary block mb-1">Modo Administrador</strong>
+              Estás visualizando el catálogo como administrador. Las funciones de cotización y carrito están deshabilitadas para este rol.
+            </p>
+          </div>
+          <a href="catalogo.php" class="w-full h-[50px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all text-sm flex items-center justify-center gap-2 ">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Volver al catálogo
+          </a>
+        </div>
+        <?php endif; ?>
         
         <?php else: ?>
         <!-- Acciones (Usuario no logueado) -->
         <div class="space-y-4">
-          <div class="bg-blue-50/50 rounded-xl p-5 flex items-center gap-4 border border-blue-100">
+          <div class="bg-blue-50/50 rounded-xl p-5 flex items-center gap-4 ">
             <span class="material-symbols-outlined text-primary text-2xl">lock</span>
             <p class="text-sm text-slate-600 leading-relaxed">
               <strong class="text-primary block mb-1">¿Quieres ver precios y cotizar este producto?</strong>
@@ -191,12 +263,12 @@ require_once '../includes/header.php';
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-4">
-            <a href="../LOGIN/login_cliente.php"
-               class="flex-1 h-[58px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-base flex items-center justify-center">
+            <a href="../LOGIN/login.php"
+               class="flex-1 h-[58px] bg-primary text-white font-bold rounded-xl  hover:bg-secondary hover:-translate-y-1 hover: active:scale-95 transition-all text-base flex items-center justify-center">
               Iniciar sesión para acceder
             </a>
             <a href="catalogo.php"
-               class="px-8 h-[58px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:-translate-y-1 transition-all text-base flex items-center justify-center gap-2 border border-slate-100 shadow-sm">
+               class="px-8 h-[58px] bg-white text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:-translate-y-1 transition-all text-base flex items-center justify-center gap-2  ">
               <span class="material-symbols-outlined text-lg">arrow_back</span>
               Volver
             </a>
@@ -211,37 +283,89 @@ require_once '../includes/header.php';
   <?php if (!empty($relacionados)): ?>
   <div>
     <h2 class="text-lg font-bold text-on-surface mb-6">Productos con sustancia similar</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-aos="fade-up">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6" data-aos="fade-up">
       <?php foreach ($relacionados as $r): ?>
       <a href="producto.php?id=<?= $r['id'] ?>"
-         class="bg-white rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all border border-blue-50 group flex flex-col">
-        <div class="w-14 h-14 bg-blue-50/50 rounded-xl flex items-center justify-center mb-4">
+         class="bg-white rounded-[3rem] transition-all duration-300  p-8 flex flex-col group animate-fade-up min-h-[420px] hover:-translate-y-2 ">
+        
+        <!-- Contenedor de Imagen -->
+        <div class="w-full aspect-square bg-white flex items-center justify-center mb-6 relative group-hover:scale-105 transition-transform duration-500">
           <?php if (!empty($r['imagen']) && $r['imagen'] !== 'PENDIENTE'): ?>
             <img src="imagenes/productos/<?= htmlspecialchars($r['imagen']) ?>"
-                 class="w-full h-full object-contain rounded-lg">
+                 class="w-full h-full object-contain">
           <?php else: ?>
-            <span class="material-symbols-outlined text-outline text-lg">medication</span>
+            <span class="material-symbols-outlined text-slate-200 text-7xl">medication</span>
+          <?php endif; ?>
+          <?php if ($r['tipo'] === 'RED FRIA'): ?>
+            <span class="absolute top-0 right-0 inline-flex items-center justify-center w-10 h-10 bg-secondary text-white rounded-full ">
+              <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1">ac_unit</span>
+            </span>
           <?php endif; ?>
         </div>
-        <p class="text-sm font-medium text-on-surface leading-tight mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          <?= htmlspecialchars($r['nombre']) ?>
-        </p>
-        <?php if ($r['tipo'] === 'RED FRIA'): ?>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-tertiary-container text-white text-xs font-bold rounded-full mb-2">
-          <span class="material-symbols-outlined text-xs">ac_unit</span> Red Fría
-        </span>
-        <?php endif; ?>
-        <?php if ($is_cliente): ?>
-          <p class="text-sm font-black text-primary mt-auto">$<?= number_format($r[$precio_campo] ?? $r['precio_farmacia'], 2) ?></p>
-        <?php else: ?>
-          <p class="text-[10px] font-bold text-slate-400 mt-auto">Inicia sesión para ver precio</p>
-        <?php endif; ?>
+
+        <!-- Info -->
+        <div class="flex-1">
+          <p class="text-sm font-black text-primary leading-tight mb-2 group-hover:text-secondary transition-colors uppercase tracking-tight">
+            <?= htmlspecialchars($r['nombre']) ?>
+          </p>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-6">
+            <?= htmlspecialchars($r['sustancia'] ?? '') ?>
+          </p>
+        </div>
+
+        <!-- Precio y Carrito -->
+        <div class="flex items-center justify-between">
+          <p class="text-xl font-black text-primary">$<?= number_format($r[$precio_campo] ?? $r['precio_farmacia'], 2) ?></p>
+          
+          <?php if ($is_cliente): ?>
+          <button type="button" 
+                  onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $r['id'] ?>, '<?= htmlspecialchars(addslashes($r['nombre'])) ?>', <?= (float)($r[$precio_campo] ?? $r['precio_farmacia']) ?>, '<?= htmlspecialchars(addslashes($r['imagen'] ?? '')) ?>')"
+                  class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 hover:bg-primary hover:text-white transition-all flex items-center justify-center ">
+            <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+          </button>
+          <?php elseif ($is_admin): ?>
+          <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center" title="Modo Administrador">
+            <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+          </div>
+          <?php else: ?>
+          <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl">lock</span>
+          </div>
+          <?php endif; ?>
+        </div>
       </a>
       <?php endforeach; ?>
     </div>
   </div>
   <?php endif; ?>
 
+  </div>
+
+  <?php if (!$is_logged_in): ?>
+  <!-- Overlay CTA para usuarios no registrados -->
+  <div class="absolute inset-0 z-40 flex items-center justify-center bg-background/20 backdrop-blur-[2px]">
+    <div class="max-w-md w-full mx-4 bg-white p-10 rounded-[2.5rem]   text-center animate-reveal">
+      <div class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-primary text-4xl">lock</span>
+      </div>
+      <h2 class="text-3xl font-black text-primary tracking-tight mb-4">Detalles exclusivos</h2>
+      <p class="text-on-surface-variant font-medium mb-8 leading-relaxed">
+        Para ver precios detallados, existencias y poder cotizar este producto, es necesario contar con una cuenta aprobada.
+      </p>
+      <div class="flex flex-col gap-3">
+        <a href="../INDEX/SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl   hover:bg-secondary transition-all">
+          Solicitar acceso
+        </a>
+        <a href="../LOGIN/login.php" class="w-full py-4 bg-transparent text-primary font-bold rounded-xl  hover:bg-primary/5 transition-all">
+          Iniciar sesión
+        </a>
+      </div>
+      <a href="catalogo.php" class="inline-block mt-6 text-slate-400 font-bold text-sm hover:text-primary transition-colors">
+        Volver al catálogo
+      </a>
+    </div>
+  </div>
+  <?php endif; ?>
 </main>
 
 <!-- ═══ FOOTER ═══ -->
