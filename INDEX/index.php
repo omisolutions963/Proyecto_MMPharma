@@ -42,10 +42,10 @@ try {
 
     
     <div class="flex flex-wrap justify-center gap-4 mb-16">
-        <a href="SELECCIÓN_REGISTRO/selección_registro.php" class="px-10 py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all hover:scale-105 flex items-center justify-center">
+        <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php" class="px-10 py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all hover:scale-105 flex items-center justify-center">
             Solicitar acceso
         </a>
-        <a href="CATALOGO/catalogo.php" class="px-10 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 hover:-translate-y-1 transition-all flex items-center justify-center">
+        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="px-10 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 hover:-translate-y-1 transition-all flex items-center justify-center">
             Ver catálogo
         </a>
     </div>

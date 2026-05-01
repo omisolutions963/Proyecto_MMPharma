@@ -169,7 +169,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_FARMACIA/registro_farmacia.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm">
                     Registrarme como Farmacia
                 </button>
 </div>
@@ -202,7 +202,7 @@
 </li>
 </ul>
 </div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm">
+<button onclick="location.href='../REGISTRO_DISTRIBUIDORA/registro_distribuidora.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm">
                     Registrarme como Distribuidora
                 </button>
 </div>
