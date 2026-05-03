@@ -36,9 +36,11 @@ try {
     $next_id = $last_id ? $last_id + 1 : 1;
     $folio = 'ORD-' . date('Y') . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
+    $direccion_id = $data['direccion_id'] ?? null;
+
     // Insertar pedido
-    $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, fecha_pedido, monto_total, estado_envio) VALUES (?, ?, ?, CURDATE(), ?, 'PENDIENTE')");
-    $stmt->execute([$folio, $cliente_id, $tipo_cliente, $monto_total]);
+    $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido, monto_total, estado_envio) VALUES (?, ?, ?, ?, CURDATE(), ?, 'PENDIENTE')");
+    $stmt->execute([$folio, $cliente_id, $tipo_cliente, $direccion_id, $monto_total]);
     $pedido_id = $pdo->lastInsertId();
 
     // Insertar detalles

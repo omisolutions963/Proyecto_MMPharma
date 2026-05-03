@@ -156,6 +156,9 @@ include('Includes/sidebar.php');
                                     <a href="Cotizacion-Detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors" title="Ver detalle">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
+                                    <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-primary transition-colors" title="Descargar PDF" target="_blank">
+                                        <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+                                    </a>
                                     <button onclick="borrarCotizacion(<?= $cot['id'] ?>, '<?= $cot['folio'] ?>')" class="text-on-surface-variant hover:text-error transition-colors" title="Eliminar">
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>
@@ -176,12 +179,9 @@ include('Includes/sidebar.php');
 
     <!-- Export Actions -->
     <div class="flex justify-end gap-3 mt-6 animate-reveal delay-400">
-        <button class="px-5 py-2.5 bg-secondary/10 hover:bg-secondary/20 text-secondary text-sm font-bold rounded-xl transition-colors flex items-center gap-2" onclick="Swal.fire({icon:'info', title:'Próximamente', text:'Exportación a Excel en desarrollo.', background:'#071628', color:'#fff'})">
-            <span class="material-symbols-outlined text-[18px]">table_chart</span> Exportar Excel
-        </button>
-        <button class="px-5 py-2.5 bg-error/10 hover:bg-error/20 text-error text-sm font-bold rounded-xl transition-colors flex items-center gap-2" onclick="Swal.fire({icon:'info', title:'Próximamente', text:'Descarga en PDF en desarrollo.', background:'#071628', color:'#fff'})">
+        <a href="descargar_resumen_pdf.php" target="_blank" class="px-5 py-2.5 bg-error/10 hover:bg-error/20 text-error text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar Reporte PDF
-        </button>
+        </a>
     </div>
 
 </main>

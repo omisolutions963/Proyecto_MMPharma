@@ -77,7 +77,7 @@ include('Includes/sidebar.php');
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 animate-reveal">
         <div>
             <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-                Dashboard Principal <span class="text-2xl">👋</span>
+                Dashboard Principal <span class="material-symbols-outlined text-2xl text-yellow-400">waving_hand</span>
             </h1>
             <p class="text-on-surface-variant mt-1 text-sm">Aquí tienes un resumen de tu actividad reciente, <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>.</p>
         </div>

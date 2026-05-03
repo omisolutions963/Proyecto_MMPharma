@@ -367,6 +367,37 @@ if (menuClose && mobileMenu) {
       <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Subtotal</p>
       <p id="cart-subtotal" class="text-2xl font-black text-primary">$0.00</p>
     </div>
+    
+    <?php if(isset($_SESSION['cliente_id'])): 
+        try {
+            if(!isset($pdo)) {
+                require_once __DIR__ . '/db.php';
+                $pdo = getDB();
+            }
+            $stmt_dir = $pdo->prepare("SELECT id, alias FROM clientes_direcciones WHERE cliente_id = ? ORDER BY predeterminada DESC, alias ASC");
+            $stmt_dir->execute([$_SESSION['cliente_id']]);
+            $direcciones_cart = $stmt_dir->fetchAll(PDO::FETCH_ASSOC);
+        } catch(Exception $e) {
+            $direcciones_cart = [];
+        }
+    ?>
+    <div class="mb-4">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Dirección de Envío</label>
+        <?php if(!empty($direcciones_cart)): ?>
+        <div class="relative">
+            <select id="cart-direccion" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none appearance-none text-sm font-medium text-slate-700">
+                <?php foreach($direcciones_cart as $d): ?>
+                    <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['alias']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+        </div>
+        <?php else: ?>
+        <p class="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">No tienes direcciones registradas. <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Direcciones.php" class="font-bold underline hover:text-amber-700">Agregar una</a>.</p>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <p class="text-xs text-slate-500 mb-6 leading-relaxed">
       *Los precios mostrados son de lista. Si eres distribuidor o empresa, el precio final se ajustará al generar la cotización formal.
     </p>
@@ -559,10 +590,20 @@ function confirmarPedido() {
     btn.innerHTML = '<div class="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Procesando...';
     btn.disabled = true;
 
+    const dirSelect = document.getElementById('cart-direccion');
+    const direccion_id = dirSelect ? dirSelect.value : null;
+
+    if (dirSelect && !direccion_id) {
+        Swal.fire('Atención', 'Debes seleccionar una dirección de envío o registrar una nueva.', 'warning');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        return;
+    }
+
     fetch('<?= $base ?? '' ?>CATALOGO/procesar_pedido.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carrito: carrito })
+        body: JSON.stringify({ carrito: carrito, direccion_id: direccion_id })
     })
     .then(res => res.json())
     .then(data => {

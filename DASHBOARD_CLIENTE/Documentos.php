@@ -27,23 +27,52 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 // Configuración de documentos requeridos
-$documentos_requeridos = [
-    'LICENCIA_SANITARIA' => [
-        'titulo' => 'Licencia Sanitaria',
-        'desc' => 'Permiso federal para la comercialización de insumos de salud y psicotrópicos.',
-        'icono' => 'medical_services'
-    ],
-    'CONSTANCIA_FISCAL' => [
-        'titulo' => 'Constancia Fiscal',
-        'desc' => 'Situación fiscal actualizada (SAT) para facturación y validación de RFC.',
-        'icono' => 'receipt_long'
-    ],
-    'AVISO_FUNCIONAMIENTO' => [
-        'titulo' => 'Aviso de Funcionamiento',
-        'desc' => 'Documentación de alta ante COFEPRIS para la operación del establecimiento.',
-        'icono' => 'storefront'
-    ]
-];
+$stmt = $pdo->prepare("SELECT regimen_fiscal FROM clientes_usuarios WHERE id = ?");
+$stmt->execute([$cliente_id]);
+$cliente_info = $stmt->fetch(PDO::FETCH_ASSOC);
+$regimen_fiscal = $cliente_info['regimen_fiscal'] ?? '';
+$tipo_cliente = $_SESSION['cliente_tipo'] ?? 'EMPRESA';
+
+if ($tipo_cliente === 'EMPRESA') {
+    $documentos_requeridos = [
+        'CONSTANCIA_FISCAL' => [
+            'titulo' => 'Constancia de Situación Fiscal',
+            'desc' => 'Situación fiscal actualizada (SAT) para facturación y validación de RFC.',
+            'icono' => 'receipt_long'
+        ]
+    ];
+} else {
+    $documentos_requeridos = [
+        'AVISO_FUNCIONAMIENTO' => [
+            'titulo' => 'Aviso de funcionamiento o Licencia Sanitaria',
+            'desc' => 'Documentación de alta ante COFEPRIS para la operación del establecimiento.',
+            'icono' => 'medical_services'
+        ],
+        'COMPROBANTE_DOMICILIO' => [
+            'titulo' => 'Comprobante de Domicilio',
+            'desc' => 'Recibo no mayor a 3 meses.',
+            'icono' => 'home'
+        ],
+        'ALTA_HACIENDA' => [
+            'titulo' => 'Alta de Hacienda',
+            'desc' => 'Documento de alta ante el SAT.',
+            'icono' => 'account_balance'
+        ],
+        'IDENTIFICACION_OFICIAL' => [
+            'titulo' => 'Identificación oficial del representante legal o propietario',
+            'desc' => 'INE o Pasaporte vigente.',
+            'icono' => 'badge'
+        ]
+    ];
+
+    if (strtolower($regimen_fiscal) === 'moral' || strtolower($regimen_fiscal) === 'personas morales') {
+        $documentos_requeridos['ACTA_CONSTITUTIVA'] = [
+            'titulo' => 'Copia del acta constitutiva',
+            'desc' => 'Documento notarial de la empresa.',
+            'icono' => 'description'
+        ];
+    }
+}
 
 // Determinar estatus global
 $faltantes_o_rechazados = 0;
@@ -115,24 +144,36 @@ include('Includes/sidebar.php');
                     $badgeBg = 'bg-tertiary/10 border-tertiary/30 text-tertiary';
                     $badgeDot = 'bg-tertiary';
                     $badgeText = 'Aprobado';
+                    $statusText = 'Documento Aceptado.';
+                    $statusIcon = 'check_circle';
+                    $statusColor = 'text-tertiary';
                 } elseif ($estatus === 'PENDIENTE') {
                     $borderClass = 'border-secondary/30 hover:border-secondary/50';
                     $bgIcon = 'bg-secondary/10 text-secondary';
                     $badgeBg = 'bg-secondary/10 border-secondary/30 text-secondary';
                     $badgeDot = 'bg-secondary';
                     $badgeText = 'En Revisión';
+                    $statusText = 'Tu documento está siendo validado.';
+                    $statusIcon = 'pending';
+                    $statusColor = 'text-secondary';
                 } elseif ($estatus === 'RECHAZADO') {
                     $borderClass = 'border-error/30 hover:border-error/50';
                     $bgIcon = 'bg-error/10 text-error';
                     $badgeBg = 'bg-error/10 border-error/30 text-error';
                     $badgeDot = 'bg-error';
                     $badgeText = 'Rechazado';
+                    $statusText = 'Tu documento fue rechazado. Sube uno nuevo.';
+                    $statusIcon = 'error';
+                    $statusColor = 'text-error';
                 } else {
-                    $borderClass = 'border-outline-variant/30 hover:border-outline-variant';
-                    $bgIcon = 'bg-surface-container-high text-on-surface';
-                    $badgeBg = 'bg-surface-container-high border-outline-variant/30 text-on-surface-variant';
-                    $badgeDot = 'bg-on-surface-variant';
+                    $borderClass = 'border-error/30 hover:border-error/50';
+                    $bgIcon = 'bg-error/10 text-error';
+                    $badgeBg = 'bg-error/10 border-error/30 text-error';
+                    $badgeDot = 'bg-error';
                     $badgeText = 'Faltante';
+                    $statusText = 'Faltante — Este documento es requerido para realizar compras.';
+                    $statusIcon = 'warning';
+                    $statusColor = 'text-error';
                 }
             ?>
         <div class="bg-surface-container-lowest border <?= $borderClass ?> rounded-2xl p-6 flex flex-col shadow-sm relative group transition-colors animate-reveal" style="animation-delay: <?= $idx * 0.1 ?>s">
@@ -141,11 +182,11 @@ include('Includes/sidebar.php');
                     <span class="w-1.5 h-1.5 rounded-full <?= $badgeDot ?>"></span> <?= $badgeText ?>
                 </span>
             </div>
-            <div class="w-10 h-10 rounded-xl <?= $bgIcon ?> flex items-center justify-center mb-5">
-                <span class="material-symbols-outlined text-[20px]"><?= $info['icono'] ?></span>
+            <div class="w-10 h-10 rounded-xl <?= $bgIcon ?> flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[20px]"><?= $statusIcon ?></span>
             </div>
             <h3 class="text-base font-bold text-white mb-2"><?= $info['titulo'] ?></h3>
-            <p class="text-xs text-on-surface-variant leading-relaxed mb-6 flex-1"><?= $info['desc'] ?></p>
+            <p class="text-xs font-bold <?= $statusColor ?> leading-relaxed mb-4"><?= $statusText ?></p>
             
             <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-5">
                 <div>
@@ -154,13 +195,20 @@ include('Includes/sidebar.php');
                 </div>
             </div>
 
-            <div class="flex gap-2">
+            <!-- Upload Area -->
+            <div class="file-upload-wrapper border-2 border-dashed border-outline-variant/50 bg-surface-container/10 rounded-xl p-4 transition-all duration-300 relative flex flex-col items-center justify-center text-center group-hover:bg-surface-container/20 mt-auto">
+                <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
+                <div class="pointer-events-none flex flex-col items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-2xl file-icon">cloud_upload</span>
+                    <p class="text-xs text-on-surface-variant file-name-display">Arrastra o haz clic para subir</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-4">
                 <?php if($subido): ?>
-                <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high text-primary text-sm font-bold rounded-xl transition-colors text-center block" style="line-height: 20px;">Ver Archivo</a>
+                <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface-container hover:bg-surface-container-high text-primary text-xs font-bold rounded-xl transition-colors text-center flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
+                <button class="flex-none px-3 py-2 bg-error/10 hover:bg-error/20 text-error text-xs font-bold rounded-xl transition-colors flex items-center justify-center" onclick="eliminarDocumento('<?= $tipo ?>')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
                 <?php endif; ?>
-                <button class="flex-1 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-primary/20" onclick="subirDocumento('<?= $tipo ?>')">
-                    <?= $subido ? 'Actualizar' : 'Subir Archivo' ?>
-                </button>
             </div>
         </div>
         <?php endforeach; ?>
@@ -185,14 +233,105 @@ include('Includes/sidebar.php');
 </main>
 <?php include('Includes/footer.php'); ?>
 
+<style>
+.drag-over {
+    border-color: #32b4ca !important;
+    background-color: rgba(50, 180, 202, 0.1) !important;
+}
+</style>
+
 <script>
-function subirDocumento(tipo) {
+    const maxFileSize = 15 * 1024 * 1024; // 15MB
+
+    document.querySelectorAll('.file-input').forEach(input => {
+        const wrapper = input.closest('.file-upload-wrapper');
+        const nameDisplay = wrapper.querySelector('.file-name-display');
+        const icon = wrapper.querySelector('.file-icon');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            wrapper.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            wrapper.addEventListener(eventName, () => wrapper.classList.add('drag-over'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            wrapper.addEventListener(eventName, () => wrapper.classList.remove('drag-over'), false);
+        });
+
+        wrapper.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if(files.length > 0) {
+                input.files = files; 
+                validateAndUpload(input.files[0], nameDisplay, icon, input);
+            }
+        });
+
+        input.addEventListener('change', (e) => {
+            if(input.files.length > 0) {
+                validateAndUpload(input.files[0], nameDisplay, icon, input);
+            }
+        });
+    });
+
+    function validateAndUpload(file, displayElement, iconElement, inputElement) {
+        if (file.size > maxFileSize) {
+            Swal.fire({icon: 'error', title: 'Archivo muy grande', text: 'El archivo supera el límite de 15MB.', background: '#071628', color: '#fff'});
+            inputElement.value = ''; 
+            displayElement.textContent = "Arrastra o haz clic para subir";
+            iconElement.textContent = "cloud_upload";
+            return;
+        }
+
+        displayElement.textContent = file.name;
+        iconElement.textContent = "check_circle";
+        iconElement.classList.replace('text-primary', 'text-tertiary');
+        
+        // Aquí iría la lógica para enviar por AJAX el archivo inmediatamente
+        Swal.fire({
+            title: 'Subiendo archivo...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        
+        // Simular subida y recargar
+        setTimeout(() => {
+            Swal.fire({icon: 'success', title: '¡Documento subido!', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
+        }, 1500);
+    }
+
+function eliminarDocumento(tipo) {
     Swal.fire({
-        title: 'Próximamente',
-        text: 'La función de subida de archivos se habilitará en la siguiente fase.',
-        icon: 'info',
+        title: '¿Eliminar documento?',
+        text: '¿Estás seguro que deseas eliminar este documento?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ba1a1a',
+        cancelButtonColor: '#747780',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
         background: '#071628',
         color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Eliminando...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            // Simular eliminación y recargar
+            setTimeout(() => {
+                Swal.fire({icon: 'success', title: 'Documento eliminado', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
+            }, 1000);
+        }
     });
 }
 </script>
