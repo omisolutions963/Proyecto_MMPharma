@@ -113,7 +113,7 @@ try {
         </p>
 
         <!-- Buscador integrado -->
-        <form action="CATALOGO/catalogo.php" method="GET" class="mb-8">
+        <form action="<?= $base ?? '' ?>CATALOGO/catalogo.php" method="GET" class="mb-8">
           <div class="relative group">
             <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">search</span>
             <input type="text" name="q" placeholder="¿Qué estás buscando?..."
@@ -124,7 +124,7 @@ try {
           </div>
         </form>
 
-        <a class="inline-flex items-center gap-2 font-bold text-white hover:underline transition-all" href="CATALOGO/catalogo.php">
+        <a class="inline-flex items-center gap-2 font-bold text-white hover:underline transition-all" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">
           Ver catálogo completo
           <span class="material-symbols-outlined">arrow_forward</span>
         </a>
@@ -132,25 +132,25 @@ try {
 
       <!-- Lado Derecho: Categorías (Cuadrícula 2x2) -->
       <div class="grid grid-cols-2 gap-3 md:gap-6" data-aos="fade-left">
-        <a href="CATALOGO/catalogo.php?tipo=seco&q=aspirina" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
+        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=aspirina" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
           <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined text-2xl md:text-3xl text-white">medication</span>
           </div>
           <h4 class="text-white font-black text-sm md:text-lg leading-tight">Medicamentos</h4>
         </a>
-        <a href="CATALOGO/catalogo.php?tipo=seco&q=gasa" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
+        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=gasa" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
           <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined text-2xl md:text-3xl text-white">healing</span>
           </div>
           <h4 class="text-white font-black text-sm md:text-lg leading-tight">Curación</h4>
         </a>
-        <a href="CATALOGO/catalogo.php?tipo=seco&q=solucion" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
+        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=solucion" class="bg-white/15 backdrop-blur-xl hover:bg-white/25 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
           <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined text-2xl md:text-3xl text-white">vaccines</span>
           </div>
           <h4 class="text-white font-black text-sm md:text-lg leading-tight">Soluciones</h4>
         </a>
-        <a href="CATALOGO/catalogo.php?tipo=red_fria" class="bg-tertiary hover:brightness-110 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
+        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=red_fria" class="bg-tertiary hover:brightness-110 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl border border-white/20 group text-center">
           <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
             <span class="material-symbols-outlined text-2xl md:text-3xl text-white">ac_unit</span>
           </div>
@@ -177,7 +177,7 @@ try {
   <h4 class="font-black text-white text-3xl leading-tight mb-2">Farmacia</h4>
   <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Puntos de venta</p>
   
-  <a href="REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
+  <a href="<?= $base ?? '' ?>REGISTRO_FARMACIA/registro_farmacia.php" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
 </div>
 <!-- Level 2: Empresa -->
 <div class="bg-secondary p-12 rounded-3xl hover:-translate-y-2 transition-transform text-white shadow-xl flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
@@ -187,7 +187,7 @@ try {
   <h4 class="font-black text-white text-3xl leading-tight mb-2">Empresa</h4>
   <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Clínicas y corporativos</p>
 
-  <a href="REGISTRO_EMPRESA/registro_empresa.php" class="w-full py-4 bg-white text-secondary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
+  <a href="<?= $base ?? '' ?>REGISTRO_EMPRESA/registro_empresa.php" class="w-full py-4 bg-white text-secondary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
 </div>
 <!-- Level 3: Distribuidor -->
 <div class="bg-tertiary p-12 rounded-3xl hover:-translate-y-2 transition-transform text-white shadow-xl flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
@@ -197,7 +197,7 @@ try {
   <h4 class="font-black text-white text-3xl leading-tight mb-2">Distribuidor</h4>
   <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Mayoreo masivo</p>
 
-  <a href="REGISTRO_DISTRIBUIDORA_FARMACIA/REGISTRO_DISTRIBUIDORA_FARMACIA.php" class="w-full py-4 bg-white text-tertiary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
+  <a href="<?= $base ?? '' ?>REGISTRO_DISTRIBUIDORA/registro_distribuidora.php" class="w-full py-4 bg-white text-tertiary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
 </div>
 </div>
   </div>
