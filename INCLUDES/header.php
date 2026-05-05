@@ -342,16 +342,17 @@ if (menuClose && mobileMenu) {
 </script>
 
 <!-- ═══ CART DRAWER ═══ -->
-<div id="cart-overlay" class="fixed inset-0 bg-slate-900/40 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer()"></div>
-<div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-[70] translate-x-full transition-transform duration-300 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col">
+<div id="cart-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-all duration-300" onclick="toggleCartDrawer()"></div>
+<div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white/95 backdrop-blur-xl z-[70] translate-x-full transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] shadow-[-30px_0_60px_rgba(0,0,0,0.15)] flex flex-col border-l border-white/50">
   
   <!-- Header -->
-  <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-primary/5">
+  <div class="px-8 py-6 border-b border-slate-100/50 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
     <div class="flex items-center gap-3 text-primary">
-      <span class="material-symbols-outlined text-2xl">shopping_cart</span>
-      <h2 class="text-lg font-black tracking-tight">Mi carrito</h2>
+      <span class="material-symbols-outlined text-[28px] animate-bounce-slow">shopping_bag</span>
+      <h2 class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Mi Carrito</h2>
     </div>
-    <button onclick="toggleCartDrawer()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">
+    <button onclick="toggleCartDrawer()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white rounded-full transition-all shadow-sm hover:shadow-md bg-slate-50/50 border border-slate-100">
       <span class="material-symbols-outlined">close</span>
     </button>
   </div>
@@ -362,10 +363,11 @@ if (menuClose && mobileMenu) {
   </div>
 
   <!-- Footer -->
-  <div class="p-6 border-t border-slate-100 bg-slate-50">
-    <div class="flex justify-between items-end mb-4">
-      <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">Subtotal</p>
-      <p id="cart-subtotal" class="text-2xl font-black text-primary">$0.00</p>
+  <div class="p-6 border-t border-slate-100/50 bg-white/80 backdrop-blur-md relative">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full w-full h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+    <div class="flex justify-between items-end mb-6">
+      <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Subtotal</p>
+      <p id="cart-subtotal" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">$0.00</p>
     </div>
     
     <?php if(isset($_SESSION['cliente_id'])): 
@@ -401,10 +403,18 @@ if (menuClose && mobileMenu) {
     <p class="text-xs text-slate-500 mb-6 leading-relaxed">
       *Los precios mostrados son de lista. Si eres distribuidor o empresa, el precio final se ajustará al generar la cotización formal.
     </p>
-    <button onclick="confirmarPedido()" id="btn-confirmar-pedido" class="w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,62,121,0.2)] active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
-      <span class="material-symbols-outlined text-lg">receipt_long</span>
-      Confirmar pedido
-    </button>
+    <div class="flex flex-col gap-3">
+        <button onclick="confirmarPedido()" id="btn-confirmar-pedido" class="w-full h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl shadow-[0_10px_20px_rgba(16,185,129,0.2)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.3)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-sm flex items-center justify-center gap-2 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          <span class="material-symbols-outlined text-[20px] relative z-10">send</span>
+          <span class="relative z-10 text-base tracking-wide">Confirmar pedido</span>
+        </button>
+        <button onclick="generarCotizacion()" class="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold rounded-xl shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:shadow-[0_15px_30px_rgba(220,38,38,0.3)] hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-sm flex items-center justify-center gap-2 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:scale-110 transition-transform">picture_as_pdf</span>
+          <span class="relative z-10 tracking-wide">Descargar Cotización</span>
+        </button>
+    </div>
   </div>
 </div>
 
@@ -458,9 +468,12 @@ function renderCartItems() {
     
     if (carrito.length === 0) {
         container.innerHTML = `
-          <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 opacity-60">
-            <span class="material-symbols-outlined text-6xl mb-4">remove_shopping_cart</span>
-            <p class="text-sm font-bold">Tu carrito está vacío</p>
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 opacity-80 px-6 animate-in fade-in zoom-in duration-500">
+            <div class="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-6">
+              <span class="material-symbols-outlined text-[64px] text-primary/40">shopping_bag</span>
+            </div>
+            <p class="text-lg font-black text-slate-600 mb-2">Tu carrito está vacío</p>
+            <p class="text-sm font-medium text-slate-400">¡Explora nuestro catálogo y descubre los mejores productos!</p>
           </div>
         `;
         subtotalEl.textContent = '$0.00';
@@ -476,30 +489,28 @@ function renderCartItems() {
         
         let imagenHtml = '';
         if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
-            imagenHtml = `<img src="<?= $base ?? '' ?>CATALOGO/imagenes/productos/${item.imagen}" class="w-full h-full object-contain p-1">`;
+            imagenHtml = `<img src="<?= $base ?? '' ?>CATALOGO/imagenes/productos/${item.imagen}" class="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-300 group-hover:scale-110">`;
         } else {
-            imagenHtml = `<span class="material-symbols-outlined text-slate-300 text-2xl">medication</span>`;
+            imagenHtml = `<span class="material-symbols-outlined text-slate-300 text-3xl transition-transform duration-300 group-hover:scale-110">medication</span>`;
         }
 
         html += `
-        <div class="flex gap-4 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm relative group">
-          <div class="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center flex-shrink-0">
+        <div class="flex gap-4 p-4 bg-white border border-slate-100/80 rounded-2xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] relative group hover:-translate-y-1 hover:shadow-[0_8px_30px_-10px_rgba(0,62,121,0.15)] transition-all duration-300 animate-in slide-in-from-right-4 fade-in duration-300" style="animation-delay: ${index * 50}ms; animation-fill-mode: both;">
+          <div class="w-20 h-20 bg-slate-50/80 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
             ${imagenHtml}
           </div>
-          <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-primary leading-tight mb-1 truncate pr-6" title="${item.nombre}">${item.nombre}</h4>
-            <p class="text-sm font-black text-secondary mb-2">${formatCurrency(item.precio)}</p>
+          <div class="flex-1 min-w-0 py-1">
+            <h4 class="text-sm font-bold text-slate-700 leading-tight mb-1 truncate pr-8 transition-colors group-hover:text-primary" title="${item.nombre}">${item.nombre}</h4>
+            <p class="text-base font-black text-secondary mb-3">${formatCurrency(item.precio)}</p>
             
-            <div class="flex items-center gap-3">
-              <div class="flex items-center bg-slate-50 rounded-lg border border-slate-200">
-                <button onclick="cambiarCantidad(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">remove</span></button>
-                <span class="w-6 text-center text-xs font-bold text-slate-700">${item.cantidad}</span>
-                <button onclick="cambiarCantidad(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">add</span></button>
-              </div>
+            <div class="flex items-center bg-slate-50/80 rounded-xl border border-slate-100 w-fit p-1">
+              <button onclick="cambiarCantidad(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all shadow-sm"><span class="material-symbols-outlined text-[18px]">remove</span></button>
+              <span class="w-8 text-center text-sm font-black text-slate-700">${item.cantidad}</span>
+              <button onclick="cambiarCantidad(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white rounded-lg transition-all shadow-sm"><span class="material-symbols-outlined text-[18px]">add</span></button>
             </div>
           </div>
-          <button onclick="eliminarDelCarrito(${index})" class="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors w-6 h-6 flex items-center justify-center rounded-md hover:bg-red-50">
-            <span class="material-symbols-outlined text-[18px]">delete</span>
+          <button onclick="eliminarDelCarrito(${index})" class="absolute top-3 right-3 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all w-8 h-8 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
           </button>
         </div>
         `;
@@ -579,6 +590,30 @@ function toggleCartDrawer() {
 document.addEventListener('DOMContentLoaded', () => {
     actualizarBadge();
 });
+
+function generarCotizacion() {
+    if (carrito.length === 0) {
+        Swal.fire('Carrito vacío', 'Añade productos antes de generar la cotización', 'warning');
+        return;
+    }
+    
+    // Create a hidden form to submit the cart data as POST and trigger download
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<?= $base ?? '' ?>CATALOGO/generar_cotizacion_pdf.php';
+    form.target = '_blank';
+    
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'carrito_data';
+    input.value = JSON.stringify(carrito);
+    
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+
 function confirmarPedido() {
     if (carrito.length === 0) {
         Swal.fire('Carrito vacío', 'Añade productos antes de confirmar el pedido', 'warning');
@@ -617,48 +652,26 @@ function confirmarPedido() {
             
             Swal.fire({
                 html: `
-                    <div class="flex flex-col items-center justify-center p-2">
-                        <div class="relative w-32 h-32 mb-8 mt-4">
-                            <!-- Círculos de fondo con animación -->
-                            <div class="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-70" style="animation-duration: 3s;"></div>
-                            <div class="absolute inset-2 bg-blue-200 rounded-full animate-pulse"></div>
-                            <!-- Contenedor del ícono -->
-                            <div class="absolute inset-4 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-xl z-10 border-4 border-white">
-                                <span class="material-symbols-outlined text-white text-4xl transform -rotate-12 animate-[bounce_2s_infinite]">send</span>
-                            </div>
-                            <!-- Pequeño reloj indicador -->
-                            <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-lg z-20">
-                                <div class="bg-amber-400 w-8 h-8 rounded-full flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-white text-sm">schedule</span>
-                                </div>
-                            </div>
+                    <div class="flex flex-col items-center justify-center pt-4 pb-2">
+                        <div class="w-20 h-20 mb-6 bg-green-50 rounded-full flex items-center justify-center relative">
+                            <div class="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-50"></div>
+                            <span class="material-symbols-outlined text-green-500 text-4xl relative z-10">check_circle</span>
                         </div>
-                        
-                        <h2 class="text-3xl font-black text-on-surface tracking-tight mb-2">¡Pedido Enviado!</h2>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">${folioText}</p>
-                        
-                        <div class="bg-amber-50 border border-amber-100/50 rounded-2xl p-5 w-full text-left relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
-                            <div class="flex items-center gap-3 text-amber-700 mb-2">
-                                <span class="material-symbols-outlined text-xl">pending_actions</span>
-                                <span class="font-bold text-sm uppercase tracking-wider">En espera de autorización</span>
-                            </div>
-                            <p class="text-xs text-amber-900/70 leading-relaxed font-medium">
-                                Tu pedido ha sido recibido exitosamente y se encuentra en revisión. Te notificaremos en cuanto nuestro equipo autorice la solicitud para proceder.
-                            </p>
-                        </div>
+                        <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">¡Pedido Enviado!</h2>
+                        ${data.folio ? `<p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Folio: ${data.folio}</p>` : ''}
+                        <p class="text-sm text-slate-500 font-medium text-center">Tu pedido ha sido recibido y está en revisión.</p>
                     </div>
                 `,
                 showConfirmButton: true,
-                confirmButtonText: 'Entendido, volver al catálogo',
+                confirmButtonText: 'Entendido',
                 buttonsStyling: false,
                 customClass: {
-                    popup: 'rounded-[2rem] p-2 border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.1)]',
-                    confirmButton: 'w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-secondary hover:-translate-y-0.5 transition-all text-sm mt-4'
+                    popup: 'rounded-[2rem] p-4 border border-slate-100 shadow-2xl',
+                    confirmButton: 'w-full py-3 px-6 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 hover:-translate-y-0.5 transition-all mt-2'
                 },
-                width: '32em',
+                width: '28em',
                 allowOutsideClick: false,
-                backdrop: `rgba(0, 29, 53, 0.4)`
+                backdrop: `rgba(15, 23, 42, 0.6)`
             }).then(() => {
                 window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
             });

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3307
--- Tiempo de generación: 27-04-2026 a las 06:52:11
+-- Tiempo de generación: 05-05-2026 a las 21:32:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -1064,6 +1064,7 @@ CREATE TABLE `clientes_pedidos` (
   `id` int(11) NOT NULL,
   `folio` varchar(30) NOT NULL COMMENT 'Ej. ORD-2024-8841',
   `cliente_id` int(11) NOT NULL COMMENT 'FK -> clientes_usuarios.id',
+  `direccion_id` int(11) DEFAULT NULL,
   `tipo_cliente` enum('FARMACIA','DISTRIBUIDORA','EMPRESA') NOT NULL,
   `fecha_pedido` date NOT NULL,
   `fecha_entrega` date DEFAULT NULL,
@@ -1074,6 +1075,13 @@ CREATE TABLE `clientes_pedidos` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `clientes_pedidos`
+--
+
+INSERT INTO `clientes_pedidos` (`id`, `folio`, `cliente_id`, `direccion_id`, `tipo_cliente`, `fecha_pedido`, `fecha_entrega`, `monto_total`, `metodo_pago`, `estado_envio`, `notas`, `created_at`, `updated_at`) VALUES
+(2, 'ORD-2026-0001', 6, NULL, 'EMPRESA', '2026-05-05', NULL, 2254.80, 'TRANSFERENCIA', 'PENDIENTE', NULL, '2026-05-05 19:20:19', '2026-05-05 19:20:19');
 
 -- --------------------------------------------------------
 
@@ -1106,6 +1114,13 @@ CREATE TABLE `clientes_pedidos_detalle` (
   `precio_unitario` decimal(10,2) NOT NULL DEFAULT 0.00,
   `subtotal` decimal(14,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `clientes_pedidos_detalle`
+--
+
+INSERT INTO `clientes_pedidos_detalle` (`id`, `pedido_id`, `producto_id`, `nombre_producto`, `cantidad`, `precio_unitario`, `subtotal`) VALUES
+(2, 2, 4, 'ACCOCEPT 500 MG CON 50 TABLETAS', 3, 751.60, 2254.80);
 
 -- --------------------------------------------------------
 
@@ -1402,7 +1417,7 @@ ALTER TABLE `clientes_documentos`
 -- AUTO_INCREMENT de la tabla `clientes_pedidos`
 --
 ALTER TABLE `clientes_pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes_pedidos_comprobantes`
@@ -1414,7 +1429,7 @@ ALTER TABLE `clientes_pedidos_comprobantes`
 -- AUTO_INCREMENT de la tabla `clientes_pedidos_detalle`
 --
 ALTER TABLE `clientes_pedidos_detalle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes_solicitudes_registro`
