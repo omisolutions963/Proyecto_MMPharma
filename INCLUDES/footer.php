@@ -1,4 +1,4 @@
-<footer class="bg-[#003e79] text-white pt-20 pb-10">
+<footer class="bg-[#050d18] text-white pt-20 pb-10">
 <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 <div class="space-y-6">
 <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal-Blanco.png" 
@@ -56,7 +56,7 @@
 </ul>
 </div>
 </div>
-<div class="max-w-[1600px] mx-auto px-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-blue-100/40">
+<div class="max-w-[1600px] mx-auto px-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-blue-100/40">
 <p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p>
 <div class="flex gap-8">
 <a class="hover:text-white transition-colors" href="https://www.facebook.com/share/1DpVKyDk9Q/">Facebook</a>
@@ -69,16 +69,6 @@
     duration: 800,
     once: true,
     offset: 50,
-  });
-
-  // Prevenir saltos de scroll al refrescar
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-  window.addEventListener('load', () => {
-    if (!window.location.hash) {
-      window.scrollTo(0, 0);
-    }
   });
 </script>
 </body>

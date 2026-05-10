@@ -1,4 +1,4 @@
-<footer class="bg-[#003e79] text-white py-16">
+<footer class="bg-[#050d18] border-t border-white/5 text-white py-16">
     <div class="max-w-[1600px] mx-auto px-12 text-center flex flex-col items-center">
         <!-- Branding & Navegación -->
         <div class="flex flex-col items-center gap-8 mb-12">

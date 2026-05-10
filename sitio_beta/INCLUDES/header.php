@@ -14,11 +14,11 @@
         theme: {
             extend: {
                 colors: {
-                    "primary": "#003e79",
-                    "secondary": "#1e60aa",
-                    "tertiary": "#2ca1b5",
-                    "background": "#f0f7ff",
-                    "surface": "#ffffff",
+                    "primary": "#38bdf8",
+                    "secondary": "#818cf8",
+                    "tertiary": "#2dd4bf",
+                    "background": "#0a192f",
+                    "surface": "#112240",
                 },
                 fontFamily: { "body": ["Inter"] },
             },
@@ -40,21 +40,21 @@
     }
 </style>
 </head>
-<body class="bg-[#f0f7ff] font-body text-on-surface antialiased">
+<body class="bg-background font-body text-slate-300 antialiased">
 
-<header class="sticky top-0 z-50 bg-white shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
+<header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border-b border-white/5">
 <nav class="flex justify-between items-center w-full px-6 md:px-12 py-4 max-w-[1600px] mx-auto font-['Inter'] font-medium text-base antialiased">
   <div class="flex items-center">
     <a href="index.php">
-      <img src="logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-7 md:h-8 w-auto">
+      <img src="logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-7 md:h-8 w-auto">
     </a>
   </div>
 
   <!-- Desktop Nav -->
   <div class="hidden md:flex items-center gap-12 text-base">
-    <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="index.php">Inicio</a>
-    <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="quienes_somos.php">¿Quiénes somos?</a>
-    <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary font-bold border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200 font-bold' ?>" href="contacto.php">Contacto</a>
+    <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-slate-300 hover:text-primary transition-colors duration-200 font-bold' ?>" href="index.php">Inicio</a>
+    <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-slate-300 hover:text-primary transition-colors duration-200 font-bold' ?>" href="quienes_somos.php">¿Quiénes somos?</a>
+    <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-slate-300 hover:text-primary transition-colors duration-200 font-bold' ?>" href="contacto.php">Contacto</a>
   </div>
 
   <!-- Mobile Toggle -->
@@ -64,18 +64,18 @@
 </nav>
 
 <!-- Mobile Menu Sidebar -->
-<div id="mobile-menu" class="fixed inset-0 z-[60] bg-white md:hidden">
+<div id="mobile-menu" class="fixed inset-0 z-[60] bg-background md:hidden">
     <div class="flex flex-col h-full">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100">
-            <img src="logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-7 w-auto">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-white/10">
+            <img src="logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-7 w-auto">
             <button id="menu-close" class="text-primary p-2">
                 <span class="material-symbols-outlined text-3xl">close</span>
             </button>
         </div>
         <div class="flex flex-col items-center p-8 gap-10">
-            <a href="index.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">Inicio</a>
-            <a href="quienes_somos.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">¿Quiénes somos?</a>
-            <a href="contacto.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-4 border-tertiary pb-1' : 'text-slate-600' ?>">Contacto</a>
+            <a href="index.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-4 border-primary pb-1' : 'text-slate-300' ?>">Inicio</a>
+            <a href="quienes_somos.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-4 border-primary pb-1' : 'text-slate-300' ?>">¿Quiénes somos?</a>
+            <a href="contacto.php" class="text-2xl font-bold w-fit text-center <?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-4 border-primary pb-1' : 'text-slate-300' ?>">Contacto</a>
         </div>
     </div>
 </div>

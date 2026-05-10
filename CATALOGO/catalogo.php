@@ -114,37 +114,37 @@ require_once '../includes/header.php';
 ?>
 
 <!-- ── HERO ── -->
-<section class="relative min-h-[369px] flex items-center overflow-hidden bg-primary">
+<section class="relative min-h-[369px] flex items-center overflow-hidden bg-background">
   <div class="absolute inset-0 z-0 overflow-hidden">
-    <img src="../IMG/23.webp" class="w-full h-full object-cover opacity-30 parallax-bg scale-125 origin-top" data-speed="0.2">
-    <div class="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/60 to-primary/90"></div>
+    <img src="../IMG/23.webp" class="w-full h-full object-cover opacity-20 parallax-bg scale-125 origin-top" data-speed="0.2">
+    <div class="absolute inset-0 bg-background/80"></div>
   </div>
   <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-20 w-full" data-aos="fade-up">
     <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight text-white mb-2">Catálogo</h1>
-    <p class="text-lg text-blue-100/90 font-medium"><?= number_format($total) ?> productos disponibles</p>
+    <p class="text-lg text-slate-300 font-medium"><?= number_format($total) ?> productos disponibles</p>
   </div>
 </section>
 
 
 <!-- ═══ FILTROS Y BUSCADOR ═══ -->
-<section class="w-full bg-primary border-b border-white/10 pt-10 pb-6 z-30 <?= $is_logged_in ? 'sticky top-[72px]' : 'pointer-events-none opacity-60' ?>">
+<section class="w-full bg-surface py-6 z-30 <?= $is_logged_in ? 'sticky top-[72px]' : 'pointer-events-none opacity-60' ?>">
   <div class="max-w-[1600px] mx-auto px-12" data-aos="fade" data-aos-delay="200">
     <form method="GET" action="catalogo.php" class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
 
       <!-- Buscador -->
       <div class="relative flex-1 group">
-        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary">search</span>
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary-light">search</span>
         <input
           type="text"
           name="q"
           value="<?= htmlspecialchars($busqueda) ?>"
           placeholder="Buscar producto..."
-          class="w-full h-11 bg-white border-none rounded-xl pl-10 pr-4 py-0 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
+          class="w-full h-11 bg-background rounded-xl pl-10 pr-4 py-0 text-white placeholder-slate-500 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
         >
       </div>
 
       <!-- Filtro Categoría -->
-      <select name="cat" class="h-11 bg-white border-none rounded-xl pl-4 pr-10 py-0 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-secondary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2364748b%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+      <select name="cat" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
         <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas las categorías</option>
         <?php foreach($categorias_db as $c): ?>
           <option value="<?= $c['id'] ?>" <?= $categoria_id === $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['nombre']) ?></option>
@@ -155,14 +155,14 @@ require_once '../includes/header.php';
       </select>
 
       <!-- Filtro tipo -->
-      <select name="tipo" class="h-11 bg-white border-none rounded-xl pl-4 pr-10 py-0 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2364748b%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+      <select name="tipo" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
         <option value="" <?= $tipo === '' ? 'selected' : '' ?>>Todos los tipos</option>
         <option value="seco" <?= $tipo === 'seco' ? 'selected' : '' ?>>Seco</option>
         <option value="red_fria" <?= $tipo === 'red_fria' ? 'selected' : '' ?>>Red Fría</option>
       </select>
 
       <!-- Ordenar -->
-      <select name="orden" class="h-11 bg-white border-none rounded-xl pl-4 pr-10 py-0 text-sm text-slate-900 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2364748b%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+      <select name="orden" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
         <option value="nombre_asc"  <?= $orden === 'nombre_asc'  ? 'selected' : '' ?>>Nombre A-Z</option>
         <option value="nombre_desc" <?= $orden === 'nombre_desc' ? 'selected' : '' ?>>Nombre Z-A</option>
         <option value="precio_asc"  <?= $orden === 'precio_asc'  ? 'selected' : '' ?>>Precio: menor a mayor</option>
@@ -170,20 +170,20 @@ require_once '../includes/header.php';
       </select>
 
       <!-- Botón buscar -->
-      <button type="submit" class="h-11 bg-primary text-white px-6 py-0 rounded-xl text-sm font-black hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap">
+      <button type="submit" class="h-11 bg-primary text-white px-6 py-0 rounded-xl text-sm font-black hover:bg-primary-light hover:text-surface transition-all flex items-center gap-2 whitespace-nowrap">
         <span class="material-symbols-outlined text-lg">search</span>
         Buscar
       </button>
 
       <!-- Limpiar filtros -->
       <?php if ($busqueda || $tipo || $categoria_id > 0 || $orden !== 'nombre_asc'): ?>
-      <a href="catalogo.php" class="w-11 h-11 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center justify-center" title="Limpiar filtros">
+      <a href="catalogo.php" class="w-11 h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all flex items-center justify-center" title="Limpiar filtros">
         <span class="material-symbols-outlined text-lg">refresh</span>
       </a>
       <?php endif; ?>
 
       <!-- Toggle vista -->
-      <div class="flex gap-1 h-11 bg-white border border-white/10 rounded-xl p-1">
+      <div class="flex gap-1 h-11 bg-background rounded-xl p-1">
         <button type="button" id="btn-lista" onclick="setVista('lista')"
           class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa">
           <span class="material-symbols-outlined text-lg">view_list</span>
@@ -205,29 +205,29 @@ require_once '../includes/header.php';
     <div class="<?= !$is_logged_in ? 'filter blur-[8px] opacity-50 select-none' : '' ?>">
 
   <?php if (empty($productos)): ?>
-  <div class="text-center py-24 text-on-surface-variant clinical-shadow bg-surface-container-low border border-white/50 rounded-2xl" data-aos="zoom-in">
+  <div class="text-center py-24 text-slate-400 bg-surface rounded-2xl" data-aos="zoom-in">
     <span class="material-symbols-outlined text-6xl text-outline mb-4">search_off</span>
-    <p class="text-lg font-medium mb-2">No se encontraron productos</p>
+    <p class="text-lg font-medium mb-2 text-slate-300">No se encontraron productos</p>
     <p class="text-sm mb-6">Intenta con otro término de búsqueda</p>
-    <a href="catalogo.php" class="text-secondary font-bold hover:underline">Ver todos los productos</a>
+    <a href="catalogo.php" class="text-primary-light font-bold hover:underline">Ver todos los productos</a>
   </div>
 
   <?php else: ?>
 
   <!-- ─── VISTA LISTA ─── -->
-  <div id="vista-lista" class="bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.05)] overflow-hidden border border-primary/10" data-aos="fade-up">
+  <div id="vista-lista" class="bg-surface rounded-[2rem] overflow-hidden" data-aos="fade-up">
     <table class="w-full">
       <thead>
-        <tr class="bg-primary border-b border-primary/10">
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white">Producto</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden lg:table-cell">Sustancia activa</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden md:table-cell">Categoría</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white">Precio</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden md:table-cell">Tipo</th>
+        <tr class="bg-primary">
+          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300">Producto</th>
+          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden lg:table-cell">Sustancia activa</th>
+          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden md:table-cell">Categoría</th>
+          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300">Precio</th>
+          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden md:table-cell">Tipo</th>
           <th class="px-8 py-5"></th>
         </tr>
       </thead>
-      <tbody id="contenedor-lista" class="divide-y divide-primary/5">
+      <tbody id="contenedor-lista" class="divide-y divide-white/5">
         <?php 
         $vista = 'lista';
         include 'obtener_productos.php'; 
@@ -257,20 +257,20 @@ require_once '../includes/header.php';
 
   <?php if (!$is_logged_in): ?>
   <!-- Overlay CTA para usuarios no registrados -->
-  <div class="absolute inset-0 z-40 flex items-center justify-center bg-background/20 backdrop-blur-[2px]">
-    <div class="max-w-md w-full mx-4 bg-white p-10 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,62,121,0.25)] border border-primary/10 text-center animate-reveal">
-      <div class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
-        <span class="material-symbols-outlined text-primary text-4xl">lock</span>
+  <div class="absolute inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-[4px]">
+    <div class="max-w-md w-full mx-4 bg-surface p-10 rounded-[2.5rem] text-center animate-reveal">
+      <div class="w-20 h-20 bg-background rounded-3xl flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-primary-light text-4xl">lock</span>
       </div>
-      <h2 class="text-3xl font-black text-primary tracking-tight mb-4">Catálogo exclusivo</h2>
-      <p class="text-on-surface-variant font-medium mb-8 leading-relaxed">
+      <h2 class="text-3xl font-black text-primary-light tracking-tight mb-4">Catálogo exclusivo</h2>
+      <p class="text-slate-300 font-medium mb-8 leading-relaxed">
         Para ver nuestros precios y existencias en tiempo real, es necesario contar con una cuenta aprobada.
       </p>
       <div class="flex flex-col gap-3">
-        <a href="../INDEX/SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-secondary transition-all">
+        <a href="../INDEX/SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-light hover:text-surface transition-all">
           Solicitar acceso
         </a>
-        <a href="../LOGIN/login.php" class="w-full py-4 bg-transparent text-primary font-bold rounded-xl border border-primary/20 hover:bg-primary/5 transition-all">
+        <a href="../LOGIN/login.php" class="w-full py-4 bg-white/5 text-primary-light font-bold rounded-xl hover:bg-white/10 transition-all">
           Ya tengo cuenta
         </a>
       </div>
@@ -356,7 +356,7 @@ if (trigger) {
 </script>
 
 <style>
-  .vista-btn { color: #64748b; }
+  .vista-btn { color: #94a3b8; }
   .vista-btn.activa { background: #1e60aa !important; color: white !important; }
 </style>
 
