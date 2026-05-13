@@ -150,6 +150,13 @@ if (session_status() === PHP_SESSION_NONE) {
             $foto_cliente = $base . 'DASHBOARD_CLIENTE/' . ltrim(str_replace('../', '', $foto_cliente_raw), '/');
         }
         ?>
+        <!-- Botón Ingresar al Portal -->
+        <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="hidden md:flex items-center justify-center gap-2 px-6 py-2.5 <?= $role_bg ?> text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all duration-300 ml-4 group relative overflow-hidden border border-white/10">
+            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+            <span class="relative z-10 tracking-wide">Ingresar al Portal</span>
+            <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+
         <!-- Perfil de cliente con Dropdown -->
         <div class="relative" id="profile-dropdown">
           <button onclick="toggleProfileDropdown()" class="w-10 h-10 <?= $foto_cliente ? 'bg-white' : $role_bg ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background <?= $role_ring ?> focus:outline-none ml-2 overflow-hidden">
@@ -234,6 +241,13 @@ if (session_status() === PHP_SESSION_NONE) {
             $foto_admin = $base . 'DASHBOARD_ADMIN/' . ltrim(str_replace('../', '', $foto_admin_raw), '/');
         }
         ?>
+        <!-- Botón Ingresar al Portal para Admin -->
+        <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="hidden md:flex items-center justify-center gap-2 px-6 py-2.5 bg-[#4ade80] text-[#005132] font-black rounded-xl hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] hover:-translate-y-1 transition-all duration-300 ml-4 group relative overflow-hidden border border-[#4ade80]/50">
+            <div class="absolute inset-0 bg-white/40 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+            <span class="relative z-10 tracking-wide">Ingresar al Portal</span>
+            <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+
         <!-- Perfil de Admin con Dropdown -->
         <div class="relative" id="profile-dropdown-admin">
           <button onclick="toggleProfileDropdownAdmin()" class="w-10 h-10 <?= $foto_admin ? 'bg-white' : 'bg-[#005132]' ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background ring-[#4ade80] focus:outline-none ml-2 overflow-hidden">

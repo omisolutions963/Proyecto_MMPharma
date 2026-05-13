@@ -78,137 +78,152 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html class="light" lang="es"><head>
+<html lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Iniciar sesión — MMPharma</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
     body { font-family: 'Inter', sans-serif; height:100%; margin:0; overflow:hidden; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .glass-panel { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 </style>
 <script id="tailwind-config">
     tailwind.config = {
         darkMode: "class",
-        theme: { extend: { colors: {
-            "surface-container-lowest":"#ffffff","primary-fixed-dim":"#abc7ff",
-            "inverse-on-surface":"#e8f2ff","inverse-surface":"#1d3246",
-            "on-tertiary":"#ffffff","surface":"#f7f9ff","on-background":"#051d30",
-            "on-error-container":"#93000a","on-secondary":"#ffffff",
-            "inverse-primary":"#abc7ff","error":"#ba1a1a",
-            "on-surface-variant":"#43474f","surface-container-high":"#d9eaff",
-            "on-secondary-container":"#004d77","on-primary-container":"#89a5dd",
-            "on-tertiary-container":"#39bb6c","secondary":"#006397",
-            "tertiary-container":"#004520","primary":"#003e79",
-            "surface-variant":"#cfe5ff","tertiary-fixed":"#7efba4",
-            "error-container":"#ffdad6","surface-container-highest":"#cfe5ff",
-            "on-primary":"#ffffff","on-primary-fixed":"#001b3f",
-            "surface-bright":"#f7f9ff","secondary-fixed-dim":"#92ccff",
-            "primary-fixed":"#d7e2ff","surface-dim":"#c6dcf6",
-            "on-secondary-fixed-variant":"#004b73","tertiary-fixed-dim":"#61de8a",
-            "primary-container":"#1a3a6b","outline-variant":"#c4c6d0",
-            "on-primary-fixed-variant":"#284678","surface-container":"#e3efff",
-            "background":"#f7f9ff","secondary-container":"#71c0fe",
-            "on-secondary-fixed":"#001d31","on-surface":"#051d30",
-            "on-tertiary-fixed":"#00210c","on-tertiary-fixed-variant":"#005228",
-            "tertiary":"#002c13","surface-container-low":"#edf4ff",
-            "secondary-fixed":"#cce5ff","surface-tint":"#415e91",
-            "outline":"#747780","on-error":"#ffffff"
-        }}}
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#003e79",
+                    "secondary": "#1e60aa",
+                    "tertiary": "#2ca1b5",
+                    "primary-light": "#60a5fa",
+                    "secondary-light": "#93c5fd",
+                    "tertiary-light": "#67e8f9",
+                    "background": "#0a192f",
+                    "surface": "#112240",
+                    "surface-container-low": "#1a365d",
+                    "surface-container": "#2a4365",
+                    "surface-container-high": "#2c5282",
+                },
+                fontFamily: { "headline": ["Inter"], "body": ["Inter"], "label": ["Inter"] },
+            },
+        },
     }
 </script>
 </head>
-<body class="bg-surface text-on-surface antialiased">
+<body class="bg-background text-slate-300 antialiased">
 
 <div class="flex h-screen w-screen overflow-hidden">
     <!-- Panel izquierdo: Branding -->
-    <div class="hidden lg:flex w-1/2 bg-[#003e79] flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
-        <!-- Background Image -->
-        <div class="absolute inset-0 z-0">
-            <img src="../IMG/37.webp" class="w-full h-full object-cover opacity-30">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-primary/60"></div>
+    <div class="hidden lg:flex w-1/2 bg-surface flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
+        <!-- Background Image Overlay -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="../IMG/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] transform scale-125">
+            <div class="absolute inset-0 bg-background/80"></div>
         </div>
 
         <div class="relative z-10">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-12 object-contain">
+            <a href="../INDEX/index.php">
+                <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
+            </a>
         </div>
-        <div class="relative z-10">
-            <h1 class="text-6xl font-black text-white leading-tight mb-6">Bienvenido a<br><span class="text-blue-300">MMPharma</span></h1>
-            <p class="text-blue-100/90 text-lg leading-relaxed max-w-md">Accede al portal unificado para gestionar tu cuenta, ver el catálogo y administrar pedidos con la mayor precisión clínica.</p>
+        <div class="relative z-10 mt-20">
+            <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight mb-6 tracking-tight">Bienvenido a<br><span class="text-primary-light">MMPharma</span></h1>
+            <p class="text-blue-100/90 text-xl leading-relaxed max-w-lg font-medium">
+                Accede al portal unificado para gestionar tu cuenta, explorar nuestro catálogo completo y administrar tus pedidos con la mayor precisión clínica.
+            </p>
         </div>
-        <div class="relative z-10 flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-white text-xl">security</span>
+        
+        <div class="relative z-10 flex flex-col gap-6 mt-auto">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                    <span class="material-symbols-outlined text-primary-light text-2xl">security</span>
+                </div>
+                <p class="text-slate-300 text-sm font-bold tracking-wide">Plataforma segura y encriptada</p>
             </div>
-            <p class="text-blue-100/80 text-sm font-medium">Acceso seguro y encriptado</p>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center border border-secondary/30">
+                    <span class="material-symbols-outlined text-secondary-light text-2xl">local_shipping</span>
+                </div>
+                <p class="text-slate-300 text-sm font-bold tracking-wide">Envíos rápidos a todo el país</p>
+            </div>
         </div>
     </div>
 
     <!-- Panel derecho: Formulario -->
-    <div class="flex-1 flex items-center justify-center p-8 bg-surface">
-        <div class="w-full max-w-md" data-aos="fade-left">
-            <div class="flex items-center gap-3 mb-10">
-                <a href="../INDEX/index.php" class="w-10 h-10 flex items-center justify-center bg-surface-container hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant">
-                    <span class="material-symbols-outlined">arrow_back</span>
+    <div class="flex-1 flex items-center justify-center p-8 bg-background relative overflow-y-auto">
+        <!-- Decoration elements -->
+        <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-tertiary/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="w-full max-w-md relative z-10 glass-panel p-10 rounded-3xl border border-white/5 shadow-2xl" data-aos="fade-left">
+            <div class="flex items-center gap-4 mb-10">
+                <a href="../INDEX/index.php" class="w-12 h-12 flex items-center justify-center bg-white/5 hover:bg-white/10 hover:text-primary-light rounded-2xl transition-all text-slate-400 group border border-white/5">
+                    <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 </a>
                 <div>
-                    <h2 class="text-2xl font-extrabold text-on-surface tracking-tight">Iniciar sesión</h2>
-                    <p class="text-on-surface-variant text-sm mt-1">Ingresa para acceder a tu panel.</p>
+                    <h2 class="text-3xl font-black text-white tracking-tight">Iniciar sesión</h2>
+                    <p class="text-slate-400 text-sm mt-1 font-medium">Ingresa para acceder a tu panel.</p>
                 </div>
             </div>
 
             <?php if ($error_login): ?>
-            <div class="mb-6 flex items-center gap-3 bg-error-container/40 border border-error/20 text-on-error-container px-4 py-3 rounded-xl text-sm font-semibold">
-                <span class="material-symbols-outlined text-error text-lg">error</span>
+            <div class="mb-8 flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-4 rounded-2xl text-sm font-bold shadow-lg shadow-red-500/5">
+                <span class="material-symbols-outlined text-red-500 text-xl">error</span>
                 <?= htmlspecialchars($error_msg) ?>
             </div>
             <?php endif; ?>
 
-            <form method="POST" class="space-y-5">
+            <form method="POST" class="space-y-6">
                 <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Correo electrónico</label>
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">mail</span>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Correo electrónico</label>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary-light transition-colors">mail</span>
                         <input type="email" name="email" required autocomplete="email"
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                placeholder="tu@correo.com"
-                               class="w-full pl-11 pr-4 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none">
+                               class="w-full pl-14 pr-5 py-4 bg-background/50 border border-white/10 rounded-2xl text-white text-base focus:ring-2 focus:ring-primary-light focus:border-transparent outline-none transition-all placeholder:text-slate-600">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Contraseña</label>
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">lock</span>
+                    <div class="flex justify-between items-end mb-3">
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">Contraseña</label>
+                    </div>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary-light transition-colors">lock</span>
                         <input type="password" name="password" id="passwordInput" required autocomplete="current-password"
                                placeholder="••••••••"
-                               class="w-full pl-11 pr-12 py-3 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary outline-none">
-                        <button type="button" onclick="togglePass()" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors">
-                            <span class="material-symbols-outlined text-lg" id="eyeIcon">visibility</span>
+                               class="w-full pl-14 pr-14 py-4 bg-background/50 border border-white/10 rounded-2xl text-white text-base focus:ring-2 focus:ring-primary-light focus:border-transparent outline-none transition-all placeholder:text-slate-600">
+                        <button type="button" onclick="togglePass()" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors focus:outline-none">
+                            <span class="material-symbols-outlined text-xl" id="eyeIcon">visibility</span>
                         </button>
                     </div>
                 </div>
                 
-                <div class="pt-2">
+                <div class="pt-6">
                     <button type="submit"
-                            class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(0,0,0,0.1)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 mt-2">
-                        <span class="material-symbols-outlined text-lg">login</span>
-                        Entrar al portal
+                            class="w-full h-14 bg-primary text-white font-bold rounded-2xl shadow-[0_0_20px_rgba(0,62,121,0.4)] hover:bg-primary-light hover:text-surface hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                        <span class="relative z-10 tracking-wide text-lg">Entrar al portal</span>
+                        <span class="material-symbols-outlined text-[22px] relative z-10 group-hover:translate-x-1 transition-transform">login</span>
                     </button>
                 </div>
             </form>
 
-            <div class="mt-8 pt-8 border-t border-surface-container-highest text-center">
-                <p class="text-sm text-on-surface-variant mb-4">¿Aún no tienes cuenta?</p>
-                <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-primary font-bold hover:underline">
-                    Solicitar acceso al portal <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            <div class="mt-10 pt-8 border-t border-white/10 text-center">
+                <p class="text-sm text-slate-400 mb-4 font-medium">¿Aún no tienes cuenta?</p>
+                <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-primary-light font-bold hover:text-white transition-colors group">
+                    Solicitar acceso al portal <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
             </div>
 
-            <p class="text-center text-xs text-on-surface-variant mt-12 opacity-60">
+            <p class="text-center text-xs text-slate-600 mt-12 font-medium">
                 © <?= date('Y') ?> MMPharma. Todos los derechos reservados.
             </p>
         </div>
@@ -217,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 700, once: true });
+    AOS.init({ duration: 800, once: true });
     function togglePass() {
         const inp  = document.getElementById('passwordInput');
         const icon = document.getElementById('eyeIcon');
