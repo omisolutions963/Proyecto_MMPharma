@@ -1,250 +1,234 @@
 <!DOCTYPE html>
-
-<html class="light" lang="es"><head>
+<html lang="es">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Registro MMPharma - Selección de Negocio</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script id="tailwind-config">
-    
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary-container": "#004d77",
-                        "secondary-fixed-dim": "#92ccff",
-                        "secondary-container": "#71c0fe",
-                        "on-surface-variant": "#43474f",
-                        "tertiary": "#002c13",
-                        "surface-bright": "#f7f9ff",
-                        "inverse-on-surface": "#e8f2ff",
-                        "surface-container-highest": "#cfe5ff",
-                        "primary-fixed-dim": "#abc7ff",
-                        "on-secondary-fixed-variant": "#004b73",
-                        "on-error": "#ffffff",
-                        "on-secondary-fixed": "#001d31",
-                        "on-error-container": "#93000a",
-                        "tertiary-fixed-dim": "#61de8a",
-                        "surface-container-high": "#d9eaff",
-                        "on-background": "#051d30",
-                        "background": "#f7f9ff",
-                        "on-secondary": "#ffffff",
-                        "on-primary-container": "#89a5dd",
-                        "surface-tint": "#415e91",
-                        "on-primary-fixed": "#001b3f",
-                        "secondary-fixed": "#cce5ff",
-                        "on-tertiary-fixed": "#00210c",
-                        "surface-container-lowest": "#ffffff",
-                        "surface": "#f7f9ff",
-                        "surface-container-low": "#edf4ff",
-                        "error": "#ba1a1a",
-                        "surface-container": "#e3efff",
-                        "surface-dim": "#c6dcf6",
-                        "surface-variant": "#cfe5ff",
-                        "primary-fixed": "#d7e2ff",
-                        "primary": "#003e79",
-                        "secondary": "#1e60aa",
-                        "tertiary": "#32b4ca",
-                        "primary-container": "#e0f2ff",
-                        "secondary-container": "#cfe5ff",
-                        "tertiary-container": "#d1e4ff",
-                        "on-surface": "#001d35",
-                        "on-surface-variant": "#003e79",
-                        "background": "#f0f7ff",
-                        "surface": "#ffffff",
-                        "surface-container-low": "#e1f0ff",
-                        "surface-container": "#cfe5ff",
-                        "surface-container-high": "#abc7ff",
-                    },
-                    fontFamily: {
-                        "headline": ["Inter"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    },
-                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#003e79",
+                    "secondary": "#1e60aa",
+                    "tertiary": "#2ca1b5",
+                    "primary-light": "#60a5fa",
+                    "secondary-light": "#93c5fd",
+                    "tertiary-light": "#67e8f9",
+                    "background": "#0a192f",
+                    "surface": "#112240",
+                    "surface-container-low": "#1a365d",
+                    "surface-container": "#2a4365",
+                    "surface-container-high": "#2c5282",
                 },
+                fontFamily: {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+                },
+                borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
             },
-        }
-    </script>
+        },
+    }
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-    </style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .glass-card { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+</style>
 </head>
-<body class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
+<body class="bg-background font-body text-slate-300 min-h-screen flex flex-col relative overflow-x-hidden">
+
+<!-- Decorative Background -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-5%] w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-tertiary/10 rounded-full blur-[100px]"></div>
+    <img src="../IMG/5.webp" class="w-full h-full object-cover object-top opacity-5 transform scale-125">
+</div>
+
 <!-- TopAppBar -->
-<header class="bg-[#f7f9ff] dark:bg-slate-900 flex justify-between items-center w-full px-8 py-6 z-50">
-  <button onclick="location.href='../INDEX/index.php'" class="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors duration-200">
-    <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
-    <span class="text-sm font-semibold">Volver</span>
+<header class="relative z-50 flex justify-between items-center w-full px-8 py-6 bg-background/80 backdrop-blur-md border-b border-white/5">
+  <button onclick="location.href='../INDEX/index.php'" class="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-200">
+    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface border border-white/5 group-hover:bg-primary transition-colors">
+        <span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+    </div>
+    <span class="text-sm font-bold tracking-wide">Volver</span>
   </button>
 
-  <a href="../INDEX/index.php">
-    <img src="../logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+  <a href="../INDEX/index.php" class="absolute left-1/2 -translate-x-1/2">
+    <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-8 w-auto hover:scale-105 transition-transform duration-300">
   </a>
 
   <div class="flex items-center gap-6">
   <button onclick="document.getElementById('popupAyuda').classList.remove('hidden')"
-    class="text-[#43474f] dark:text-slate-400 hover:bg-[#edf4ff] dark:hover:bg-slate-800 transition-colors px-3 py-2 rounded-lg flex items-center gap-2">
-    <span class="material-symbols-outlined text-xl">help_outline</span>
-    <span class="text-sm font-medium">Ayuda</span>
+    class="text-slate-400 hover:text-white hover:bg-surface transition-colors px-4 py-2 rounded-xl flex items-center gap-2 border border-transparent hover:border-white/10 group">
+    <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">help_outline</span>
+    <span class="text-sm font-bold">Ayuda</span>
   </button>
-</div>
+  </div>
+</header>
+
 <!-- Popup Ayuda -->
-<div id="popupAyuda" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-  <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-xl font-bold text-primary">¿Cómo elegir tu tipo de cuenta?</h3>
+<div id="popupAyuda" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm">
+  <div class="bg-surface rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl border border-white/10" data-aos="zoom-in" data-aos-duration="300">
+    <div class="flex justify-between items-center mb-8">
+      <h3 class="text-xl font-black text-white">¿Cómo elegir tu tipo de cuenta?</h3>
       <button onclick="document.getElementById('popupAyuda').classList.add('hidden')" 
-        class="text-on-surface-variant hover:text-primary">
+        class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
     <div class="space-y-4">
-      <div class="p-4 bg-surface-container-low rounded-xl">
-        <p class="font-bold text-on-surface mb-1">💊 Farmacia</p>
-        <p class="text-sm text-on-surface-variant">Venta directa al público. Farmacias independientes o sucursales.</p>
+      <div class="p-5 bg-background rounded-2xl border border-white/5">
+        <p class="font-black text-primary-light mb-1 text-lg flex items-center gap-2"><span class="material-symbols-outlined">storefront</span> Farmacia</p>
+        <p class="text-sm text-slate-400">Venta directa al público. Farmacias independientes o sucursales.</p>
       </div>
-      <div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
-        <p class="font-bold text-on-surface mb-1">🚚 Distribuidora</p>
-        <p class="text-sm text-on-surface-variant">Mayoristas con volumen alto y logística propia.</p>
+      <div class="p-5 bg-primary/20 rounded-2xl border border-primary/30">
+        <p class="font-black text-white mb-1 text-lg flex items-center gap-2"><span class="material-symbols-outlined text-secondary-light">local_shipping</span> Distribuidora</p>
+        <p class="text-sm text-blue-100/80">Mayoristas con volumen alto y logística propia.</p>
       </div>
-      <div class="p-4 bg-surface-container-low rounded-xl">
-        <p class="font-bold text-on-surface mb-1">🏥 Empresa</p>
-        <p class="text-sm text-on-surface-variant">Clínicas, hospitales o corporativos que compran para uso interno.</p>
+      <div class="p-5 bg-background rounded-2xl border border-white/5">
+        <p class="font-black text-tertiary-light mb-1 text-lg flex items-center gap-2"><span class="material-symbols-outlined">domain</span> Empresa</p>
+        <p class="text-sm text-slate-400">Clínicas, hospitales o corporativos que compran para uso interno.</p>
       </div>
     </div>
-    <p class="text-xs text-on-surface-variant mt-6 text-center">¿Sigues con dudas? Escríbenos a <span class="text-secondary font-bold">ventas@mmpharma.com</span></p>
+    <p class="text-xs text-slate-500 mt-8 text-center font-medium">¿Sigues con dudas? Escríbenos a <a href="mailto:ventas@mmpharma.com" class="text-primary-light hover:underline font-bold">ventas@mmpharma.com</a></p>
   </div>
 </div>
-</header>
+
 <!-- Main Content Canvas -->
-<main class="flex-grow flex flex-col items-center justify-center px-6 py-12 max-w-7xl mx-auto w-full">
+<main class="relative z-10 flex-grow flex flex-col items-center justify-center px-6 py-16 max-w-7xl mx-auto w-full">
 <!-- Hero Header -->
 <div class="text-center mb-16 max-w-3xl" data-aos="fade-up">
-<h1 class="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-4">
-                Solicitar acceso al portal
-            </h1>
-<p class="text-lg text-on-surface-variant leading-relaxed">
-                Selecciona el tipo de negocio para el cual deseas solicitar una cuenta. Prepararemos tu entorno clínico personalizado.
-            </p>
+    <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
+        Solicitar acceso al portal
+    </h1>
+    <p class="text-lg text-blue-100/70 leading-relaxed font-medium">
+        Selecciona el tipo de negocio para el cual deseas solicitar una cuenta. Prepararemos tu entorno clínico personalizado.
+    </p>
 </div>
+
 <!-- Selection Grid: Asymmetric Bento Influence -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full relative">
+<!-- Line Connector Background (Desktop) -->
+<div class="hidden md:block absolute top-1/2 left-0 w-full h-px border-t-2 border-dashed border-white/5 z-0 -translate-y-1/2"></div>
+
 <!-- TARJETA 1: FARMACIA -->
-<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay="100">
-<div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
-<span class="material-symbols-outlined text-3xl">medication</span>
+<div class="relative z-10 flex flex-col bg-surface p-8 rounded-3xl border border-white/5 hover:bg-surface-container transition-all duration-300 group" data-aos="fade-up" data-aos-delay="100">
+    <div class="mb-6 w-16 h-16 rounded-2xl bg-background border border-white/5 flex items-center justify-center text-primary-light group-hover:scale-110 group-hover:bg-primary transition-all duration-300 shadow-lg shadow-black/20">
+        <span class="material-symbols-outlined text-3xl group-hover:text-white transition-colors">storefront</span>
+    </div>
+    <h3 class="text-2xl font-black text-white mb-3">Farmacia</h3>
+    <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+        Para farmacias independientes o sucursales que requieren medicamentos de patente y genéricos.
+    </p>
+    <div class="flex-grow">
+        <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">Requisitos básicos:</h4>
+        <ul class="space-y-3 mb-10">
+            <li class="flex items-start gap-3 text-sm text-slate-300 font-medium">
+                <span class="material-symbols-outlined text-green-400 text-lg">check_circle</span>
+                <span>Licencia Sanitaria</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-300 font-medium">
+                <span class="material-symbols-outlined text-green-400 text-lg">check_circle</span>
+                <span>Comprobante de domicilio</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-300 font-medium">
+                <span class="material-symbols-outlined text-green-400 text-lg">check_circle</span>
+                <span>Constancia de Situación Fiscal</span>
+            </li>
+        </ul>
+    </div>
+    <button onclick="location.href='../REGISTRO_FARMACIA/registro_farmacia.php'" class="w-full h-14 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light hover:text-surface hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+        <span>Solicitar acceso</span>
+        <span class="material-symbols-outlined text-xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+    </button>
 </div>
-<h3 class="text-2xl font-bold text-primary mb-3 font-display">Farmacia</h3>
-<p class="text-slate-600 text-sm mb-8 leading-relaxed">
-                    Para farmacias independientes o sucursales que requieren medicamentos de patente y genéricos.
-                </p>
-<div class="flex-grow">
-<h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Requisitos básicos:</h4>
-<ul class="space-y-3 mb-10">
-<li class="flex items-start gap-3 text-sm text-slate-600">
-<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Licencia Sanitaria</span>
-</li>
-<li class="flex items-start gap-3 text-sm text-slate-600">
-<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Comprobante de domicilio</span>
-</li>
-<li class="flex items-start gap-3 text-sm text-slate-600">
-<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Constancia de Situación Fiscal</span>
-</li>
-</ul>
-</div>
-<button onclick="location.href='../REGISTRO_FARMACIA/registro_farmacia.php'" class="w-full py-4 bg-secondary text-white font-bold rounded-xl hover:bg-primary transition-all duration-300 text-sm">
-                    Registrarme como Farmacia
-                </button>
-</div>
+
 <!-- TARJETA 2: DISTRIBUIDORA (Featured) -->
-<div class="relative flex flex-col bg-primary text-white p-8 rounded-2xl shadow-2xl transform md:-translate-y-4 border border-primary/10 group" data-aos="fade-up" data-aos-delay="200">
-<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#006397] px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-                    Recomendado para Mayoristas
-                </div>
-<div class="mb-6 w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
-<span class="material-symbols-outlined text-3xl">local_shipping</span>
+<div class="relative z-20 flex flex-col bg-primary text-white p-8 rounded-3xl shadow-2xl shadow-primary/20 transform md:-translate-y-4 border border-primary-light/30 group" data-aos="fade-up" data-aos-delay="200">
+    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-primary shadow-lg whitespace-nowrap">
+        Recomendado para Mayoristas
+    </div>
+    <div class="mb-6 w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-black/10">
+        <span class="material-symbols-outlined text-3xl">local_shipping</span>
+    </div>
+    <h3 class="text-2xl font-black mb-3 text-white">Distribuidora</h3>
+    <p class="text-blue-100/90 text-sm mb-8 leading-relaxed">
+        Para mayoristas y distribuidores regionales con volumen de compra masivo y logística propia.
+    </p>
+    <div class="flex-grow">
+        <h4 class="text-xs font-black uppercase tracking-widest text-blue-200/60 mb-4">Requisitos especializados:</h4>
+        <ul class="space-y-3 mb-10">
+            <li class="flex items-start gap-3 text-sm text-white font-medium">
+                <span class="material-symbols-outlined text-white text-lg">check_circle</span>
+                <span>Licencia (Venta al por mayor)</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-white font-medium">
+                <span class="material-symbols-outlined text-white text-lg">check_circle</span>
+                <span>Acta constitutiva</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-white font-medium">
+                <span class="material-symbols-outlined text-white text-lg">check_circle</span>
+                <span>Identificación oficial representante</span>
+            </li>
+        </ul>
+    </div>
+    <button onclick="location.href='../REGISTRO_DISTRIBUIDORA/registro_distribuidora.php'" class="w-full h-14 bg-white text-primary font-bold rounded-2xl hover:bg-blue-50 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+        <span>Solicitar acceso</span>
+        <span class="material-symbols-outlined text-xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+    </button>
 </div>
-<h3 class="text-2xl font-bold mb-3 font-display">Distribuidora</h3>
-<p class="text-blue-100 text-sm mb-8 leading-relaxed">
-                    Para mayoristas y distribuidores regionales con volumen de compra masivo y logística propia.
-                </p>
-<div class="flex-grow">
-<h4 class="text-xs font-bold uppercase tracking-widest text-blue-200/60 mb-4">Requisitos especializados:</h4>
-<ul class="space-y-3 mb-10">
-<li class="flex items-start gap-3 text-sm text-blue-50">
-<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Licencia (Venta al por mayor)</span>
-</li>
-<li class="flex items-start gap-3 text-sm text-blue-50">
-<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Acta constitutiva</span>
-</li>
-<li class="flex items-start gap-3 text-sm text-blue-50">
-<span class="material-symbols-outlined text-blue-300 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Identificación oficial representante</span>
-</li>
-</ul>
-</div>
-<button onclick="location.href='../REGISTRO_DISTRIBUIDORA/registro_distribuidora.php'" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 transition-all duration-300 text-sm">
-                    Registrarme como Distribuidora
-                </button>
-</div>
+
 <!-- TARJETA 3: EMPRESA -->
-<div class="flex flex-col bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay="300">
-<div class="mb-6 w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
-<span class="material-symbols-outlined text-3xl">domain</span>
+<div class="relative z-10 flex flex-col bg-surface p-8 rounded-3xl border border-white/5 hover:bg-surface-container transition-all duration-300 group" data-aos="fade-up" data-aos-delay="300">
+    <div class="mb-6 w-16 h-16 rounded-2xl bg-background border border-white/5 flex items-center justify-center text-tertiary-light group-hover:scale-110 group-hover:bg-tertiary transition-all duration-300 shadow-lg shadow-black/20">
+        <span class="material-symbols-outlined text-3xl group-hover:text-white transition-colors">domain</span>
+    </div>
+    <h3 class="text-2xl font-black text-white mb-3">Empresa</h3>
+    <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+        Para clínicas, hospitales o corporativos que requieren insumos médicos para uso interno.
+    </p>
+    <div class="flex-grow">
+        <h4 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">Requisitos corporativos:</h4>
+        <ul class="space-y-3 mb-10">
+            <li class="flex items-start gap-3 text-sm text-slate-300 font-medium">
+                <span class="material-symbols-outlined text-green-400 text-lg">check_circle</span>
+                <span>Constancia de Situación Fiscal</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-300 font-medium">
+                <span class="material-symbols-outlined text-green-400 text-lg">check_circle</span>
+                <span>Formato de alta empresarial</span>
+            </li>
+        </ul>
+    </div>
+    <button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full h-14 bg-tertiary/20 text-tertiary-light font-bold rounded-2xl hover:bg-tertiary hover:text-white hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group/btn">
+        <span>Solicitar acceso</span>
+        <span class="material-symbols-outlined text-xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+    </button>
 </div>
-<h3 class="text-2xl font-bold text-primary mb-3 font-display">Empresa</h3>
-<p class="text-slate-600 text-sm mb-8 leading-relaxed">
-                    Para clínicas, hospitales o corporativos que requieren insumos médicos para uso interno.
-                </p>
-<div class="flex-grow">
-<h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Requisitos corporativos:</h4>
-<ul class="space-y-3 mb-10">
-<li class="flex items-start gap-3 text-sm text-slate-600">
-<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Constancia de Situación Fiscal</span>
-</li>
-<li class="flex items-start gap-3 text-sm text-slate-600">
-<span class="material-symbols-outlined text-green-600 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<span>Formato de alta empresarial</span>
-</li>
-</ul>
+
 </div>
-<button onclick="location.href='../REGISTRO_EMPRESA/registro_empresa.php'" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary transition-all duration-300 text-sm">
-                    Registrarme como Empresa
-                </button>
-</div>
-</div>
+
 <!-- Support Section -->
-<div class="mt-20 flex flex-col items-center gap-4" data-aos="fade-in" data-aos-delay="400">
-<div class="bg-surface-container p-1 rounded-full px-6 py-2 flex items-center gap-3">
-<span class="material-symbols-outlined text-secondary text-sm">mail</span>
-<p class="text-sm font-medium text-on-surface">¿Necesitas ayuda personalizada? Contacta a <a class="text-secondary hover:underline font-bold" href="mailto:ventas@mmpharma.com">ventas@mmpharma.com</a></p>
-</div>
+<div class="mt-20 flex flex-col items-center gap-4 relative z-10" data-aos="fade-in" data-aos-delay="400">
+    <div class="bg-surface/50 backdrop-blur-md border border-white/5 rounded-full px-6 py-3 flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary-light text-xl">mail</span>
+        <p class="text-sm font-medium text-slate-300">¿Necesitas ayuda personalizada? Contacta a <a class="text-primary-light hover:text-white transition-colors font-bold" href="mailto:ventas@mmpharma.com">ventas@mmpharma.com</a></p>
+    </div>
 </div>
 </main>
-<!-- Footer Space -->
-<footer class="py-12 px-6 flex flex-col items-center">
-<p class="text-xs text-on-surface-variant opacity-60"><p class="">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma</p></p>
+
+<!-- Footer -->
+<footer class="relative z-10 py-12 px-6 flex flex-col items-center border-t border-white/5 mt-auto bg-background/50">
+    <p class="text-sm text-slate-500 font-medium">&copy; <script>document.write(new Date().getFullYear());</script> MMPharma. Todos los derechos reservados.</p>
 </footer>
+
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
   AOS.init({
@@ -252,4 +236,5 @@
     once: true,
   });
 </script>
-</body></html>
+</body>
+</html>

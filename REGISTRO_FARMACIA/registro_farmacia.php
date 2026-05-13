@@ -25,38 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "primary": "#003e79",
-                    "secondary": "#1e60aa",
-                    "tertiary": "#32b4ca",
-                    "primary-container": "#e0f2ff",
-                    "secondary-container": "#cfe5ff",
-                    "tertiary-container": "#d1e4ff",
-                    "on-surface": "#001d35",
-                    "on-surface-variant": "#003e79",
-                    "background": "#f0f7ff",
-                    "surface": "#ffffff",
-                    "surface-container-low": "#e1f0ff",
-                    "surface-container": "#cfe5ff",
-                    "surface-container-high": "#abc7ff",
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#003e79",
+                        "secondary": "#1e60aa",
+                        "tertiary": "#2ca1b5",
+                        "primary-light": "#60a5fa",
+                        "secondary-light": "#93c5fd",
+                        "tertiary-light": "#67e8f9",
+                        "background": "#0a192f",
+                        "surface": "#112240",
+                        "surface-container-low": "#1a365d",
+                        "surface-container": "#2a4365",
+                        "surface-container-high": "#2c5282",
+                    },
+                    fontFamily: { "headline": ["Inter"], "body": ["Inter"], "label": ["Inter"] },
+                },
             },
-            "fontFamily": {
-                    "headline": ["Inter"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
-          },
-        },
-      }
+        }
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle;
         }
         .drag-over {
             border-color: #003e79 !important;
@@ -64,13 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
+<body class="bg-background text-slate-300 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+
+<!-- Decorative Background -->
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[5%] left-[-5%] w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-[5%] right-[-5%] w-96 h-96 bg-tertiary/10 rounded-full blur-[100px]"></div>
+</div>
+
 <!-- TopNavBar -->
-<nav class="bg-surface/95 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-slate-200 shadow-sm">
-    <div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+<nav class="bg-background/80 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-white/5 shadow-sm">
+    <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
         <div class="flex-1 flex justify-start">
-            <a class="flex items-center gap-3 px-4 py-2 bg-slate-100 hover:bg-primary hover:text-white text-slate-700 rounded-full transition-all duration-300 text-sm font-bold shadow-sm group border border-slate-200 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
-                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-white text-primary group-hover:bg-white/20 group-hover:text-white transition-colors">
+            <a class="flex items-center gap-3 px-4 py-2 bg-surface hover:bg-primary text-slate-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-bold shadow-sm group border border-white/5 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
+                <div class="w-6 h-6 flex items-center justify-center rounded-lg bg-background text-primary-light group-hover:bg-white/20 group-hover:text-white transition-colors">
                     <span class="material-symbols-outlined text-[16px] font-bold group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
                 </div>
                 Volver
@@ -79,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </nav>
 
-<main class="max-w-4xl mx-auto px-4 py-8 md:py-12 flex-grow flex flex-col items-center w-full">
-    <div class="w-full bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden relative">
+<main class="max-w-4xl mx-auto px-4 py-8 md:py-12 flex-grow flex flex-col items-center w-full relative z-10">
+    <div class="w-full bg-white text-slate-600 rounded-3xl shadow-2xl border border-slate-100 overflow-hidden relative">
         <div class="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
         <div class="p-8 md:p-12">
             <header class="mb-10 text-center">
