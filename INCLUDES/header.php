@@ -95,19 +95,47 @@ if (session_status() === PHP_SESSION_NONE) {
 </script>
 <body class="bg-white font-body text-slate-800 antialiased">
 
-<header class="sticky top-0 z-50 bg-primary">
+  <!-- Top Bar with Contact Info -->
+  <div class="bg-primary text-white text-xs py-2 shadow-inner">
+    <div class="max-w-[1369px] mx-auto px-4 md:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div class="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
+        <a href="tel:3322207506" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+          <span class="material-symbols-outlined text-[16px]">call</span>
+          <span>33 2220 7506</span>
+        </a>
+        <span class="hidden sm:inline text-white/30 text-xs">|</span>
+        <a href="tel:3343480581" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+          <span class="material-symbols-outlined text-[16px]">call</span>
+          <span>33 4348 0581</span>
+        </a>
+        <span class="hidden sm:inline text-white/30 text-xs">|</span>
+        <a href="tel:3343480582" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+          <span class="material-symbols-outlined text-[16px]">call</span>
+          <span>33 4348 0582</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="mailto:atencionclientes@mmpharma.mx" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+          <span class="material-symbols-outlined text-[16px]">mail</span>
+          <span>atencionclientes@mmpharma.mx</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+<header class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm transition-all duration-300">
 <nav class="flex justify-between items-center w-full px-4 md:px-8 py-3 md:py-4 max-w-[1369px] mx-auto font-['Inter'] font-medium text-base antialiased gap-2">
  <div class="flex-1 flex items-center">
  <a href="<?= $base ?? '' ?>INDEX/index.php">
- <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-6 md:h-8 w-auto">
+ <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-6 md:h-8 w-auto">
  </a>
  </div>
 
  <div class="hidden lg:flex gap-8 xl:gap-12 text-sm xl:text-base font-semibold">
- <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-white border-b-2 border-tertiary pb-1' : 'text-white hover:text-white/80 transition-colors duration-200' ?>" href="<?= $base ?? '' ?>INDEX/index.php">Inicio</a>
- <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-white border-b-2 border-tertiary pb-1' : 'text-white hover:text-white/80 transition-colors duration-200' ?>" href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php">Nosotros</a>
- <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-white border-b-2 border-tertiary pb-1' : 'text-white hover:text-white/80 transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">Productos</a>
- <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-white border-b-2 border-tertiary pb-1' : 'text-white hover:text-white/80 transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
+ <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>INDEX/index.php">Inicio</a>
+ <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php">Nosotros</a>
+ <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">Productos</a>
+ <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
  </div>
 
  <div class="flex flex-1 items-center justify-end gap-2 md:gap-4">
@@ -156,7 +184,7 @@ if (session_status() === PHP_SESSION_NONE) {
  }
  ?>
  <!-- Botón Ingresar al Portal -->
- <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-primary font-bold text-sm rounded-full hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 hover: transition-all duration-300 ml-4 group">
+ <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full hover:bg-primary/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
  <span class="tracking-wide">Ingresar al Portal</span>
  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
@@ -217,7 +245,7 @@ if (session_status() === PHP_SESSION_NONE) {
  </div>
 
  <!-- Icono de carrito (Solo para clientes logueados) -->
- <button id="cart-icon-btn" onclick="toggleCartDrawer()" class="relative w-10 h-10 flex items-center justify-center text-white hover:bg-white/10 rounded-xl transition-all ml-1" aria-label="Carrito de compras">
+ <button id="cart-icon-btn" onclick="toggleCartDrawer()" class="relative w-10 h-10 flex items-center justify-center text-slate-800 hover:bg-slate-50 rounded-xl transition-all ml-1" aria-label="Carrito de compras">
  <span class="material-symbols-outlined text-2xl">shopping_cart</span>
  <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-tertiary text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">0</span>
  </button>
@@ -319,7 +347,7 @@ if (session_status() === PHP_SESSION_NONE) {
  <?php else: ?>
  <div class="hidden lg:flex items-center gap-3">
  <a href="<?= $base ?? '' ?>LOGIN/login.php"
- class="px-5 py-2.5 bg-white text-primary font-bold text-sm rounded-full hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 hover: transition-all duration-300">
+ class="px-5 py-2.5 border border-slate-200 text-slate-800 font-bold text-sm rounded-full hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
  Iniciar sesi&oacute;n
  </a>
  <a href="<?= $base ?? '' ?>INDEX/SELECCI&Oacute;N_REGISTRO/selecci&oacute;n_registro.php"
@@ -330,7 +358,7 @@ if (session_status() === PHP_SESSION_NONE) {
  <?php endif; ?>
 
  <!-- Mobile Toggle -->
- <button id="menu-toggle" class="lg:hidden text-white p-1 md:p-2 ml-1">
+ <button id="menu-toggle" class="lg:hidden text-slate-800 hover:bg-slate-50 rounded-xl p-1 md:p-2 ml-1">
     <span class="material-symbols-outlined text-3xl">menu</span>
   </button>
   </div>
