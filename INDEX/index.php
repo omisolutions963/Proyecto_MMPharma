@@ -2,209 +2,188 @@
 $titulo = 'MMPharma | Distribuidora Farmacéutica';
 $pagina_actual = 'inicio';
 $base = '../';
-require_once '../includes/header.php';
+require_once '../INCLUDES/header.php';
 require_once '../INCLUDES/db.php';
 
 // Obtener total de productos dinámico según el tipo de cliente
 $is_cliente_idx = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
-$is_admin_idx   = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+$is_admin_idx = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 $cliente_tipo_idx = $is_cliente_idx ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
 $where_idx = [];
 if ($cliente_tipo_idx === 'EMPRESA') {
-    $where_idx[] = "solo_empresa = 'SI'";
+ $where_idx[] = "solo_empresa = 'SI'";
 }
 
 $where_sql_idx = $where_idx ? 'WHERE ' . implode(' AND ', $where_idx) : '';
 
 try {
-    $pdo_idx = getDB();
-    $total_stmt = $pdo_idx->prepare("SELECT COUNT(*) FROM catalogo_productos $where_sql_idx");
-    $total_stmt->execute();
-    $total_productos = $total_stmt->fetchColumn();
+ $pdo_idx = getDB();
+ $total_stmt = $pdo_idx->prepare("SELECT COUNT(*) FROM catalogo_productos $where_sql_idx");
+ $total_stmt->execute();
+ $total_productos = $total_stmt->fetchColumn();
 } catch (Exception $e) {
-    $total_productos = 788; // Fallback
+ $total_productos = 788; // Fallback
+}
+
+// Helper function for the stats
+function roundStatIndex($num) {
+ if ($num >= 1000) {
+ return '+' . floor($num / 1000) . ',' . str_pad(($num % 1000), 3, '0', STR_PAD_LEFT);
+ }
+ return '+' . $num;
 }
 ?>
+
 <!-- Hero Section -->
-<section class="relative min-h-screen text-white flex items-center overflow-hidden bg-background">
-  <div class="absolute inset-0 z-0 overflow-hidden">
-    <img src="../IMG/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] parallax-bg" data-speed="0.2" style="transform: scale(1.25);">
-    <div class="absolute inset-0 bg-background/80"></div>
-  </div>
-<div class="max-w-6xl mx-auto px-8 py-24 w-full flex flex-col items-center text-center relative z-10">
-    <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-6 text-white">
-        Tu distribuidora farmacéutica de confianza
-    </h1>
-    <p class="text-xl text-blue-100/90 mb-10 max-w-2xl leading-relaxed">
-        Accede a más de <?= ltrim(roundStat($total_productos), '+') ?> productos farmacéuticos con los estándares más altos de calidad y precios competitivos para tu sector.
-    </p>
+<section class="relative pt-20 pb-16 bg-white overflow-hidden">
+ <div class="max-w-[1369px] mx-auto px-8 w-full">
+ <div class="flex flex-col lg:flex-row items-center gap-12">
+ <!-- Left Content -->
+ <div class="w-full lg:w-1/2 z-10" data-aos="fade-right">
+ <h1 class="text-5xl md:text-6xl lg:text-[72px] font-black tracking-tight leading-[1.1] mb-6 text-primary">
+ Cuidamos<br>
+ la salud de<br>
+ <span class="text-tertiary">tu negocio</span>
+ </h1>
+ <p class="text-lg md:text-xl text-slate-900 mb-10 max-w-lg leading-relaxed font-medium">
+ Distribuimos medicamentos con eficiencia, confianza y atención personalizada.
+ </p>
 
-    
-    <div class="flex flex-wrap justify-center gap-4 mb-16">
-        <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php" class="px-10 py-4 bg-primary text-white font-bold rounded-xl transform translate-y-0 hover:bg-primary-light hover:text-surface hover:-translate-y-1 transition-all duration-300 flex items-center justify-center will-change-transform">
-            Solicitar acceso
-        </a>
-        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="px-10 py-4 text-white font-bold rounded-xl border-2 border-white hover:bg-white/10 hover:-translate-y-1 transition-all flex items-center justify-center">
-            Ver catálogo
-        </a>
-    </div>
-</div>
-</section>
-<!-- ¿Cómo funciona? Section -->
-<section class="py-24 bg-surface">
-  <div class="max-w-[1600px] mx-auto px-8">
-<div class="text-center mb-20" data-aos="fade-up">
-<h2 class="text-3xl font-black text-primary-light tracking-tight mb-4">¿Cómo funciona?</h2>
-<p class="text-lg text-slate-300 font-medium max-w-2xl mx-auto">Nuestro proceso de alta está diseñado para garantizar la seguridad y profesionalismo en la distribución de insumos médicos.</p>
-</div>
-<div class="relative grid md:grid-cols-4 gap-8">
-<!-- Connector Line (Desktop) -->
-<div class="hidden md:block absolute top-12 left-0 w-full h-px border-t-[3px] border-dashed border-white/10 z-0"></div>
-<!-- Step 1 -->
-<div class="relative z-10 flex flex-col items-center text-center group" data-aos="fade-up" data-aos-delay="100">
-<div class="w-24 h-24 bg-background rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">
-<span class="text-2xl font-black text-primary-light group-hover:text-white transition-colors">01</span>
-</div>
-<h3 class="font-black text-primary-light text-lg mb-2">Solicita tu acceso</h3>
-<p class="text-base text-slate-300 px-4 font-medium">Completa el formulario con los datos de tu empresa o farmacia.</p>
-</div>
-<!-- Step 2 -->
-<div class="relative z-10 flex flex-col items-center text-center group" data-aos="fade-up" data-aos-delay="200">
-<div class="w-24 h-24 bg-background rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">
-<span class="text-2xl font-black text-primary-light group-hover:text-white transition-colors">02</span>
-</div>
-<h3 class="font-black text-primary-light text-lg mb-2">Aprobación en 24 hrs</h3>
-<p class="text-base text-slate-300 px-4 font-medium">Validamos tu documentación para asignarte un nivel de cliente.</p>
-</div>
-<!-- Step 3 -->
-<div class="relative z-10 flex flex-col items-center text-center group" data-aos="fade-up" data-aos-delay="300">
-<div class="w-24 h-24 bg-background rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">
-<span class="text-2xl font-black text-primary-light group-hover:text-white transition-colors">03</span>
-</div>
-<h3 class="font-black text-primary-light text-lg mb-2">Busca y cotiza</h3>
-<p class="text-base text-slate-300 px-4 font-medium">Explora el catálogo y genera cotizaciones en tiempo real.</p>
-</div>
-<!-- Step 4 -->
-<div class="relative z-10 flex flex-col items-center text-center group" data-aos="fade-up" data-aos-delay="400">
-<div class="w-24 h-24 bg-background rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">
-<span class="text-2xl font-black text-primary-light group-hover:text-white transition-colors">04</span>
-</div>
-<h3 class="font-black text-primary-light text-lg mb-2">Recibe tu pedido</h3>
-<p class="text-base text-slate-300 px-4 font-medium">Confirmamos tu orden y entregamos en tu domicilio.</p>
-</div>
-</div>
-</section>
-<section class="py-24 bg-background text-white overflow-hidden relative">
-  <!-- Background Image Overlay -->
-  <div class="absolute inset-0 z-0 overflow-hidden">
-    <img src="../IMG/5.webp" class="w-full h-full object-cover object-top opacity-10 parallax-bg scale-125 relative top-[-20%]" data-speed="0.1">
-    <div class="absolute inset-0 bg-background/90"></div>
-  </div>
-  <div class="max-w-[1600px] mx-auto px-8 relative z-10">
-    <div class="grid lg:grid-cols-2 gap-20 items-center">
-      
-      <!-- Lado Izquierdo: Contenido y Buscador -->
-      <div class="text-center lg:text-left" data-aos="fade-right">
-        <h2 class="text-primary-light font-bold tracking-widest uppercase text-sm mb-4"><?= number_format($total_productos) ?> Productos disponibles</h2>
-        <h3 class="text-4xl md:text-5xl font-black tracking-tight mb-6">Encuentra lo que necesitas</h3>
-        <p class="text-blue-100/90 text-lg mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
-          Explora nuestro catálogo completo de medicamentos, material de curación y soluciones especializadas con entrega inmediata en todo el país.
-        </p>
+ <div class="flex flex-wrap gap-4 mb-12">
+ <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="px-8 py-3.5 bg-primary text-white font-bold rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
+ Conoce nuestro catálogo <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+ </a>
+ <a href="<?= $base ?? '' ?>CONTACTO/contacto.php" class="px-8 py-3.5 text-white font-bold rounded-full bg-tertiary hover:bg-tertiary/90 hover:-translate-y-0.5 transition-all flex items-center gap-2 group">
+ Habla con un asesor <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">chat</span>
+ </a>
+ </div>
+ </div>
 
-        <!-- Buscador integrado -->
-        <form action="<?= $base ?? '' ?>CATALOGO/catalogo.php" method="GET" class="mb-8">
-          <div class="relative group">
-            <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-primary-light transition-colors">search</span>
-            <input type="text" name="q" placeholder="¿Qué estás buscando?..."
-              class="w-full bg-surface rounded-xl pl-14 pr-6 py-5 text-white text-base outline-none transition-all placeholder:text-slate-500">
-            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-3 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all">
-              Buscar
-            </button>
-          </div>
-        </form>
+ <!-- Right Image area -->
+ <div class="w-full lg:w-1/2 relative" data-aos="fade-left">
+ <!-- Blob shape / Mask for image (Isolated Group for Hover) -->
+ <div class="relative w-full aspect-[4/3] max-w-[800px] mx-auto overflow-hidden rounded-[40px] md:rounded-[80px] lg:rounded-bl-[120px] group">
+ <img src="../IMG/33.webp" alt="Equipo MMPharma" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
+ </div>
 
-        <a class="group inline-flex items-center gap-2 font-bold text-slate-300 hover:text-primary-light transition-colors duration-200" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">
-          <span>Ver catálogo completo</span>
-          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
-        </a>
-      </div>
-
-      <!-- Lado Derecho: Categorías (Cuadrícula 2x2) -->
-      <div class="grid grid-cols-2 gap-3 md:gap-6" data-aos="fade-left">
-        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=aspirina" class="bg-surface/50 backdrop-blur-xl hover:bg-surface transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl group text-center">
-          <div class="w-12 h-12 md:w-16 md:h-16 bg-background rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-2xl md:text-3xl text-primary-light">medication</span>
-          </div>
-          <h4 class="text-slate-300 font-black text-sm md:text-lg leading-tight group-hover:text-primary-light transition-colors">Medicamentos</h4>
-        </a>
-        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=gasa" class="bg-surface/50 backdrop-blur-xl hover:bg-surface transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl group text-center">
-          <div class="w-12 h-12 md:w-16 md:h-16 bg-background rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-2xl md:text-3xl text-primary-light">healing</span>
-          </div>
-          <h4 class="text-slate-300 font-black text-sm md:text-lg leading-tight group-hover:text-primary-light transition-colors">Curación</h4>
-        </a>
-        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=seco&q=solucion" class="bg-surface/50 backdrop-blur-xl hover:bg-surface transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl group text-center">
-          <div class="w-12 h-12 md:w-16 md:h-16 bg-background rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-2xl md:text-3xl text-primary-light">vaccines</span>
-          </div>
-          <h4 class="text-slate-300 font-black text-sm md:text-lg leading-tight group-hover:text-primary-light transition-colors">Soluciones</h4>
-        </a>
-        <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php?tipo=red_fria" class="bg-tertiary/20 hover:bg-tertiary/40 transition-all p-4 md:p-8 rounded-2xl md:rounded-3xl group text-center">
-          <div class="w-12 h-12 md:w-16 md:h-16 bg-tertiary rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <span class="material-symbols-outlined text-2xl md:text-3xl text-white">ac_unit</span>
-          </div>
-          <h4 class="text-tertiary-light font-black text-sm md:text-lg leading-tight">Red Fría</h4>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-<!-- Niveles de Cliente Section -->
-<section class="py-32 bg-surface">
-  <div class="max-w-[1600px] mx-auto px-8">
-<div class="text-center mb-16" data-aos="fade-up">
-<h2 class="text-3xl font-black text-primary-light mb-4">Soluciones a tu medida</h2>
-<p class="text-lg text-slate-300 font-medium">Niveles de acceso adaptados a la magnitud de tu negocio.</p>
-</div>
-<div class="grid md:grid-cols-3 gap-8">
-<!-- Level 1: Farmacia -->
-<div class="bg-primary p-12 rounded-3xl hover:-translate-y-2 transition-transform text-white flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
-  <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-    <span class="material-symbols-outlined text-white text-4xl" data-icon="storefront">storefront</span>
-  </div>
-  <h4 class="font-black text-white text-3xl leading-tight mb-2">Farmacia</h4>
-  <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Puntos de venta</p>
-  
-  <a href="<?= $base ?? '' ?>REGISTRO_FARMACIA/registro_farmacia.php" class="w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
-</div>
-<!-- Level 2: Empresa -->
-<div class="bg-secondary p-12 rounded-3xl hover:-translate-y-2 transition-transform text-white flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
-  <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-    <span class="material-symbols-outlined text-white text-4xl" data-icon="business">business</span>
-  </div>
-  <h4 class="font-black text-white text-3xl leading-tight mb-2">Empresa</h4>
-  <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Clínicas y corporativos</p>
-
-  <a href="<?= $base ?? '' ?>REGISTRO_EMPRESA/registro_empresa.php" class="w-full py-4 bg-white text-secondary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
-</div>
-<!-- Level 3: Distribuidor -->
-<div class="bg-tertiary p-12 rounded-3xl hover:-translate-y-2 transition-transform text-white flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
-  <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-    <span class="material-symbols-outlined text-white text-4xl" data-icon="inventory_2">inventory_2</span>
-  </div>
-  <h4 class="font-black text-white text-3xl leading-tight mb-2">Distribuidor</h4>
-  <p class="text-xs uppercase font-black tracking-[0.2em] text-white/70 mb-10">Mayoreo masivo</p>
-
-  <a href="<?= $base ?? '' ?>REGISTRO_DISTRIBUIDORA/registro_distribuidora.php" class="w-full py-4 bg-white text-tertiary font-bold rounded-xl hover:bg-blue-50 hover:-translate-y-1 transition-all inline-block text-center">Solicitar este acceso</a>
-</div>
-</div>
-  </div>
+ <!-- Floating Badge -->
+ <div class="absolute -bottom-8 right-4 md:right-12 bg-primary text-white p-6 rounded-2xl flex items-center gap-4 max-w-[320px] animate-bounce-slow group/badge">
+ <p class="font-bold text-sm leading-snug">Comprometidos con tu bienestar y el de tus clientes</p>
+ <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover/badge:bg-white transition-all duration-300">
+ <span class="material-symbols-outlined text-white group-hover/badge:text-primary text-2xl transition-colors duration-300">check</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 </section>
 
+<!-- Features Grid -->
+<section class="py-[69px] bg-white relative z-20">
+ <div class="max-w-[1369px] mx-auto px-8">
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
 
-<!-- ═══ FOOTER ═══ -->
-<?php require_once '../includes/footer.php'; ?>
+ <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="100">
+ <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">person</span>
+ <p class="font-black text-tertiary text-base">Atención personalizada</p>
+ </div>
 
-</body></html>
+ <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="200">
+ <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">local_shipping</span>
+ <p class="font-black text-tertiary text-base">Entregas rápidas</p>
+ </div>
+
+ <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="300">
+ <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">location_on</span>
+ <p class="font-black text-tertiary text-base">Cobertura nacional</p>
+ </div>
+
+ <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="400">
+ <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">verified</span>
+ <p class="font-black text-tertiary text-base">Calidad garantizada</p>
+ </div>
+
+ </div>
+ </div>
+</section>
+
+<!-- Nuestras Soluciones Section -->
+<section class="py-[69px] bg-white">
+ <div class="max-w-[1369px] mx-auto px-8">
+ <h2 class="text-4xl md:text-5xl font-black text-primary mb-12 text-center tracking-tight" data-aos="fade-up">
+ Nuestras <span class="text-tertiary">soluciones</span>
+ </h2>
+ 
+ <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+ <!-- Card 1 -->
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
+ <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
+ <span class="material-symbols-outlined text-3xl">inventory_2</span>
+ </div>
+ <h3 class="font-black text-white text-lg mb-3">Distribución mayorista</h3>
+ <p class="text-white/80 text-sm leading-relaxed">Amplio catálogo de medicamentos de patente, genéricos y material de curación.</p>
+ </div>
+ 
+ <!-- Card 2 -->
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
+ <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
+ <span class="material-symbols-outlined text-3xl">local_shipping</span>
+ </div>
+ <h3 class="font-black text-white text-lg mb-3">Logística eficiente</h3>
+ <p class="text-white/80 text-sm leading-relaxed">Procesos optimizados para entregas rápidas y seguras.</p>
+ </div>
+ 
+ <!-- Card 3 -->
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
+ <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
+ <span class="material-symbols-outlined text-3xl">support_agent</span>
+ </div>
+ <h3 class="font-black text-white text-lg mb-3">Asesoría especializada</h3>
+ <p class="text-white/80 text-sm leading-relaxed">Te ayudamos a tomar las mejores decisiones para tu inventario y negocio.</p>
+ </div>
+ 
+ <!-- Card 4 -->
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="400">
+ <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
+ <span class="material-symbols-outlined text-3xl">sentiment_satisfied</span>
+ </div>
+ <h3 class="font-black text-white text-lg mb-3">Atención personalizada</h3>
+ <p class="text-white/80 text-sm leading-relaxed">Un equipo experto para acompañarte siempre que lo necesites.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- Banner Soluciones -->
+<section class="pt-[69px] pb-[136px] bg-white">
+ <div class="max-w-[1369px] mx-auto px-8">
+ <div class="bg-tertiary rounded-[48px] py-24 px-10 md:px-20 relative overflow-hidden flex items-center justify-center text-center" data-aos="fade-up">
+ <!-- Background Image Overlay -->
+ <div class="absolute inset-0 pointer-events-none">
+ <img src="../IMG/15.webp" alt="" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+ <div class="absolute inset-0 bg-tertiary/70"></div>
+ </div>
+
+ <!-- Content -->
+ <div class="relative z-10 max-w-4xl mx-auto">
+ <h2 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
+ Tu aliado en distribución farmacéutica
+ </h2>
+ <p class="text-white text-lg mb-10 max-w-xl mx-auto font-medium leading-relaxed">
+ Explora nuestro catálogo completo de medicamentos, material de curación y soluciones especializadas con entrega inmediata en todo el país.
+ </p>
+ <div class="flex justify-center">
+ <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="inline-flex items-center justify-center px-10 py-4 bg-white text-tertiary font-semibold rounded-xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all group text-base">
+ Explorar catálogo <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+ </a>
+ </div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<?php require_once '../INCLUDES/footer.php'; ?>
+
+</body>
+</html>

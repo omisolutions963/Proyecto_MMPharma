@@ -4,67 +4,67 @@ $pagina_actual = 'inicio';
 $base = '../';
 
 // ── Guardar solicitud de empresa en BD ────────────────────────────────────────
-$solicitud_ok    = false;
+$solicitud_ok = false;
 $solicitud_error = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $campos = [
-        'tipo_cliente'     => 'EMPRESA',
-        'razon_social'     => trim($_POST['razon_social']    ?? ''),
-        'rfc'              => trim($_POST['rfc']             ?? ''),
-        'regimen_fiscal'   => trim($_POST['regimen_fiscal']  ?? ''),
-        'domicilio_fiscal' => trim($_POST['domicilio']       ?? ''),
-        'colonia'          => trim($_POST['colonia']         ?? ''),
-        'cp'               => trim($_POST['cp']              ?? ''),
-        'ciudad'           => trim($_POST['ciudad']          ?? ''),
-        'estado'           => trim($_POST['estado']          ?? ''),
-        'representante'    => trim($_POST['representante_legal'] ?? ''),
-        'nombre_comercial' => trim($_POST['nombre_comercial']?? ''),
-        'giro'             => trim($_POST['giro']            ?? ''),
-        'persona_contacto' => trim($_POST['persona_contacto']?? ''),
-        'volumen_mensual'  => trim($_POST['volumen_mensual'] ?? ''),
-        'telefono_local'   => trim($_POST['telefono_local']  ?? ''),
-        'telefono_celular' => trim($_POST['telefono_celular']?? ''),
-        'email'            => trim($_POST['email']           ?? ''),
-        'documento_tipo'   => strtoupper(trim($_POST['doc_type']           ?? 'FACTURA')),
-        'metodo_pago'      => strtoupper(trim($_POST['payment_method_chip'] ?? 'TRANSFERENCIA')),
-        'uso_cfdi'         => trim($_POST['uso_cfdi']        ?? ''),
-        'domicilio_entrega'=> trim($_POST['domicilio_entrega']?? ''),
-        'colonia_entrega'  => trim($_POST['colonia_entrega'] ?? ''),
-        'cp_entrega'       => trim($_POST['cp_entrega']      ?? ''),
-        'ciudad_entrega'   => trim($_POST['ciudad_entrega']  ?? ''),
-        'municipio_entrega'=> trim($_POST['municipio_entrega']?? ''),
-        'estado_entrega'   => trim($_POST['estado_entrega']  ?? ''),
-        'receptor_entrega' => trim($_POST['receptor_entrega']?? ''),
-        'horario_entrega'  => trim($_POST['horario_entrega'] ?? ''),
-        'ip_origen'        => $_SERVER['REMOTE_ADDR'] ?? null,
-    ];
+ $campos = [
+ 'tipo_cliente' => 'EMPRESA',
+ 'razon_social' => trim($_POST['razon_social'] ?? ''),
+ 'rfc' => trim($_POST['rfc'] ?? ''),
+ 'regimen_fiscal' => trim($_POST['regimen_fiscal'] ?? ''),
+ 'domicilio_fiscal' => trim($_POST['domicilio'] ?? ''),
+ 'colonia' => trim($_POST['colonia'] ?? ''),
+ 'cp' => trim($_POST['cp'] ?? ''),
+ 'ciudad' => trim($_POST['ciudad'] ?? ''),
+ 'estado' => trim($_POST['estado'] ?? ''),
+ 'representante' => trim($_POST['representante_legal'] ?? ''),
+ 'nombre_comercial' => trim($_POST['nombre_comercial']?? ''),
+ 'giro' => trim($_POST['giro'] ?? ''),
+ 'persona_contacto' => trim($_POST['persona_contacto']?? ''),
+ 'volumen_mensual' => trim($_POST['volumen_mensual'] ?? ''),
+ 'telefono_local' => trim($_POST['telefono_local'] ?? ''),
+ 'telefono_celular' => trim($_POST['telefono_celular']?? ''),
+ 'email' => trim($_POST['email'] ?? ''),
+ 'documento_tipo' => strtoupper(trim($_POST['doc_type'] ?? 'FACTURA')),
+ 'metodo_pago' => strtoupper(trim($_POST['payment_method_chip'] ?? 'TRANSFERENCIA')),
+ 'uso_cfdi' => trim($_POST['uso_cfdi'] ?? ''),
+ 'domicilio_entrega'=> trim($_POST['domicilio_entrega']?? ''),
+ 'colonia_entrega' => trim($_POST['colonia_entrega'] ?? ''),
+ 'cp_entrega' => trim($_POST['cp_entrega'] ?? ''),
+ 'ciudad_entrega' => trim($_POST['ciudad_entrega'] ?? ''),
+ 'municipio_entrega'=> trim($_POST['municipio_entrega']?? ''),
+ 'estado_entrega' => trim($_POST['estado_entrega'] ?? ''),
+ 'receptor_entrega' => trim($_POST['receptor_entrega']?? ''),
+ 'horario_entrega' => trim($_POST['horario_entrega'] ?? ''),
+ 'ip_origen' => $_SERVER['REMOTE_ADDR'] ?? null,
+ ];
 
-    if ($campos['razon_social']) {
-        try {
-            require_once '../INCLUDES/db.php';
-            $pdo = getDB();
-            $sql = "INSERT INTO clientes_solicitudes_registro
-                    (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
-                     representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
-                     telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,
-                     colonia_entrega,cp_entrega,ciudad_entrega,municipio_entrega,estado_entrega,
-                     receptor_entrega,horario_entrega,ip_origen)
-                    VALUES
-                    (:tipo_cliente,:razon_social,:rfc,:regimen_fiscal,:domicilio_fiscal,:colonia,:cp,:ciudad,:estado,
-                     :representante,:nombre_comercial,:giro,:persona_contacto,:volumen_mensual,:telefono_local,
-                     :telefono_celular,:email,:documento_tipo,:metodo_pago,:uso_cfdi,:domicilio_entrega,
-                     :colonia_entrega,:cp_entrega,:ciudad_entrega,:municipio_entrega,:estado_entrega,
-                     :receptor_entrega,:horario_entrega,:ip_origen)";
-            $pdo->prepare($sql)->execute($campos);
-            header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
-            exit;
-        } catch (Exception $e) {
-            $solicitud_error = true;
-        }
-    } else {
-        $solicitud_error = true;
-    }
+ if ($campos['razon_social']) {
+ try {
+ require_once '../INCLUDES/db.php';
+ $pdo = getDB();
+ $sql = "INSERT INTO clientes_solicitudes_registro
+ (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
+ representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
+ telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,
+ colonia_entrega,cp_entrega,ciudad_entrega,municipio_entrega,estado_entrega,
+ receptor_entrega,horario_entrega,ip_origen)
+ VALUES
+ (:tipo_cliente,:razon_social,:rfc,:regimen_fiscal,:domicilio_fiscal,:colonia,:cp,:ciudad,:estado,
+ :representante,:nombre_comercial,:giro,:persona_contacto,:volumen_mensual,:telefono_local,
+ :telefono_celular,:email,:documento_tipo,:metodo_pago,:uso_cfdi,:domicilio_entrega,
+ :colonia_entrega,:cp_entrega,:ciudad_entrega,:municipio_entrega,:estado_entrega,
+ :receptor_entrega,:horario_entrega,:ip_origen)";
+ $pdo->prepare($sql)->execute($campos);
+ header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
+ exit;
+ } catch (Exception $e) {
+ $solicitud_error = true;
+ }
+ } else {
+ $solicitud_error = true;
+ }
 }
 
 ?>
@@ -77,68 +77,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <style>
-        body { font-family: 'Inter', sans-serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-    </style>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#003e79",
-                        "secondary": "#1e60aa",
-                        "tertiary": "#2ca1b5",
-                        "primary-light": "#60a5fa",
-                        "secondary-light": "#93c5fd",
-                        "tertiary-light": "#67e8f9",
-                        "background": "#0a192f",
-                        "surface": "#112240",
-                        "surface-container-low": "#1a365d",
-                        "surface-container": "#2a4365",
-                        "surface-container-high": "#2c5282",
-                    },
-                    fontFamily: { "headline": ["Inter"], "body": ["Inter"], "label": ["Inter"] },
-                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
+ body { font-family: 'Inter', sans-serif; }
+ .material-symbols-outlined {
+ font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+ vertical-align: middle;
+ }
+ </style>
+ <script id="tailwind-config">
+ tailwind.config = {
+ darkMode: "class",
+ theme: {
+ extend: {
+ colors: {
+ "primary": "#003e79",
+ "secondary": "#1e60aa",
+ "tertiary": "#2ca1b5",
+ "primary-light": "#60a5fa",
+ "secondary-light": "#93c5fd",
+ "tertiary-light": "#67e8f9",
+ "background": "#0a192f",
+ "surface": "#112240",
+ "surface-container-low": "#1a365d",
+ "surface-container": "#2a4365",
+ "surface-container-high": "#2c5282",
+ },
+ fontFamily: { "headline": ["Inter"], "body": ["Inter"], "label": ["Inter"] },
+ borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+ },
+ },
+ }
+ </script>
 </head>
 <body class="bg-background text-slate-300 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
 
 <!-- Decorative Background -->
 <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-[5%] left-[-5%] w-96 h-96 bg-primary/20 rounded-full blur-[100px]"></div>
-    <div class="absolute bottom-[5%] right-[-5%] w-96 h-96 bg-tertiary/10 rounded-full blur-[100px]"></div>
 </div>
 
 <!-- Top Navigation Bar -->
-<nav class="bg-background/80 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-white/5 shadow-sm">
-    <div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
-        <div class="flex-1 flex justify-start">
-            <a class="flex items-center gap-3 px-4 py-2 bg-surface hover:bg-primary text-slate-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-bold shadow-sm group border border-white/5 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
-                <div class="w-6 h-6 flex items-center justify-center rounded-lg bg-background text-primary-light group-hover:bg-white/20 group-hover:text-white transition-colors">
-                    <span class="material-symbols-outlined text-[16px] font-bold group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
-                </div>
-                Volver
-            </a>
-        </div>
-    </div>
+<nav class="bg-background/80 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-white/5 ">
+ <div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
+ <div class="flex-1 flex justify-start">
+ <a class="flex items-center gap-3 px-4 py-2 bg-surface hover:bg-primary text-slate-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-bold group border border-white/5 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
+ <div class="w-6 h-6 flex items-center justify-center rounded-lg bg-background text-primary-light group-hover:bg-white/20 group-hover:text-white transition-colors">
+ <span class="material-symbols-outlined text-[16px] font-bold group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+ </div>
+ Volver
+ </a>
+ </div>
+ </div>
 </nav>
 
 <main class="max-w-[1440px] mx-auto px-6 py-16 flex flex-col items-center relative z-10 w-full">
 <!-- Main Form Card -->
-<div class="w-full max-w-4xl bg-white text-slate-600 rounded-3xl shadow-2xl overflow-hidden border border-slate-100 relative">
+<div class="w-full max-w-4xl bg-white text-slate-600 rounded-3xl overflow-hidden border border-slate-100 relative">
 <!-- Header Section -->
 <div class="px-12 py-10 border-b border-outline-variant/20">
 <h1 class="text-3xl font-extrabold tracking-tight text-on-surface mb-3" style="">Solicitud de Empresa</h1>
 <p class="text-on-surface-variant leading-relaxed max-w-2xl" style="">
-                Inicia tu proceso de registro corporativo. Toda la información será tratada bajo estrictos protocolos de confidencialidad y cumplimiento normativo.
-            </p>
+ Inicia tu proceso de registro corporativo. Toda la información será tratada bajo estrictos protocolos de confidencialidad y cumplimiento normativo.
+ </p>
 </div>
 <form id="registroForm" action="" method="POST" class="px-12 py-12 space-y-16" enctype="multipart/form-data">
 <!-- Section 1: Datos Generales -->
@@ -219,13 +217,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div>
 <label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
 <span class="material-symbols-outlined text-sm" style="">smartphone</span>Teléfono Celular
-                        </label>
+ </label>
 <input name="telefono_celular" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel" required>
 </div>
 <div>
 <label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
 <span class="material-symbols-outlined text-sm" style="">mail</span>Correo electrónico institucional
-                        </label>
+ </label>
 <input name="email" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. pedidos@empresa.com" type="email" required>
 </div>
 <div class="md:col-span-2">
@@ -259,25 +257,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p class="text-sm text-on-surface-variant mb-6">Sube el documento escaneado. Formatos permitidos: PDF, JPG, PNG. Tamaño máximo por archivo: 15MB.</p>
 
 <div class="space-y-4">
-    <div class="file-upload-wrapper bg-surface-container-lowest border border-outline-variant/40 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-primary/50 hover:bg-primary/5">
-        <input type="file" name="constancia_fiscal" id="constancia_fiscal" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png" required>
-        <div class="flex items-center justify-between pointer-events-none">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors icon-container">
-                    <span class="material-symbols-outlined file-icon">upload_file</span>
-                </div>
-                <div>
-                    <p class="text-base font-bold text-on-surface">Constancia de situación fiscal <span class="text-red-600">*</span></p>
-                    <p class="text-sm text-on-surface-variant file-name-display mt-0.5">Arrastra y suelta tu archivo o haz clic para explorar</p>
-                </div>
-            </div>
-            <div class="text-sm font-bold text-primary px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-lg shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">Examinar</div>
-        </div>
-    </div>
+ <div class="file-upload-wrapper bg-surface-container-lowest border border-outline-variant/40 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-primary/50 hover:bg-primary/5">
+ <input type="file" name="constancia_fiscal" id="constancia_fiscal" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png" required>
+ <div class="flex items-center justify-between pointer-events-none">
+ <div class="flex items-center gap-4">
+ <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors icon-container">
+ <span class="material-symbols-outlined file-icon">upload_file</span>
+ </div>
+ <div>
+ <p class="text-base font-bold text-on-surface">Constancia de situación fiscal <span class="text-red-600">*</span></p>
+ <p class="text-sm text-on-surface-variant file-name-display mt-0.5">Arrastra y suelta tu archivo o haz clic para explorar</p>
+ </div>
+ </div>
+ <div class="text-sm font-bold text-primary px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Examinar</div>
+ </div>
+ </div>
 </div>
 </section>
 <!-- Section 4: Contrato de Uso de Medicamento -->
-<section class="bg-amber-50 rounded-2xl p-8 border border-amber-200 shadow-sm">
+<section class="bg-amber-50 rounded-2xl p-8 border border-amber-200 ">
 <div class="flex items-start gap-5">
 <div class="bg-amber-100 p-2.5 rounded-xl">
 <span class="material-symbols-outlined text-amber-700 text-2xl" style="">verified_user</span>
@@ -285,8 +283,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="flex-1">
 <h2 class="text-xl font-extrabold text-amber-900 mb-3" style="">Cláusula de Uso de Medicamento</h2>
 <p class="text-sm text-amber-800 leading-relaxed mb-6 font-medium" style="">
-                            Declaro bajo protesta de decir verdad que los insumos médicos adquiridos serán destinados única y exclusivamente para los fines clínicos autorizados. Me comprometo al cumplimiento estricto de la Norma Oficial Mexicana respecto al manejo de insumos y Red Fría.
-                        </p>
+ Declaro bajo protesta de decir verdad que los insumos médicos adquiridos serán destinados única y exclusivamente para los fines clínicos autorizados. Me comprometo al cumplimiento estricto de la Norma Oficial Mexicana respecto al manejo de insumos y Red Fría.
+ </p>
 <label class="flex items-center gap-4 cursor-pointer group" style="">
 <input class="w-6 h-6 rounded border-amber-400 text-amber-700 focus:ring-amber-600 transition-all cursor-pointer" required="" type="checkbox">
 <span class="text-sm font-bold text-amber-950 group-hover:underline" style="">Acepto los términos y condiciones de uso de medicamento</span>
@@ -300,17 +298,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <label class="flex items-start gap-4 cursor-pointer group" style="">
 <input class="mt-1 w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" required="" type="checkbox">
 <span class="text-sm text-on-surface-variant font-medium leading-relaxed" style="">
-                            Confirmo que he leído y acepto el <a class="text-primary font-bold hover:underline" href="#" style="">Aviso de Privacidad</a> de MMPharma para el tratamiento de mis datos corporativos y personales.
-                        </span>
+ Confirmo que he leído y acepto el <a class="text-primary font-bold hover:underline" href="#" style="">Aviso de Privacidad</a> de MMPharma para el tratamiento de mis datos corporativos y personales.
+ </span>
 </label>
 <div class="flex flex-col items-center">
-<button class="w-full md:max-w-md py-4 bg-primary text-white font-extrabold text-lg rounded-2xl hover:bg-secondary hover:shadow-lg active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 shadow-md" type="submit" style="">
+<button class="w-full md:max-w-md py-4 bg-primary text-white font-extrabold text-lg rounded-2xl hover:bg-secondary transition-all duration-200 flex items-center justify-center gap-3" type="submit" style="">
 <span class="" style="">Enviar Solicitud de Alta</span>
 <span class="material-symbols-outlined font-normal" style="">send</span>
 </button>
 <p class="text-center text-xs text-on-surface-variant mt-6 font-medium" style="">
-                            Su solicitud pasará por un proceso de verificación documental (24-48h hábiles).
-                        </p>
+ Su solicitud pasará por un proceso de verificación documental (24-48h hábiles).
+ </p>
 </div>
 </div>
 </section>
@@ -319,70 +317,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <script>
-    // File Upload Logic (Drag and Drop, Size, Preview)
-    const maxFileSize = 15 * 1024 * 1024; // 15MB
+ // File Upload Logic (Drag and Drop, Size, Preview)
+ const maxFileSize = 15 * 1024 * 1024; // 15MB
 
-    document.querySelectorAll('.file-input').forEach(input => {
-        const wrapper = input.closest('.file-upload-wrapper');
-        const nameDisplay = wrapper.querySelector('.file-name-display');
-        const icon = wrapper.querySelector('.file-icon');
-        const iconContainer = wrapper.querySelector('.icon-container');
+ document.querySelectorAll('.file-input').forEach(input => {
+ const wrapper = input.closest('.file-upload-wrapper');
+ const nameDisplay = wrapper.querySelector('.file-name-display');
+ const icon = wrapper.querySelector('.file-icon');
+ const iconContainer = wrapper.querySelector('.icon-container');
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            wrapper.addEventListener(eventName, preventDefaults, false);
-        });
+ ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+ wrapper.addEventListener(eventName, preventDefaults, false);
+ });
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+ function preventDefaults(e) {
+ e.preventDefault();
+ e.stopPropagation();
+ }
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            wrapper.addEventListener(eventName, () => {
-                wrapper.classList.add('border-primary', 'bg-primary/5');
-            }, false);
-        });
+ ['dragenter', 'dragover'].forEach(eventName => {
+ wrapper.addEventListener(eventName, () => {
+ wrapper.classList.add('border-primary', 'bg-primary/5');
+ }, false);
+ });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            wrapper.addEventListener(eventName, () => {
-                wrapper.classList.remove('border-primary', 'bg-primary/5');
-            }, false);
-        });
+ ['dragleave', 'drop'].forEach(eventName => {
+ wrapper.addEventListener(eventName, () => {
+ wrapper.classList.remove('border-primary', 'bg-primary/5');
+ }, false);
+ });
 
-        wrapper.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if(files.length > 0) {
-                input.files = files; 
-                validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
-            }
-        });
+ wrapper.addEventListener('drop', (e) => {
+ const dt = e.dataTransfer;
+ const files = dt.files;
+ if(files.length > 0) {
+ input.files = files; 
+ validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
+ }
+ });
 
-        input.addEventListener('change', (e) => {
-            if(input.files.length > 0) {
-                validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
-            }
-        });
-    });
+ input.addEventListener('change', (e) => {
+ if(input.files.length > 0) {
+ validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
+ }
+ });
+ });
 
-    function validateAndDisplay(file, displayElement, iconElement, iconContainer, inputElement) {
-        if (file.size > maxFileSize) {
-            alert('El archivo "' + file.name + '" supera el límite de 15MB. Por favor, selecciona un archivo más pequeño.');
-            inputElement.value = ''; 
-            displayElement.textContent = "Arrastra y suelta tu archivo o haz clic para explorar";
-            displayElement.classList.remove('text-green-600', 'font-medium');
-            iconElement.textContent = "upload_file";
-            iconContainer.classList.remove('bg-green-100', 'text-green-600');
-            iconContainer.classList.add('bg-primary/10', 'text-primary');
-            return;
-        }
+ function validateAndDisplay(file, displayElement, iconElement, iconContainer, inputElement) {
+ if (file.size > maxFileSize) {
+ alert('El archivo "' + file.name + '" supera el límite de 15MB. Por favor, selecciona un archivo más pequeño.');
+ inputElement.value = ''; 
+ displayElement.textContent = "Arrastra y suelta tu archivo o haz clic para explorar";
+ displayElement.classList.remove('text-green-600', 'font-medium');
+ iconElement.textContent = "upload_file";
+ iconContainer.classList.remove('bg-green-100', 'text-green-600');
+ iconContainer.classList.add('bg-primary/10', 'text-primary');
+ return;
+ }
 
-        displayElement.textContent = file.name;
-        displayElement.classList.add('text-green-600', 'font-medium');
-        iconElement.textContent = "check_circle";
-        iconContainer.classList.remove('bg-primary/10', 'text-primary');
-        iconContainer.classList.add('bg-green-100', 'text-green-600');
-    }
+ displayElement.textContent = file.name;
+ displayElement.classList.add('text-green-600', 'font-medium');
+ iconElement.textContent = "check_circle";
+ iconContainer.classList.remove('bg-primary/10', 'text-primary');
+ iconContainer.classList.add('bg-green-100', 'text-green-600');
+ }
 </script>
 
 <!-- ═══ FOOTER ═══ -->

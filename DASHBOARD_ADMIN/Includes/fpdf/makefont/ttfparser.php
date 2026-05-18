@@ -1,10 +1,10 @@
 <?php
 /*******************************************************************************
-* Class to parse and subset TrueType fonts                                     *
-*                                                                              *
-* Version: 1.11                                                                *
-* Date:    2021-04-18                                                          *
-* Author:  Olivier PLATHEY                                                     *
+* Class to parse and subset TrueType fonts *
+* *
+* Version: 1.11 *
+* Date: 2021-04-18 *
+* Author: Olivier PLATHEY *
 *******************************************************************************/
 
 class TTFParser

@@ -18,14 +18,14 @@ include("../Includes/sidebar.php");
 </div>
 <!-- Bento Layout Tabs -->
 <div class="flex gap-1 p-1 bg-surface-container-low rounded-xl w-fit mb-8 animate-reveal" style="animation-delay: 0.1s">
-<button class="px-6 py-2.5 rounded-lg text-sm font-bold bg-surface-container-lowest text-primary shadow-sm transition-all">General</button>
+<button class="px-6 py-2.5 rounded-lg text-sm font-bold bg-surface-container-lowest text-primary transition-all">General</button>
 <button class="px-6 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">Usuarios Admin</button>
 <button class="px-6 py-2.5 rounded-lg text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">Roles y Permisos</button>
 </div>
 <div class="grid grid-cols-12 gap-8">
 <!-- Left Column: Configuration Form -->
 <div class="col-span-12 lg:col-span-7 space-y-8 animate-reveal" style="animation-delay: 0.2s">
-<section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
+<section class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10">
 <div class="flex items-center justify-between mb-8">
 <div>
 <h3 class="text-xl font-bold text-on-surface tracking-tight">Configuración General</h3>
@@ -65,9 +65,9 @@ include("../Includes/sidebar.php");
 </div>
 </div>
 <div class="pt-4 flex justify-end">
-<button onclick="event.preventDefault(); mockAction('Configuración Guardada', 'Se han actualizado los parámetros globales del sistema.', 'success')" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
-                                Guardar Cambios
-                            </button>
+<button onclick="event.preventDefault(); mockAction('Configuración Guardada', 'Se han actualizado los parámetros globales del sistema.', 'success')" class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-lg text-sm font-bold hover:scale-[1.02] transition-transform">
+ Guardar Cambios
+ </button>
 </div>
 </form>
 </section>
@@ -87,21 +87,21 @@ include("../Includes/sidebar.php");
 </div>
 <!-- Bento Card: Usage Stats -->
 <div class="grid grid-cols-2 gap-4">
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10">
 <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Adm. Activos</p>
 <h3 class="text-3xl font-extrabold text-primary">12</h3>
 </div>
-<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/10">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10">
 <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Roles Def.</p>
 <h3 class="text-3xl font-extrabold text-secondary">05</h3>
 </div>
 </div>
-<div class="bg-primary text-white p-8 rounded-xl relative overflow-hidden shadow-xl shadow-primary/20">
+<div class="bg-primary text-white p-8 rounded-xl relative overflow-hidden ">
 <div class="relative z-10">
 <h4 class="text-lg font-bold mb-2">Certificación Sanitaria</h4>
 <p class="text-emerald-100/70 text-sm mb-4 leading-relaxed">Su licencia de operación clínica vence en 45 días. Asegúrese de actualizar su documentación.</p>
 <button onclick="mockAction('Renovación Sanitaria', 'Iniciando proceso de renovación con la entidad regulatoria...', 'info')" class="text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
-                            Renovar Ahora <span class="material-symbols-outlined text-sm">arrow_forward</span>
+ Renovar Ahora <span class="material-symbols-outlined text-sm">arrow_forward</span>
 </button>
 </div>
 <div class="absolute -right-4 -bottom-4 opacity-10">
@@ -111,7 +111,7 @@ include("../Includes/sidebar.php");
 </div>
 <!-- Full Width: Users Table -->
 <div class="col-span-12">
-<section class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<section class="bg-surface-container-lowest rounded-xl overflow-hidden">
 <div class="p-8 border-b border-surface-container-low flex items-center justify-between bg-white">
 <div>
 <h3 class="text-xl font-bold text-on-surface tracking-tight">Usuarios Admin</h3>
@@ -119,8 +119,8 @@ include("../Includes/sidebar.php");
 </div>
 <button onclick="mockAction('Nuevo Usuario', 'Abriendo formulario para crear una nueva cuenta administrativa.', 'info')" class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-on-secondary-container rounded-lg text-sm font-bold hover:bg-surface-container-high transition-colors">
 <span class="material-symbols-outlined text-sm" data-icon="person_add">person_add</span>
-                            + Agregar Usuario Admin
-                        </button>
+ + Agregar Usuario Admin
+ </button>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-left border-collapse">

@@ -5,25 +5,25 @@ require_once 'INCLUDES/header.php';
 ?>
 <!-- Hero Section -->
 <section class="relative min-h-screen text-white flex items-center overflow-hidden bg-background">
-  <div class="absolute inset-0 z-0 overflow-hidden">
-    <img src="IMG/33.webp" class="w-full h-full object-cover object-top opacity-20 parallax-bg scale-125 relative top-[-25%]" data-speed="0.2">
-    <div class="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background"></div>
-  </div>
+ <div class="absolute inset-0 z-0 overflow-hidden">
+ <img src="IMG/33.webp" class="w-full h-full object-cover object-top opacity-20 parallax-bg scale-125 relative top-[-25%]" data-speed="0.2">
+ <div class="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background"></div>
+ </div>
 <div class="max-w-6xl mx-auto px-8 py-24 w-full flex flex-col items-center text-center relative z-10" data-aos="fade-up">
-    <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-6 text-white">
-        Tu distribuidora farmacéutica de confianza
-    </h1>
-    <p class="text-xl text-blue-100/90 mb-10 max-w-2xl leading-relaxed">
-        Accede a más de 700 productos farmacéuticos con los estándares más altos de calidad y precios competitivos para tu sector.
-    </p>
+ <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight mb-6 text-white">
+ Tu distribuidora farmacéutica de confianza
+ </h1>
+ <p class="text-xl text-blue-100/90 mb-10 max-w-2xl leading-relaxed">
+ Accede a más de 700 productos farmacéuticos con los estándares más altos de calidad y precios competitivos para tu sector.
+ </p>
 
-    <!-- Botones ocultos para versión beta -->
+ <!-- Botones ocultos para versión beta -->
 </div>
 </section>
 
 <!-- ¿Cómo funciona? Section -->
 <section class="py-24 bg-surface border-y border-white/5">
-  <div class="max-w-[1600px] mx-auto px-8">
+ <div class="max-w-[1600px] mx-auto px-8">
 <div class="text-center mb-20" data-aos="fade-up">
 <h2 class="text-3xl font-black text-primary tracking-tight mb-4">¿Cómo funciona?</h2>
 <p class="text-lg text-slate-300 font-medium max-w-2xl mx-auto">Nuestro proceso de alta está diseñado para garantizar la seguridad y profesionalismo en la distribución de insumos médicos.</p>

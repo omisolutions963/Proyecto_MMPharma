@@ -1,8 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: ../../LOGIN/login.php");
-    exit;
+ header("Location: ../../LOGIN/login.php");
+ exit;
 }
 
 require_once '../clinical_core/db.php';
@@ -27,32 +27,32 @@ $detalles = $stmt->fetchAll();
 
 // Crear PDF
 class PDF extends FPDF {
-    function Header() {
-        // Logo (Asegúrate de que la ruta sea correcta)
-        if (file_exists('../../logos/MMPharma-Logotipo-Horizontal.png')) {
-            $this->Image('../../logos/MMPharma-Logotipo-Horizontal.png', 10, 10, 50);
-        }
-        
-        $this->SetFont('Arial', 'B', 15);
-        $this->SetTextColor(0, 36, 81); // Primary color
-        $this->Cell(80);
-        $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE PRODUCTOS', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
-        
-        $this->SetFont('Arial', '', 10);
-        $this->SetTextColor(100, 100, 100);
-        $this->Cell(80);
-        $this->Cell(110, 5, 'MMPharma Clinical Systems S.A. de C.V.', 0, 1, 'R');
-        $this->Cell(80);
-        $this->Cell(110, 5, 'Venta y Distribucion Nacional', 0, 1, 'R');
-        $this->Ln(15);
-    }
+ function Header() {
+ // Logo (Asegúrate de que la ruta sea correcta)
+ if (file_exists('../../logos/MMPharma-Logotipo-Horizontal.png')) {
+ $this->Image('../../logos/MMPharma-Logotipo-Horizontal.png', 10, 10, 50);
+ }
+ 
+ $this->SetFont('Arial', 'B', 15);
+ $this->SetTextColor(0, 36, 81); // Primary color
+ $this->Cell(80);
+ $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE PRODUCTOS', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
+ 
+ $this->SetFont('Arial', '', 10);
+ $this->SetTextColor(100, 100, 100);
+ $this->Cell(80);
+ $this->Cell(110, 5, 'MMPharma Clinical Systems S.A. de C.V.', 0, 1, 'R');
+ $this->Cell(80);
+ $this->Cell(110, 5, 'Venta y Distribucion Nacional', 0, 1, 'R');
+ $this->Ln(15);
+ }
 
-    function Footer() {
-        $this->SetY(-15);
-        $this->SetFont('Arial', 'I', 8);
-        $this->SetTextColor(128);
-        $this->Cell(0, 10, mb_convert_encoding('Página ', 'ISO-8859-1', 'UTF-8') . $this->PageNo() . '/{nb}', 0, 0, 'C');
-    }
+ function Footer() {
+ $this->SetY(-15);
+ $this->SetFont('Arial', 'I', 8);
+ $this->SetTextColor(128);
+ $this->Cell(0, 10, mb_convert_encoding('Página ', 'ISO-8859-1', 'UTF-8') . $this->PageNo() . '/{nb}', 0, 0, 'C');
+ }
 }
 
 $pdf = new PDF();
@@ -113,19 +113,19 @@ $pdf->SetTextColor(50, 50, 50);
 
 $fill = false;
 foreach ($detalles as $det) {
-    $pdf->SetFillColor(245, 245, 245);
-    $pdf->Cell(15, 8, $det['cantidad'], 1, 0, 'C', $fill);
-    
-    // Truncar nombre si es muy largo
-    $nombre = mb_convert_encoding($det['nombre_producto'], 'ISO-8859-1', 'UTF-8');
-    if (strlen($nombre) > 55) {
-        $nombre = substr($nombre, 0, 52) . '...';
-    }
-    
-    $pdf->Cell(105, 8, $nombre, 1, 0, 'L', $fill);
-    $pdf->Cell(35, 8, '$' . number_format($det['precio_unitario'], 2), 1, 0, 'R', $fill);
-    $pdf->Cell(35, 8, '$' . number_format($det['subtotal'], 2), 1, 1, 'R', $fill);
-    $fill = !$fill;
+ $pdf->SetFillColor(245, 245, 245);
+ $pdf->Cell(15, 8, $det['cantidad'], 1, 0, 'C', $fill);
+ 
+ // Truncar nombre si es muy largo
+ $nombre = mb_convert_encoding($det['nombre_producto'], 'ISO-8859-1', 'UTF-8');
+ if (strlen($nombre) > 55) {
+ $nombre = substr($nombre, 0, 52) . '...';
+ }
+ 
+ $pdf->Cell(105, 8, $nombre, 1, 0, 'L', $fill);
+ $pdf->Cell(35, 8, '$' . number_format($det['precio_unitario'], 2), 1, 0, 'R', $fill);
+ $pdf->Cell(35, 8, '$' . number_format($det['subtotal'], 2), 1, 1, 'R', $fill);
+ $fill = !$fill;
 }
 
 // Totales

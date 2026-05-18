@@ -1,17 +1,17 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+ session_start();
 }
 $is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
-$is_admin   = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+$is_admin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 $is_logged_in = $is_cliente || $is_admin;
 
 require_once '../INCLUDES/db.php';
 
 try {
-    $pdo = getDB();
+ $pdo = getDB();
 } catch (Exception $e) {
-    die('Error de conexión: ' . $e->getMessage());
+ die('Error de conexión: ' . $e->getMessage());
 }
 
 
@@ -25,12 +25,12 @@ $cat_otros = $stmt_otros->fetch(PDO::FETCH_ASSOC);
 
 // Parámetros de búsqueda y filtros
 $busqueda = isset($_GET['q']) ? trim($_GET['q']) : '';
-$tipo     = isset($_GET['tipo']) ? $_GET['tipo'] : '';
+$tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';
 $categoria_id = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
-$orden    = isset($_GET['orden']) ? $_GET['orden'] : 'nombre_asc';
-$pagina   = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+$orden = isset($_GET['orden']) ? $_GET['orden'] : 'nombre_asc';
+$pagina = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
 $por_pagina = $is_logged_in ? 50 : 15;
-$offset  = ($pagina - 1) * $por_pagina;
+$offset = ($pagina - 1) * $por_pagina;
 
 $cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
@@ -39,26 +39,26 @@ $where = [];
 $params = [];
 
 if ($busqueda) {
-    $where[] = "(p.nombre LIKE ? OR p.sustancia LIKE ? OR c.nombre LIKE ?)";
-    $params[] = "%$busqueda%";
-    $params[] = "%$busqueda%";
-    $params[] = "%$busqueda%";
+ $where[] = "(p.nombre LIKE ? OR p.sustancia LIKE ? OR c.nombre LIKE ?)";
+ $params[] = "%$busqueda%";
+ $params[] = "%$busqueda%";
+ $params[] = "%$busqueda%";
 }
 
 if ($tipo === 'red_fria') {
-    $where[] = "p.tipo = 'RED FRIA'";
+ $where[] = "p.tipo = 'RED FRIA'";
 } elseif ($tipo === 'seco') {
-    $where[] = "p.tipo = 'SECO'";
+ $where[] = "p.tipo = 'SECO'";
 }
 
 if ($categoria_id > 0) {
-    $where[] = "p.categoria_id = ?";
-    $params[] = $categoria_id;
+ $where[] = "p.categoria_id = ?";
+ $params[] = $categoria_id;
 }
 
 // Filtro de visibilidad según tipo de cliente
 if ($cliente_tipo === 'EMPRESA') {
-    $where[] = "p.solo_empresa = 'SI'";
+ $where[] = "p.solo_empresa = 'SI'";
 }
 
 
@@ -71,18 +71,18 @@ elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
 
 // Orden
 $orden_sql = match($orden) {
-    'nombre_desc' => 'ORDER BY nombre DESC',
-    'precio_asc'  => "ORDER BY $precio_campo ASC",
-    'precio_desc' => "ORDER BY $precio_campo DESC",
-    default       => 'ORDER BY nombre ASC',
+ 'nombre_desc' => 'ORDER BY nombre DESC',
+ 'precio_asc' => "ORDER BY $precio_campo ASC",
+ 'precio_desc' => "ORDER BY $precio_campo DESC",
+ default => 'ORDER BY nombre ASC',
 };
 
 // Total de resultados
 $count_stmt = $pdo->prepare("
-    SELECT COUNT(*) 
-    FROM catalogo_productos p 
-    LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
-    $where_sql
+ SELECT COUNT(*) 
+ FROM catalogo_productos p 
+ LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
+ $where_sql
 ");
 $count_stmt->execute($params);
 $total = $count_stmt->fetchColumn();
@@ -90,193 +90,193 @@ $total_paginas = ceil($total / $por_pagina);
 
 // Productos paginados
 $stmt = $pdo->prepare("
-    SELECT p.*, c.nombre as categoria_nombre 
-    FROM catalogo_productos p 
-    LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
-    $where_sql $orden_sql LIMIT $por_pagina OFFSET $offset
+ SELECT p.*, c.nombre as categoria_nombre 
+ FROM catalogo_productos p 
+ LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
+ $where_sql $orden_sql LIMIT $por_pagina OFFSET $offset
 ");
 $stmt->execute($params);
 $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Helper para mantener parámetros en links de paginación
 function queryStr($extra = []) {
-    $params = array_merge($_GET, $extra);
-    unset($params['pagina']);
-    return http_build_query($params);
+ $params = array_merge($_GET, $extra);
+ unset($params['pagina']);
+ return http_build_query($params);
 }
 ?>
 
 <?php
 $titulo = 'Catálogo | MMPharma';
 $pagina_actual = 'catalogo'; // marca el link activo en el nav
-$base = '../';               // si estás en subcarpeta como CATALOGO/
+$base = '../'; // si estás en subcarpeta como CATALOGO/
 require_once '../includes/header.php';
 ?>
 
 <!-- ── HERO ── -->
-<section class="relative min-h-[369px] flex items-center overflow-hidden bg-background">
-  <div class="absolute inset-0 z-0 overflow-hidden">
-    <img src="../IMG/23.webp" class="w-full h-full object-cover opacity-20 parallax-bg scale-125 origin-top" data-speed="0.2">
-    <div class="absolute inset-0 bg-background/80"></div>
-  </div>
-  <div class="relative z-10 max-w-[1600px] mx-auto px-8 py-20 w-full" data-aos="fade-up">
-    <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-tight text-white mb-2">Catálogo</h1>
-    <p class="text-lg text-slate-300 font-medium"><?= number_format($total) ?> productos disponibles</p>
-  </div>
+<section class="relative min-h-[250px] md:min-h-[369px] flex items-center overflow-hidden bg-slate-900">
+ <div class="absolute inset-0 z-0 overflow-hidden">
+ <img src="../IMG/23.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
+ <div class="absolute inset-0 bg-primary/70"></div>
+ </div>
+ <div class="relative z-10 max-w-[1369px] mx-auto px-6 md:px-8 py-12 md:py-20 w-full" data-aos="fade-up">
+ <h1 class="text-4xl md:text-7xl font-black tracking-tight leading-tight text-white mb-2">Catálogo</h1>
+ <p class="text-base md:text-lg text-white font-medium"><?= number_format($total) ?> productos disponibles</p>
+ </div>
 </section>
 
 
 <!-- ═══ FILTROS Y BUSCADOR ═══ -->
-<section class="w-full bg-surface py-6 z-30 <?= $is_logged_in ? 'sticky top-[72px]' : 'pointer-events-none opacity-60' ?>">
-  <div class="max-w-[1600px] mx-auto px-12" data-aos="fade" data-aos-delay="200">
-    <form method="GET" action="catalogo.php" class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+<section class="w-full bg-tertiary py-4 md:py-6 z-30 <?= $is_logged_in ? 'sticky top-[56px] md:top-[72px]' : 'pointer-events-none opacity-60' ?>">
+ <div class="max-w-[1369px] mx-auto px-4 lg:px-12" data-aos="fade" data-aos-delay="200">
+ <form method="GET" action="catalogo.php" class="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-3 items-stretch lg:items-center">
 
-      <!-- Buscador -->
-      <div class="relative flex-1 group">
-        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary-light">search</span>
-        <input
-          type="text"
-          name="q"
-          value="<?= htmlspecialchars($busqueda) ?>"
-          placeholder="Buscar producto..."
-          class="w-full h-11 bg-background rounded-xl pl-10 pr-4 py-0 text-white placeholder-slate-500 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
-        >
-      </div>
+ <!-- Buscador -->
+ <div class="relative sm:col-span-2 lg:flex-1 group">
+ <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary">search</span>
+ <input
+ type="text"
+ name="q"
+ value="<?= htmlspecialchars($busqueda) ?>"
+ placeholder="Buscar producto..."
+ class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-0 text-slate-800 placeholder-slate-400 text-sm focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+ >
+ </div>
 
-      <!-- Filtro Categoría -->
-      <select name="cat" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
-        <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas las categorías</option>
-        <?php foreach($categorias_db as $c): ?>
-          <option value="<?= $c['id'] ?>" <?= $categoria_id === $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['nombre']) ?></option>
-        <?php endforeach; ?>
-        <?php if ($cat_otros): ?>
-          <option value="<?= $cat_otros['id'] ?>" <?= $categoria_id === $cat_otros['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat_otros['nombre']) ?></option>
-        <?php endif; ?>
-      </select>
+ <!-- Filtro Categoría -->
+ <select name="cat" class="sm:col-span-1 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+ <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas las categorías</option>
+ <?php foreach($categorias_db as $c): ?>
+ <option value="<?= $c['id'] ?>" <?= $categoria_id === $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['nombre']) ?></option>
+ <?php endforeach; ?>
+ <?php if ($cat_otros): ?>
+ <option value="<?= $cat_otros['id'] ?>" <?= $categoria_id === $cat_otros['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat_otros['nombre']) ?></option>
+ <?php endif; ?>
+ </select>
 
-      <!-- Filtro tipo -->
-      <select name="tipo" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
-        <option value="" <?= $tipo === '' ? 'selected' : '' ?>>Todos los tipos</option>
-        <option value="seco" <?= $tipo === 'seco' ? 'selected' : '' ?>>Seco</option>
-        <option value="red_fria" <?= $tipo === 'red_fria' ? 'selected' : '' ?>>Red Fría</option>
-      </select>
+ <!-- Filtro tipo -->
+ <select name="tipo" class="sm:col-span-1 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+ <option value="" <?= $tipo === '' ? 'selected' : '' ?>>Todos los tipos</option>
+ <option value="seco" <?= $tipo === 'seco' ? 'selected' : '' ?>>Seco</option>
+ <option value="red_fria" <?= $tipo === 'red_fria' ? 'selected' : '' ?>>Red Fría</option>
+ </select>
 
-      <!-- Ordenar -->
-      <select name="orden" class="h-11 bg-background rounded-xl pl-4 pr-10 py-0 text-sm text-slate-300 font-bold focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%23cbd5e1%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
-        <option value="nombre_asc"  <?= $orden === 'nombre_asc'  ? 'selected' : '' ?>>Nombre A-Z</option>
-        <option value="nombre_desc" <?= $orden === 'nombre_desc' ? 'selected' : '' ?>>Nombre Z-A</option>
-        <option value="precio_asc"  <?= $orden === 'precio_asc'  ? 'selected' : '' ?>>Precio: menor a mayor</option>
-        <option value="precio_desc" <?= $orden === 'precio_desc' ? 'selected' : '' ?>>Precio: mayor a menor</option>
-      </select>
+ <!-- Ordenar -->
+ <select name="orden" class="sm:col-span-2 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+ <option value="nombre_asc" <?= $orden === 'nombre_asc' ? 'selected' : '' ?>>Nombre A-Z</option>
+ <option value="nombre_desc" <?= $orden === 'nombre_desc' ? 'selected' : '' ?>>Nombre Z-A</option>
+ <option value="precio_asc" <?= $orden === 'precio_asc' ? 'selected' : '' ?>>Precio: menor a mayor</option>
+ <option value="precio_desc" <?= $orden === 'precio_desc' ? 'selected' : '' ?>>Precio: mayor a menor</option>
+ </select>
 
-      <!-- Botón buscar -->
-      <button type="submit" class="h-11 bg-primary text-white px-6 py-0 rounded-xl text-sm font-black hover:bg-primary-light hover:text-surface transition-all flex items-center gap-2 whitespace-nowrap">
-        <span class="material-symbols-outlined text-lg">search</span>
-        Buscar
-      </button>
+ <!-- Botón buscar -->
+ <button type="submit" class="sm:col-span-2 lg:w-auto h-11 bg-primary text-white px-6 py-0 rounded-xl text-sm font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+ <span class="material-symbols-outlined text-lg">search</span>
+ Buscar
+ </button>
 
-      <!-- Limpiar filtros -->
-      <?php if ($busqueda || $tipo || $categoria_id > 0 || $orden !== 'nombre_asc'): ?>
-      <a href="catalogo.php" class="w-11 h-11 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all flex items-center justify-center" title="Limpiar filtros">
-        <span class="material-symbols-outlined text-lg">refresh</span>
-      </a>
-      <?php endif; ?>
+ <!-- Limpiar filtros -->
+ <?php if ($busqueda || $tipo || $categoria_id > 0 || $orden !== 'nombre_asc'): ?>
+ <a href="catalogo.php" class="w-11 h-11 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all flex items-center justify-center border border-slate-200" title="Limpiar filtros">
+ <span class="material-symbols-outlined text-lg">refresh</span>
+ </a>
+ <?php endif; ?>
 
-      <!-- Toggle vista -->
-      <div class="flex gap-1 h-11 bg-background rounded-xl p-1">
-        <button type="button" id="btn-lista" onclick="setVista('lista')"
-          class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa">
-          <span class="material-symbols-outlined text-lg">view_list</span>
-        </button>
-        <button type="button" id="btn-grid" onclick="setVista('grid')"
-          class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn">
-          <span class="material-symbols-outlined text-lg">grid_view</span>
-        </button>
-      </div>
+ <!-- Toggle vista -->
+ <div class="flex gap-1 h-11 bg-slate-100 rounded-xl p-1 border border-slate-200">
+ <button type="button" id="btn-lista" onclick="setVista('lista')"
+ class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa">
+ <span class="material-symbols-outlined text-lg">view_list</span>
+ </button>
+ <button type="button" id="btn-grid" onclick="setVista('grid')"
+ class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn">
+ <span class="material-symbols-outlined text-lg">grid_view</span>
+ </button>
+ </div>
 
-    </form>
-  </div>
+ </form>
+ </div>
 </section>
 
 <!-- ═══ PRODUCTOS ═══ -->
-<main class="bg-background py-12 min-h-screen relative">
-  <div class="max-w-[1600px] mx-auto px-8 <?= !$is_logged_in ? 'pointer-events-none' : '' ?>">
-    
-    <div class="<?= !$is_logged_in ? 'filter blur-[8px] opacity-50 select-none' : '' ?>">
+<main class="bg-white py-12 min-h-screen relative">
+ <div class="max-w-[1369px] mx-auto px-8 <?= !$is_logged_in ? 'pointer-events-none' : '' ?>">
+ 
+ <div class="<?= !$is_logged_in ? 'filter blur-[8px] opacity-50 select-none' : '' ?>">
 
-  <?php if (empty($productos)): ?>
-  <div class="text-center py-24 text-slate-400 bg-surface rounded-2xl" data-aos="zoom-in">
-    <span class="material-symbols-outlined text-6xl text-outline mb-4">search_off</span>
-    <p class="text-lg font-medium mb-2 text-slate-300">No se encontraron productos</p>
-    <p class="text-sm mb-6">Intenta con otro término de búsqueda</p>
-    <a href="catalogo.php" class="text-primary-light font-bold hover:underline">Ver todos los productos</a>
-  </div>
+ <?php if (empty($productos)): ?>
+ <div class="text-center py-24 text-slate-400 bg-white border border-slate-200 rounded-2xl " data-aos="zoom-in">
+ <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">search_off</span>
+ <p class="text-lg font-bold mb-2 text-slate-600">No se encontraron productos</p>
+ <p class="text-sm mb-6 text-slate-500">Intenta con otro término de búsqueda</p>
+ <a href="catalogo.php" class="text-primary font-bold hover:underline">Ver todos los productos</a>
+ </div>
 
-  <?php else: ?>
+ <?php else: ?>
 
-  <!-- ─── VISTA LISTA ─── -->
-  <div id="vista-lista" class="bg-surface rounded-[2rem] overflow-hidden" data-aos="fade-up">
-    <table class="w-full">
-      <thead>
-        <tr class="bg-primary">
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300">Producto</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden lg:table-cell">Sustancia activa</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden md:table-cell">Categoría</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300">Precio</th>
-          <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-slate-300 hidden md:table-cell">Tipo</th>
-          <th class="px-8 py-5"></th>
-        </tr>
-      </thead>
-      <tbody id="contenedor-lista" class="divide-y divide-white/5">
-        <?php 
-        $vista = 'lista';
-        include 'obtener_productos.php'; 
-        ?>
-      </tbody>
-    </table>
-  </div>
+ <!-- ─── VISTA LISTA ─── -->
+ <div id="vista-lista" class="bg-white rounded-[2rem] overflow-hidden border border-slate-200" data-aos="fade-up">
+ <table class="w-full">
+ <thead>
+ <tr class="bg-primary">
+ <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white">Producto</th>
+ <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden lg:table-cell">Sustancia activa</th>
+ <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden md:table-cell">Categoría</th>
+ <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white">Precio</th>
+ <th class="px-8 py-5 text-center text-sm font-black uppercase tracking-widest text-white hidden md:table-cell">Tipo</th>
+ <th class="px-8 py-5"></th>
+ </tr>
+ </thead>
+ <tbody id="contenedor-lista" class="divide-y divide-slate-100">
+ <?php 
+ $vista = 'lista';
+ include 'obtener_productos.php'; 
+ ?>
+ </tbody>
+ </table>
+ </div>
 
-  <!-- ─── VISTA GRID ─── -->
-  <div id="vista-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" data-aos="fade-up">
-    <?php 
-    $vista = 'grid';
-    include 'obtener_productos.php'; 
-    ?>
-  </div>
+ <!-- ─── VISTA GRID ─── -->
+ <div id="vista-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" data-aos="fade-up">
+ <?php 
+ $vista = 'grid';
+ include 'obtener_productos.php'; 
+ ?>
+ </div>
 
-  <!-- Centinela para Infinite Scroll -->
-  <div id="infinite-scroll-trigger" class="flex justify-center py-12">
-    <div id="loader" class="hidden">
-      <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-    </div>
-  </div>
+ <!-- Centinela para Infinite Scroll -->
+ <div id="infinite-scroll-trigger" class="flex justify-center py-12">
+ <div id="loader" class="hidden">
+ <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+ </div>
+ </div>
 
-  <?php endif; ?>
-  </div>
-  </div>
+ <?php endif; ?>
+ </div>
+ </div>
 
-  <?php if (!$is_logged_in): ?>
-  <!-- Overlay CTA para usuarios no registrados -->
-  <div class="absolute inset-0 z-40 flex items-center justify-center bg-background/80 backdrop-blur-[4px]">
-    <div class="max-w-md w-full mx-4 bg-surface p-10 rounded-[2.5rem] text-center animate-reveal">
-      <div class="w-20 h-20 bg-background rounded-3xl flex items-center justify-center mx-auto mb-6">
-        <span class="material-symbols-outlined text-primary-light text-4xl">lock</span>
-      </div>
-      <h2 class="text-3xl font-black text-primary-light tracking-tight mb-4">Catálogo exclusivo</h2>
-      <p class="text-slate-300 font-medium mb-8 leading-relaxed">
-        Para ver nuestros precios y existencias en tiempo real, es necesario contar con una cuenta aprobada.
-      </p>
-      <div class="flex flex-col gap-3">
-        <a href="../INDEX/SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-light hover:text-surface transition-all">
-          Solicitar acceso
-        </a>
-        <a href="../LOGIN/login.php" class="w-full py-4 bg-white/5 text-primary-light font-bold rounded-xl hover:bg-white/10 transition-all">
-          Ya tengo cuenta
-        </a>
-      </div>
-    </div>
-  </div>
-  <?php endif; ?>
+ <?php if (!$is_logged_in): ?>
+ <!-- Overlay CTA para usuarios no registrados -->
+ <div class="absolute inset-0 z-40 flex items-center justify-center bg-white/80 backdrop-blur-[4px]">
+ <div class="max-w-md w-full mx-4 bg-white p-10 rounded-[2.5rem] text-center animate-reveal border border-slate-100">
+ <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+ <span class="material-symbols-outlined text-primary text-4xl">lock</span>
+ </div>
+ <h2 class="text-3xl font-black text-primary tracking-tight mb-4">Catálogo exclusivo</h2>
+ <p class="text-slate-500 font-medium mb-8 leading-relaxed">
+ Para ver nuestros precios y existencias en tiempo real, es necesario contar con una cuenta aprobada.
+ </p>
+ <div class="flex flex-col gap-3">
+ <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all">
+ Solicitar acceso
+ </a>
+ <a href="../LOGIN/login.php" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-slate-200 transition-all">
+ Ya tengo cuenta
+ </a>
+ </div>
+ </div>
+ </div>
+ <?php endif; ?>
 </main>
 
 <script>
@@ -286,78 +286,78 @@ let finDeCatalogo = false;
 let vistaActual = localStorage.getItem('mm_vista') || 'lista';
 
 function setVista(v) {
-    vistaActual = v;
-    const lista = document.getElementById('vista-lista');
-    const grid = document.getElementById('vista-grid');
-    const btnL = document.getElementById('btn-lista');
-    const btnG = document.getElementById('btn-grid');
+ vistaActual = v;
+ const lista = document.getElementById('vista-lista');
+ const grid = document.getElementById('vista-grid');
+ const btnL = document.getElementById('btn-lista');
+ const btnG = document.getElementById('btn-grid');
 
-    if (v === 'grid') {
-        lista.classList.add('hidden');
-        grid.classList.remove('hidden');
-        grid.classList.add('grid');
-        btnG.classList.add('activa');
-        btnL.classList.remove('activa');
-    } else {
-        grid.classList.add('hidden');
-        grid.classList.remove('grid');
-        lista.classList.remove('hidden');
-        btnL.classList.add('activa');
-        btnG.classList.remove('activa');
-    }
-    localStorage.setItem('mm_vista', v);
+ if (v === 'grid') {
+ lista.classList.add('hidden');
+ grid.classList.remove('hidden');
+ grid.classList.add('grid');
+ btnG.classList.add('activa');
+ btnL.classList.remove('activa');
+ } else {
+ grid.classList.add('hidden');
+ grid.classList.remove('grid');
+ lista.classList.remove('hidden');
+ btnL.classList.add('activa');
+ btnG.classList.remove('activa');
+ }
+ localStorage.setItem('mm_vista', v);
 }
 
 // Inicializar vista
 setVista(vistaActual);
 
 async function cargarMasProductos() {
-    if (cargando || finDeCatalogo) return;
-    
-    cargando = true;
-    const loader = document.getElementById('loader');
-    if (loader) loader.classList.remove('hidden');
-    
-    paginaActual++;
-    
-    const params = new URLSearchParams(window.location.search);
-    params.set('pagina', paginaActual);
-    params.set('vista', vistaActual);
-    
-    try {
-        const response = await fetch(`obtener_productos.php?${params.toString()}`);
-        const html = await response.text();
-        
-        if (html.trim() === '') {
-            finDeCatalogo = true;
-            document.getElementById('infinite-scroll-trigger').innerHTML = '<p class="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">Fin del catálogo</p>';
-        } else {
-            const contenedor = vistaActual === 'lista' ? document.getElementById('contenedor-lista') : document.getElementById('vista-grid');
-            contenedor.insertAdjacentHTML('beforeend', html);
-        }
-    } catch (error) {
-        console.error('Error cargando productos:', error);
-    } finally {
-        cargando = false;
-        if (loader) loader.classList.add('hidden');
-    }
+ if (cargando || finDeCatalogo) return;
+ 
+ cargando = true;
+ const loader = document.getElementById('loader');
+ if (loader) loader.classList.remove('hidden');
+ 
+ paginaActual++;
+ 
+ const params = new URLSearchParams(window.location.search);
+ params.set('pagina', paginaActual);
+ params.set('vista', vistaActual);
+ 
+ try {
+ const response = await fetch(`obtener_productos.php?${params.toString()}`);
+ const html = await response.text();
+ 
+ if (html.trim() === '') {
+ finDeCatalogo = true;
+ document.getElementById('infinite-scroll-trigger').innerHTML = '<p class="text-slate-400 font-bold text-xs uppercase tracking-[0.2em]">Fin del catálogo</p>';
+ } else {
+ const contenedor = vistaActual === 'lista' ? document.getElementById('contenedor-lista') : document.getElementById('vista-grid');
+ contenedor.insertAdjacentHTML('beforeend', html);
+ }
+ } catch (error) {
+ console.error('Error cargando productos:', error);
+ } finally {
+ cargando = false;
+ if (loader) loader.classList.add('hidden');
+ }
 }
 
 // Intersection Observer para scroll infinito
 const trigger = document.getElementById('infinite-scroll-trigger');
 if (trigger) {
-    const observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            cargarMasProductos();
-        }
-    }, { threshold: 0.1 });
-    observer.observe(trigger);
+ const observer = new IntersectionObserver((entries) => {
+ if (entries[0].isIntersecting) {
+ cargarMasProductos();
+ }
+ }, { threshold: 0.1 });
+ observer.observe(trigger);
 }
 </script>
 
 <style>
-  .vista-btn { color: #94a3b8; }
-  .vista-btn.activa { background: #1e60aa !important; color: white !important; }
+ .vista-btn { color: #94a3b8; }
+ .vista-btn.activa { background: #003e79 !important; color: white !important; }
 </style>
 
 <?php require_once '../includes/footer.php'; ?>
