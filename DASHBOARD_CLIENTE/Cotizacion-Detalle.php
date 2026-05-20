@@ -74,9 +74,9 @@ include('Includes/sidebar.php');
  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 animate-reveal">
  <h1 class="text-3xl font-extrabold text-white tracking-tight">Folio #<?= htmlspecialchars($pedido['folio']) ?></h1>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
- <button class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all " onclick="Swal.fire({icon:'info', title:'Próximamente', text:'Exportación PDF en desarrollo.', background:'#071628', color:'#fff'})">
+ <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>" target="_blank" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
- </button>
+ </a>
  <?php if (!$comprobante && $pedido['estado_envio'] !== 'CANCELADO'): ?>
  <input type="file" id="fileComprobante" class="hidden" accept=".pdf,.jpg,.jpeg,.png" onchange="procesarArchivo()">
  <button class="bg-primary text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all" onclick="document.getElementById('fileComprobante').click()">
