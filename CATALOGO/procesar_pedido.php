@@ -8,6 +8,7 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
 }
 
 require_once '../INCLUDES/db.php';
+require_once '../INCLUDES/shipping_calculator.php';
 $pdo = getDB();
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -37,10 +38,26 @@ try {
  $folio = 'ORD-' . date('Y') . '-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
  $direccion_id = $data['direccion_id'] ?? null;
+ $costo_envio = 0.00;
+
+ if ($direccion_id) {
+     $stmtDir = $pdo->prepare("SELECT estado, latitud, longitud FROM clientes_direcciones WHERE id = ?");
+     $stmtDir->execute([$direccion_id]);
+     $dirInfo = $stmtDir->fetch(PDO::FETCH_ASSOC);
+     if ($dirInfo) {
+         $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
+         $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
+         $calc = calcularCostoEnvio($monto_total, $dirInfo['estado'], $lat, $lng);
+         $costo_envio = $calc['costo'];
+         // Si es recoger en sucursal y la UI lo permitió, el costo es 0.
+         // Sumar al total
+         $monto_total += $costo_envio;
+     }
+ }
 
  // Insertar pedido
- $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido, monto_total, estado_envio) VALUES (?, ?, ?, ?, CURDATE(), ?, 'PENDIENTE')");
- $stmt->execute([$folio, $cliente_id, $tipo_cliente, $direccion_id, $monto_total]);
+ $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido, monto_total, costo_envio, estado_envio) VALUES (?, ?, ?, ?, CURDATE(), ?, ?, 'PENDIENTE')");
+ $stmt->execute([$folio, $cliente_id, $tipo_cliente, $direccion_id, $monto_total, $costo_envio]);
  $pedido_id = $pdo->lastInsertId();
 
  // Insertar detalles

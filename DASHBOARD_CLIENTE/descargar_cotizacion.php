@@ -34,9 +34,19 @@ $detalles = $stmt->fetchAll();
 $tipo_cliente = $_SESSION['cliente_tipo'] ?? ($pedido['tipo_cliente'] ?? 'FARMACIA');
 
 // Calcular totales
+$costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
 $monto_total = (float)$pedido['monto_total'];
-$subtotal    = $monto_total / 1.16;
-$iva         = $monto_total - $subtotal;
+
+$subtotal_productos = 0;
+foreach($detalles as $det) {
+    $subtotal_productos += (float)$det['subtotal'];
+}
+if ($costo_envio == 0 && abs($monto_total - $subtotal_productos) > 0.01) {
+    $costo_envio = $monto_total - $subtotal_productos;
+}
+
+$subtotal_sin_iva = $monto_total / 1.16;
+$iva = $monto_total - $subtotal_sin_iva;
 
 // Fechas
 $fecha_emision = date('d/m/Y', strtotime($pedido['created_at']));
@@ -153,13 +163,23 @@ foreach ($detalles as $det) {
 $pdf->Ln(4);
 $pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(50, 50, 50);
-$pdf->Cell(120, 7, '', 0, 0);
-$pdf->Cell(35, 7, 'Subtotal:', 0, 0, 'R');
-$pdf->Cell(35, 7, '$' . number_format($subtotal, 2), 0, 1, 'R');
 
-$pdf->Cell(120, 7, '', 0, 0);
-$pdf->Cell(35, 7, 'IVA (16%):', 0, 0, 'R');
-$pdf->Cell(35, 7, '$' . number_format($iva, 2), 0, 1, 'R');
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'Subtotal Productos:', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+$texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8');
+$pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'Subtotal (sin IVA):', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($subtotal_sin_iva, 2), 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'IVA (16%):', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($iva, 2), 0, 1, 'R');
 
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(120, 8, '', 0, 0);
@@ -172,7 +192,7 @@ $pdf->Ln(20);
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding(
-    "ESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
+    "* Todos los precios unitarios y de envío mostrados incluyen el 16% de IVA.\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
     'ISO-8859-1', 'UTF-8'
 ), 0, 'C');
 

@@ -63,15 +63,9 @@ include('Includes/sidebar.php');
  <?php endif; ?>
  <h3 class="text-lg font-bold text-white"><?= htmlspecialchars($dir['alias']) ?></h3>
  </div>
- <?php if ($dir['costo_envio'] == 0): ?>
- <span class="px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 text-[10px] font-bold rounded-lg uppercase flex items-center gap-1 shadow-sm shrink-0">
-    <span class="material-symbols-outlined text-[14px]">local_shipping</span> Envío Gratis
+ <span class="px-3 py-1 bg-primary/20 text-primary-light border border-primary/30 text-[10px] font-bold rounded-lg uppercase flex items-center gap-1 shadow-sm shrink-0">
+    <span class="material-symbols-outlined text-[14px]">info</span> Envío se calcula al cotizar
  </span>
- <?php else: ?>
- <span class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg uppercase flex items-center gap-1 shadow-sm shrink-0">
-    <span class="material-symbols-outlined text-[14px]">local_shipping</span> $<?= number_format($dir['costo_envio'], 2) ?>
- </span>
- <?php endif; ?>
  </div>
  
  <div class="space-y-4 mb-8 flex-1">

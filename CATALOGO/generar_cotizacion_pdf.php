@@ -5,6 +5,7 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
 }
 
 require_once '../INCLUDES/db.php';
+require_once '../INCLUDES/shipping_calculator.php';
 require_once '../DASHBOARD_ADMIN/Includes/fpdf/fpdf.php';
 
 $pdo = getDB();
@@ -33,11 +34,30 @@ $tipo_cliente = $_SESSION['cliente_tipo'] ?? 'FARMACIA';
 // Generar folio único (basado en timestamp y random)
 $folio = 'COT-' . date('Y') . '-' . strtoupper(substr(uniqid(), -5));
 
-// Calcular total
-$monto_total = 0;
+// Calcular subtotal
+$subtotal_productos = 0;
 foreach ($carrito as $item) {
- $monto_total += (float)$item['precio'] * (int)$item['cantidad'];
+ $subtotal_productos += (float)$item['precio'] * (int)$item['cantidad'];
 }
+
+$costo_envio = 0.00;
+$mensaje_envio = '';
+if (!empty($_POST['direccion_id'])) {
+    $stmtDir = $pdo->prepare("SELECT estado, latitud, longitud FROM clientes_direcciones WHERE id = ? AND cliente_id = ?");
+    $stmtDir->execute([$_POST['direccion_id'], $cliente_id]);
+    $dirInfo = $stmtDir->fetch(PDO::FETCH_ASSOC);
+    if ($dirInfo) {
+        $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
+        $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
+        $calc = calcularCostoEnvio($subtotal_productos, $dirInfo['estado'], $lat, $lng);
+        $costo_envio = $calc['costo'];
+        $mensaje_envio = mb_convert_encoding($calc['mensaje'], 'ISO-8859-1', 'UTF-8');
+    }
+}
+
+$monto_total = $subtotal_productos + $costo_envio;
+$subtotal_sin_iva = $monto_total / 1.16;
+$iva = $monto_total - $subtotal_sin_iva;
 
 // Crear PDF
 class PDF extends FPDF {
@@ -145,6 +165,27 @@ foreach ($carrito as $item) {
 }
 
 // Totales
+$pdf->Ln(4);
+$pdf->SetFont('Arial', '', 9);
+$pdf->SetTextColor(50, 50, 50);
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'Subtotal Productos:', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+$texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : ($mensaje_envio !== '' ? $mensaje_envio : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8'));
+$pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'Subtotal (sin IVA):', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($subtotal_sin_iva, 2), 0, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, 'IVA (16%):', 0, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($iva, 2), 0, 1, 'R');
+
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(120, 8, '', 0, 0);
 $pdf->Cell(35, 8, 'TOTAL:', 1, 0, 'R');
@@ -154,7 +195,10 @@ $pdf->Cell(35, 8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 $pdf->Ln(20);
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
-$pdf->MultiCell(0, 5, mb_convert_encoding("ESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.", 'ISO-8859-1', 'UTF-8'), 0, 'C');
+$pdf->MultiCell(0, 5, mb_convert_encoding(
+    "* Todos los precios unitarios y de envío mostrados incluyen el 16% de IVA.\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
+    'ISO-8859-1', 'UTF-8'
+), 0, 'C');
 
 $pdf->Output('D', 'Cotizacion_' . $folio . '.pdf');
 ?>

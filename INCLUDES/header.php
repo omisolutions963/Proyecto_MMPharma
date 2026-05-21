@@ -445,9 +445,17 @@ if (menuClose && mobileMenu) {
 
  <!-- Footer -->
  <div class="p-6 border-t border-white/10">
- <div class="flex justify-between items-end mb-6">
+ <div class="flex justify-between items-end mb-2">
  <p class="text-xs font-black text-white/50 uppercase tracking-widest">Subtotal</p>
- <p id="cart-subtotal" class="text-3xl font-black text-white">$0.00</p>
+ <p id="cart-subtotal" class="text-lg font-black text-white">$0.00</p>
+ </div>
+ <div class="flex justify-between items-end mb-2">
+ <p class="text-xs font-black text-white/50 uppercase tracking-widest">Envío</p>
+ <p id="cart-envio" class="text-sm font-bold text-tertiary">Selecciona dirección</p>
+ </div>
+ <div class="flex justify-between items-end mb-6 pt-2 border-t border-white/10">
+ <p class="text-sm font-black text-white uppercase tracking-widest">Total</p>
+ <p id="cart-total" class="text-3xl font-black text-white">$0.00</p>
  </div>
  
  <?php if(isset($_SESSION['cliente_id'])): 
@@ -596,6 +604,51 @@ function renderCartItems() {
 
  container.innerHTML = html;
  subtotalEl.textContent = formatCurrency(subtotal);
+ calcularEnvioDynamic(subtotal);
+}
+
+function calcularEnvioDynamic(subtotal) {
+  const dirSelect = document.getElementById('cart-direccion');
+  const envioEl = document.getElementById('cart-envio');
+  const totalEl = document.getElementById('cart-total');
+
+  if (!dirSelect || !envioEl || !totalEl) {
+      if(totalEl) totalEl.textContent = formatCurrency(subtotal);
+      return;
+  }
+
+  const direccion_id = dirSelect.value;
+  if (!direccion_id) {
+     envioEl.textContent = 'Selecciona dirección';
+     totalEl.textContent = formatCurrency(subtotal);
+     return;
+  }
+
+  fetch('<?= $base ?? '' ?>CATALOGO/api_calcular_envio.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ direccion_id: direccion_id, subtotal: subtotal })
+  })
+  .then(res => res.json())
+  .then(data => {
+      if (data.success) {
+          const calc = data.calculo;
+          if (calc.costo > 0) {
+              envioEl.textContent = formatCurrency(calc.costo);
+          } else {
+              envioEl.textContent = calc.mensaje;
+          }
+          const total = subtotal + calc.costo;
+          totalEl.textContent = formatCurrency(total);
+      } else {
+          envioEl.textContent = 'Error al calcular';
+          totalEl.textContent = formatCurrency(subtotal);
+      }
+  })
+  .catch(err => {
+      envioEl.textContent = 'Error';
+      totalEl.textContent = formatCurrency(subtotal);
+  });
 }
 
 function agregarAlCarrito(id, nombre, precio, imagen) {
@@ -667,12 +720,27 @@ function toggleCartDrawer() {
 // Inicializar el badge al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
  actualizarBadge();
+ const dirSelect = document.getElementById('cart-direccion');
+ if (dirSelect) {
+     dirSelect.addEventListener('change', () => {
+         const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+         calcularEnvioDynamic(subtotal);
+     });
+ }
 });
 
 function generarCotizacion() {
  if (carrito.length === 0) {
  Swal.fire('Carrito vacío', 'Añade productos antes de generar la cotización', 'warning');
  return;
+ }
+
+ const dirSelect = document.getElementById('cart-direccion');
+ const direccion_id = dirSelect ? dirSelect.value : null;
+
+ if (dirSelect && !direccion_id) {
+    Swal.fire('Atención', 'Debes seleccionar una dirección para cotizar.', 'warning');
+    return;
  }
  
  // Create a hidden form to submit the cart data as POST and trigger download
@@ -687,6 +755,14 @@ function generarCotizacion() {
  input.value = JSON.stringify(carrito);
  
  form.appendChild(input);
+
+ if (typeof direccion_id !== 'undefined' && direccion_id) {
+     const inputDir = document.createElement('input');
+     inputDir.type = 'hidden';
+     inputDir.name = 'direccion_id';
+     inputDir.value = direccion_id;
+     form.appendChild(inputDir);
+ }
  document.body.appendChild(form);
  form.submit();
  document.body.removeChild(form);

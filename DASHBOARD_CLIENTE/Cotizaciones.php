@@ -117,8 +117,8 @@ include('Includes/sidebar.php');
  <th class="py-4 px-6">Folio</th>
  <th class="py-4 px-6">Fecha</th>
  <th class="py-4 px-6 text-center">Cant.</th>
- <th class="py-4 px-6 text-right">Subtotal</th>
- <th class="py-4 px-6 text-right">IVA</th>
+ <th class="py-4 px-6 text-right">Subtotal (sin IVA)</th>
+ <th class="py-4 px-6 text-right">IVA (16%)</th>
  <th class="py-4 px-6 text-right">Total</th>
  <th class="py-4 px-6 text-center">Estado</th>
  <th class="py-4 px-6 text-center">Acciones</th>

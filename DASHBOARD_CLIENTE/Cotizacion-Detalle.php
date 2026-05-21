@@ -47,9 +47,20 @@ $stmt = $pdo->prepare("SELECT * FROM clientes_usuarios WHERE id = ?");
 $stmt->execute([$cliente_id]);
 $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$subtotal = $pedido['monto_total'] / 1.16;
-$iva = $pedido['monto_total'] - $subtotal;
-$total = $pedido['monto_total'];
+$subtotal_productos = 0;
+foreach($detalles as $det) {
+    $subtotal_productos += (float)$det['subtotal'];
+}
+
+$costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
+$monto_total = (float)$pedido['monto_total'];
+
+if ($costo_envio == 0 && abs($monto_total - $subtotal_productos) > 0.01) {
+    $costo_envio = $monto_total - $subtotal_productos;
+}
+
+$subtotal_sin_iva = $monto_total / 1.16;
+$iva = $monto_total - $subtotal_sin_iva;
 
 $fecha_pedido = date('d M, Y', strtotime($pedido['created_at']));
 $vence_pedido = date('d M, Y', strtotime($pedido['created_at'] . ' + 7 days'));
@@ -171,8 +182,16 @@ include('Includes/sidebar.php');
  <div class="flex flex-col items-end border-t border-outline-variant/30 pt-6">
  <div class="w-full max-w-sm">
  <div class="flex justify-between items-center mb-3">
- <span class="text-sm text-on-surface-variant">Subtotal:</span>
- <span class="text-sm font-bold text-white">$<?= number_format($subtotal, 2) ?></span>
+ <span class="text-sm text-on-surface-variant">Subtotal Productos:</span>
+ <span class="text-sm font-bold text-white">$<?= number_format($subtotal_productos, 2) ?></span>
+ </div>
+ <div class="flex justify-between items-center mb-3">
+ <span class="text-sm text-on-surface-variant">Envío:</span>
+ <span class="text-sm font-bold <?= $costo_envio > 0 ? 'text-white' : 'text-green-400' ?>"><?= $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío Gratis' ?></span>
+ </div>
+ <div class="flex justify-between items-center mb-3 pt-3 border-t border-outline-variant/10">
+ <span class="text-sm text-on-surface-variant">Subtotal (sin IVA):</span>
+ <span class="text-sm font-bold text-white">$<?= number_format($subtotal_sin_iva, 2) ?></span>
  </div>
  <div class="flex justify-between items-center mb-6">
  <span class="text-sm text-on-surface-variant">IVA (16%):</span>
@@ -180,9 +199,9 @@ include('Includes/sidebar.php');
  </div>
  <div class="flex justify-between items-center bg-surface-container-high rounded-xl p-4">
  <span class="text-lg font-black text-white uppercase tracking-widest">Total:</span>
- <span class="text-2xl font-extrabold text-primary">$<?= number_format($total, 2) ?></span>
+ <span class="text-2xl font-extrabold text-primary">$<?= number_format($monto_total, 2) ?></span>
  </div>
- <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">Precios sujetos a cambio sin previo aviso. Moneda: MXN.</p>
+ <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Todos los precios incluyen 16% de IVA. Moneda: MXN.</p>
  </div>
  </div>
  

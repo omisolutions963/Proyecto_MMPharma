@@ -75,10 +75,20 @@ if ($tipo_cliente === 'EMPRESA') {
 }
 
 // Determinar estatus global
-$faltantes_o_rechazados = 0;
+$faltantes = 0;
+$rechazados = 0;
+$pendientes = 0;
+$aprobados = 0;
+$total_req = count($documentos_requeridos);
+
 foreach ($documentos_requeridos as $tipo => $info) {
- if (!isset($docs_subidos[$tipo]) || $docs_subidos[$tipo]['estatus_validacion'] !== 'APROBADO') {
- $faltantes_o_rechazados++;
+ if (!isset($docs_subidos[$tipo])) {
+ $faltantes++;
+ } else {
+ $st = $docs_subidos[$tipo]['estatus_validacion'];
+ if ($st === 'RECHAZADO') $rechazados++;
+ elseif ($st === 'PENDIENTE') $pendientes++;
+ elseif ($st === 'APROBADO') $aprobados++;
  }
 }
 
@@ -95,10 +105,10 @@ include('Includes/sidebar.php');
  </div>
 
  <!-- Alert Banner -->
- <?php if ($faltantes_o_rechazados === 0): ?>
+ <?php if ($aprobados === $total_req): ?>
  <div class="bg-tertiary-container/20 border border-tertiary/40 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 animate-reveal delay-100">
  <div class="flex items-center gap-4">
- <div class="w-12 h-12 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 0_0_15px_rgba(52,196,122,0.3)]">
+ <div class="w-12 h-12 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(52,196,122,0.3)]">
  <span class="material-symbols-outlined text-[24px]">check_circle</span>
  </div>
  <div>
@@ -106,19 +116,28 @@ include('Includes/sidebar.php');
  <p class="text-sm text-tertiary/80">Tu cuenta se encuentra al día y autorizada para compras controladas.</p>
  </div>
  </div>
- <button class="px-5 py-2.5 bg-tertiary hover:bg-tertiary-fixed-dim text-white text-sm font-bold rounded-xl transition-all flex items-center gap-2 w-full md:w-auto justify-center">
- <span class="material-symbols-outlined text-[18px]">download</span> Descargar Expediente
- </button>
  </div>
- <?php else: ?>
+ <?php elseif ($faltantes > 0 || $rechazados > 0): ?>
  <div class="bg-[#422c10] border border-[#a66a1d] rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 animate-reveal delay-100">
  <div class="flex items-center gap-4">
- <div class="w-12 h-12 rounded-full bg-[#eab308]/20 text-[#eab308] flex items-center justify-center shrink-0 0_0_15px_rgba(234,179,8,0.3)]">
+ <div class="w-12 h-12 rounded-full bg-[#eab308]/20 text-[#eab308] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
  <span class="material-symbols-outlined text-[24px]">warning</span>
  </div>
  <div>
  <h3 class="text-lg font-bold text-white mb-0.5">Atención Requerida</h3>
- <p class="text-sm text-[#fef08a]/80">Tienes documentos pendientes por subir, en revisión o rechazados.</p>
+ <p class="text-sm text-[#fef08a]/80">Tienes documentos pendientes por subir o rechazados que requieren tu acción.</p>
+ </div>
+ </div>
+ </div>
+ <?php elseif ($pendientes > 0): ?>
+ <div class="bg-secondary-container/20 border border-secondary/40 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 animate-reveal delay-100">
+ <div class="flex items-center gap-4">
+ <div class="w-12 h-12 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+ <span class="material-symbols-outlined text-[24px]">pending</span>
+ </div>
+ <div>
+ <h3 class="text-lg font-bold text-white mb-0.5">Documentos en Revisión</h3>
+ <p class="text-sm text-secondary/80">Hemos recibido tus documentos. Nuestro equipo de operaciones los validará pronto.</p>
  </div>
  </div>
  </div>
@@ -294,7 +313,12 @@ include('Includes/sidebar.php');
  iconElement.textContent = "check_circle";
  iconElement.classList.replace('text-primary', 'text-tertiary');
  
- // Aquí iría la lógica para enviar por AJAX el archivo inmediatamente
+ const tipoDocumento = inputElement.name.replace('documento_', '');
+ const formData = new FormData();
+ formData.append('documento', file);
+ formData.append('tipo_documento', tipoDocumento);
+ formData.append('action', 'upload');
+
  Swal.fire({
  title: 'Subiendo archivo...',
  text: 'Por favor espera',
@@ -302,10 +326,23 @@ include('Includes/sidebar.php');
  didOpen: () => { Swal.showLoading(); }
  });
  
- // Simular subida y recargar
- setTimeout(() => {
+ fetch('api_documentos.php', {
+ method: 'POST',
+ body: formData
+ })
+ .then(r => r.json())
+ .then(data => {
+ if(data.status === 'success') {
  Swal.fire({icon: 'success', title: '¡Documento subido!', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
- }, 1500);
+ } else {
+ Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+ displayElement.textContent = "Arrastra o haz clic para subir";
+ iconElement.textContent = "cloud_upload";
+ inputElement.value = '';
+ }
+ }).catch(e => {
+ Swal.fire({icon: 'error', title: 'Error de red', background: '#071628', color: '#fff'});
+ });
  }
 
 function eliminarDocumento(tipo) {
@@ -327,10 +364,25 @@ function eliminarDocumento(tipo) {
  allowOutsideClick: false,
  didOpen: () => { Swal.showLoading(); }
  });
- // Simular eliminación y recargar
- setTimeout(() => {
+ 
+ const formData = new FormData();
+ formData.append('tipo_documento', tipo);
+ formData.append('action', 'delete');
+
+ fetch('api_documentos.php', {
+ method: 'POST',
+ body: formData
+ })
+ .then(r => r.json())
+ .then(data => {
+ if(data.status === 'success') {
  Swal.fire({icon: 'success', title: 'Documento eliminado', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
- }, 1000);
+ } else {
+ Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+ }
+ }).catch(e => {
+ Swal.fire({icon: 'error', title: 'Error de red', background: '#071628', color: '#fff'});
+ });
  }
  });
 }
