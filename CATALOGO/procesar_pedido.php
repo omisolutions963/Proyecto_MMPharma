@@ -39,6 +39,8 @@ try {
 
  $direccion_id = $data['direccion_id'] ?? null;
  $costo_envio = 0.00;
+ $recoger_sucursal = isset($data['recoger_sucursal']) && $data['recoger_sucursal'];
+ $estado_envio = $recoger_sucursal ? 'RECOGER EN SUCURSAL' : 'PENDIENTE';
 
  if ($direccion_id) {
      $stmtDir = $pdo->prepare("SELECT estado, latitud, longitud FROM clientes_direcciones WHERE id = ?");
@@ -48,16 +50,20 @@ try {
          $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
          $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
          $calc = calcularCostoEnvio($monto_total, $dirInfo['estado'], $lat, $lng);
-         $costo_envio = $calc['costo'];
-         // Si es recoger en sucursal y la UI lo permitió, el costo es 0.
+         
+         if ($recoger_sucursal) {
+             $costo_envio = 0.00;
+         } else {
+             $costo_envio = $calc['costo'];
+         }
          // Sumar al total
          $monto_total += $costo_envio;
      }
  }
 
  // Insertar pedido
- $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido, monto_total, costo_envio, estado_envio) VALUES (?, ?, ?, ?, CURDATE(), ?, ?, 'PENDIENTE')");
- $stmt->execute([$folio, $cliente_id, $tipo_cliente, $direccion_id, $monto_total, $costo_envio]);
+ $stmt = $pdo->prepare("INSERT INTO clientes_pedidos (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido, monto_total, costo_envio, estado_envio, recoger_sucursal) VALUES (?, ?, ?, ?, CURDATE(), ?, ?, ?, ?)");
+ $stmt->execute([$folio, $cliente_id, $tipo_cliente, $direccion_id, $monto_total, $costo_envio, $estado_envio, $recoger_sucursal ? 1 : 0]);
  $pedido_id = $pdo->lastInsertId();
 
  // Insertar detalles

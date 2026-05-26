@@ -156,8 +156,11 @@ include('Includes/sidebar.php');
  <a href="Cotizacion-Detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors" title="Ver detalle">
  <span class="material-symbols-outlined text-[20px]">visibility</span>
  </a>
- <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-primary transition-colors" title="Descargar PDF" target="_blank">
+ <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>&action=view" class="text-on-surface-variant hover:text-primary transition-colors" title="Ver PDF" target="_blank">
  <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+ </a>
+ <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>&action=download" class="text-on-surface-variant hover:text-primary transition-colors" title="Descargar PDF">
+ <span class="material-symbols-outlined text-[20px]">download</span>
  </a>
  <button onclick="borrarCotizacion(<?= $cot['id'] ?>, '<?= $cot['folio'] ?>')" class="text-on-surface-variant hover:text-error transition-colors" title="Eliminar">
  <span class="material-symbols-outlined text-[20px]">delete</span>

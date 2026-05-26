@@ -42,6 +42,9 @@ foreach ($carrito as $item) {
 
 $costo_envio = 0.00;
 $mensaje_envio = '';
+$costo_envio_original = 0.00;
+$recoger_sucursal = isset($_POST['recoger_sucursal']) && $_POST['recoger_sucursal'] === '1';
+
 if (!empty($_POST['direccion_id'])) {
     $stmtDir = $pdo->prepare("SELECT estado, latitud, longitud FROM clientes_direcciones WHERE id = ? AND cliente_id = ?");
     $stmtDir->execute([$_POST['direccion_id'], $cliente_id]);
@@ -50,8 +53,15 @@ if (!empty($_POST['direccion_id'])) {
         $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
         $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
         $calc = calcularCostoEnvio($subtotal_productos, $dirInfo['estado'], $lat, $lng);
-        $costo_envio = $calc['costo'];
-        $mensaje_envio = mb_convert_encoding($calc['mensaje'], 'ISO-8859-1', 'UTF-8');
+        $costo_envio_original = $calc['costo'];
+        
+        if ($recoger_sucursal) {
+            $costo_envio = 0.00;
+            $mensaje_envio = 'Recoger en sucursal';
+        } else {
+            $costo_envio = $calc['costo'];
+            $mensaje_envio = mb_convert_encoding($calc['mensaje'], 'ISO-8859-1', 'UTF-8');
+        }
     }
 }
 
@@ -193,6 +203,17 @@ $pdf->SetTextColor(0, 36, 81);
 $pdf->Cell(35, 8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 
 $pdf->Ln(20);
+
+if ($costo_envio > 0 || ($recoger_sucursal && $costo_envio_original > 0)) {
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->SetTextColor(0, 36, 81);
+    $pdf->MultiCell(0, 5, mb_convert_encoding(
+        "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        'ISO-8859-1', 'UTF-8'
+    ), 0, 'C');
+    $pdf->Ln(5);
+}
+
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding(
@@ -200,5 +221,5 @@ $pdf->MultiCell(0, 5, mb_convert_encoding(
     'ISO-8859-1', 'UTF-8'
 ), 0, 'C');
 
-$pdf->Output('D', 'Cotizacion_' . $folio . '.pdf');
+$pdf->Output('I', 'Cotizacion_' . $folio . '.pdf');
 ?>

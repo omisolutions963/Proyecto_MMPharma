@@ -453,6 +453,18 @@ if (menuClose && mobileMenu) {
  <p class="text-xs font-black text-white/50 uppercase tracking-widest">Envío</p>
  <p id="cart-envio" class="text-sm font-bold text-tertiary">Selecciona dirección</p>
  </div>
+ 
+ <div id="opcion-recoger-sucursal" class="hidden flex items-center justify-between bg-white/10 p-3 rounded-xl mb-4 border border-white/5 transition-all duration-300">
+ <div>
+ <p class="text-sm font-bold text-white">¿Recoger en sucursal?</p>
+ <p class="text-[10px] text-white/50">El envío será gratis</p>
+ </div>
+ <label class="relative inline-flex items-center cursor-pointer">
+ <input type="checkbox" id="checkbox-recoger-sucursal" class="sr-only peer" onchange="toggleRecogerSucursal()">
+ <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+ </label>
+ </div>
+
  <div class="flex justify-between items-end mb-6 pt-2 border-t border-white/10">
  <p class="text-sm font-black text-white uppercase tracking-widest">Total</p>
  <p id="cart-total" class="text-3xl font-black text-white">$0.00</p>
@@ -497,8 +509,8 @@ if (menuClose && mobileMenu) {
  <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:translate-x-1 transition-transform">send</span>
  </button>
  <button onclick="generarCotizacion()" class="w-full h-14 bg-white text-primary font-bold rounded-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-sm flex items-center justify-center gap-2 relative overflow-hidden group">
- <span class="relative z-10 tracking-wide">Descargar cotización</span>
- <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:-translate-y-1 transition-transform">picture_as_pdf</span>
+ <span class="relative z-10 tracking-wide">Ver cotización</span>
+ <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:-translate-y-1 transition-transform">visibility</span>
  </button>
  </div>
  </div>
@@ -607,7 +619,11 @@ function renderCartItems() {
  calcularEnvioDynamic(subtotal);
 }
 
+let currentShippingCost = 0;
+let currentSubtotal = 0;
+
 function calcularEnvioDynamic(subtotal) {
+  currentSubtotal = subtotal;
   const dirSelect = document.getElementById('cart-direccion');
   const envioEl = document.getElementById('cart-envio');
   const totalEl = document.getElementById('cart-total');
@@ -621,6 +637,8 @@ function calcularEnvioDynamic(subtotal) {
   if (!direccion_id) {
      envioEl.textContent = 'Selecciona dirección';
      totalEl.textContent = formatCurrency(subtotal);
+     document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
+     document.getElementById('checkbox-recoger-sucursal').checked = false;
      return;
   }
 
@@ -634,12 +652,16 @@ function calcularEnvioDynamic(subtotal) {
       if (data.success) {
           const calc = data.calculo;
           if (calc.costo > 0) {
-              envioEl.textContent = formatCurrency(calc.costo);
+              currentShippingCost = calc.costo;
+              document.getElementById('opcion-recoger-sucursal').classList.remove('hidden');
+              actualizarTotalConEnvio();
           } else {
+              currentShippingCost = 0;
+              document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
+              document.getElementById('checkbox-recoger-sucursal').checked = false;
               envioEl.textContent = calc.mensaje;
+              totalEl.textContent = formatCurrency(subtotal);
           }
-          const total = subtotal + calc.costo;
-          totalEl.textContent = formatCurrency(total);
       } else {
           envioEl.textContent = 'Error al calcular';
           totalEl.textContent = formatCurrency(subtotal);
@@ -649,6 +671,24 @@ function calcularEnvioDynamic(subtotal) {
       envioEl.textContent = 'Error';
       totalEl.textContent = formatCurrency(subtotal);
   });
+}
+
+function toggleRecogerSucursal() {
+    actualizarTotalConEnvio();
+}
+
+function actualizarTotalConEnvio() {
+    const envioEl = document.getElementById('cart-envio');
+    const totalEl = document.getElementById('cart-total');
+    const isRecoger = document.getElementById('checkbox-recoger-sucursal').checked;
+    
+    if (isRecoger) {
+        envioEl.innerHTML = `<span class="line-through text-white/50 text-xs mr-2">${formatCurrency(currentShippingCost)}</span><span class="text-white">Recoger en sucursal</span>`;
+        totalEl.textContent = formatCurrency(currentSubtotal);
+    } else {
+        envioEl.textContent = formatCurrency(currentShippingCost);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentShippingCost);
+    }
 }
 
 function agregarAlCarrito(id, nombre, precio, imagen) {
@@ -743,6 +783,8 @@ function generarCotizacion() {
     return;
  }
  
+ const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
+
  // Create a hidden form to submit the cart data as POST and trigger download
  const form = document.createElement('form');
  form.method = 'POST';
@@ -762,6 +804,12 @@ function generarCotizacion() {
      inputDir.name = 'direccion_id';
      inputDir.value = direccion_id;
      form.appendChild(inputDir);
+     
+     const inputRecoger = document.createElement('input');
+     inputRecoger.type = 'hidden';
+     inputRecoger.name = 'recoger_sucursal';
+     inputRecoger.value = isRecoger ? '1' : '0';
+     form.appendChild(inputRecoger);
  }
  document.body.appendChild(form);
  form.submit();
@@ -788,11 +836,13 @@ function confirmarPedido() {
  btn.disabled = false;
  return;
  }
+ 
+ const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
 
  fetch('<?= $base ?? '' ?>CATALOGO/procesar_pedido.php', {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ carrito: carrito, direccion_id: direccion_id })
+ body: JSON.stringify({ carrito: carrito, direccion_id: direccion_id, recoger_sucursal: isRecoger })
  })
  .then(res => res.json())
  .then(data => {

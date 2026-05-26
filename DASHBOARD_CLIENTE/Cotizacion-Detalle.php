@@ -85,8 +85,11 @@ include('Includes/sidebar.php');
  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 animate-reveal">
  <h1 class="text-3xl font-extrabold text-white tracking-tight">Folio #<?= htmlspecialchars($pedido['folio']) ?></h1>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
- <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>" target="_blank" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
- <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+ <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=view" target="_blank" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
+ <span class="material-symbols-outlined text-[18px]">visibility</span> Ver
+ </a>
+ <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=download" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
+ <span class="material-symbols-outlined text-[18px]">download</span> PDF
  </a>
  <?php if (!$comprobante && $pedido['estado_envio'] !== 'CANCELADO'): ?>
  <input type="file" id="fileComprobante" class="hidden" accept=".pdf,.jpg,.jpeg,.png" onchange="procesarArchivo()">
@@ -187,7 +190,16 @@ include('Includes/sidebar.php');
  </div>
  <div class="flex justify-between items-center mb-3">
  <span class="text-sm text-on-surface-variant">Envío:</span>
- <span class="text-sm font-bold <?= $costo_envio > 0 ? 'text-white' : 'text-green-400' ?>"><?= $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío Gratis' ?></span>
+ <?php
+ if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+     $texto_envio = 'Recoger en sucursal';
+     $color_envio = 'text-green-400';
+ } else {
+     $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío Gratis';
+     $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400';
+ }
+ ?>
+ <span class="text-sm font-bold <?= $color_envio ?>"><?= $texto_envio ?></span>
  </div>
  <div class="flex justify-between items-center mb-3 pt-3 border-t border-outline-variant/10">
  <span class="text-sm text-on-surface-variant">Subtotal (sin IVA):</span>
@@ -205,6 +217,17 @@ include('Includes/sidebar.php');
  </div>
  </div>
  
+ <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])): ?>
+ <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
+     <div class="flex items-center gap-2 text-primary font-bold mb-1">
+         <span class="material-symbols-outlined text-[18px]">store</span>
+         Información de Entrega en Sucursal
+     </div>
+     <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-white">De 9am a 6pm todos los días de la semana.</strong></p>
+     <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
+ </div>
+ <?php endif; ?>
+
  <div class="flex justify-between items-center mt-12 pt-4 border-t border-outline-variant/10 text-[9px] text-on-surface-variant">
  <span>Generado vía MMPharma Digital Portal</span>
  </div>

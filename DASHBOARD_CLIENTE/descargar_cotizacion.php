@@ -170,7 +170,13 @@ $pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
 $pdf->Cell(120, 6, '', 0, 0);
 $pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
-$texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8');
+
+if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+    $texto_envio = mb_convert_encoding('Recoger en sucursal', 'ISO-8859-1', 'UTF-8');
+} else {
+    $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8');
+}
+
 $pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');
 
 $pdf->Cell(120, 6, '', 0, 0);
@@ -189,6 +195,17 @@ $pdf->Cell(35,  8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 
 // ─── Aviso legal ──────────────────────────────────────────────────────────
 $pdf->Ln(20);
+
+if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->SetTextColor(0, 36, 81);
+    $pdf->MultiCell(0, 5, mb_convert_encoding(
+        "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        'ISO-8859-1', 'UTF-8'
+    ), 0, 'C');
+    $pdf->Ln(5);
+}
+
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding(
@@ -197,5 +214,6 @@ $pdf->MultiCell(0, 5, mb_convert_encoding(
 ), 0, 'C');
 
 // 'D' = descarga directa   |   'I' = inline (abre en el navegador)
-$pdf->Output('D', 'Cotizacion_' . $pedido['folio'] . '.pdf');
+$action = isset($_GET['action']) && $_GET['action'] === 'view' ? 'I' : 'D';
+$pdf->Output($action, 'Cotizacion_' . $pedido['folio'] . '.pdf');
 ?>

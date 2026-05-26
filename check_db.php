@@ -3,15 +3,13 @@ require_once 'c:\xampp\htdocs\Proyecto_MMPharma\INCLUDES\db.php';
 $pdo = getDB();
 
 try {
-    $stmt = $pdo->query("SHOW TABLES LIKE 'clientes_documentos'");
-    if ($stmt->rowCount() > 0) {
-        echo "Table clientes_documentos exists.\n";
-        $stmt2 = $pdo->query("DESCRIBE clientes_documentos");
-        $cols = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-        print_r($cols);
-    } else {
-        echo "Table clientes_documentos DOES NOT exist.\n";
-    }
+    // Add the column if it doesn't exist
+    $pdo->query("ALTER TABLE clientes_pedidos ADD COLUMN recoger_sucursal TINYINT(1) NOT NULL DEFAULT 0");
+    echo "Column recoger_sucursal added.\n";
+    
+    // Update existing orders that are 'RECOGER EN SUCURSAL'
+    $pdo->query("UPDATE clientes_pedidos SET recoger_sucursal = 1 WHERE estado_envio = 'RECOGER EN SUCURSAL'");
+    echo "Updated existing orders.\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
