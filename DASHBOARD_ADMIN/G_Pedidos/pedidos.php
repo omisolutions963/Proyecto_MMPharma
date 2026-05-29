@@ -110,9 +110,9 @@ if (isset($_GET['ajax'])) {
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar Cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <button onclick="verDetalle(<?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
+ <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
- </button>
+ </a>
  <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar pedido de la base de datos?')">
  <input type="hidden" name="action" value="delete">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
@@ -262,9 +262,9 @@ include("../Includes/sidebar.php");
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar Cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <button onclick="verDetalle(<?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
+ <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
- </button>
+ </a>
  <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar pedido de la base de datos?')">
  <input type="hidden" name="action" value="delete">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">

@@ -22,8 +22,9 @@ if (!$id) {
 
 // Buscar el producto
 $stmt = $pdo->prepare("
- SELECT p.*, c.nombre as categoria_nombre 
+ SELECT p.*, COALESCE(s.stock_actual, 0) as stock, c.nombre as categoria_nombre 
  FROM catalogo_productos p 
+ LEFT JOIN admin_inventario_stock s ON p.id = s.producto_id 
  LEFT JOIN catalogo_categorias c ON p.categoria_id = c.id
  WHERE p.id = ?
 ");
@@ -70,7 +71,11 @@ $precio_campo = 'precio_farmacia';
 if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
 elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
 
-$precio_mostrar = $p[$precio_campo];
+$precio_base = (float)$p[$precio_campo];
+$precio_mostrar = $precio_base;
+ if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
+ $precio_mostrar = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
+ }
 ?>
 
 <?php
@@ -98,15 +103,19 @@ require_once '../includes/header.php';
 
  <!-- Imagen del producto -->
  <div class="bg-white border border-slate-200 rounded-[2rem] flex items-center justify-center min-h-[400px] p-12 relative" data-aos="fade-right">
- <?php if ($p['tipo'] === 'RED FRIA'): ?>
- <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full">
- <span class="material-symbols-outlined text-sm">ac_unit</span>
- Requiere Red Fría
- </span>
- <?php endif; ?>
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full">
+  <span class="material-symbols-outlined text-sm">ac_unit</span>
+  Requiere Red Fría
+  </span>
+  <?php elseif ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
+  <span class="absolute top-4 left-4 z-10 px-3 py-1 bg-error text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-error/30">
+  -<?= (float)$p['descuento_porcentaje'] ?>% DESC
+  </span>
+  <?php endif; ?>
 
  <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
- <img src="imagenes/productos/<?= htmlspecialchars($p['imagen']) ?>"
+ <img src="../IMG/productos/<?= htmlspecialchars($p['imagen']) ?>"
  alt="<?= htmlspecialchars($p['nombre']) ?>"
  class="max-h-64 object-contain mix-blend-multiply">
  <?php else: ?>
@@ -186,17 +195,31 @@ require_once '../includes/header.php';
  elseif ($cliente_tipo === 'EMPRESA') $box_class = 'bg-tertiary/10 text-tertiary';
  ?>
  <div class="<?= $box_class ?> p-6 rounded-2xl flex items-center justify-between transition-transform hover:-translate-y-1">
- <div>
- <p class="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80"><?= htmlspecialchars($cliente_tipo) ?></p>
- <p class="text-4xl font-black">$<?= number_format($precio_mostrar, 2) ?></p>
- </div>
- <span class="material-symbols-outlined text-4xl opacity-30">verified</span>
- </div>
+  <div>
+  <p class="text-[10px] font-black uppercase tracking-widest mb-1 opacity-80"><?= htmlspecialchars($cliente_tipo) ?></p>
+   <?php if ($precio_mostrar < $precio_base): ?>
+   <p class="text-sm line-through opacity-70 font-bold mb-1">$<?= number_format($precio_base, 2) ?></p>
+   <p class="text-4xl font-black text-error flex items-center gap-2">
+   $<?= number_format($precio_mostrar, 2) ?>
+   <span class="text-sm font-bold bg-error text-white px-2 py-0.5 rounded-full">-<?= (float)$p['descuento_porcentaje'] ?>%</span>
+   </p>
+   <?php else: ?>
+   <p class="text-4xl font-black">$<?= number_format($precio_mostrar, 2) ?></p>
+   <?php endif; ?>
+  </div>
+  <span class="material-symbols-outlined text-4xl opacity-30">verified</span>
+  </div>
  </div>
  <?php endif; ?>
 
  <!-- Controles de Carrito (Solo para Clientes) -->
  <?php if ($is_cliente): ?>
+ <div class="mb-6 animate-reveal">
+ <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl <?= $p['stock']>0 ? 'bg-tertiary-fixed-dim/20 text-tertiary-fixed-dim' : 'bg-error/10 text-error' ?> font-bold text-sm border <?= $p['stock']>0 ? 'border-tertiary-fixed-dim/30' : 'border-error/20' ?>">
+ <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+ Existencias disponibles: <?= $p['stock'] ?>
+ </span>
+ </div>
  <div class="space-y-4">
  <div class="flex items-end gap-4">
  <div class="flex flex-col">
@@ -292,7 +315,7 @@ require_once '../includes/header.php';
  <!-- Contenedor de Imagen -->
  <div class="w-full aspect-square bg-slate-50 rounded-2xl flex items-center justify-center mb-6 relative group-hover:scale-105 transition-transform duration-500 overflow-hidden">
  <?php if (!empty($r['imagen']) && $r['imagen'] !== 'PENDIENTE'): ?>
- <img src="imagenes/productos/<?= htmlspecialchars($r['imagen']) ?>"
+ <img src="../IMG/productos/<?= htmlspecialchars($r['imagen']) ?>"
  class="w-full h-full object-contain p-4 mix-blend-multiply">
  <?php else: ?>
  <span class="material-symbols-outlined text-slate-300 text-7xl">medication</span>
@@ -315,12 +338,26 @@ require_once '../includes/header.php';
  </div>
 
  <!-- Precio y Carrito -->
- <div class="flex items-center justify-between">
- <p class="text-xl font-black text-primary">$<?= number_format($r[$precio_campo] ?? $r['precio_farmacia'], 2) ?></p>
- 
- <?php if ($is_cliente): ?>
- <button type="button" 
- onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $r['id'] ?>, '<?= htmlspecialchars(addslashes($r['nombre'])) ?>', <?= (float)($r[$precio_campo] ?? $r['precio_farmacia']) ?>, '<?= htmlspecialchars(addslashes($r['imagen'] ?? '')) ?>')"
+  <div class="flex items-center justify-between">
+  <?php
+  $r_precio_base = (float)($r[$precio_campo] ?? $r['precio_farmacia']);
+  $r_precio_final = $r_precio_base;
+  if ($r['en_promocion'] && $r['descuento_porcentaje'] > 0) {
+  $r_precio_final = $r_precio_base * (1 - ($r['descuento_porcentaje'] / 100));
+  }
+  ?>
+  <?php if ($r_precio_final < $r_precio_base): ?>
+  <div class="flex flex-col">
+  <span class="text-[10px] text-slate-400 line-through font-bold leading-none mb-0.5">$<?= number_format($r_precio_base, 2) ?></span>
+  <span class="text-xl font-black text-error leading-none">$<?= number_format($r_precio_final, 2) ?></span>
+  </div>
+  <?php else: ?>
+  <p class="text-xl font-black text-primary">$<?= number_format($r_precio_base, 2) ?></p>
+  <?php endif; ?>
+  
+  <?php if ($is_cliente): ?>
+  <button type="button" 
+  onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $r['id'] ?>, '<?= htmlspecialchars(addslashes($r['nombre'])) ?>', <?= $r_precio_final ?>, '<?= htmlspecialchars(addslashes($r['imagen'] ?? '')) ?>')"
  class="w-12 h-12 rounded-2xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all flex items-center justify-center">
  <span class="material-symbols-outlined text-2xl">shopping_cart</span>
  </button>

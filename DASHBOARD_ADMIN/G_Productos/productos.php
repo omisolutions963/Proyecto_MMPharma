@@ -45,16 +45,22 @@ if (isset($_GET['ajax'])) {
  <div class="flex flex-col items-center gap-3">
  <div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-container-high border border-outline-variant/10">
  <?php if($p['imagen']): ?>
- <img src="../assets/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+ <img src="../../IMG/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
  <?php else: ?>
  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
  <span class="material-symbols-outlined text-[20px]">image</span>
  </div>
  <?php endif; ?>
  </div>
- <div class="flex flex-col">
- <span class="text-sm font-bold text-on-surface leading-tight"><?= htmlspecialchars($p['nombre']) ?></span>
- <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5">Sustancia activa aquí</span>
+ <div class="flex flex-col items-center">
+ <span class="text-sm font-bold text-on-surface leading-tight text-center"><?= htmlspecialchars($p['nombre']) ?></span>
+ <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
+ <?php if ($p['en_promocion']): ?>
+ <span class="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
+ <span class="material-symbols-outlined text-[10px]">local_fire_department</span>
+ Promoción <?= (float)$p['descuento_porcentaje'] > 0 ? '-' . (float)$p['descuento_porcentaje'] . '%' : '' ?> <?= $p['promocion_perfil'] !== 'TODOS' ? '(' . $p['promocion_perfil'] . ')' : '' ?>
+ </span>
+ <?php endif; ?>
  </div>
  </div>
  </td>
@@ -92,13 +98,16 @@ if (isset($_GET['ajax'])) {
 }
 
 // ── ACCIONES POST (UPSERT/DELETE) ────────────────────────────────────────────
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
  $action = $_POST['action'];
  $id = (int)($_POST['id'] ?? 0);
+ 
+ $qs = $_GET; unset($qs['msg']); $query_str = http_build_query($qs);
+ $redirect_url = "productos.php?" . ($query_str ? $query_str . "&" : "");
 
  if ($action === 'delete' && $id) {
  $pdo->prepare("DELETE FROM catalogo_productos WHERE id = ?")->execute([$id]);
- header("Location: productos.php?msg=deleted"); exit;
+ header("Location: " . $redirect_url . "msg=deleted"); exit;
  }
 
  if ($action === 'upsert') {
@@ -107,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
  if ($cat_id === 0) $cat_id = null;
  $p_f = (float)$_POST['precio_farmacia']; $p_d = (float)$_POST['precio_distribuidor']; $p_e = (float)$_POST['precio_empresa'];
  $stock = (int)$_POST['stock'];
+ $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
+ $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
+ $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
  $foto_base64 = $_POST['foto_base64'] ?? '';
  
  $nombre_archivo = null;
@@ -114,24 +126,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
  $data = explode(',', $foto_base64);
  $img_content = base64_decode($data[1]);
  $nombre_archivo = 'prod_' . time() . '_' . uniqid() . '.jpg';
- $ruta = '../assets/productos/' . $nombre_archivo;
+ $ruta = '../../IMG/productos/' . $nombre_archivo;
  file_put_contents($ruta, $img_content);
  }
 
  if ($id > 0) {
- $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?";
- $params = [$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e];
+ $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?";
+ $params = [$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil];
  if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
  $sql .= " WHERE id=?"; $params[] = $id;
  $pdo->prepare($sql)->execute($params);
  } else {
- $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, imagen) VALUES (?,?,?,?,?,?,?,?)";
- $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $nombre_archivo]);
+ $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, en_promocion, descuento_porcentaje, promocion_perfil, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+ $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $nombre_archivo]);
  $id = $pdo->lastInsertId();
  }
  $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
  ->execute([$id, $stock, $stock]);
- header("Location: productos.php?msg=saved"); exit;
+ header("Location: " . $redirect_url . "msg=saved"); exit;
  }
 }
 
@@ -226,7 +238,7 @@ include("../Includes/sidebar.php");
  <div class="flex flex-col items-center gap-2">
  <div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container-high border border-outline-variant/10">
  <?php if($p['imagen']): ?>
- <img src="../assets/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+ <img src="../../IMG/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
  <?php else: ?>
  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
  <span class="material-symbols-outlined text-[18px]">image</span>
@@ -235,7 +247,13 @@ include("../Includes/sidebar.php");
  </div>
  <div class="flex flex-col">
  <span class="text-sm font-bold text-on-surface leading-tight"><?= htmlspecialchars($p['nombre']) ?></span>
- <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= htmlspecialchars($p['categoria_nombre'] ?? 'Sin categoría') ?></span>
+ <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
+ <?php if ($p['en_promocion']): ?>
+ <span class="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
+ <span class="material-symbols-outlined text-[10px]">local_fire_department</span>
+ Promoción <?= (float)$p['descuento_porcentaje'] > 0 ? '-' . (float)$p['descuento_porcentaje'] . '%' : '' ?> <?= $p['promocion_perfil'] !== 'TODOS' ? '(' . $p['promocion_perfil'] . ')' : '' ?>
+ </span>
+ <?php endif; ?>
  </div>
  </div>
  </td>
@@ -283,7 +301,7 @@ include("../Includes/sidebar.php");
 <!-- MODAL PRODUCTO CON FOTO -->
 <div id="modalProducto" class="fixed inset-0 z-[100] hidden">
  <div onclick="cerrarModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
- <div id="modalPanel" class="absolute right-0 top-0 h-full w-full max-w-lg bg-surface transition-transform duration-300 translate-x-full flex flex-col">
+ <div id="modalPanel" class="absolute right-0 top-0 h-full w-full max-w-2xl bg-surface transition-transform duration-300 translate-x-full flex flex-col">
  <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
  <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo Producto</h3>
  <p class="text-on-surface-variant text-xs mt-1">Registra o actualiza la información del catálogo.</p>
@@ -306,7 +324,7 @@ include("../Includes/sidebar.php");
  <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
  </div>
  </div>
- <input type="file" id="fotoInput" accept="image/*" class="hidden" onchange="procesarFoto(this)">
+ <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
  </div>
 
  <div class="space-y-4">
@@ -319,17 +337,26 @@ include("../Includes/sidebar.php");
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Código</label>
  <input type="text" name="codigo" id="prod_codigo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
  </div>
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Categoría</label>
- <select name="categoria_id" id="prod_cat" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
- <option value="0">Sin categoría</option>
- <?php foreach($categorias as $cat): ?>
- <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
- <?php endforeach; ?>
- </select>
- </div>
- </div>
- <div class="grid grid-cols-3 gap-4 p-4 bg-surface-container-low rounded-2xl">
+  <div class="col-span-2 grid grid-cols-2 gap-4">
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Categoría</label>
+  <select name="categoria_id" id="prod_cat" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+  <option value="0">Sin categoría</option>
+  <?php foreach($categorias as $cat): ?>
+  <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
+  <?php endforeach; ?>
+  </select>
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo</label>
+  <select name="tipo" id="prod_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+  <option value="SECO">Cadena Seca</option>
+  <option value="RED FRIA">Red Fría</option>
+  </select>
+  </div>
+  </div>
+  </div>
+  <div class="grid grid-cols-3 gap-4 p-4 bg-surface-container-low rounded-2xl">
  <div>
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Farmacia</label>
  <input type="number" step="0.01" name="precio_farmacia" id="prod_pf" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
@@ -343,10 +370,33 @@ include("../Includes/sidebar.php");
  <input type="number" step="0.01" name="precio_empresa" id="prod_pe" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
  </div>
  </div>
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en Inventario</label>
- <input type="number" name="stock" id="prod_stock" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm font-bold text-primary focus:ring-2 focus:ring-primary outline-none">
+ <div class="grid grid-cols-2 gap-4">
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en Inventario</label>
+  <input type="number" name="stock" id="prod_stock" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm font-bold text-primary focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div class="bg-error/5 border border-error/20 p-3 rounded-xl">
+  <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-error mb-2 cursor-pointer">
+  <input type="checkbox" name="en_promocion" id="prod_promo" value="1" class="rounded border-error/50 text-error focus:ring-error w-4 h-4 bg-transparent cursor-pointer">
+  Destacar en Promoción
+  </label>
+ <div class="flex flex-col gap-2">
+ <div class="flex items-center gap-2">
+ <span class="text-xs text-error font-bold">% Desc:</span>
+ <input type="number" step="0.01" name="descuento_porcentaje" id="prod_desc" class="w-full bg-surface border-none rounded-lg p-2 text-xs font-bold text-error focus:ring-2 focus:ring-error outline-none" placeholder="0.00">
  </div>
+ <div class="flex items-center gap-2">
+ <span class="text-xs text-error font-bold">Perfil:</span>
+ <select name="promocion_perfil" id="prod_promo_perfil" class="w-full bg-surface border-none rounded-lg p-2 text-xs font-bold text-error focus:ring-2 focus:ring-error outline-none">
+ <option value="TODOS">Todos</option>
+ <option value="FARMACIA">Farmacia</option>
+ <option value="DISTRIBUIDORA">Distribuidor</option>
+ <option value="EMPRESA">Empresa</option>
+ </select>
+ </div>
+ </div>
+  </div>
+  </div>
  </div>
  <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
  <button type="button" onclick="cerrarModal()" class="flex-1 py-4 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-all">Cancelar</button>
@@ -403,6 +453,12 @@ async function loadMore() {
 // Cropper Logic
 function procesarFoto(input) {
  if (input.files && input.files[0]) {
+ const file = input.files[0];
+ if (!file.type.match('image/jpeg|image/png|image/webp')) {
+ mockAction('Formato no soportado', 'Por favor sube una imagen en formato JPG, PNG o WEBP. Los formatos como HEIC no son compatibles.', 'error');
+ input.value = '';
+ return;
+ }
  const reader = new FileReader();
  reader.onload = (e) => {
  document.getElementById('cropperImage').src = e.target.result;
@@ -410,7 +466,7 @@ function procesarFoto(input) {
  if (cropper) cropper.destroy();
  cropper = new Cropper(document.getElementById('cropperImage'), { aspectRatio: 1, viewMode: 2 });
  };
- reader.readAsDataURL(input.files[0]);
+ reader.readAsDataURL(file);
  }
 }
 
@@ -440,6 +496,9 @@ function abrirModal() {
  document.getElementById('prod_pd').value = "0";
  document.getElementById('prod_pe').value = "0";
  document.getElementById('prod_stock').value = "0";
+ document.getElementById('prod_promo').checked = false;
+ document.getElementById('prod_desc').value = "0";
+ document.getElementById('prod_promo_perfil').value = "TODOS";
  document.getElementById('modalProducto').classList.remove('hidden');
  setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
 }
@@ -449,7 +508,7 @@ function abrirEditar(p) {
  document.getElementById('prod_id').value = p.id;
  document.getElementById('foto_base64').value = "";
  if (p.imagen) {
- document.getElementById('previewModal').src = "../assets/productos/" + p.imagen;
+ document.getElementById('previewModal').src = "../../IMG/productos/" + p.imagen;
  document.getElementById('previewModal').classList.remove('hidden');
  document.getElementById('placeholderModal').classList.add('hidden');
  } else {
@@ -464,6 +523,9 @@ function abrirEditar(p) {
  document.getElementById('prod_pd').value = p.precio_distribuidor;
  document.getElementById('prod_pe').value = p.precio_empresa;
  document.getElementById('prod_stock').value = p.stock || 0;
+ document.getElementById('prod_promo').checked = p.en_promocion == 1;
+ document.getElementById('prod_desc').value = p.descuento_porcentaje || 0;
+ document.getElementById('prod_promo_perfil').value = p.promocion_perfil || "TODOS";
  document.getElementById('modalProducto').classList.remove('hidden');
  setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
 }

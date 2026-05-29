@@ -44,10 +44,11 @@ if ($action === 'save') {
  }
 } elseif ($action === 'get') {
  $stmt = $pdo->prepare("
- SELECT c.cantidad, p.id, p.nombre, p.imagen, 
- p.precio_farmacia, p.precio_distribuidor, p.precio_empresa
- FROM clientes_carrito c
- JOIN catalogo_productos p ON c.producto_id = p.id
+  SELECT c.cantidad, p.id, p.nombre, p.imagen, 
+  p.precio_farmacia, p.precio_distribuidor, p.precio_empresa,
+  p.en_promocion, p.descuento_porcentaje
+  FROM clientes_carrito c
+  JOIN catalogo_productos p ON c.producto_id = p.id
  WHERE c.cliente_id = ?
  ");
  $stmt->execute([$cliente_id]);
@@ -59,13 +60,19 @@ if ($action === 'save') {
  
  $items = [];
  foreach ($db_items as $db_item) {
- $items[] = [
- 'id' => $db_item['id'],
- 'nombre' => $db_item['nombre'],
- 'precio' => (float)$db_item[$precio_campo],
- 'imagen' => $db_item['imagen'],
- 'cantidad' => (int)$db_item['cantidad']
- ];
+  $precio_base = (float)$db_item[$precio_campo];
+  $precio_final = $precio_base;
+  if ($db_item['en_promocion'] && $db_item['descuento_porcentaje'] > 0) {
+  $precio_final = $precio_base * (1 - ($db_item['descuento_porcentaje'] / 100));
+  }
+
+  $items[] = [
+  'id' => $db_item['id'],
+  'nombre' => $db_item['nombre'],
+  'precio' => $precio_final,
+  'imagen' => $db_item['imagen'],
+  'cantidad' => (int)$db_item['cantidad']
+  ];
  }
  
  echo json_encode(['status' => 'success', 'items' => $items]);
