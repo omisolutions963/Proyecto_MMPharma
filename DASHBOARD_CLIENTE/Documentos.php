@@ -65,7 +65,7 @@ if ($tipo_cliente === 'EMPRESA') {
  ]
  ];
 
- if (strtolower($regimen_fiscal) === 'moral' || strtolower($regimen_fiscal) === 'personas morales') {
+ if (stripos($regimen_fiscal, 'moral') !== false) {
  $documentos_requeridos['ACTA_CONSTITUTIVA'] = [
  'titulo' => 'Copia del acta constitutiva',
  'desc' => 'Documento notarial de la empresa.',
@@ -100,8 +100,20 @@ include('Includes/sidebar.php');
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
  
  <!-- Header -->
- <div class="mb-8 animate-reveal">
+ <div class="mb-8 animate-reveal flex flex-col md:flex-row md:items-center justify-between gap-4">
+ <div>
  <h1 class="text-3xl font-extrabold text-white tracking-tight">Mis Documentos</h1>
+ </div>
+ 
+ <?php if ($tipo_cliente !== 'EMPRESA'): ?>
+ <div class="flex items-center gap-3 bg-surface-container/50 border border-outline-variant/30 px-4 py-2 rounded-xl">
+ <label for="selectRegimen" class="text-sm font-bold text-on-surface-variant">Tipo de Persona:</label>
+ <select id="selectRegimen" class="bg-surface-container border border-outline-variant/50 text-white text-sm font-bold rounded-lg py-1.5 px-3 focus:outline-none focus:border-primary transition-colors cursor-pointer outline-none">
+ <option value="Persona Física" <?= stripos($regimen_fiscal, 'moral') === false ? 'selected' : '' ?>>Física</option>
+ <option value="Persona Moral" <?= stripos($regimen_fiscal, 'moral') !== false ? 'selected' : '' ?>>Moral</option>
+ </select>
+ </div>
+ <?php endif; ?>
  </div>
 
  <!-- Alert Banner -->
@@ -214,6 +226,7 @@ include('Includes/sidebar.php');
  </div>
  </div>
 
+ <?php if (!$subido || $estatus === 'RECHAZADO'): ?>
  <!-- Upload Area -->
  <div class="file-upload-wrapper border-2 border-dashed border-outline-variant/50 bg-surface-container/10 rounded-xl p-4 transition-all duration-300 relative flex flex-col items-center justify-center text-center group-hover:bg-surface-container/20 mt-auto">
  <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
@@ -222,13 +235,28 @@ include('Includes/sidebar.php');
  <p class="text-xs text-on-surface-variant file-name-display">Arrastra o haz clic para subir</p>
  </div>
  </div>
-
- <div class="flex gap-2 mt-4">
- <?php if($subido): ?>
- <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface-container hover:bg-surface-container-high text-primary text-xs font-bold rounded-xl transition-colors text-center flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
- <button class="flex-none px-3 py-2 bg-error/10 hover:bg-error/20 text-error text-xs font-bold rounded-xl transition-colors flex items-center justify-center" onclick="eliminarDocumento('<?= $tipo ?>')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
- <?php endif; ?>
+ <?php else: ?>
+ <!-- Uploaded Area Success -->
+ <div class="mt-auto bg-tertiary/10 border border-tertiary/20 rounded-xl p-4 flex flex-col items-center text-center transition-all duration-300">
+ <div class="w-10 h-10 rounded-full bg-tertiary/20 flex items-center justify-center mb-2 shadow-[0_0_10px_rgba(52,196,122,0.2)]">
+ <span class="material-symbols-outlined text-tertiary text-xl">task_alt</span>
  </div>
+ <p class="text-sm font-bold text-tertiary mb-1">¡Documento Listo!</p>
+ <p class="text-[10px] text-tertiary/80 mb-4">El documento ha sido cargado con éxito y está en el sistema.</p>
+ 
+ <div class="flex w-full gap-2 mt-1">
+ <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface-container hover:bg-surface-container-high text-primary text-xs font-bold rounded-lg transition-colors text-center flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
+ 
+ <div class="flex-1 relative file-upload-wrapper cursor-pointer">
+ <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
+ <div class="flex items-center justify-center w-full h-full py-2 bg-secondary/10 hover:bg-secondary/20 text-secondary text-xs font-bold rounded-lg transition-colors gap-1 pointer-events-none">
+ <span class="material-symbols-outlined text-[16px] file-icon">edit</span> 
+ <span class="file-name-display">Actualizar</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ <?php endif; ?>
  </div>
  <?php endforeach; ?>
  </div>
@@ -345,30 +373,20 @@ include('Includes/sidebar.php');
  });
  }
 
-function eliminarDocumento(tipo) {
+ const selectRegimen = document.getElementById('selectRegimen');
+ if (selectRegimen) {
+ selectRegimen.addEventListener('change', (e) => {
+ const val = e.target.value;
  Swal.fire({
- title: '¿Eliminar documento?',
- text: '¿Estás seguro que deseas eliminar este documento?',
- icon: 'warning',
- showCancelButton: true,
- confirmButtonColor: '#ba1a1a',
- cancelButtonColor: '#747780',
- confirmButtonText: 'Sí, eliminar',
- cancelButtonText: 'Cancelar',
- background: '#071628',
- color: '#fff'
- }).then((result) => {
- if (result.isConfirmed) {
- Swal.fire({
- title: 'Eliminando...',
+ title: 'Actualizando tipo de persona...',
  allowOutsideClick: false,
  didOpen: () => { Swal.showLoading(); }
  });
  
  const formData = new FormData();
- formData.append('tipo_documento', tipo);
- formData.append('action', 'delete');
-
+ formData.append('action', 'update_regimen');
+ formData.append('regimen', val);
+ 
  fetch('api_documentos.php', {
  method: 'POST',
  body: formData
@@ -376,14 +394,15 @@ function eliminarDocumento(tipo) {
  .then(r => r.json())
  .then(data => {
  if(data.status === 'success') {
- Swal.fire({icon: 'success', title: 'Documento eliminado', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
+ location.reload();
  } else {
  Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
  }
  }).catch(e => {
  Swal.fire({icon: 'error', title: 'Error de red', background: '#071628', color: '#fff'});
  });
- }
  });
-}
+ }
+
+
 </script>
