@@ -13,18 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cliente_id = $_SESSION['cliente_id'];
     $tipo_documento = $_POST['tipo_documento'] ?? '';
 
-    if ($action === 'update_regimen') {
-        $regimen = $_POST['regimen'] ?? '';
-        if ($regimen) {
-            $stmt = $pdo->prepare("UPDATE clientes_usuarios SET regimen_fiscal = ? WHERE id = ?");
-            $stmt->execute([$regimen, $cliente_id]);
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Régimen no válido']);
-        }
-        exit;
-    }
-
     if (!$tipo_documento) {
         echo json_encode(['status' => 'error', 'message' => 'Falta el tipo de documento']);
         exit;
