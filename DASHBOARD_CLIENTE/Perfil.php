@@ -1,10 +1,10 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
- session_start();
+    session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
- exit;
+    header("Location: ../LOGIN/login.php");
+    exit;
 }
 
 require_once '../INCLUDES/db.php';
@@ -34,265 +34,366 @@ include('Includes/header.php');
 include('Includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
- 
- <!-- Header -->
- <div class="mb-6 animate-reveal">
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi Perfil</h1>
- </div>
+    
+    <!-- Header -->
+    <div class="mb-6 animate-reveal">
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi Perfil</h1>
+    </div>
 
- <!-- Hero Profile Card -->
- <div class="bg-gradient-to-r from-surface-container-highest to-surface-container rounded-3xl p-8 mb-8 relative overflow-hidden animate-reveal delay-100 border border-outline-variant/30">
- <!-- Abstract Decoration -->
- <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
- <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Hero Profile Card -->
+    <div class="bg-gradient-to-r from-surface-container-highest to-surface-container rounded-3xl p-8 mb-8 relative overflow-hidden animate-reveal delay-100 border border-outline-variant/30">
+        <!-- Abstract Decoration -->
+        <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
 
- <div class="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
- <!-- Avatar -->
- <div class="relative group">
- <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-surface flex items-center justify-center bg-surface-container-high">
- <?php if ($foto_perfil): ?>
- <img src="<?= htmlspecialchars($foto_perfil) ?>" alt="Avatar" class="w-full h-full object-cover">
- <?php else: ?>
- <span class="text-4xl font-black text-primary"><?= strtoupper(substr($nombre, 0, 1)) ?></span>
- <?php endif; ?>
- </div>
- <button class="absolute -bottom-3 -right-3 w-10 h-10 bg-surface text-primary rounded-xl flex items-center justify-center border border-outline-variant hover:text-white hover:bg-primary transition-colors" onclick="Swal.fire({icon:'info', title:'Próximamente', text:'Subida de fotos en la siguiente actualización.', background:'#071628', color:'#fff'})">
- <span class="material-symbols-outlined text-[18px]">photo_camera</span>
- </button>
- </div>
- 
- <!-- Info -->
- <div class="flex-1 text-center md:text-left mt-2 md:mt-0">
- <h2 class="text-3xl font-bold text-white mb-1"><?= $nombre ?></h2>
- <p class="text-on-surface-variant text-sm flex items-center justify-center md:justify-start gap-2 mb-4">
- <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
- <?= $tipo_cliente ?>
- </p>
- <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
- <?php if ($estatus === 'ACTIVO'): ?>
- <span class="px-3 py-1.5 bg-tertiary/20 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
- <span class="material-symbols-outlined text-[14px]">verified</span> Cuenta Activa
- </span>
- <?php else: ?>
- <span class="px-3 py-1.5 bg-error/20 border border-error/30 text-error text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
- <span class="material-symbols-outlined text-[14px]">warning</span> Docs Pendientes
- </span>
- <?php endif; ?>
- </div>
- </div>
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+            <!-- Avatar -->
+            <div class="relative group">
+                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-surface flex items-center justify-center bg-surface-container-high">
+                    <?php if ($foto_perfil): ?>
+                        <img src="<?= htmlspecialchars($foto_perfil) ?>" alt="Avatar" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <span class="text-4xl font-black text-primary"><?= strtoupper(substr($nombre, 0, 1)) ?></span>
+                    <?php endif; ?>
+                </div>
+                <button type="button" class="absolute -bottom-3 -right-3 w-10 h-10 bg-surface text-primary rounded-xl flex items-center justify-center border border-outline-variant hover:text-white hover:bg-primary transition-colors" onclick="document.getElementById('avatarInput').click()">
+                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                </button>
+                <input type="file" id="avatarInput" accept="image/png, image/jpeg, image/webp" class="hidden" onchange="subirAvatar(this)">
+            </div>
+            
+            <!-- Info -->
+            <div class="flex-1 text-center md:text-left mt-2 md:mt-0">
+                <h2 class="text-3xl font-bold text-white mb-1"><?= $nombre ?></h2>
+                <p class="text-on-surface-variant text-sm flex items-center justify-center md:justify-start gap-2 mb-4">
+                    <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
+                    <?= $tipo_cliente ?>
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    <?php if ($estatus === 'ACTIVO'): ?>
+                        <span class="px-3 py-1.5 bg-tertiary/20 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">verified</span> Cuenta Activa
+                        </span>
+                    <?php else: ?>
+                        <span class="px-3 py-1.5 bg-error/20 border border-error/30 text-error text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">warning</span> Docs Pendientes
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
 
- <!-- Actions -->
- <div class="flex flex-col gap-3 mt-4 md:mt-auto self-stretch md:self-end">
- <a href="Documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver Documentos</a>
- <button class="px-6 py-2 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all " onclick="Swal.fire({icon:'info', title:'Próximamente', text:'Actualización de perfil en desarrollo.', background:'#071628', color:'#fff'})">Editar Perfil</button>
- </div>
- </div>
- </div>
+            <!-- Actions -->
+            <div class="flex flex-col gap-3 mt-4 md:mt-auto self-stretch md:self-end">
+                <a href="Documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver Documentos</a>
+            </div>
+        </div>
+    </div>
 
- <!-- Tabs -->
- <div class="flex items-center gap-8 border-b border-outline-variant/30 mb-8 overflow-x-auto animate-reveal delay-200">
- <button class="pb-4 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap">Información personal</button>
- <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Facturación</button>
- <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Seguridad</button>
- <button class="pb-4 text-sm font-bold text-on-surface-variant hover:text-white transition-colors whitespace-nowrap" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Notificaciones</button>
- </div>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal delay-300">
+        
+        <!-- Left Column (General Data & Billing) -->
+        <form id="perfilForm" class="lg:col-span-2 space-y-8" onsubmit="actualizarPerfil(event)">
+            
+            <!-- Datos Generales -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">person</span> Datos Generales
+                    </h3>
+                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center gap-2 border-none cursor-pointer"><span class="material-symbols-outlined text-[18px]">save</span> Guardar Cambios</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Razón Social</label>
+                        <input type="text" name="razon_social" value="<?= $nombre ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">RFC</label>
+                        <input type="text" name="rfc" value="<?= $rfc ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Email Profesional</label>
+                        <input type="email" name="email" value="<?= $email ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Teléfono Celular</label>
+                        <input type="text" name="telefono_celular" value="<?= $telefono ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Régimen Fiscal</label>
+                        <input type="text" name="regimen_fiscal" value="<?= $regimen ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                    </div>
+                </div>
+            </div>
 
- <!-- Main Content Grid -->
- <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-reveal delay-300">
- 
- <!-- Left Column (General Data & Billing) -->
- <div class="lg:col-span-2 space-y-8">
- 
- <!-- Datos Generales -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
- <div class="flex items-center justify-between mb-8">
- <h3 class="text-lg font-bold text-white flex items-center gap-2">
- <span class="material-symbols-outlined text-primary">person</span> Datos Generales
- </h3>
- <button class="text-[10px] font-black text-primary uppercase tracking-widest hover:text-primary-fixed-dim transition-colors" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Actualizar datos</button>
- </div>
- 
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Razón Social</label>
- <input type="text" value="<?= $nombre ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" readonly>
- </div>
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">RFC</label>
- <input type="text" value="<?= $rfc ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" readonly>
- </div>
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Email Profesional</label>
- <input type="email" value="<?= $email ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" readonly>
- </div>
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Teléfono</label>
- <input type="text" value="<?= $telefono ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" readonly>
- </div>
- <div class="md:col-span-2">
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Régimen Fiscal</label>
- <div class="relative">
- <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all" disabled>
- <?php if ($regimen): ?>
- <option><?= $regimen ?></option>
- <?php else: ?>
- <option>No especificado</option>
- <?php endif; ?>
- </select>
- <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
- </div>
- </div>
- </div>
- </div>
+            <!-- Preferencias de Facturación -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-white mb-1">Preferencias de Facturación</h3>
+                    <p class="text-xs text-on-surface-variant">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de Documento</label>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'FACTURA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border">
+                                <input type="radio" name="documento_tipo" value="FACTURA" <?= $tipo_doc === 'FACTURA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
+                                <span class="text-sm font-semibold <?= $tipo_doc === 'FACTURA' ? 'text-white' : 'text-on-surface-variant' ?>">Factura (CFDI 4.0)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'NOTA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border hover:border-outline-variant">
+                                <input type="radio" name="documento_tipo" value="NOTA" <?= $tipo_doc === 'NOTA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
+                                <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-white' : 'text-on-surface-variant' ?>">Nota de Crédito</span>
+                            </label>
+                        </div>
+                    </div>
 
- <!-- Preferencias de Facturación -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
- <div class="mb-6">
- <h3 class="text-lg font-bold text-white mb-1">Preferencias de Facturación</h3>
- <p class="text-xs text-on-surface-variant">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
- </div>
- 
- <div class="space-y-6">
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de Documento</label>
- <div class="flex items-center gap-4">
- <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'FACTURA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border">
- <input type="radio" name="tipo_doc" value="FACTURA" <?= $tipo_doc === 'FACTURA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary" disabled>
- <span class="text-sm font-semibold <?= $tipo_doc === 'FACTURA' ? 'text-white' : 'text-on-surface-variant' ?>">Factura (CFDI 4.0)</span>
- </label>
- <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'NOTA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border hover:border-outline-variant">
- <input type="radio" name="tipo_doc" value="NOTA" <?= $tipo_doc === 'NOTA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary" disabled>
- <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-white' : 'text-on-surface-variant' ?>">Nota de Crédito</span>
- </label>
- </div>
- </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de Pago</label>
+                            <div class="relative">
+                                <select name="metodo_pago" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
+                                    <option value="TRANSFERENCIA" <?= $metodo_pago == 'TRANSFERENCIA' ? 'selected' : '' ?>>Transferencia</option>
+                                    <option value="EFECTIVO" <?= $metodo_pago == 'EFECTIVO' ? 'selected' : '' ?>>Efectivo</option>
+                                    <option value="CHEQUE" <?= $metodo_pago == 'CHEQUE' ? 'selected' : '' ?>>Cheque</option>
+                                    <option value="CREDITO_30D" <?= $metodo_pago == 'CREDITO_30D' ? 'selected' : '' ?>>Crédito 30 Días</option>
+                                    <option value="CREDITO_60D" <?= $metodo_pago == 'CREDITO_60D' ? 'selected' : '' ?>>Crédito 60 Días</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Uso de CFDI</label>
+                            <input type="text" name="uso_cfdi" value="<?= $uso_cfdi ?>" placeholder="Ej. G03 - Gastos en general" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Danger Zone -->
+            <div class="bg-error-container/10 border border-error/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-error/20 text-error flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">delete</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white mb-0.5">Solicitar baja de cuenta</h4>
+                        <p class="text-xs text-on-surface-variant">Este proceso es irreversible y requiere validación legal.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
+                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Solicitar</button>
+                </div>
+            </div>
 
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de Pago</label>
- <div class="relative">
- <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all" disabled>
- <option><?= htmlspecialchars($metodo_pago) ?></option>
- </select>
- <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
- </div>
- </div>
- <div>
- <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Uso de CFDI</label>
- <div class="relative">
- <select class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all" disabled>
- <?php if ($uso_cfdi): ?>
- <option><?= $uso_cfdi ?></option>
- <?php else: ?>
- <option>No especificado</option>
- <?php endif; ?>
- </select>
- <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
- </div>
- </div>
- </div>
- </div>
- </div>
- 
- <!-- Danger Zone -->
- <div class="bg-error-container/10 border border-error/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
- <div class="flex items-center gap-4">
- <div class="w-10 h-10 rounded-xl bg-error/20 text-error flex items-center justify-center shrink-0">
- <span class="material-symbols-outlined">delete</span>
- </div>
- <div>
- <h4 class="text-sm font-bold text-white mb-0.5">Solicitar baja de cuenta</h4>
- <p class="text-xs text-on-surface-variant">Este proceso es irreversible y requiere validación legal.</p>
- </div>
- </div>
- <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
- <button class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Solicitar</button>
- </div>
- </div>
+        </form>
 
- </div>
+        <!-- Right Column (Security & Support) -->
+        <div class="space-y-8">
+            
+            <!-- Seguridad de la Cuenta -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ">
+                <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">shield</span> Seguridad de la Cuenta
+                </h3>
+                
+                <div class="bg-surface-container-low border border-primary/30 rounded-xl p-4 mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">laptop_mac</span>
+                        <div>
+                            <p class="text-sm font-bold text-white"><?= $email ?></p>
+                            <p class="text-[10px] text-on-surface-variant">Sesión activa</p>
+                        </div>
+                    </div>
+                    <span class="w-2 h-2 rounded-full bg-tertiary 0_0_8px_rgba(52,196,122,0.6)]"></span>
+                </div>
 
- <!-- Right Column (Security & Alerts) -->
- <div class="space-y-8">
- 
- <!-- Seguridad de la Cuenta -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ">
- <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
- <span class="material-symbols-outlined text-primary text-[20px]">shield</span> Seguridad de la Cuenta
- </h3>
- 
- <div class="bg-surface-container-low border border-primary/30 rounded-xl p-4 mb-4 flex items-center justify-between">
- <div class="flex items-center gap-3">
- <span class="material-symbols-outlined text-primary">laptop_mac</span>
- <div>
- <p class="text-sm font-bold text-white"><?= $email ?></p>
- <p class="text-[10px] text-on-surface-variant">Sesión activa</p>
- </div>
- </div>
- <span class="w-2 h-2 rounded-full bg-tertiary 0_0_8px_rgba(52,196,122,0.6)]"></span>
- </div>
+                <div class="space-y-3">
+                    <button type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors" onclick="cambiarPassword()">
+                        <span class="material-symbols-outlined text-[18px]">key</span> Cambiar Contraseña
+                    </button>
+                </div>
+            </div>
 
- <div class="space-y-3">
- <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">
- <span class="material-symbols-outlined text-[18px]">key</span> Cambiar Contraseña
- </button>
- <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">
- <span class="material-symbols-outlined text-[18px]">security</span> Autenticación 2FA
- </button>
- </div>
- </div>
+            <!-- Soporte Técnico -->
+            <div class="bg-gradient-to-br from-tertiary-container/80 to-surface-container border border-tertiary/20 rounded-2xl p-6 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[100px] text-tertiary/10 rotate-[-15deg] pointer-events-none">support_agent</span>
+                <div class="relative z-10">
+                    <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
+                    <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
+                    <a href="Contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary-container text-center text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors ">
+                        Contactar Soporte
+                    </a>
+                </div>
+            </div>
 
- <!-- Alertas y Avisos -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ">
- <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
- <span class="material-symbols-outlined text-secondary text-[20px]">notifications_active</span> Alertas y Avisos
- </h3>
- 
- <div class="space-y-5">
- <div class="flex items-center justify-between">
- <div>
- <p class="text-sm font-bold text-white">Estado de Pedidos</p>
- <p class="text-[10px] text-on-surface-variant">Alertas de surtido y envío</p>
- </div>
- <div class="w-10 h-6 bg-primary rounded-full relative cursor-pointer">
- <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div>
- </div>
- </div>
- <div class="flex items-center justify-between">
- <div>
- <p class="text-sm font-bold text-white">Stock & Disponibilidad</p>
- <p class="text-[10px] text-on-surface-variant">Aviso de productos agotados</p>
- </div>
- <div class="w-10 h-6 bg-primary rounded-full relative cursor-pointer">
- <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div>
- </div>
- </div>
- <div class="flex items-center justify-between">
- <div>
- <p class="text-sm font-bold text-white">Promociones MMPharma</p>
- <p class="text-[10px] text-on-surface-variant">Descuentos exclusivos B2B</p>
- </div>
- <div class="w-10 h-6 bg-surface-container-high rounded-full relative cursor-pointer border border-outline-variant">
- <div class="w-4 h-4 bg-on-surface-variant rounded-full absolute left-1 top-0.5"></div>
- </div>
- </div>
- </div>
- </div>
-
- <!-- Soporte Técnico -->
- <div class="bg-gradient-to-br from-tertiary-container/80 to-surface-container border border-tertiary/20 rounded-2xl p-6 relative overflow-hidden">
- <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[100px] text-tertiary/10 rotate-[-15deg] pointer-events-none">support_agent</span>
- <div class="relative z-10">
- <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
- <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
- <a href="Contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary-container text-center text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors ">
- Contactar Soporte
- </a>
- </div>
- </div>
-
- </div>
- </div>
+        </div>
+    </div>
 
 </main>
 <?php include('Includes/footer.php'); ?>
+
+<script>
+// Radio button styling toggle
+document.querySelectorAll('input[name="documento_tipo"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('input[name="documento_tipo"]').forEach(r => {
+            const label = r.closest('label');
+            const span = label.querySelector('span');
+            if(r.checked) {
+                label.classList.remove('bg-surface-container-low', 'border-outline-variant/50');
+                label.classList.add('bg-primary/10', 'border-primary/30');
+                span.classList.remove('text-on-surface-variant');
+                span.classList.add('text-white');
+            } else {
+                label.classList.remove('bg-primary/10', 'border-primary/30');
+                label.classList.add('bg-surface-container-low', 'border-outline-variant/50');
+                span.classList.remove('text-white');
+                span.classList.add('text-on-surface-variant');
+            }
+        });
+    });
+});
+
+function actualizarPerfil(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    formData.append('action', 'update_info');
+
+    Swal.fire({
+        title: 'Guardando...',
+        allowOutsideClick: false,
+        background: '#071628',
+        color: '#fff',
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    fetch('api_perfil.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.status === 'success') {
+            Swal.fire({icon: 'success', title: '¡Éxito!', text: data.message, background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500})
+            .then(() => location.reload());
+        } else {
+            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+        }
+    })
+    .catch(err => {
+        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+    });
+}
+
+function subirAvatar(input) {
+    if(!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+
+    const formData = new FormData();
+    formData.append('action', 'update_avatar');
+    formData.append('avatar', file);
+
+    Swal.fire({
+        title: 'Subiendo foto...',
+        allowOutsideClick: false,
+        background: '#071628',
+        color: '#fff',
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    fetch('api_perfil.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.status === 'success') {
+            Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Foto actualizada.', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500})
+            .then(() => location.reload());
+        } else {
+            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+        }
+        input.value = '';
+    })
+    .catch(err => {
+        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+        input.value = '';
+    });
+}
+
+function cambiarPassword() {
+    Swal.fire({
+        title: 'Cambiar Contraseña',
+        html: `
+            <div class="flex flex-col gap-4 text-left">
+                <div>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Contraseña Actual</label>
+                    <input type="password" id="curr_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Nueva Contraseña</label>
+                    <input type="password" id="new_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="conf_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#32b4ca',
+        background: '#071628',
+        color: '#fff',
+        preConfirm: () => {
+            const curr = document.getElementById('curr_pass').value;
+            const newp = document.getElementById('new_pass').value;
+            const conf = document.getElementById('conf_pass').value;
+            if(!curr || !newp || !conf) {
+                Swal.showValidationMessage('Todos los campos son obligatorios');
+                return false;
+            }
+            if(newp !== conf) {
+                Swal.showValidationMessage('La nueva contraseña no coincide');
+                return false;
+            }
+            return {curr, newp};
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('action', 'update_password');
+            formData.append('current_password', result.value.curr);
+            formData.append('new_password', result.value.newp);
+
+            Swal.fire({
+                title: 'Actualizando...',
+                allowOutsideClick: false,
+                background: '#071628',
+                color: '#fff',
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            fetch('api_perfil.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    Swal.fire({icon: 'success', title: '¡Actualizada!', text: data.message, background: '#071628', color: '#fff'});
+                } else {
+                    Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+                }
+            })
+            .catch(err => {
+                Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+            });
+        }
+    });
+}
+</script>

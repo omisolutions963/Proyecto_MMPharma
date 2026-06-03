@@ -211,10 +211,36 @@ include('Includes/sidebar.php');
  <div>
  <span class="block text-on-surface-variant/70 mb-1">Última Carga</span>
  <span class="text-white"><?= $subido ? date('d M Y', strtotime($doc['fecha_subida'])) : 'Nunca' ?></span>
+  <!-- File Area -->
+ <?php if($subido): 
+     $full_path = '../' . $doc['ruta_archivo'];
+     $file_size = '0 KB';
+     $file_name = 'Documento no encontrado';
+     if(file_exists($full_path)){
+         $bytes = filesize($full_path);
+         $file_size = $bytes > 1048576 ? round($bytes/1048576, 2).' MB' : round($bytes/1024, 2).' KB';
+         $file_name = basename($doc['ruta_archivo']);
+     }
+ ?>
+ <div class="bg-surface-container/20 rounded-xl p-4 flex flex-col gap-3 mt-auto border border-outline-variant/30">
+     <div class="flex items-center gap-3 overflow-hidden">
+         <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0 text-primary">
+             <span class="material-symbols-outlined text-[20px]">description</span>
+         </div>
+         <div class="overflow-hidden flex-1">
+             <p class="text-white text-xs font-bold truncate" title="<?= $file_name ?>"><?= $file_name ?></p>
+             <p class="text-on-surface-variant text-[10px] mt-0.5"><?= $file_size ?></p>
+         </div>
+     </div>
+     <div class="flex gap-2 mt-2">
+         <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface hover:bg-surface-container-high text-primary text-xs font-bold rounded-lg transition-colors text-center flex items-center justify-center gap-1 border border-outline-variant/30"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
+         <div class="flex-1 relative">
+             <button type="button" class="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1 border border-primary/20"><span class="material-symbols-outlined text-[16px]">upload</span> Reemplazar</button>
+             <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
+         </div>
+     </div>
  </div>
- </div>
-
- <!-- Upload Area -->
+ <?php else: ?>
  <div class="file-upload-wrapper border-2 border-dashed border-outline-variant/50 bg-surface-container/10 rounded-xl p-4 transition-all duration-300 relative flex flex-col items-center justify-center text-center group-hover:bg-surface-container/20 mt-auto">
  <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
  <div class="pointer-events-none flex flex-col items-center gap-2">
@@ -222,12 +248,8 @@ include('Includes/sidebar.php');
  <p class="text-xs text-on-surface-variant file-name-display">Arrastra o haz clic para subir</p>
  </div>
  </div>
-
- <div class="flex gap-2 mt-4">
- <?php if($subido): ?>
- <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface-container hover:bg-surface-container-high text-primary text-xs font-bold rounded-xl transition-colors text-center flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
- <button class="flex-none px-3 py-2 bg-error/10 hover:bg-error/20 text-error text-xs font-bold rounded-xl transition-colors flex items-center justify-center" onclick="eliminarDocumento('<?= $tipo ?>')"><span class="material-symbols-outlined text-[16px]">delete</span></button>
  <?php endif; ?>
+ </div>
  </div>
  </div>
  <?php endforeach; ?>
@@ -264,6 +286,9 @@ include('Includes/sidebar.php');
 
  document.querySelectorAll('.file-input').forEach(input => {
  const wrapper = input.closest('.file-upload-wrapper');
+
+ // Only set up drag-drop for the dashed upload zone (not the replace button)
+ if (wrapper) {
  const nameDisplay = wrapper.querySelector('.file-name-display');
  const icon = wrapper.querySelector('.file-icon');
 
@@ -298,20 +323,32 @@ include('Includes/sidebar.php');
  validateAndUpload(input.files[0], nameDisplay, icon, input);
  }
  });
+ } else {
+ // This is a replace button input — just listen for change
+ input.addEventListener('change', (e) => {
+ if(input.files.length > 0) {
+ validateAndUpload(input.files[0], null, null, input);
+ }
+ });
+ }
  });
 
  function validateAndUpload(file, displayElement, iconElement, inputElement) {
  if (file.size > maxFileSize) {
  Swal.fire({icon: 'error', title: 'Archivo muy grande', text: 'El archivo supera el límite de 15MB.', background: '#071628', color: '#fff'});
  inputElement.value = ''; 
- displayElement.textContent = "Arrastra o haz clic para subir";
- iconElement.textContent = "cloud_upload";
+ if (displayElement) displayElement.textContent = "Arrastra o haz clic para subir";
+ if (iconElement) iconElement.textContent = "cloud_upload";
  return;
  }
 
+ if (displayElement) {
  displayElement.textContent = file.name;
+ }
+ if (iconElement) {
  iconElement.textContent = "check_circle";
  iconElement.classList.replace('text-primary', 'text-tertiary');
+ }
  
  const tipoDocumento = inputElement.name.replace('documento_', '');
  const formData = new FormData();
@@ -336,8 +373,8 @@ include('Includes/sidebar.php');
  Swal.fire({icon: 'success', title: '¡Documento subido!', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
  } else {
  Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
- displayElement.textContent = "Arrastra o haz clic para subir";
- iconElement.textContent = "cloud_upload";
+ if (displayElement) displayElement.textContent = "Arrastra o haz clic para subir";
+ if (iconElement) iconElement.textContent = "cloud_upload";
  inputElement.value = '';
  }
  }).catch(e => {

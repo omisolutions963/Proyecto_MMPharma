@@ -63,24 +63,26 @@ $menuLinks = [
  <span class="material-symbols-outlined text-base">logout</span>
  Cerrar sesión
  </a>
- <div class="flex items-center gap-3 pt-2">
- <?php $fotoSide = $_SESSION['cliente_foto'] ?? ''; ?>
- <?php if ($fotoSide): ?>
- <img src="<?= htmlspecialchars($fotoSide) ?>"
- class="w-9 h-9 rounded-xl object-cover border-2 border-blue-400/40 flex-shrink-0"
- alt="Perfil">
- <?php else: ?>
- <div class="w-9 h-9 rounded-xl border border-blue-400/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
- style="background:rgba(74,144,217,0.25)">
- <?= strtoupper(substr($_SESSION['cliente_nombre'] ?? 'C', 0, 1)) ?>
- </div>
- <?php endif; ?>
- <div class="overflow-hidden">
- <p class="text-white text-xs font-semibold truncate">
- <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>
- </p>
- <p class="text-blue-400/50 text-[10px]">Portal cliente</p>
- </div>
- </div>
- </div>
+        <a href="Perfil.php" class="flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 hover:border-white/20 mt-2 cursor-pointer group relative">
+            <?php $fotoSide = $_SESSION['cliente_foto'] ?? ''; ?>
+            <?php if ($fotoSide): ?>
+                <img src="<?= htmlspecialchars($fotoSide) ?>"
+                     class="w-10 h-10 rounded-xl object-cover border-2 border-blue-400/40 flex-shrink-0"
+                     alt="Perfil">
+            <?php else: ?>
+                <div class="w-10 h-10 rounded-xl border border-blue-400/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                     style="background:rgba(74,144,217,0.25)">
+                    <?= strtoupper(substr($_SESSION['cliente_nombre'] ?? 'C', 0, 1)) ?>
+                </div>
+            <?php endif; ?>
+            <div class="overflow-hidden flex-1">
+                <p class="text-white text-sm font-semibold truncate group-hover:text-blue-300 transition-colors">
+                    <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>
+                </p>
+                <p class="text-blue-400/50 text-[10px] uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                    <span class="material-symbols-outlined text-[12px]">manage_accounts</span> Mi Perfil
+                </p>
+            </div>
+            <span class="material-symbols-outlined text-white/30 group-hover:text-blue-300 absolute right-3 transition-colors">chevron_right</span>
+        </a>
 </aside>
