@@ -138,8 +138,12 @@ if (session_status() === PHP_SESSION_NONE) {
  <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
  </div>
 
- <div class="flex flex-1 items-center justify-end gap-2 md:gap-4">
- <?php if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true): ?>
+  <?php
+  $is_logged_in = (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true) || (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true);
+  $justify_class = $is_logged_in ? 'justify-end' : 'justify-between lg:justify-end';
+  ?>
+  <div class="flex flex-1 items-center <?= $justify_class ?> gap-2 md:gap-4">
+  <?php if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true): ?>
  
  <!-- Lógica de colores por rol -->
  <?php
@@ -188,9 +192,9 @@ if (session_status() === PHP_SESSION_NONE) {
  <span class="tracking-wide">Ingresar al Portal</span>
  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
-
+ <div class="flex items-center gap-1.5 sm:gap-3">
  <!-- Perfil de cliente con Dropdown -->
- <div class="relative" id="profile-dropdown">
+ <div class="lg:relative" id="profile-dropdown">
  <button onclick="toggleProfileDropdown()" class="w-10 h-10 <?= $foto_cliente ? 'bg-white' : $role_bg ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background <?= $role_ring ?> focus:outline-none ml-2 overflow-hidden">
  <?php if ($foto_cliente && $foto_cliente !== 'PENDIENTE'): ?>
  <img src="<?= htmlspecialchars($foto_cliente) ?>" alt="Perfil" class="w-full h-full object-cover">
@@ -200,7 +204,7 @@ if (session_status() === PHP_SESSION_NONE) {
  </button>
 
  <!-- Dropdown Menu -->
- <div id="profile-menu" class="profile-menu-anim absolute right-0 mt-4 w-72 bg-white rounded-2xl overflow-hidden z-[100] origin-top-right border border-slate-100">
+ <div id="profile-menu" class="profile-menu-anim absolute left-4 right-4 lg:left-auto lg:right-0 mt-4 lg:w-72 bg-white rounded-2xl overflow-hidden z-[100] origin-top-right border border-slate-100">
  <div class="px-6 py-5 bg-slate-50">
  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Cuenta activa</p>
  <div class="flex items-center gap-3">
@@ -249,6 +253,7 @@ if (session_status() === PHP_SESSION_NONE) {
  <span class="material-symbols-outlined text-2xl">shopping_cart</span>
  <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-tertiary text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">0</span>
  </button>
+ </div>
 
  <script>
  function toggleProfileDropdown() {
@@ -281,7 +286,7 @@ if (session_status() === PHP_SESSION_NONE) {
  </a>
 
  <!-- Perfil de Admin con Dropdown -->
- <div class="relative" id="profile-dropdown-admin">
+ <div class="lg:relative" id="profile-dropdown-admin">
  <button onclick="toggleProfileDropdownAdmin()" class="w-10 h-10 <?= $foto_admin ? 'bg-white' : 'bg-[#005132]' ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background ring-[#4ade80] focus:outline-none ml-2 overflow-hidden">
  <?php if ($foto_admin && $foto_admin !== 'PENDIENTE'): ?>
  <img src="<?= htmlspecialchars($foto_admin) ?>" alt="Perfil" class="w-full h-full object-cover">
@@ -291,7 +296,7 @@ if (session_status() === PHP_SESSION_NONE) {
  </button>
 
  <!-- Dropdown Menu -->
- <div id="profile-menu-admin" class="profile-menu-anim absolute right-0 mt-4 w-72 bg-white rounded-2xl overflow-hidden z-[100] origin-top-right border border-slate-100">
+ <div id="profile-menu-admin" class="profile-menu-anim absolute left-4 right-4 lg:left-auto lg:right-0 mt-4 lg:w-72 bg-white rounded-2xl overflow-hidden z-[100] origin-top-right border border-slate-100">
  <div class="px-6 py-5 bg-slate-50">
  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Cuenta activa</p>
  <div class="flex items-center gap-3">
@@ -343,20 +348,20 @@ if (session_status() === PHP_SESSION_NONE) {
  }
  });
  </script>
-
+ 
  <?php else: ?>
- <div class="hidden lg:flex items-center gap-3">
- <a href="<?= $base ?? '' ?>LOGIN/login.php"
- class="px-5 py-2.5 border border-slate-200 text-slate-800 font-bold text-sm rounded-full hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
- Iniciar sesi&oacute;n
- </a>
- <a href="<?= $base ?? '' ?>INDEX/SELECCI&Oacute;N_REGISTRO/selecci&oacute;n_registro.php"
- class="px-5 py-2.5 bg-tertiary text-white font-bold text-sm rounded-full hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-95 hover: transition-all duration-300">
- Crear cuenta
- </a>
- </div>
+  <div class="flex items-center gap-1.5 sm:gap-3">
+  <a href="<?= $base ?? '' ?>LOGIN/login.php"
+  class="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-primary text-white font-bold text-[11px] sm:text-sm rounded-full hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 whitespace-nowrap">
+  Iniciar sesi&oacute;n
+  </a>
+  <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php"
+  class="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-tertiary text-white font-bold text-[11px] sm:text-sm rounded-full hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-95 hover: transition-all duration-300 whitespace-nowrap">
+  Crear cuenta
+  </a>
+  </div>
  <?php endif; ?>
-
+ 
  <!-- Mobile Toggle -->
  <button id="menu-toggle" class="lg:hidden text-slate-800 hover:bg-slate-50 rounded-xl p-1 md:p-2 ml-1">
     <span class="material-symbols-outlined text-3xl">menu</span>
@@ -364,7 +369,7 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 </nav>
 </header>
-
+ 
 <!-- Mobile Menu — fuera del header para posicionamiento correcto -->
 <div id="mobile-menu" class="fixed inset-0 z-[100] bg-white flex flex-col">
 
@@ -376,8 +381,8 @@ if (session_status() === PHP_SESSION_NONE) {
     </button>
   </div>
 
-  <!-- Nav links — centrados verticalmente -->
-  <div class="flex-1 flex flex-col items-center justify-center gap-8 px-8 text-center">
+  <!-- Nav links — centrados verticalmente con my-auto -->
+  <div class="my-auto flex flex-col items-center gap-8 px-8 text-center">
     <a href="<?= $base ?? '' ?>INDEX/index.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Inicio</a>
     <a href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Nosotros</a>
     <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Productos</a>
@@ -385,19 +390,16 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 
   <!-- Bottom session links -->
+  <?php if (isset($_SESSION['cliente_logged_in']) || isset($_SESSION['admin_logged_in'])): ?>
   <div class="flex-shrink-0 flex flex-col items-center gap-4 pb-10 pt-6 border-t border-slate-100">
-    <?php if (!isset($_SESSION['cliente_logged_in']) && !isset($_SESSION['admin_logged_in'])): ?>
-    <a href="<?= $base ?? '' ?>LOGIN/login.php" class="text-base font-bold text-primary">Iniciar sesión</a>
-    <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php" class="px-6 py-2.5 bg-primary text-white font-bold text-sm rounded-full">Solicitar acceso</a>
-    <?php else: ?>
     <?php if (isset($_SESSION['cliente_logged_in'])): ?>
     <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="text-base font-bold text-primary">Panel de control</a>
     <?php else: ?>
     <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="text-base font-bold text-[#005132]">Panel admin</a>
     <?php endif; ?>
     <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="text-base font-bold text-red-500">Cerrar sesión</a>
-    <?php endif; ?>
   </div>
+  <?php endif; ?>
 
 </div>
 
@@ -517,17 +519,18 @@ if (menuClose && mobileMenu) {
 </div>
 
 <script>
+const mm_cart_key = 'mm_carrito_' + (<?= isset($_SESSION['cliente_id']) ? json_encode($_SESSION['cliente_id']) : 'null' ?> || 'guest');
 let carrito = [];
 try {
- const parsed = JSON.parse(localStorage.getItem('mm_carrito'));
+ const parsed = JSON.parse(localStorage.getItem(mm_cart_key));
  carrito = Array.isArray(parsed) ? parsed : [];
 } catch (e) {
  carrito = [];
- localStorage.removeItem('mm_carrito');
+ localStorage.removeItem(mm_cart_key);
 }
 
 function guardarCarrito() {
- localStorage.setItem('mm_carrito', JSON.stringify(carrito));
+ localStorage.setItem(mm_cart_key, JSON.stringify(carrito));
  actualizarBadge();
 }
 

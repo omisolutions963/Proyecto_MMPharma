@@ -258,19 +258,19 @@ require_once '../includes/header.php';
  <?php if (!$is_logged_in): ?>
  <!-- Overlay CTA para usuarios no registrados -->
  <div class="absolute inset-0 z-40 flex items-center justify-center bg-white/80 backdrop-blur-[4px]">
- <div class="max-w-md w-full mx-4 bg-white p-10 rounded-[2.5rem] text-center animate-reveal border border-slate-100">
- <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
- <span class="material-symbols-outlined text-primary text-4xl">lock</span>
+  <div class="max-w-md w-full mx-4 bg-primary p-10 rounded-3xl text-center animate-reveal">
+  <div class="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
+  <span class="material-symbols-outlined text-white text-4xl">lock</span>
  </div>
- <h2 class="text-3xl font-black text-primary tracking-tight mb-4">Catálogo exclusivo</h2>
- <p class="text-slate-500 font-medium mb-8 leading-relaxed">
+  <h2 class="text-3xl font-black text-white tracking-tight mb-4">Catálogo exclusivo</h2>
+  <p class="text-white/80 font-medium mb-8 leading-relaxed">
  Para ver nuestros precios y existencias en tiempo real, es necesario contar con una cuenta aprobada.
  </p>
  <div class="flex flex-col gap-3">
- <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all">
+  <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-tertiary text-white font-bold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
  Solicitar acceso
  </a>
- <a href="../LOGIN/login.php" class="w-full py-4 bg-slate-100 text-primary font-bold rounded-xl hover:bg-slate-200 transition-all">
+  <a href="../LOGIN/login.php" class="w-full py-4 bg-white text-primary font-bold rounded-2xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
  Ya tengo cuenta
  </a>
  </div>

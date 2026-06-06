@@ -1,10 +1,10 @@
-<footer class="bg-black text-white py-16">
+<footer class="bg-black text-white pt-16 pb-[200px] sm:pb-24">
  <div class="max-w-[1369px] mx-auto px-8 flex flex-col items-center text-center space-y-8">
  <!-- Logo -->
  <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 w-auto">
  
  <!-- Navegación -->
- <nav class="flex flex-wrap justify-center gap-x-12 gap-y-4 text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+ <nav class="grid grid-cols-2 justify-items-center max-w-xs mx-auto sm:flex sm:flex-wrap sm:justify-center sm:max-w-none gap-x-12 gap-y-4 text-xs font-bold uppercase tracking-[0.2em] text-white/60">
  <a href="<?= $base ?? '' ?>INDEX/index.php" class="hover:text-white transition-colors">Inicio</a>
  <a href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php" class="hover:text-white transition-colors">Nosotros</a>
  <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="hover:text-white transition-colors">Catálogo</a>
@@ -23,10 +23,10 @@
 
  <!-- Copyright -->
  <div class="w-full text-[10px] text-white/60 tracking-[0.3em] uppercase hover:text-white transition-colors cursor-default">
- <p>&copy; <script>document.write(new Date().getFullYear());</script> MMPharma. Todos los derechos reservados.</p>
+ <p>&copy; <span id="copyright-year">2026</span> MMPharma. Todos los derechos reservados.</p>
+ <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
  </div>
  </div>
-</footer>
 </footer>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>

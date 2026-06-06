@@ -32,7 +32,7 @@ require_once '../includes/header.php';
  <div class="relative group" data-aos="fade-left">
  <!-- Contenedor con overflow-hidden solo para la imagen -->
  <div class="relative rounded-3xl overflow-hidden">
- <img src="../IMG/7.webp" alt="Nuestra Historia" class="w-full object-cover aspect-[4/3] rounded-3xl group-hover:scale-105 transition-transform duration-700">
+ <img src="../IMG/30.webp" alt="Nuestra Historia" class="w-full object-cover aspect-[4/3] rounded-3xl group-hover:scale-105 transition-transform duration-700">
  <div class="absolute inset-0 bg-primary mix-blend-overlay opacity-10"></div>
  </div>
  
@@ -100,7 +100,7 @@ require_once '../includes/header.php';
 <!-- ── CTA FINAL ── -->
 <section class="pt-12 pb-16 bg-white">
  <div class="max-w-[1369px] mx-auto px-8">
- <div class="bg-primary rounded-[48px] p-12 md:p-24 text-center relative overflow-hidden" data-aos="zoom-in">
+ <div class="bg-primary rounded-3xl p-12 md:p-24 text-center relative overflow-hidden" data-aos="zoom-in">
 
  <!-- Background Image Overlay -->
  <div class="absolute inset-0 pointer-events-none">
@@ -115,7 +115,7 @@ require_once '../includes/header.php';
  </p>
  <div class="flex justify-center">
  <a href="../SELECCIÓN_REGISTRO/selección_registro.php"
- class="px-10 py-4 bg-white text-primary font-semibold rounded-xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all text-base flex items-center gap-2 whitespace-nowrap group">
+  class="px-10 py-4 bg-tertiary text-white font-semibold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all text-base flex items-center gap-2 whitespace-nowrap group">
  Solicitar acceso
  <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>

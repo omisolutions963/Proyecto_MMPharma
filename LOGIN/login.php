@@ -89,7 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
- body { font-family: 'Inter', sans-serif; height:100%; margin:0; overflow:hidden; }
+ body { font-family: 'Inter', sans-serif; min-height: 100vh; margin:0; }
+ @media (min-width: 1024px) {
+  body { overflow: hidden; height: 100vh; }
+ }
  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
  .glass-panel { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 </style>
@@ -119,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-background text-slate-300 antialiased">
 
-<div class="flex h-screen w-screen overflow-hidden">
+<div class="flex flex-col lg:flex-row min-h-screen lg:h-screen w-screen overflow-y-auto lg:overflow-hidden">
  <!-- Panel izquierdo: Branding -->
  <div class="hidden lg:flex w-1/2 bg-surface flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
  <!-- Background Image Overlay -->
@@ -157,9 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  </div>
 
  <!-- Panel derecho: Formulario -->
- <div class="flex-1 flex items-center justify-center p-8 bg-background relative overflow-y-auto">
- <div class="w-full max-w-md relative z-10 bg-tertiary p-10 rounded-3xl " data-aos="fade-left">
- <div class="flex items-center gap-4 mb-10">
+ <div class="flex-1 flex flex-col items-center justify-start lg:justify-center px-6 pt-12 pb-12 sm:p-8 bg-background relative overflow-y-auto w-full min-h-screen lg:min-h-0">
+  <!-- Logo para Móvil (Oculto en Desktop) -->
+  <div class="lg:hidden mb-8 mt-2 z-10" data-aos="fade-down">
+   <a href="../INDEX/index.php">
+    <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
+   </a>
+  </div>
+
+  <div class="w-full max-w-md relative z-10 bg-tertiary px-6 py-8 sm:p-10 rounded-3xl" data-aos="fade-left">
+   <div class="flex items-center gap-4 mb-6 sm:mb-10">
  <a href="../INDEX/index.php" class="w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 text-white rounded-2xl transition-all group">
  <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
  </a>
@@ -169,14 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  </div>
  </div>
 
- <?php if ($error_login): ?>
- <div class="mb-8 flex items-center gap-3 bg-white border border-red-200 text-red-600 px-5 py-4 rounded-2xl text-sm font-bold ">
- <span class="material-symbols-outlined text-red-500 text-xl">error</span>
- <?= htmlspecialchars($error_msg) ?>
- </div>
- <?php endif; ?>
+  <?php if ($error_login): ?>
+  <div class="mb-6 sm:mb-8 flex items-center gap-3 bg-white border border-red-200 text-red-600 px-5 py-4 rounded-2xl text-sm font-bold ">
+  <span class="material-symbols-outlined text-red-500 text-xl">error</span>
+  <?= htmlspecialchars($error_msg) ?>
+  </div>
+  <?php endif; ?>
 
- <form method="POST" class="space-y-6">
+  <form method="POST" class="space-y-5 sm:space-y-6">
  <div>
  <label class="block text-xs font-black text-white uppercase tracking-widest mb-3">Correo electrónico</label>
  <div class="relative group">
@@ -202,25 +212,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  </div>
  </div>
  
- <div class="pt-6">
+  <div class="pt-4 sm:pt-6">
  <button type="submit"
- class="w-full h-14 bg-primary text-white font-bold rounded-2xl hover:-translate-y-1 hover:bg-surface transition-all duration-300 flex items-center justify-center gap-3 group">
+  class="w-full h-14 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 group">
  <span class="tracking-wide text-lg">Entrar al portal</span>
  <span class="material-symbols-outlined text-[22px] group-hover:translate-x-1 transition-transform">login</span>
  </button>
  </div>
  </form>
 
- <div class="mt-10 pt-8 border-t border-white/20 text-center">
- <p class="text-sm text-white mb-4 font-medium">¿Aún no tienes cuenta?</p>
- <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-white font-bold hover:text-white/80 transition-colors group">
- Solicitar acceso al portal <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
- </a>
- </div>
+  <div class="mt-8 pt-6 sm:mt-10 sm:pt-8 border-t border-white/20 text-center">
+  <p class="text-sm text-white mb-4 font-medium">¿Aún no tienes cuenta?</p>
+  <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-white font-bold hover:text-white/80 transition-colors group">
+  Solicitar acceso al portal <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+  </a>
+  </div>
 
- <p class="text-center text-xs text-white mt-12 font-medium">
- © <?= date('Y') ?> MMPharma. Todos los derechos reservados.
- </p>
+  <p class="text-center text-xs text-white mt-8 sm:mt-12 font-medium">
+  © <?= date('Y') ?> MMPharma. Todos los derechos reservados.
+  </p>
  </div>
  </div>
 </div>

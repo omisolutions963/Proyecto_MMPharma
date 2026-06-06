@@ -115,9 +115,9 @@ function roundStatIndex($num) {
  Nuestras <span class="text-tertiary">soluciones</span>
  </h2>
  
- <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+ <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
  <!-- Card 1 -->
- <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="100">
  <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
  <span class="material-symbols-outlined text-3xl">inventory_2</span>
  </div>
@@ -126,7 +126,7 @@ function roundStatIndex($num) {
  </div>
  
  <!-- Card 2 -->
- <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
  <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
  <span class="material-symbols-outlined text-3xl">local_shipping</span>
  </div>
@@ -134,17 +134,8 @@ function roundStatIndex($num) {
  <p class="text-white/80 text-sm leading-relaxed">Procesos optimizados para entregas rápidas y seguras.</p>
  </div>
  
- <!-- Card 3 -->
- <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
- <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
- <span class="material-symbols-outlined text-3xl">support_agent</span>
- </div>
- <h3 class="font-black text-white text-lg mb-3">Asesoría especializada</h3>
- <p class="text-white/80 text-sm leading-relaxed">Te ayudamos a tomar las mejores decisiones para tu inventario y negocio.</p>
- </div>
- 
- <!-- Card 4 -->
- <div class="bg-primary p-8 rounded-3xl border border-primary/20 hover: transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="400">
+ <!-- Card 4 (Now Card 3) -->
+ <div class="bg-primary p-8 rounded-3xl border border-primary/20 transition-all group flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="300">
  <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white transition-all text-white group-hover:text-primary">
  <span class="material-symbols-outlined text-3xl">sentiment_satisfied</span>
  </div>
@@ -174,7 +165,7 @@ function roundStatIndex($num) {
  Explora nuestro catálogo completo de medicamentos, material de curación y soluciones especializadas con entrega inmediata en todo el país.
  </p>
  <div class="flex justify-center">
- <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="inline-flex items-center justify-center px-10 py-4 bg-white text-tertiary font-semibold rounded-xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all group text-base">
+ <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="inline-flex items-center justify-center px-10 py-4 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all group text-base">
  Explorar catálogo <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
  </div>
@@ -185,5 +176,3 @@ function roundStatIndex($num) {
 
 <?php require_once '../INCLUDES/footer.php'; ?>
 
-</body>
-</html>

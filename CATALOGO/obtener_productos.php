@@ -111,7 +111,7 @@ foreach ($productos as $p) {
   <?php 
   $precio_base = (float)$p[$precio_campo];
   $precio_final = $precio_base;
-  if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
+  if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
   }
   ?>
@@ -141,7 +141,7 @@ foreach ($productos as $p) {
   <?php 
   $precio_base = (float)$p[$precio_campo];
   $precio_final = $precio_base;
-  if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0) {
+  if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0) {
   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
   }
   ?>
@@ -170,7 +170,7 @@ foreach ($productos as $p) {
   <?php else: ?>
   <span class="material-symbols-outlined text-slate-300 text-5xl">medication</span>
   <?php endif; ?>
-  <?php if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
+  <?php if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
   <span class="absolute top-3 left-3 inline-flex items-center justify-center px-2 py-1 bg-error/10 text-error text-[9px] font-black uppercase rounded-full">
   -<?= (float)$p['descuento_porcentaje'] ?>%
   </span>
@@ -192,7 +192,7 @@ foreach ($productos as $p) {
   <?php 
   $precio_base = (float)$p[$precio_campo];
   $precio_final = $precio_base;
-  if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0) {
+  if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0) {
   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
   }
   ?>

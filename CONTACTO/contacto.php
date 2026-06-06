@@ -115,7 +115,7 @@ require_once '../includes/header.php';
 
  <!-- Estatus Red Fría Rediseñado -->
  <div class="flex-1 flex flex-col">
- <div class="p-5 bg-tertiary rounded-[2rem] relative overflow-hidden group transition-all flex flex-col justify-between hover:-translate-y-1 h-full">
+ <div class="p-5 bg-tertiary rounded-3xl relative overflow-hidden group transition-all flex flex-col justify-between hover:-translate-y-1 h-full">
  <!-- Icono decorativo de fondo -->
  <div class="absolute -right-6 -bottom-6 opacity-[0.08] group-hover:opacity-[0.15] transition-all">
  <span class="material-symbols-outlined text-[120px] text-white" style="font-variation-settings: 'FILL' 1">ac_unit</span>
@@ -123,7 +123,7 @@ require_once '../includes/header.php';
  
  <div class="relative z-10 flex flex-col gap-3">
  <div class="flex items-center justify-between">
- <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white transition-all group-hover:bg-white group-hover:text-tertiary">
+ <div class="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white transition-all group-hover:bg-white group-hover:text-tertiary">
  <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1">ac_unit</span>
  </div>
  <div class="flex items-center gap-2 px-3 py-1 bg-green-100 rounded-full border border-green-200">
@@ -162,7 +162,7 @@ require_once '../includes/header.php';
  <p class="text-slate-900 text-lg max-w-sm mx-auto leading-relaxed">
  Hemos registrado tu solicitud correctamente. Un asesor se pondrá en contacto contigo muy pronto.
  </p>
- <a href="contacto.php" class="mt-10 inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 hover:-translate-y-1 transition-all ">
+ <a href="contacto.php" class="mt-10 inline-flex items-center gap-2 px-10 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 hover:-translate-y-1 transition-all ">
  Cerrar y volver
  </a>
  </div>
@@ -219,11 +219,11 @@ require_once '../includes/header.php';
  <label class="text-sm font-bold text-white uppercase tracking-wider ml-1">Mensaje *</label>
  <textarea name="mensaje" required rows="4"
  placeholder="Describe tu requerimiento o dudas..."
- class="w-full bg-white rounded-xl p-5 text-primary font-medium focus:ring-4 focus:ring-white/20 outline-none border border-transparent focus:border-tertiary transition-all placeholder:text-slate-400 resize-none"><?= htmlspecialchars($_POST['mensaje'] ?? '') ?></textarea>
+ class="w-full bg-white rounded-2xl p-5 text-primary font-medium focus:ring-4 focus:ring-white/20 outline-none border border-transparent focus:border-tertiary transition-all placeholder:text-slate-400 resize-none"><?= htmlspecialchars($_POST['mensaje'] ?? '') ?></textarea>
  </div>
 
  <div class="md:col-span-2 pt-4">
- <button type="submit" class="w-full py-4 bg-white text-primary font-semibold rounded-xl hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 group">
+ <button type="submit" class="w-full py-4 bg-tertiary text-white font-semibold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 group">
  Enviar mensaje
  <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
  </button>

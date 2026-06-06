@@ -73,7 +73,7 @@ elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
 
 $precio_base = (float)$p[$precio_campo];
 $precio_mostrar = $precio_base;
- if ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
+ if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
  $precio_mostrar = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
  }
 ?>
@@ -108,7 +108,7 @@ require_once '../includes/header.php';
   <span class="material-symbols-outlined text-sm">ac_unit</span>
   Requiere Red Fría
   </span>
-  <?php elseif ($p['en_promocion'] && $p['descuento_porcentaje'] > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
+  <?php elseif (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
   <span class="absolute top-4 left-4 z-10 px-3 py-1 bg-error text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-error/30">
   -<?= (float)$p['descuento_porcentaje'] ?>% DESC
   </span>
@@ -342,7 +342,7 @@ require_once '../includes/header.php';
   <?php
   $r_precio_base = (float)($r[$precio_campo] ?? $r['precio_farmacia']);
   $r_precio_final = $r_precio_base;
-  if ($r['en_promocion'] && $r['descuento_porcentaje'] > 0) {
+  if (($r['en_promocion'] ?? 0) && ($r['descuento_porcentaje'] ?? 0) > 0) {
   $r_precio_final = $r_precio_base * (1 - ($r['descuento_porcentaje'] / 100));
   }
   ?>
