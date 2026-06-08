@@ -36,7 +36,7 @@ $tipo_cliente = $_SESSION['cliente_tipo'] ?? 'EMPRESA';
 if ($tipo_cliente === 'EMPRESA') {
  $documentos_requeridos = [
  'CONSTANCIA_FISCAL' => [
- 'titulo' => 'Constancia de Situación Fiscal',
+ 'titulo' => 'Constancia de situación fiscal',
  'desc' => 'Situación fiscal actualizada (SAT) para facturación y validación de RFC.',
  'icono' => 'receipt_long'
  ]
@@ -49,7 +49,7 @@ if ($tipo_cliente === 'EMPRESA') {
  'icono' => 'medical_services'
  ],
  'COMPROBANTE_DOMICILIO' => [
- 'titulo' => 'Comprobante de Domicilio',
+ 'titulo' => 'Comprobante de domicilio',
  'desc' => 'Recibo no mayor a 3 meses.',
  'icono' => 'home'
  ],
@@ -101,7 +101,7 @@ include('Includes/sidebar.php');
  
  <!-- Header -->
  <div class="mb-8 animate-reveal">
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Mis Documentos</h1>
+ <h1 class="text-3xl font-extrabold text-white tracking-tight">Mis documentos</h1>
  </div>
 
  <!-- Alert Banner -->
@@ -124,7 +124,7 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">warning</span>
  </div>
  <div>
- <h3 class="text-lg font-bold text-white mb-0.5">Atención Requerida</h3>
+ <h3 class="text-lg font-bold text-white mb-0.5">Atención requerida</h3>
  <p class="text-sm text-[#fef08a]/80">Tienes documentos pendientes por subir o rechazados que requieren tu acción.</p>
  </div>
  </div>
@@ -136,7 +136,7 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">pending</span>
  </div>
  <div>
- <h3 class="text-lg font-bold text-white mb-0.5">Documentos en Revisión</h3>
+ <h3 class="text-lg font-bold text-white mb-0.5">Documentos en revisión</h3>
  <p class="text-sm text-secondary/80">Hemos recibido tus documentos. Nuestro equipo de operaciones los validará pronto.</p>
  </div>
  </div>
@@ -163,7 +163,7 @@ include('Includes/sidebar.php');
  $badgeBg = 'bg-tertiary/10 border-tertiary/30 text-tertiary';
  $badgeDot = 'bg-tertiary';
  $badgeText = 'Aprobado';
- $statusText = 'Documento Aceptado.';
+ $statusText = 'Documento aceptado.';
  $statusIcon = 'check_circle';
  $statusColor = 'text-tertiary';
  } elseif ($estatus === 'PENDIENTE') {
@@ -171,7 +171,7 @@ include('Includes/sidebar.php');
  $bgIcon = 'bg-secondary/10 text-secondary';
  $badgeBg = 'bg-secondary/10 border-secondary/30 text-secondary';
  $badgeDot = 'bg-secondary';
- $badgeText = 'En Revisión';
+ $badgeText = 'En revisión';
  $statusText = 'Tu documento está siendo validado.';
  $statusIcon = 'pending';
  $statusColor = 'text-secondary';
@@ -190,7 +190,7 @@ include('Includes/sidebar.php');
  $badgeBg = 'bg-error/10 border-error/30 text-error';
  $badgeDot = 'bg-error';
  $badgeText = 'Faltante';
- $statusText = 'Faltante — Este documento es requerido para realizar compras.';
+ $statusText = 'Faltante — este documento es requerido para realizar compras.';
  $statusIcon = 'warning';
  $statusColor = 'text-error';
  }
@@ -209,7 +209,7 @@ include('Includes/sidebar.php');
  
  <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-5">
  <div>
- <span class="block text-on-surface-variant/70 mb-1">Última Carga</span>
+ <span class="block text-on-surface-variant/70 mb-1">Última carga</span>
  <span class="text-white"><?= $subido ? date('d M Y', strtotime($doc['fecha_subida'])) : 'Nunca' ?></span>
   <!-- File Area -->
  <?php if($subido): 
@@ -260,7 +260,7 @@ include('Includes/sidebar.php');
  <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary mb-6 ">
  <span class="material-symbols-outlined text-[32px]">upload_file</span>
  </div>
- <h3 class="text-xl font-bold text-white mb-2">Gestión Segura</h3>
+ <h3 class="text-xl font-bold text-white mb-2">Gestión segura</h3>
  <p class="text-on-surface-variant text-sm mb-8 max-w-md">Todos los documentos cargados son almacenados en un entorno seguro y validados por nuestro equipo de operaciones.</p>
  </div>
 

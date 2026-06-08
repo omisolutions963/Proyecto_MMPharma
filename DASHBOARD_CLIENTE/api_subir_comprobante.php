@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  }
  
  if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
- $stmt = $pdo->prepare("INSERT INTO clientes_pedidos_comprobantes (pedido_id, ruta_archivo, estatus) VALUES (?, ?, 'PENDIENTE')");
+ $stmt = $pdo->prepare("INSERT INTO clientes_pedidos_comprobantes (pedido_id, ruta_archivo, estatus_validacion) VALUES (?, ?, 'PENDIENTE')");
  $stmt->execute([$pedido_id, $filename]);
  
  echo json_encode(['status' => 'success', 'filename' => $filename]);
@@ -43,3 +43,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  echo json_encode(['status' => 'error', 'message' => 'Error al mover el archivo']);
  }
 }
+?>

@@ -73,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Alta de Empresa - MMPharma</title>
+<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
@@ -115,26 +117,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <!-- Top Navigation Bar -->
-<nav class="bg-background/80 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-white/5 ">
- <div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
- <div class="flex-1 flex justify-start">
- <a class="flex items-center gap-3 px-4 py-2 bg-surface hover:bg-primary text-slate-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-bold group border border-white/5 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
- <div class="w-6 h-6 flex items-center justify-center rounded-lg bg-background text-primary-light group-hover:bg-white/20 group-hover:text-white transition-colors">
- <span class="material-symbols-outlined text-[16px] font-bold group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
- </div>
- Volver
+<header class="relative z-50 flex justify-between items-center w-full px-4 sm:px-8 py-4 sm:py-6 bg-background/80 backdrop-blur-md border-b border-white/5 sticky top-0">
+ <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all group">
+  <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
  </a>
- </div>
- </div>
-</nav>
 
-<main class="max-w-[1440px] mx-auto px-6 py-16 flex flex-col items-center relative z-10 w-full">
+ <a href="../INDEX/index.php" class="absolute left-1/2 -translate-x-1/2">
+  <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-6 sm:h-8 w-auto hover:scale-105 transition-transform duration-300">
+ </a>
+
+ <div class="w-12 h-12"></div>
+</header>
+
+<main class="max-w-[1440px] mx-auto px-6 py-16 flex flex-col items-center relative z-10 w-full" data-aos="fade-up">
 <!-- Main Form Card -->
-<div class="w-full max-w-4xl bg-white text-slate-600 rounded-3xl overflow-hidden border border-slate-100 relative">
+<div class="w-full max-w-4xl bg-surface/85 backdrop-blur-xl text-slate-200 rounded-3xl overflow-hidden border border-white/10 relative shadow-2xl">
+ <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-tertiary"></div>
 <!-- Header Section -->
-<div class="px-12 py-10 border-b border-outline-variant/20">
-<h1 class="text-3xl font-extrabold tracking-tight text-on-surface mb-3" style="">Solicitud de Empresa</h1>
-<p class="text-on-surface-variant leading-relaxed max-w-2xl" style="">
+<div class="px-12 py-10 border-b border-white/5">
+<h1 class="text-3xl font-black tracking-tight text-white mb-3" style="">Solicitud de Empresa</h1>
+<p class="text-slate-400 leading-relaxed max-w-2xl text-base font-medium" style="">
  Inicia tu proceso de registro corporativo. Toda la información será tratada bajo estrictos protocolos de confidencialidad y cumplimiento normativo.
  </p>
 </div>
@@ -142,104 +144,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Section 1: Datos Generales -->
 <section>
 <div class="flex items-center gap-3 mb-8">
-<div class="p-2 bg-primary/5 rounded-lg">
-<span class="material-symbols-outlined text-primary text-2xl" style="">domain</span>
+<div class="p-2 bg-white/5 border border-white/10 rounded-lg text-tertiary-light">
+<span class="material-symbols-outlined text-2xl" style="">domain</span>
 </div>
-<h2 class="text-xl font-bold text-on-surface" style="">Sección 1: Datos Generales</h2>
+<h2 class="text-xl font-bold text-white" style="">Sección 1: Datos Generales</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
 <div class="md:col-span-6">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Nombre o Razón Social</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all" placeholder="Ej. Grupo Empresarial del Norte S.A. de C.V." type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Nombre o Razón Social</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl transition-all text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Grupo Empresarial del Norte S.A. de C.V." type="text">
 </div>
 <div class="md:col-span-3">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">RFC</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. GEN010101ABC" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">RFC</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. GEN010101ABC" type="text">
 </div>
 <div class="md:col-span-3">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Régimen Fiscal</label>
-<select class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl">
-<option>601 - General de Ley Personas Morales</option>
-<option>603 - Personas Morales con Fines no Lucrativos</option>
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Régimen Fiscal</label>
+<select class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm">
+<option class="bg-surface text-white">601 - General de Ley Personas Morales</option>
+<option class="bg-surface text-white">603 - Personas Morales con Fines no Lucrativos</option>
 </select>
 </div>
 <div class="md:col-span-6">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Domicilio Fiscal (Calle y Número)</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Av. Juárez 1234, Local 5" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Domicilio Fiscal (Calle y Número)</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Av. Juárez 1234, Local 5" type="text">
 </div>
 <div class="md:col-span-2">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Colonia</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Centro Histórico" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Colonia</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Centro Histórico" type="text">
 </div>
 <div class="md:col-span-1">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">C.P.</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 44100" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">C.P.</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 44100" type="text">
 </div>
 <div class="md:col-span-3">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Ciudad / Municipio</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Guadalajara" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Ciudad / Municipio</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Guadalajara" type="text">
 </div>
 <div class="md:col-span-3">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Estado</label>
-<select class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl">
-<option disabled="" selected="" value="">Selecciona tu estado</option>
-<option value="Jalisco">Jalisco</option>
-<option>Aguascalientes</option><option>Baja California</option><option>Baja California Sur</option><option>Campeche</option><option>Chiapas</option><option>Chihuahua</option><option>Ciudad de México</option><option>Coahuila</option><option>Colima</option><option>Durango</option><option>Estado de México</option><option>Guanajuato</option><option>Guerrero</option><option>Hidalgo</option><option>Michoacán</option><option>Morelos</option><option>Nayarit</option><option>Nuevo León</option><option>Oaxaca</option><option>Puebla</option><option>Querétaro</option><option>Quintana Roo</option><option>San Luis Potosí</option><option>Sinaloa</option><option>Sonora</option><option>Tabasco</option><option>Tamaulipas</option><option>Tlaxcala</option><option>Veracruz</option><option>Yucatán</option><option>Zacatecas</option>
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Estado</label>
+<select class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm">
+<option disabled="" selected="" value="" class="bg-surface text-slate-400">Selecciona tu estado</option>
+<option value="Jalisco" class="bg-surface text-white">Jalisco</option>
+<option class="bg-surface text-white">Aguascalientes</option><option class="bg-surface text-white">Baja California</option><option class="bg-surface text-white">Baja California Sur</option><option class="bg-surface text-white">Campeche</option><option class="bg-surface text-white">Chiapas</option><option class="bg-surface text-white">Chihuahua</option><option class="bg-surface text-white">Ciudad de México</option><option class="bg-surface text-white">Coahuila</option><option class="bg-surface text-white">Colima</option><option class="bg-surface text-white">Durango</option><option class="bg-surface text-white">Estado de México</option><option class="bg-surface text-white">Guanajuato</option><option class="bg-surface text-white">Guerrero</option><option class="bg-surface text-white">Hidalgo</option><option class="bg-surface text-white">Michoacán</option><option class="bg-surface text-white">Morelos</option><option class="bg-surface text-white">Nayarit</option><option class="bg-surface text-white">Nuevo León</option><option class="bg-surface text-white">Oaxaca</option><option class="bg-surface text-white">Puebla</option><option class="bg-surface text-white">Querétaro</option><option class="bg-surface text-white">Quintana Roo</option><option class="bg-surface text-white">San Luis Potosí</option><option class="bg-surface text-white">Sinaloa</option><option class="bg-surface text-white">Sonora</option><option class="bg-surface text-white">Tabasco</option><option class="bg-surface text-white">Tamaulipas</option><option class="bg-surface text-white">Tlaxcala</option><option class="bg-surface text-white">Veracruz</option><option class="bg-surface text-white">Yucatán</option><option class="bg-surface text-white">Zacatecas</option>
 </select>
 </div>
 <div class="md:col-span-3">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Teléfono Institucional</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Teléfono Institucional</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 3312345678" type="tel">
 </div>
 <div class="md:col-span-6">
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Representante Legal</label>
-<input class="w-full px-4 py-3.5 bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Juan García Martínez" type="text">
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Representante Legal</label>
+<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Juan García Martínez" type="text">
 </div>
 </div>
 </section>
 <!-- Section 2: Información Empresarial -->
-<section class="p-8 rounded-2xl bg-surface-container-low border border-outline-variant/10">
+<section class="p-8 rounded-2xl bg-background/40 border border-white/5">
 <div class="flex items-center gap-3 mb-8">
-<div class="p-2 bg-primary/10 rounded-lg">
-<span class="material-symbols-outlined text-primary text-2xl" style="">analytics</span>
+<div class="p-2 bg-white/5 border border-white/10 rounded-lg text-tertiary-light">
+<span class="material-symbols-outlined text-2xl" style="">analytics</span>
 </div>
-<h2 class="text-xl font-bold text-on-surface" style="">Sección 2: Información Empresarial</h2>
+<h2 class="text-xl font-bold text-white" style="">Sección 2: Información Empresarial</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 <div>
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Nombre Comercial</label>
-<input name="nombre_comercial" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. Grupo Norte" type="text" required>
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Nombre Comercial</label>
+<input name="nombre_comercial" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Grupo Norte" type="text" required>
 </div>
 <div>
-<label class="block text-sm font-semibold text-on-surface-variant mb-2" style="">Persona de contacto</label>
-<input name="persona_contacto" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. María López Hernández" type="text" required>
+<label class="block text-sm font-semibold text-slate-300 mb-2" style="">Persona de contacto</label>
+<input name="persona_contacto" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. María López Hernández" type="text" required>
 </div>
 <div>
-<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<label class="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2" style="">
 <span class="material-symbols-outlined text-sm" style="">smartphone</span>Teléfono Celular
  </label>
-<input name="telefono_celular" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. 3312345678" type="tel" required>
+<input name="telefono_celular" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 3312345678" type="tel" required>
 </div>
 <div>
-<label class="block text-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2" style="">
+<label class="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2" style="">
 <span class="material-symbols-outlined text-sm" style="">mail</span>Correo electrónico institucional
  </label>
-<input name="email" class="w-full px-4 py-3.5 bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" placeholder="Ej. pedidos@empresa.com" type="email" required>
+<input name="email" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. pedidos@empresa.com" type="email" required>
 </div>
 <div class="md:col-span-2">
-<label class="block text-sm font-semibold text-on-surface-variant mb-4" style="">Método de pago preferente</label>
+<label class="block text-sm font-semibold text-slate-300 mb-4" style="">Método de pago preferente</label>
 <div class="flex flex-wrap gap-3">
 <label class="cursor-pointer group" style="">
 <input class="peer hidden" name="payment_method_chip" type="radio" value="transferencia" checked>
-<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Transferencia</span>
+<span class="px-6 py-2.5 rounded-xl border border-white/10 text-sm font-semibold bg-background/50 peer-checked:bg-tertiary peer-checked:text-white peer-checked:border-tertiary group-hover:border-tertiary/50 transition-all inline-block" style="">Transferencia</span>
 </label>
 <label class="cursor-pointer group" style="">
 <input class="peer hidden" name="payment_method_chip" type="radio" value="cheque">
-<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Cheque</span>
+<span class="px-6 py-2.5 rounded-xl border border-white/10 text-sm font-semibold bg-background/50 peer-checked:bg-tertiary peer-checked:text-white peer-checked:border-tertiary group-hover:border-tertiary/50 transition-all inline-block" style="">Cheque</span>
 </label>
 <label class="cursor-pointer group" style="">
 <input class="peer hidden" name="payment_method_chip" type="radio" value="efectivo">
-<span class="px-6 py-2.5 rounded-xl border border-outline-variant text-sm font-semibold bg-surface-container-lowest peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary group-hover:border-primary transition-all inline-block" style="">Efectivo</span>
+<span class="px-6 py-2.5 rounded-xl border border-white/10 text-sm font-semibold bg-background/50 peer-checked:bg-tertiary peer-checked:text-white peer-checked:border-tertiary group-hover:border-tertiary/50 transition-all inline-block" style="">Efectivo</span>
 </label>
 </div>
 </div>
@@ -247,66 +249,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </section>
 
 <!-- Section 3: Documentación -->
-<section class="p-8 rounded-2xl bg-surface-container-low border border-outline-variant/10">
+<section class="p-8 rounded-2xl bg-background/40 border border-white/5">
 <div class="flex items-center gap-3 mb-8">
-<div class="p-2 bg-primary/10 rounded-lg">
-<span class="material-symbols-outlined text-primary text-2xl" style="">folder</span>
+<div class="p-2 bg-white/5 border border-white/10 rounded-lg text-tertiary-light">
+<span class="material-symbols-outlined text-2xl" style="">folder</span>
 </div>
-<h2 class="text-xl font-bold text-on-surface" style="">Sección 3: Documentación Requerida</h2>
+<h2 class="text-xl font-bold text-white" style="">Sección 3: Documentación Requerida</h2>
 </div>
-<p class="text-sm text-on-surface-variant mb-6">Sube el documento escaneado. Formatos permitidos: PDF, JPG, PNG. Tamaño máximo por archivo: 15MB.</p>
+<p class="text-sm text-slate-400 mb-6">Sube el documento escaneado. Formatos permitidos: PDF, JPG, PNG. Tamaño máximo por archivo: 15MB.</p>
 
 <div class="space-y-4">
- <div class="file-upload-wrapper bg-surface-container-lowest border border-outline-variant/40 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-primary/50 hover:bg-primary/5">
+ <div class="file-upload-wrapper bg-background/60 border border-white/10 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-tertiary/50 hover:bg-tertiary/5">
  <input type="file" name="constancia_fiscal" id="constancia_fiscal" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png" required>
  <div class="flex items-center justify-between pointer-events-none">
- <div class="flex items-center gap-4">
- <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors icon-container">
- <span class="material-symbols-outlined file-icon">upload_file</span>
- </div>
- <div>
- <p class="text-base font-bold text-on-surface">Constancia de situación fiscal <span class="text-red-600">*</span></p>
- <p class="text-sm text-on-surface-variant file-name-display mt-0.5">Arrastra y suelta tu archivo o haz clic para explorar</p>
- </div>
- </div>
- <div class="text-sm font-bold text-primary px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">Examinar</div>
+  <div class="flex items-center gap-4">
+   <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-400 transition-colors icon-container group-hover:bg-tertiary/10 group-hover:text-tertiary">
+    <span class="material-symbols-outlined file-icon">upload_file</span>
+   </div>
+   <div>
+    <p class="text-base font-bold text-white">Constancia de situación fiscal <span class="text-red-600">*</span></p>
+    <p class="text-sm text-slate-400 file-name-display mt-0.5">Arrastra y suelta tu archivo o haz clic para explorar</p>
+   </div>
+  </div>
+   <div class="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-tertiary group-hover:text-white border border-white/10 group-hover:border-tertiary flex items-center justify-center text-slate-300 transition-all duration-300">
+    <span class="material-symbols-outlined text-lg">upload</span>
+   </div>
  </div>
  </div>
 </div>
 </section>
 <!-- Section 4: Contrato de Uso de Medicamento -->
-<section class="bg-amber-50 rounded-2xl p-8 border border-amber-200 ">
+<section class="bg-amber-950/20 rounded-2xl p-8 border border-amber-500/20">
 <div class="flex items-start gap-5">
-<div class="bg-amber-100 p-2.5 rounded-xl">
-<span class="material-symbols-outlined text-amber-700 text-2xl" style="">verified_user</span>
+<div class="bg-amber-500/10 p-2.5 rounded-xl text-amber-400">
+<span class="material-symbols-outlined text-2xl" style="">verified_user</span>
 </div>
 <div class="flex-1">
-<h2 class="text-xl font-extrabold text-amber-900 mb-3" style="">Cláusula de Uso de Medicamento</h2>
-<p class="text-sm text-amber-800 leading-relaxed mb-6 font-medium" style="">
+<h2 class="text-xl font-extrabold text-amber-400 mb-3" style="">Cláusula de Uso de Medicamento</h2>
+<p class="text-sm text-amber-200/80 leading-relaxed mb-6 font-medium" style="">
  Declaro bajo protesta de decir verdad que los insumos médicos adquiridos serán destinados única y exclusivamente para los fines clínicos autorizados. Me comprometo al cumplimiento estricto de la Norma Oficial Mexicana respecto al manejo de insumos y Red Fría.
  </p>
 <label class="flex items-center gap-4 cursor-pointer group" style="">
-<input class="w-6 h-6 rounded border-amber-400 text-amber-700 focus:ring-amber-600 transition-all cursor-pointer" required="" type="checkbox">
-<span class="text-sm font-bold text-amber-950 group-hover:underline" style="">Acepto los términos y condiciones de uso de medicamento</span>
+<input class="w-6 h-6 rounded border-amber-500/30 bg-background/50 text-amber-500 focus:ring-amber-500/20 transition-all cursor-pointer" required="" type="checkbox">
+<span class="text-sm font-bold text-amber-200 group-hover:text-amber-100 transition-colors" style="">Acepto los términos y condiciones de uso de medicamento</span>
 </label>
 </div>
 </div>
 </section>
 <!-- Final Section: Privacy and Submit -->
-<section class="pt-8 border-t border-outline-variant/20">
+<section class="pt-8 border-t border-white/5">
 <div class="space-y-8">
-<label class="flex items-start gap-4 cursor-pointer group" style="">
-<input class="mt-1 w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary transition-all" required="" type="checkbox">
-<span class="text-sm text-on-surface-variant font-medium leading-relaxed" style="">
- Confirmo que he leído y acepto el <a class="text-primary font-bold hover:underline" href="#" style="">Aviso de Privacidad</a> de MMPharma para el tratamiento de mis datos corporativos y personales.
+<div class="bg-background/40 p-6 rounded-xl border border-white/5 flex justify-center items-center">
+<label class="flex items-center gap-4 cursor-pointer group" style="">
+<input class="w-5 h-5 rounded border-white/10 bg-background/50 text-tertiary focus:ring-tertiary/20 transition-all" required="" type="checkbox">
+<span class="text-sm text-slate-300 font-medium leading-relaxed" style="">
+ Confirmo que los datos proporcionados son verídicos.
  </span>
 </label>
+</div>
 <div class="flex flex-col items-center">
-<button class="w-full md:max-w-md py-4 bg-primary text-white font-extrabold text-lg rounded-2xl hover:bg-secondary transition-all duration-200 flex items-center justify-center gap-3" type="submit" style="">
-<span class="" style="">Enviar Solicitud de Alta</span>
+<button class="w-full md:max-w-md py-4 bg-tertiary text-white font-extrabold text-lg rounded-2xl hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-tertiary/10" type="submit" style="">
+<span class="" style="">Enviar solicitud de alta</span>
 <span class="material-symbols-outlined font-normal" style="">send</span>
 </button>
-<p class="text-center text-xs text-on-surface-variant mt-6 font-medium" style="">
+<p class="text-center text-xs text-slate-400 mt-6 font-medium" style="">
  Su solicitud pasará por un proceso de verificación documental (24-48h hábiles).
  </p>
 </div>
@@ -368,23 +374,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  alert('El archivo "' + file.name + '" supera el límite de 15MB. Por favor, selecciona un archivo más pequeño.');
  inputElement.value = ''; 
  displayElement.textContent = "Arrastra y suelta tu archivo o haz clic para explorar";
- displayElement.classList.remove('text-green-600', 'font-medium');
+ displayElement.classList.remove('text-green-400', 'font-semibold');
  iconElement.textContent = "upload_file";
- iconContainer.classList.remove('bg-green-100', 'text-green-600');
- iconContainer.classList.add('bg-primary/10', 'text-primary');
+ iconContainer.classList.remove('bg-green-500/10', 'text-green-400');
+ iconContainer.classList.add('bg-white/5', 'text-slate-400');
  return;
  }
 
  displayElement.textContent = file.name;
- displayElement.classList.add('text-green-600', 'font-medium');
+ displayElement.classList.add('text-green-400', 'font-semibold');
  iconElement.textContent = "check_circle";
- iconContainer.classList.remove('bg-primary/10', 'text-primary');
- iconContainer.classList.add('bg-green-100', 'text-green-600');
+ iconContainer.classList.remove('bg-white/5', 'text-slate-400');
+ iconContainer.classList.add('bg-green-500/10', 'text-green-400');
  }
 </script>
 
-<!-- ═══ FOOTER ═══ -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+ AOS.init({
+  duration: 800,
+  once: true,
+ });
+</script>
+
 <?php require_once '../includes/footer.php'; ?>
-
-
-</body></html>

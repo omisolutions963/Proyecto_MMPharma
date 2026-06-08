@@ -35,21 +35,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  
  // 2. Intentar como CLIENTE (si no se encontró admin o falló el password de admin)
  if (!$error_login) {
- $stmt_cli = $pdo->prepare("SELECT id, razon_social, password_hash, estatus, tipo, foto_perfil FROM clientes_usuarios WHERE email = ? LIMIT 1");
- $stmt_cli->execute([$email]);
- $cliente = $stmt_cli->fetch();
+  $stmt_cli = $pdo->prepare("SELECT id, razon_social, password_hash, estatus, tipo, foto_perfil, debe_cambiar_password FROM clientes_usuarios WHERE email = ? LIMIT 1");
+  $stmt_cli->execute([$email]);
+  $cliente = $stmt_cli->fetch();
 
- if ($cliente && password_verify($password, $cliente['password_hash'])) {
- if ($cliente['estatus'] === 'ACTIVO') {
- $_SESSION['cliente_logged_in'] = true;
- $_SESSION['cliente_id'] = $cliente['id'];
- $_SESSION['cliente_email'] = $email;
- $_SESSION['cliente_nombre'] = $cliente['razon_social'];
- $_SESSION['cliente_tipo'] = $cliente['tipo'];
- $_SESSION['cliente_foto'] = $cliente['foto_perfil'];
- 
- header("Location: ../INDEX/index.php");
- exit;
+  if ($cliente && password_verify($password, $cliente['password_hash'])) {
+  if ($cliente['estatus'] === 'ACTIVO') {
+  $_SESSION['cliente_logged_in'] = true;
+  $_SESSION['cliente_id'] = $cliente['id'];
+  $_SESSION['cliente_email'] = $email;
+  $_SESSION['cliente_nombre'] = $cliente['razon_social'];
+  $_SESSION['cliente_tipo'] = $cliente['tipo'];
+  $_SESSION['cliente_foto'] = $cliente['foto_perfil'];
+  $_SESSION['debe_cambiar_password'] = (int)$cliente['debe_cambiar_password'];
+  
+  if ((int)$cliente['debe_cambiar_password'] === 1) {
+  header("Location: cambiar_password_obligatorio.php");
+  exit;
+  }
+  
+  header("Location: ../INDEX/index.php");
+  exit;
  } else {
  $error_login = true;
  $error_msg = "Tu cuenta aún no ha sido activada o está suspendida.";
@@ -213,11 +219,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  </div>
  
   <div class="pt-4 sm:pt-6">
- <button type="submit"
-  class="w-full h-14 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 group">
- <span class="tracking-wide text-lg">Entrar al portal</span>
- <span class="material-symbols-outlined text-[22px] group-hover:translate-x-1 transition-transform">login</span>
- </button>
+  <button type="submit"
+   class="w-full h-14 bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
+  <span class="text-lg">Entrar</span>
+  <span class="material-symbols-outlined text-[22px] group-hover:translate-x-1 transition-transform">login</span>
+  </button>
  </div>
  </form>
 

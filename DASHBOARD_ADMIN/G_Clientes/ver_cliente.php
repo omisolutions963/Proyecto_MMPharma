@@ -228,12 +228,12 @@ include("../Includes/sidebar.php");
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center gap-2">
                                         <!-- Botón Ver Archivo -->
-                                        <a href="../../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-primary transition-all" title="Ver Documento">
+                                        <a href="../../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-primary transition-all" title="Ver documento">
                                             <span class="material-symbols-outlined text-[16px]">visibility</span>
                                         </a>
                                         
                                         <!-- Botón Validar (Abre Modal) -->
-                                        <button onclick='abrirValidacion(<?= json_encode($doc) ?>)' class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-tertiary transition-all" title="Validar Documento">
+                                        <button onclick='abrirValidacion(<?= json_encode($doc) ?>)' class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-tertiary transition-all" title="Validar documento">
                                             <span class="material-symbols-outlined text-[16px]">verified</span>
                                         </button>
                                     </div>

@@ -2,6 +2,59 @@
 require_once '../clinical_core/db.php';
 $pdo = getDB();
 
+function enviarCorreoBienvenida($email_cliente, $razon_social, $tipo_cliente) {
+    $url_login = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Proyecto_MMPharma/LOGIN/login.php';
+    $asunto = "¡Bienvenido a MMPharma! Tu cuenta ha sido activada";
+    $headers = implode("\r\n", [
+        'From: MMPharma Portal <noreply@mmpharma.com>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+    ]);
+    
+    $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
+  <div style="background:#002451;padding:24px 32px;text-align:center">
+    <h1 style="margin:0;color:#fff;font-size:22px">🎉 ¡Tu cuenta ha sido activada!</h1>
+    <p style="margin:6px 0 0;color:#8baed4;font-size:14px">Bienvenido a MMPharma Clinical Systems</p>
+  </div>
+  <div style="padding:32px;color:#333;line-height:1.6">
+    <p style="font-size:16px;font-weight:bold;color:#002451;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
+    <p>Nos complace informarte que tu solicitud de registro ha sido aprobada con éxito. A partir de este momento, ya tienes acceso completo a nuestro catálogo de productos con precios personalizados para tu nivel de cliente.</p>
+    
+    <div style="background:#f0f5ff;border-radius:8px;padding:20px;margin:24px 0">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr>
+          <td style="padding:6px 0;color:#666;width:120px;font-weight:bold">Usuario/Email:</td>
+          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($email_cliente) . '</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#666;font-weight:bold">Nivel de Cliente:</td>
+          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($tipo_cliente) . '</td>
+        </tr>
+      </table>
+    </div>
+    
+    <p>Puedes iniciar sesión en el portal utilizando tus credenciales registradas haciendo clic en el siguiente botón:</p>
+    
+    <div style="text-align:center;margin:32px 0 16px">
+      <a href="' . htmlspecialchars($url_login) . '"
+         style="display:inline-block;background:#002451;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,36,81,0.2)">
+        Iniciar Sesión en el Portal
+      </a>
+    </div>
+    
+    <p style="font-size:12px;color:#777;margin-top:40px;border-top:1px solid #eee;padding-top:20px">
+      Si tienes alguna duda o requieres asistencia adicional, no dudes en ponerte en contacto con nuestro equipo de atención a clientes.
+    </p>
+  </div>
+  <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
+    MMPharma Clinical Systems S.A. de C.V. &bull; Notificación automática
+  </div>
+</div></body></html>';
+
+    @mail($email_cliente, $asunto, $html, $headers);
+}
+
 // ── FILTROS Y PAGINACIÓN ──────────────────────────────────────────────────────
 $q = trim($_GET['q'] ?? '');
 $tipo = trim($_GET['tipo'] ?? '');
@@ -62,7 +115,7 @@ if (isset($_GET['ajax'])) {
  </td>
  <td class="px-8 py-4">
  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <a href="ver_cliente.php?id=<?= $c['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white transition-all" title="Ver Detalles">
+ <a href="ver_cliente.php?id=<?= $c['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white transition-all" title="Ver detalles">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
  </a>
  <button onclick='abrirEditar(<?= json_encode($c) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
@@ -129,58 +182,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
   $notas = $_POST['notas'] ?? '';
 
   if ($id > 0) {
-   $sql = "UPDATE clientes_usuarios SET 
-       tipo = ?, razon_social = ?, nombre_comercial = ?, rfc = ?, regimen_fiscal = ?, 
-       domicilio_fiscal = ?, colonia_fiscal = ?, cp_fiscal = ?, ciudad_fiscal = ?, estado_fiscal = ?, 
-       representante_legal = ?, giro = ?, persona_contacto = ?, volumen_mensual = ?, 
-       telefono_local = ?, telefono_celular = ?, email = ?, documento_tipo = ?, 
-       metodo_pago = ?, uso_cfdi = ?, domicilio_entrega = ?, colonia_entrega = ?, 
-       cp_entrega = ?, ciudad_entrega = ?, municipio_entrega = ?, estado_entrega = ?, 
-       receptor_entrega = ?, horario_entrega = ?, estatus = ?, notas = ?";
-   $params = [
-    $tipo, $razon_social, $nombre_comercial, $rfc, $regimen_fiscal,
-    $domicilio_fiscal, $colonia_fiscal, $cp_fiscal, $ciudad_fiscal, $estado_fiscal,
-    $representante_legal, $giro, $persona_contacto, $volumen_mensual,
-    $telefono_local, $telefono_celular, $email, $documento_tipo,
-    $metodo_pago, $uso_cfdi, $domicilio_entrega, $colonia_entrega,
-    $cp_entrega, $ciudad_entrega, $municipio_entrega, $estado_entrega,
-    $receptor_entrega, $horario_entrega, $estatus, $notas
-   ];
+    // Obtener estatus anterior para verificar si se activa
+    $stmtOld = $pdo->prepare("SELECT estatus, email, razon_social, tipo FROM clientes_usuarios WHERE id = ?");
+    $stmtOld->execute([$id]);
+    $oldCli = $stmtOld->fetch(PDO::FETCH_ASSOC);
 
-   if (!empty($password)) {
-    $sql .= ", password_hash = ?";
-    $params[] = password_hash($password, PASSWORD_DEFAULT);
-   }
-   $sql .= " WHERE id = ?";
-   $params[] = $id;
+    $sql = "UPDATE clientes_usuarios SET 
+        tipo = ?, razon_social = ?, nombre_comercial = ?, rfc = ?, regimen_fiscal = ?, 
+        domicilio_fiscal = ?, colonia_fiscal = ?, cp_fiscal = ?, ciudad_fiscal = ?, estado_fiscal = ?, 
+        representante_legal = ?, giro = ?, persona_contacto = ?, volumen_mensual = ?, 
+        telefono_local = ?, telefono_celular = ?, email = ?, documento_tipo = ?, 
+        metodo_pago = ?, uso_cfdi = ?, domicilio_entrega = ?, colonia_entrega = ?, 
+        cp_entrega = ?, ciudad_entrega = ?, municipio_entrega = ?, estado_entrega = ?, 
+        receptor_entrega = ?, horario_entrega = ?, estatus = ?, notas = ?";
+    $params = [
+     $tipo, $razon_social, $nombre_comercial, $rfc, $regimen_fiscal,
+     $domicilio_fiscal, $colonia_fiscal, $cp_fiscal, $ciudad_fiscal, $estado_fiscal,
+     $representante_legal, $giro, $persona_contacto, $volumen_mensual,
+     $telefono_local, $telefono_celular, $email, $documento_tipo,
+     $metodo_pago, $uso_cfdi, $domicilio_entrega, $colonia_entrega,
+     $cp_entrega, $ciudad_entrega, $municipio_entrega, $estado_entrega,
+     $receptor_entrega, $horario_entrega, $estatus, $notas
+    ];
 
-   $pdo->prepare($sql)->execute($params);
+    if (!empty($password)) {
+     $sql .= ", password_hash = ?";
+     $params[] = password_hash($password, PASSWORD_DEFAULT);
+    }
+    $sql .= " WHERE id = ?";
+    $params[] = $id;
+
+    $pdo->prepare($sql)->execute($params);
+
+    if ($oldCli && $oldCli['estatus'] !== 'ACTIVO' && $estatus === 'ACTIVO') {
+        enviarCorreoBienvenida($oldCli['email'], $oldCli['razon_social'], $oldCli['tipo']);
+    }
   } else {
-   if (empty($password)) {
-    $password = 'cliente123';
-   }
-   $password_hash = password_hash($password, PASSWORD_DEFAULT);
+    if (empty($password)) {
+     $password = 'cliente123';
+    }
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-   $sql = "INSERT INTO clientes_usuarios (
-       tipo, razon_social, nombre_comercial, rfc, regimen_fiscal, 
-       domicilio_fiscal, colonia_fiscal, cp_fiscal, ciudad_fiscal, estado_fiscal, 
-       representante_legal, giro, persona_contacto, volumen_mensual, 
-       telefono_local, telefono_celular, email, password_hash, documento_tipo, 
-       metodo_pago, uso_cfdi, domicilio_entrega, colonia_entrega, 
-       cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega, 
-       receptor_entrega, horario_entrega, estatus, notas
-     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-   $params = [
-    $tipo, $razon_social, $nombre_comercial, $rfc, $regimen_fiscal,
-    $domicilio_fiscal, $colonia_fiscal, $cp_fiscal, $ciudad_fiscal, $estado_fiscal,
-    $representante_legal, $giro, $persona_contacto, $volumen_mensual,
-    $telefono_local, $telefono_celular, $email, $password_hash, $documento_tipo,
-    $metodo_pago, $uso_cfdi, $domicilio_entrega, $colonia_entrega,
-    $cp_entrega, $ciudad_entrega, $municipio_entrega, $estado_entrega,
-    $receptor_entrega, $horario_entrega, $estatus, $notas
-   ];
+    $sql = "INSERT INTO clientes_usuarios (
+        tipo, razon_social, nombre_comercial, rfc, regimen_fiscal, 
+        domicilio_fiscal, colonia_fiscal, cp_fiscal, ciudad_fiscal, estado_fiscal, 
+        representante_legal, giro, persona_contacto, volumen_mensual, 
+        telefono_local, telefono_celular, email, password_hash, documento_tipo, 
+        metodo_pago, uso_cfdi, domicilio_entrega, colonia_entrega, 
+        cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega, 
+        receptor_entrega, horario_entrega, estatus, notas
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $params = [
+     $tipo, $razon_social, $nombre_comercial, $rfc, $regimen_fiscal,
+     $domicilio_fiscal, $colonia_fiscal, $cp_fiscal, $ciudad_fiscal, $estado_fiscal,
+     $representante_legal, $giro, $persona_contacto, $volumen_mensual,
+     $telefono_local, $telefono_celular, $email, $password_hash, $documento_tipo,
+     $metodo_pago, $uso_cfdi, $domicilio_entrega, $colonia_entrega,
+     $cp_entrega, $ciudad_entrega, $municipio_entrega, $estado_entrega,
+     $receptor_entrega, $horario_entrega, $estatus, $notas
+    ];
 
-   $pdo->prepare($sql)->execute($params);
+    $pdo->prepare($sql)->execute($params);
+
+    if ($estatus === 'ACTIVO') {
+        enviarCorreoBienvenida($email, $razon_social, $tipo);
+    }
   }
   header("Location: clientes.php?msg=saved"); exit;
  }
@@ -202,7 +268,7 @@ include("../Includes/sidebar.php");
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Clientes</span>
  </nav>
- <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Clientes</h2>
+ <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de clientes</h2>
  <p class="text-on-surface-variant text-sm mt-1">Directorio de farmacias, distribuidoras y empresas.</p>
  </div>
  <button onclick="abrirModal()" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
@@ -218,7 +284,7 @@ include("../Includes/sidebar.php");
  $pendien = (int)$pdo->query("SELECT COUNT(*) FROM clientes_usuarios WHERE estatus='DOCS_PENDIENTES'")->fetchColumn();
  $inactiv = (int)$pdo->query("SELECT COUNT(*) FROM clientes_usuarios WHERE estatus='INACTIVO'")->fetchColumn();
  $kpis = [
- ['l'=>'Total Clientes', 'v'=>$total_c, 'i'=>'group', 'b'=>'border-primary/40'],
+ ['l'=>'Total clientes', 'v'=>$total_c, 'i'=>'group', 'b'=>'border-primary/40'],
  ['l'=>'Activos', 'v'=>$activos, 'i'=>'check_circle', 'b'=>'border-tertiary/40'],
  ['l'=>'Pendientes', 'v'=>$pendien, 'i'=>'pending', 'b'=>'border-secondary/40'],
  ['l'=>'Inactivos', 'v'=>$inactiv, 'i'=>'cancel', 'b'=>'border-error/40'],
@@ -255,7 +321,7 @@ include("../Includes/sidebar.php");
  <table class="w-full text-left border-collapse">
  <thead>
  <tr class="bg-surface-container-low text-on-surface-variant text-[10px] font-black uppercase tracking-widest">
- <th class="px-8 py-4 text-center">Socio Comercial</th>
+ <th class="px-8 py-4 text-center">Socio comercial</th>
  <th class="px-8 py-4 text-center">Tipo</th>
  <th class="px-8 py-4 text-center">Contacto</th>
  <th class="px-8 py-4 text-center">Estatus</th>
@@ -299,7 +365,7 @@ include("../Includes/sidebar.php");
  </td>
  <td class="px-8 py-4">
  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <a href="ver_cliente.php?id=<?= $c['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white transition-all" title="Ver Detalles">
+ <a href="ver_cliente.php?id=<?= $c['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white transition-all" title="Ver detalles">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
  </a>
  <button onclick='abrirEditar(<?= json_encode($c) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
@@ -357,29 +423,29 @@ include("../Includes/sidebar.php");
   <div onclick="cerrarModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
   <div id="modalPanel" class="absolute right-0 top-0 h-full w-full max-w-4xl bg-surface transition-transform duration-300 translate-x-full flex flex-col border-l border-outline-variant/30 shadow-2xl">
     <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
-      <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo Cliente</h3>
+      <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo cliente</h3>
       <p class="text-on-surface-variant text-xs mt-1">Registra o actualiza la información del socio comercial.</p>
     </div>
     <form method="POST" class="flex-1 overflow-y-auto p-8 space-y-6">
       <input type="hidden" name="action" value="upsert">
       <input type="hidden" name="id" id="cli_id">
-
+ 
       <!-- Navegación de Pestañas -->
       <div class="flex items-center gap-6 border-b border-outline-variant/20 mb-6 pb-2">
-        <button type="button" id="tabBtn_generales" onclick="cambiarPestana('generales')" class="tab-btn pb-2 text-sm font-bold text-primary border-b-2 border-primary transition-all">Datos Generales</button>
+        <button type="button" id="tabBtn_generales" onclick="cambiarPestana('generales')" class="tab-btn pb-2 text-sm font-bold text-primary border-b-2 border-primary transition-all">Datos generales</button>
         <button type="button" id="tabBtn_facturacion" onclick="cambiarPestana('facturacion')" class="tab-btn pb-2 text-sm font-bold text-on-surface-variant/60 hover:text-white border-b-2 border-transparent transition-all">Facturación (CFDI)</button>
-        <button type="button" id="tabBtn_entrega" onclick="cambiarPestana('entrega')" class="tab-btn pb-2 text-sm font-bold text-on-surface-variant/60 hover:text-white border-b-2 border-transparent transition-all">Entrega y Notas</button>
+        <button type="button" id="tabBtn_entrega" onclick="cambiarPestana('entrega')" class="tab-btn pb-2 text-sm font-bold text-on-surface-variant/60 hover:text-white border-b-2 border-transparent transition-all">Entrega y notas</button>
       </div>
 
       <!-- TAB: GENERALES -->
       <div id="tab_generales" class="tab-content space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Razón Social *</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Razón social *</label>
             <input type="text" name="razon_social" id="cli_razon_social" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre Comercial</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre comercial</label>
             <input type="text" name="nombre_comercial" id="cli_nombre_comercial" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
@@ -387,7 +453,7 @@ include("../Includes/sidebar.php");
             <input type="text" name="rfc" id="cli_rfc" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de Cliente *</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de cliente *</label>
             <select name="tipo" id="cli_tipo" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
               <option value="FARMACIA">Farmacia</option>
               <option value="DISTRIBUIDORA">Distribuidora</option>
@@ -403,35 +469,35 @@ include("../Includes/sidebar.php");
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Volumen Mensual ($)</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Volumen mensual ($)</label>
             <input type="number" step="0.01" name="volumen_mensual" id="cli_volumen_mensual" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Giro Comercial</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Giro comercial</label>
             <input type="text" name="giro" id="cli_giro" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Representante Legal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Representante legal</label>
             <input type="text" name="representante_legal" id="cli_representante_legal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona de Contacto</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona de contacto</label>
             <input type="text" name="persona_contacto" id="cli_persona_contacto" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Email Profesional *</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Email profesional *</label>
             <input type="email" name="email" id="cli_email" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono Local</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono local</label>
             <input type="text" name="telefono_local" id="cli_telefono_local" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono Celular</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono celular</label>
             <input type="text" name="telefono_celular" id="cli_telefono_celular" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div class="col-span-2 bg-primary/10 border border-primary/20 p-4 rounded-2xl">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Contraseña de Acceso</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Contraseña de acceso</label>
             <span class="text-[9px] text-on-surface-variant/60 block mb-2 font-medium">Para clientes nuevos, si se deja en blanco se asignará 'cliente123'. Para clientes existentes, se actualiza solo si digita un nuevo valor.</span>
             <input type="password" name="password" id="cli_password" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
@@ -442,38 +508,38 @@ include("../Includes/sidebar.php");
       <div id="tab_facturacion" class="tab-content hidden space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Régimen Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Régimen fiscal</label>
             <input type="text" name="regimen_fiscal" id="cli_regimen_fiscal" placeholder="Ej. 601 - General de Ley Personas Morales" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio fiscal</label>
             <input type="text" name="domicilio_fiscal" id="cli_domicilio_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia fiscal</label>
             <input type="text" name="colonia_fiscal" id="cli_colonia_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP fiscal</label>
             <input type="text" name="cp_fiscal" id="cli_cp_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad fiscal</label>
             <input type="text" name="ciudad_fiscal" id="cli_ciudad_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado Fiscal</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado fiscal</label>
             <input type="text" name="estado_fiscal" id="cli_estado_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de Documento</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de documento</label>
             <select name="documento_tipo" id="cli_documento_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
               <option value="FACTURA">Factura</option>
               <option value="NOTA">Nota</option>
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Método de Pago</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Método de pago</label>
             <select name="metodo_pago" id="cli_metodo_pago" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
               <option value="TRANSFERENCIA">Transferencia</option>
               <option value="CHEQUE">Cheque</option>
@@ -491,39 +557,39 @@ include("../Includes/sidebar.php");
       <div id="tab_entrega" class="tab-content hidden space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio de entrega</label>
             <input type="text" name="domicilio_entrega" id="cli_domicilio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia de entrega</label>
             <input type="text" name="colonia_entrega" id="cli_colonia_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP de entrega</label>
             <input type="text" name="cp_entrega" id="cli_cp_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad de entrega</label>
             <input type="text" name="ciudad_entrega" id="cli_ciudad_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Municipio de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Municipio de entrega</label>
             <input type="text" name="municipio_entrega" id="cli_municipio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado de entrega</label>
             <input type="text" name="estado_entrega" id="cli_estado_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona que Recibe</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona que recibe</label>
             <input type="text" name="receptor_entrega" id="cli_receptor_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Horario de Entrega</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Horario de entrega</label>
             <input type="text" name="horario_entrega" id="cli_horario_entrega" placeholder="Ej. Lunes a Viernes 09:00 - 18:00" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
           </div>
           <div class="col-span-2">
-            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Notas Internas</label>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Notas internas</label>
             <textarea name="notas" id="cli_notas" rows="3" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white"></textarea>
           </div>
         </div>
@@ -570,7 +636,7 @@ async function loadMore() {
 }
 
 function abrirModal() {
-  document.getElementById('modalTitle').textContent = "Nuevo Cliente";
+  document.getElementById('modalTitle').textContent = "Nuevo cliente";
   document.getElementById('cli_id').value = "0";
   document.getElementById('cli_razon_social').value = "";
   document.getElementById('cli_nombre_comercial').value = "";
@@ -610,7 +676,7 @@ function abrirModal() {
 }
 
 function abrirEditar(c) {
-  document.getElementById('modalTitle').textContent = "Editar Cliente";
+  document.getElementById('modalTitle').textContent = "Editar cliente";
   document.getElementById('cli_id').value = c.id;
   document.getElementById('cli_razon_social').value = c.razon_social || '';
   document.getElementById('cli_nombre_comercial').value = c.nombre_comercial || '';

@@ -65,7 +65,7 @@ $iva = $monto_total - $subtotal_sin_iva;
 $fecha_pedido = date('d M, Y', strtotime($pedido['created_at']));
 $vence_pedido = date('d M, Y', strtotime($pedido['created_at'] . ' + 7 days'));
 
-$pageTitle = 'MMPharma Portal - Detalle de Cotización';
+$pageTitle = 'MMPharma Portal - Detalle de cotización';
 $activePage = 'cotizaciones';
 include('Includes/header.php');
 include('Includes/sidebar.php');
@@ -91,21 +91,131 @@ include('Includes/sidebar.php');
  <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=download" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
  <span class="material-symbols-outlined text-[18px]">download</span> PDF
  </a>
- <?php if (!$comprobante && $pedido['estado_envio'] !== 'CANCELADO'): ?>
- <input type="file" id="fileComprobante" class="hidden" accept=".pdf,.jpg,.jpeg,.png" onchange="procesarArchivo()">
- <button class="bg-primary text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all" onclick="document.getElementById('fileComprobante').click()">
- <span class="material-symbols-outlined text-[18px]">upload_file</span> Subir comprobante
- </button>
- <?php elseif ($comprobante): ?>
- <span class="px-4 py-2 bg-tertiary/10 text-tertiary text-sm font-bold rounded-xl flex items-center gap-2 border border-tertiary/20">
- <span class="material-symbols-outlined text-[18px]">receipt</span> Comprobante Enviado (<?= htmlspecialchars($comprobante['estatus']) ?>)
- </span>
- <?php endif; ?>
- </div>
- </div>
+  <?php if ((!$comprobante || $comprobante['estatus_validacion'] === 'RECHAZADO') && $pedido['estado_envio'] !== 'CANCELADO'): ?>
+  <input type="file" id="fileComprobante" class="hidden" accept=".pdf,.jpg,.jpeg,.png" onchange="procesarArchivo()">
+  <button class="bg-primary text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all" onclick="document.getElementById('fileComprobante').click()">
+  <span class="material-symbols-outlined text-[18px]">upload_file</span> Subir comprobante
+  </button>
+  <?php elseif ($comprobante): ?>
+  <span class="px-4 py-2 bg-tertiary/10 text-tertiary text-sm font-bold rounded-xl flex items-center gap-2 border border-tertiary/20">
+  <span class="material-symbols-outlined text-[18px]">receipt</span> Comprobante enviado (<?= htmlspecialchars($comprobante['estatus_validacion']) ?>)
+  </span>
+  <?php endif; ?>
+  </div>
+  </div>
 
- <!-- Main Grid -->
- <div class="grid grid-cols-1 xl:grid-cols-4 gap-8 animate-reveal delay-100">
+  <?php if ($comprobante && $comprobante['estatus_validacion'] === 'RECHAZADO'): ?>
+  <div class="mb-6 bg-error/15 border border-error/30 text-error px-6 py-4 rounded-2xl flex items-start gap-3 animate-reveal">
+      <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">error</span>
+      <div>
+          <h4 class="font-bold text-white text-sm">Comprobante de pago rechazado</h4>
+          <p class="text-xs text-on-surface-variant mt-1">Tu comprobante anterior fue rechazado por el administrador.</p>
+          <?php if (!empty($comprobante['notas_admin'])): ?>
+          <p class="text-xs text-white font-semibold mt-2">Motivo: <span class="italic font-normal">"<?= htmlspecialchars($comprobante['notas_admin']) ?>"</span></p>
+          <?php endif; ?>
+          <p class="text-xs text-on-surface-variant mt-2 font-medium">Por favor, sube un nuevo comprobante válido utilizando el botón de arriba.</p>
+      </div>
+  </div>
+  <?php endif; ?>
+
+  <!-- Stepper de Seguimiento del Pedido -->
+  <div class="mb-8 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 lg:p-8 animate-reveal">
+      <h3 class="text-xs font-black text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">local_shipping</span>
+          Seguimiento de tu pedido
+      </h3>
+      
+      <!-- Stepper Container -->
+      <div class="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4">
+          <?php
+          $estado = $pedido['estado_envio'];
+          $pago_val = ($comprobante && $comprobante['estatus_validacion'] === 'APROBADO') || in_array($estado, ['PROCESANDO', 'ENVIADO', 'ENTREGADO']);
+          $en_proceso = in_array($estado, ['PROCESANDO', 'ENVIADO', 'ENTREGADO']);
+          $enviado = in_array($estado, ['ENVIADO', 'ENTREGADO']);
+          $entregado = ($estado === 'ENTREGADO');
+          
+          $recoger_sucursal = ($estado === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal']));
+          $label_paso4 = $recoger_sucursal ? 'Listo para recoger' : 'Enviado';
+          $icon_paso4 = $recoger_sucursal ? 'store' : 'local_shipping';
+          
+          if ($recoger_sucursal) {
+              $enviado = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'ENTREGADO');
+          }
+          
+          $cancelado = ($estado === 'CANCELADO');
+          
+          $progress_width = 0;
+          $line_color = $cancelado ? 'bg-error' : 'bg-tertiary';
+          
+          if (!$cancelado) {
+              if ($entregado) $progress_width = 100;
+              elseif ($enviado) $progress_width = 75;
+              elseif ($en_proceso) $progress_width = 50;
+              elseif ($pago_val) $progress_width = 25;
+          } else {
+              $progress_width = 100;
+          }
+          
+          $steps = [
+              ['label' => 'Pedido recibido', 'done' => !$cancelado, 'active' => !$cancelado && !$pago_val, 'icon' => 'receipt_long'],
+              ['label' => 'Pago validado', 'done' => !$cancelado && $pago_val, 'active' => !$cancelado && $pago_val && !$en_proceso, 'icon' => 'payments'],
+              ['label' => 'En proceso', 'done' => !$cancelado && $en_proceso, 'active' => !$cancelado && $en_proceso && !$enviado, 'icon' => 'package_2'],
+              ['label' => $label_paso4, 'done' => !$cancelado && $enviado, 'active' => !$cancelado && $enviado && !$entregado, 'icon' => $icon_paso4],
+              ['label' => 'Entregado', 'done' => !$cancelado && $entregado, 'active' => !$cancelado && $entregado, 'icon' => 'assignment_turned_in']
+          ];
+          
+          if ($cancelado) {
+              $steps = [
+                  ['label' => 'Pedido recibido', 'done' => true, 'active' => false, 'icon' => 'receipt_long', 'is_cancel' => false],
+                  ['label' => 'Pedido cancelado', 'done' => false, 'active' => true, 'icon' => 'cancel', 'is_cancel' => true]
+              ];
+          }
+          ?>
+          
+          <!-- Horizontal Line background for Desktop -->
+          <div class="absolute left-[10%] right-[10%] top-[28px] h-1 bg-outline-variant/30 hidden md:block z-0">
+              <div class="h-full <?= $line_color ?> transition-all duration-1000" style="width: <?= $progress_width ?>%;"></div>
+          </div>
+          
+          <?php foreach ($steps as $idx => $step): ?>
+              <?php
+              $circle_bg = 'bg-surface-container';
+              $circle_border = 'border-outline-variant';
+              $icon_color = 'text-on-surface-variant';
+              $text_color = 'text-on-surface-variant';
+              
+              if (isset($step['is_cancel']) && $step['is_cancel']) {
+                  $circle_bg = 'bg-error/20';
+                  $circle_border = 'border-error';
+                  $icon_color = 'text-error';
+                  $text_color = 'text-error font-extrabold';
+              } elseif ($step['done']) {
+                  $circle_bg = 'bg-tertiary';
+                  $circle_border = 'border-tertiary';
+                  $icon_color = 'text-white';
+                  $text_color = 'text-white font-bold';
+              } elseif ($step['active']) {
+                  $circle_bg = 'bg-primary';
+                  $circle_border = 'border-primary';
+                  $icon_color = 'text-white';
+                  $text_color = 'text-primary font-black';
+              }
+              ?>
+              
+              <div class="relative z-10 flex flex-col items-center flex-1 w-full text-center">
+                  <!-- Stepper Circle -->
+                  <div class="w-14 h-14 rounded-full <?= $circle_bg ?> border-4 <?= $circle_border ?> flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 <?= $step['active'] ? 'animate-pulse' : '' ?>" title="<?= htmlspecialchars($step['label']) ?>">
+                      <span class="material-symbols-outlined text-2xl <?= $icon_color ?>"><?= $step['icon'] ?></span>
+                  </div>
+                  <!-- Stepper Text Label -->
+                  <span class="mt-3 text-xs md:text-sm <?= $text_color ?> tracking-tight leading-tight px-2"><?= htmlspecialchars($step['label']) ?></span>
+              </div>
+          <?php endforeach; ?>
+      </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 xl:grid-cols-4 gap-8 animate-reveal delay-100">
  
  <!-- Document Area (Left 3 cols) -->
  <div class="xl:col-span-3 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 lg:p-12 ">
@@ -132,7 +242,7 @@ include('Includes/sidebar.php');
  <!-- Doc Info (Client & Delivery) -->
  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
  <div class="bg-surface-container-low/50 rounded-xl p-6 border border-outline-variant/20">
- <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Datos del Cliente</h3>
+ <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Datos del cliente</h3>
  <p class="text-base font-bold text-white mb-1"><?= htmlspecialchars($cliente['razon_social'] ?? 'N/A') ?></p>
  <p class="text-xs text-on-surface-variant mb-3">RFC: <span class="text-white"><?= htmlspecialchars($cliente['rfc'] ?? 'Pendiente') ?></span></p>
  <p class="text-xs text-on-surface-variant leading-relaxed mb-4"><?= htmlspecialchars($cliente['domicilio_fiscal'] ?? 'Sin domicilio fiscal registrado.') ?></p>
@@ -141,7 +251,7 @@ include('Includes/sidebar.php');
  </p>
  </div>
  <div class="bg-surface-container-low/50 rounded-xl p-6 border border-outline-variant/20">
- <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Lugar de Entrega</h3>
+ <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Lugar de entrega</h3>
  <p class="text-base font-bold text-white mb-2"><?= htmlspecialchars($cliente['receptor_entrega'] ?? $cliente['razon_social']) ?></p>
  <p class="text-xs text-on-surface-variant leading-relaxed mb-5"><?= htmlspecialchars($cliente['domicilio_entrega'] ?? 'Sin domicilio de entrega.') ?></p>
  <div class="flex gap-2">
@@ -185,7 +295,7 @@ include('Includes/sidebar.php');
  <div class="flex flex-col items-end border-t border-outline-variant/30 pt-6">
  <div class="w-full max-w-sm">
  <div class="flex justify-between items-center mb-3">
- <span class="text-sm text-on-surface-variant">Subtotal Productos:</span>
+ <span class="text-sm text-on-surface-variant">Subtotal productos:</span>
  <span class="text-sm font-bold text-white">$<?= number_format($subtotal_productos, 2) ?></span>
  </div>
  <div class="flex justify-between items-center mb-3">
@@ -195,7 +305,7 @@ include('Includes/sidebar.php');
      $texto_envio = 'Recoger en sucursal';
      $color_envio = 'text-green-400';
  } else {
-     $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío Gratis';
+     $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío gratis';
      $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400';
  }
  ?>
@@ -221,7 +331,7 @@ include('Includes/sidebar.php');
  <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
      <div class="flex items-center gap-2 text-primary font-bold mb-1">
          <span class="material-symbols-outlined text-[18px]">store</span>
-         Información de Entrega en Sucursal
+         Información de entrega en sucursal
      </div>
      <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-white">De 9am a 6pm todos los días de la semana.</strong></p>
      <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
@@ -240,7 +350,7 @@ include('Includes/sidebar.php');
  <!-- Status Timeline -->
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ">
  <h3 class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2">
- <span class="material-symbols-outlined text-[16px]">history</span> Estatus de Pedido
+ <span class="material-symbols-outlined text-[16px]">history</span> Estatus de pedido
  </h3>
  
  <div class="relative pl-3">
@@ -253,7 +363,7 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[10px] font-bold">check</span>
  </div>
  <div>
- <p class="text-sm font-bold text-white mb-0.5">Cotización Generada</p>
+ <p class="text-sm font-bold text-white mb-0.5">Cotización generada</p>
  <p class="text-[10px] text-on-surface-variant"><?= $fecha_pedido ?></p>
  </div>
  </div>
@@ -278,7 +388,7 @@ include('Includes/sidebar.php');
  <p class="text-[10px] text-on-primary-container leading-relaxed mb-6">¿Tiene dudas sobre esta cotización? Envíe un mensaje.</p>
  
  <a href="Contacto.php" class="flex items-center justify-center gap-3 bg-surface-container-lowest/40 hover:bg-surface-container-lowest transition-colors rounded-xl p-3 border border-outline-variant/30 backdrop-blur-sm relative z-10 font-bold text-xs text-white">
- <span class="material-symbols-outlined text-[18px]">support_agent</span> Contactar Soporte
+ <span class="material-symbols-outlined text-[18px]">support_agent</span> Contactar soporte
  </a>
  </div>
 

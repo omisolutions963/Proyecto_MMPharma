@@ -29,7 +29,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
 
     $resultado = [
         'costo' => 0.00,
-        'mensaje' => 'Envío Gratis',
+        'mensaje' => 'Envío gratis',
         'tipo' => 'GRATIS',
         'puede_enviarse' => true
     ];
@@ -37,7 +37,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
     if ($estado !== 'JALISCO') {
         if ($subtotal > 8000) {
             $resultado['costo'] = 0.00;
-            $resultado['mensaje'] = 'Envío Gratis';
+            $resultado['mensaje'] = 'Envío gratis';
             $resultado['tipo'] = 'GRATIS';
         } else {
             $resultado['costo'] = 290.00;
@@ -52,7 +52,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
                 // Radio <= 10km
                 if ($subtotal > 4000) {
                     $resultado['costo'] = 0.00;
-                    $resultado['mensaje'] = 'Envío Gratis';
+                    $resultado['mensaje'] = 'Envío gratis';
                     $resultado['tipo'] = 'GRATIS';
                 } else {
                     $resultado['costo'] = 0.00;
@@ -64,7 +64,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
                 // Radio > 10km
                 if ($subtotal > 7000) {
                     $resultado['costo'] = 0.00;
-                    $resultado['mensaje'] = 'Envío Gratis';
+                    $resultado['mensaje'] = 'Envío gratis';
                     $resultado['tipo'] = 'GRATIS';
                 } else {
                     $resultado['costo'] = 0.00;
@@ -77,7 +77,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
             // En Jalisco pero sin ubicación exacta, asumimos como fuera del radio de 10km
             if ($subtotal > 7000) {
                 $resultado['costo'] = 0.00;
-                $resultado['mensaje'] = 'Envío Gratis';
+                $resultado['mensaje'] = 'Envío gratis';
                 $resultado['tipo'] = 'GRATIS';
             } else {
                 $resultado['costo'] = 0.00;

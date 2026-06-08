@@ -49,8 +49,23 @@ $subtotal_sin_iva = $monto_total / 1.16;
 $iva = $monto_total - $subtotal_sin_iva;
 
 // Fechas
-$fecha_emision = date('d/m/Y', strtotime($pedido['created_at']));
-$vigencia      = date('d/m/Y', strtotime($pedido['created_at'] . ' +15 days'));
+if (!function_exists('sumarDiasHabilesVigencia')) {
+    function sumarDiasHabilesVigencia(DateTime $fecha, int $dias): DateTime {
+        $agregados = 0;
+        while ($agregados < $dias) {
+            $fecha->modify('+1 day');
+            $dow = (int)$fecha->format('N'); // 1=Lun … 7=Dom
+            if ($dow < 6) {
+                $agregados++;
+            }
+        }
+        return $fecha;
+    }
+}
+$created_at_dt = new DateTime($pedido['created_at']);
+$fecha_emision = $created_at_dt->format('d/m/Y');
+$fecha_vigencia_dt = sumarDiasHabilesVigencia(clone $created_at_dt, 10);
+$vigencia = $fecha_vigencia_dt->format('d/m/Y');
 
 // ─── Crear PDF con el mismo diseño del carrito ─────────────────────────────
 class PDF extends FPDF {
@@ -165,7 +180,7 @@ $pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(50, 50, 50);
 
 $pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, 'Subtotal Productos:', 0, 0, 'R');
+$pdf->Cell(35, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
 $pdf->Cell(120, 6, '', 0, 0);
@@ -174,7 +189,7 @@ $pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, '
 if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
     $texto_envio = mb_convert_encoding('Recoger en sucursal', 'ISO-8859-1', 'UTF-8');
 } else {
-    $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8');
+    $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : mb_convert_encoding('Envío gratis', 'ISO-8859-1', 'UTF-8');
 }
 
 $pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');

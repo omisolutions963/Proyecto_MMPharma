@@ -1,6 +1,18 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true) {
+    if (isset($_SESSION['debe_cambiar_password']) && $_SESSION['debe_cambiar_password'] == 1) {
+        $current_script = basename($_SERVER['PHP_SELF']);
+        $current_dir = basename(dirname($_SERVER['PHP_SELF']));
+        if ($current_script !== 'cambiar_password_obligatorio.php' && $current_script !== 'logout.php') {
+            $redirect_url = ($current_dir === 'LOGIN') ? 'cambiar_password_obligatorio.php' : '../LOGIN/cambiar_password_obligatorio.php';
+            header("Location: " . $redirect_url);
+            exit;
+        }
+    }
+}
+
 // Fetch Notifications if database connection is available
 $notificaciones = [];
 $unread_count = 0;
@@ -118,6 +130,9 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  body {
  overflow-x: hidden !important;
  }
+ html.swal2-shown, body.swal2-shown {
+ overflow-y: scroll !important;
+ }
  .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
  .card-glow { box-: 0 0 30px rgba(74,144,217,0.08); }
 
@@ -146,21 +161,53 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  .delay-300 { animation-delay: 0.3s; }
  .delay-400 { animation-delay: 0.4s; }
  .delay-500 { animation-delay: 0.5s; }
+  /* Responsive Panel adjustments */
+  @media (max-width: 1023px) {
+    main.ml-64, main {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 1.5rem 1rem !important;
+    }
+    header {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 </style>
 
 <script>
- function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
- Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
- background: '#102245', color: '#e8f0ff' });
- }
- function confirmAction(title, text, confirmText, callback) {
- Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
- confirmButtonColor: '#f28b82', cancelButtonColor: '#3a5a8a',
- confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
- background: '#102245', color: '#e8f0ff'
- }).then(r => { if (r.isConfirmed) callback(); });
- }
- function toggleNotificaciones() {
+  function toggleUserSidebar() {
+    const sidebar = document.getElementById('userSidebar');
+    const overlay = document.getElementById('userSidebarOverlay');
+    if (!sidebar || !overlay) return;
+    
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+      }, 10);
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('opacity-0');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 300);
+    }
+  }
+
+  function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
+  Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
+  background: '#102245', color: '#e8f0ff' });
+  }
+  function confirmAction(title, text, confirmText, callback) {
+  Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
+  confirmButtonColor: '#f28b82', cancelButtonColor: '#3a5a8a',
+  confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
+  background: '#102245', color: '#e8f0ff'
+  }).then(r => { if (r.isConfirmed) callback(); });
+  }
+  function toggleNotificaciones() {
  const dropdown = document.getElementById('notificaciones-dropdown');
  dropdown.classList.toggle('opacity-0');
  dropdown.classList.toggle('invisible');
@@ -175,23 +222,126 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  }
  }
  }
+
+ async function marcarNotificacionLeida(element, id) {
+     const indicator = element.querySelector('.unread-indicator');
+     if (!indicator) return;
+
+     try {
+         const response = await fetch('api_notificaciones.php', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ action: 'marcar_leida', id: id })
+         });
+         const data = await response.json();
+         if (data.success) {
+             indicator.remove();
+             const badge = document.querySelector('#notif-btn .bg-error');
+             const unreadText = document.querySelector('.unread-count-text');
+             let currentCount = parseInt(unreadText.textContent) || 0;
+             if (currentCount > 0) {
+                 currentCount--;
+                 unreadText.textContent = currentCount + ' sin leer';
+                 if (currentCount === 0) {
+                     if (badge) badge.remove();
+                 }
+             }
+         }
+     } catch (error) {
+         console.error('Error al marcar notificación como leída:', error);
+     }
+ }
+
+ async function marcarTodasLeidas() {
+     try {
+         const response = await fetch('api_notificaciones.php', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ action: 'marcar_todas_leidas' })
+         });
+         const data = await response.json();
+         if (data.success) {
+             document.querySelectorAll('.unread-indicator').forEach(el => el.remove());
+             const badge = document.querySelector('#notif-btn .bg-error');
+             if (badge) badge.remove();
+             const unreadText = document.querySelector('.unread-count-text');
+             if (unreadText) {
+                 unreadText.textContent = '0 sin leer';
+             }
+         }
+     } catch (error) {
+         console.error('Error al marcar todas las notificaciones como leídas:', error);
+     }
+ }
+
+ async function verTodasNotificaciones() {
+     try {
+         const response = await fetch('api_notificaciones.php', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ action: 'listar' })
+         });
+         const data = await response.json();
+         if (data.success && data.notificaciones) {
+             let htmlList = '<div class="text-left space-y-4 max-h-96 overflow-y-auto pr-2">';
+             if (data.notificaciones.length === 0) {
+                 htmlList += '<p class="text-sm text-center text-slate-400">No tienes notificaciones.</p>';
+             } else {
+                 data.notificaciones.forEach(n => {
+                     const dateFmt = new Date(n.created_at).toLocaleString('es-MX', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+                     const isUnread = !parseInt(n.leida);
+                     const borderStyle = isUnread ? 'border-l-4 border-primary pl-3' : 'pl-3';
+                     const bgStyle = isUnread ? 'bg-surface-container-high/40' : '';
+                     
+                     htmlList += `
+                     <div class="p-3 rounded-xl border border-outline-variant/30 ${borderStyle} ${bgStyle} transition-all">
+                         <div class="flex justify-between items-start gap-2">
+                             <h4 class="text-sm font-bold text-white">${n.tipo || 'INFORMACIÓN'}</h4>
+                             <span class="text-[9px] text-slate-400 shrink-0">${dateFmt}</span>
+                         </div>
+                         <p class="text-xs text-slate-300 mt-1">${n.mensaje}</p>
+                     </div>`;
+                 });
+             }
+             htmlList += '</div>';
+
+             Swal.fire({
+                 title: 'Historial de Notificaciones',
+                 html: htmlList,
+                 width: '500px',
+                 confirmButtonColor: '#4a90d9',
+                 confirmButtonText: 'Cerrar',
+                 background: '#102245',
+                 color: '#e8f0ff'
+             });
+
+             marcarTodasLeidas();
+         }
+     } catch (error) {
+         console.error('Error al listar notificaciones:', error);
+     }
+ }
 </script>
 </head>
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
 <header style="background:rgba(7,22,40,0.97);border-bottom:1px solid rgba(74,144,217,0.15)"
- class="h-16 fixed top-0 z-40 backdrop-blur-xl flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)]">
+ class="h-16 fixed top-0 z-40 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)]">
  
- <div class="flex items-center gap-5 flex-1">
- <!-- Portal Label -->
- <div class="flex items-center gap-3">
- <div class="flex flex-col leading-none">
- <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
- <span class="text-xl font-extrabold text-white tracking-tight uppercase">Portal cliente</span>
- </div>
- </div>
- </div>
+  <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
+  <!-- Hamburger Menu Button -->
+  <button onclick="toggleUserSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+    <span class="material-symbols-outlined text-2xl">menu</span>
+  </button>
+  <!-- Portal Label -->
+  <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
+  <div class="flex flex-col leading-none min-w-0">
+  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
+  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
+  </div>
+  </div>
+  </div>
 
  <div class="flex items-center gap-5">
  <!-- Search -->
@@ -216,7 +366,12 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
  <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
- <span class="text-[10px] font-black text-primary uppercase tracking-widest"><?= $unread_count ?> sin leer</span>
+ <div class="flex flex-col items-end gap-1">
+ <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> sin leer</span>
+ <?php if ($unread_count > 0): ?>
+ <button onclick="marcarTodasLeidas(); event.stopPropagation();" class="text-[9px] text-secondary hover:underline font-bold uppercase tracking-wider">Marcar todas leídas</button>
+ <?php endif; ?>
+ </div>
  </div>
  <div class="max-h-96 overflow-y-auto">
  <?php if (empty($notificaciones)): ?>
@@ -226,9 +381,9 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  </div>
  <?php else: ?>
  <?php foreach($notificaciones as $n): ?>
- <div class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative">
+ <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item">
  <?php if(!$n['leida']): ?>
- <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+ <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary unread-indicator"></div>
  <?php endif; ?>
  <div class="flex gap-3">
  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 
@@ -248,15 +403,15 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  <?php endforeach; ?>
  <?php endif; ?>
  </div>
- <a href="#" class="block p-3 text-center text-[11px] font-bold text-primary hover:bg-primary/5 transition-colors">
+ <a href="#" onclick="verTodasNotificaciones(); event.stopPropagation(); event.preventDefault();" class="block p-3 text-center text-[11px] font-bold text-primary hover:bg-primary/5 transition-colors">
  Ver todas las notificaciones
  </a>
  </div>
  </div>
 
  
- <!-- Divider -->
- <div class="h-6 w-px bg-outline-variant/30"></div>
+  <!-- Divider -->
+  <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
 
  <!-- User / Perfil Button -->
  <a href="Perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">

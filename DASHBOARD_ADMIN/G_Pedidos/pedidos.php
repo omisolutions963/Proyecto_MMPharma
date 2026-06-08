@@ -87,7 +87,7 @@ if (isset($_GET['ajax'])) {
  <td class="px-8 py-4">
  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
  <?php if ($p['comprobante_archivo']): ?>
- <button onclick="verComprobante('<?= $p['comprobante_archivo'] ?>', '<?= $p['comprobante_estatus'] ?>', <?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-amber-500 hover:bg-amber-500 hover:text-white transition-all" title="Ver Comprobante de Pago">
+ <button onclick="verComprobante('<?= $p['comprobante_archivo'] ?>', '<?= $p['comprobante_estatus'] ?>', <?= $p['id'] ?>)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-amber-500 hover:bg-amber-500 hover:text-white transition-all" title="Ver comprobante de pago">
  <span class="material-symbols-outlined text-[18px]">receipt_long</span>
  </button>
  <?php endif; ?>
@@ -95,28 +95,28 @@ if (isset($_GET['ajax'])) {
  <form method="POST" class="inline">
  <input type="hidden" name="action" value="approve">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-green-600 hover:bg-green-600 hover:text-white transition-all" title="Aprobar Pedido">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-green-600 hover:bg-green-600 hover:text-white transition-all" title="Aprobar pedido">
  <span class="material-symbols-outlined text-[18px]">check_circle</span>
  </button>
  </form>
  <form method="POST" class="inline" onsubmit="return confirm('¿Rechazar pedido?')">
  <input type="hidden" name="action" value="reject">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-orange-600 hover:bg-orange-600 hover:text-white transition-all" title="Rechazar Pedido">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-orange-600 hover:bg-orange-600 hover:text-white transition-all" title="Rechazar pedido">
  <span class="material-symbols-outlined text-[18px]">cancel</span>
  </button>
  </form>
  <?php endif; ?>
- <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar Cotización PDF">
+ <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
+ <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
  </a>
  <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar pedido de la base de datos?')">
  <input type="hidden" name="action" value="delete">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all" title="Eliminar Permanente">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all" title="Eliminar permanente">
  <span class="material-symbols-outlined text-[18px]">delete</span>
  </button>
  </form>
@@ -247,28 +247,28 @@ include("../Includes/sidebar.php");
  <form method="POST" class="inline">
  <input type="hidden" name="action" value="approve">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-green-600 hover:bg-green-600 hover:text-white transition-all" title="Aprobar Pedido">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-green-600 hover:bg-green-600 hover:text-white transition-all" title="Aprobar pedido">
  <span class="material-symbols-outlined text-[18px]">check_circle</span>
  </button>
  </form>
  <form method="POST" class="inline" onsubmit="return confirm('¿Rechazar pedido?')">
  <input type="hidden" name="action" value="reject">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-orange-600 hover:bg-orange-600 hover:text-white transition-all" title="Rechazar Pedido">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-orange-600 hover:bg-orange-600 hover:text-white transition-all" title="Rechazar pedido">
  <span class="material-symbols-outlined text-[18px]">cancel</span>
  </button>
  </form>
  <?php endif; ?>
- <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar Cotización PDF">
+ <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver Detalle">
+ <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
  </a>
  <form method="POST" class="inline" onsubmit="return confirm('¿Eliminar pedido de la base de datos?')">
  <input type="hidden" name="action" value="delete">
  <input type="hidden" name="id" value="<?= $p['id'] ?>">
- <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all" title="Eliminar Permanente">
+ <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-error hover:bg-error hover:text-white transition-all" title="Eliminar permanente">
  <span class="material-symbols-outlined text-[18px]">delete</span>
  </button>
  </form>
@@ -317,7 +317,7 @@ async function loadMore() {
 
 function verComprobante(ruta, estatus, id) {
  Swal.fire({
- title: 'Comprobante de Pago',
+ title: 'Comprobante de pago',
  text: 'Estatus actual: ' + estatus,
  imageUrl: '../../uploads/comprobantes/' + ruta,
  imageAlt: 'Comprobante',

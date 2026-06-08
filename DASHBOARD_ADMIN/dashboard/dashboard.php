@@ -42,45 +42,60 @@ try { $contactoNuevos= (int)$pdo->query("SELECT COUNT(*) FROM clientes_contacto_
 try { $topProductos = $pdo->query("SELECT nombre, precio_farmacia FROM catalogo_productos WHERE precio_farmacia > 0 ORDER BY precio_farmacia DESC LIMIT 6")->fetchAll(); } catch(Exception $e){}
 try { $ultimasSolicitudes = $pdo->query("SELECT razon_social, tipo_cliente, email, estatus, created_at FROM clientes_solicitudes_registro ORDER BY created_at DESC LIMIT 5")->fetchAll(); } catch(Exception $e){}
 
-$salesData = ['daily' => ['labels' => [], 'data' => []], 'monthly' => ['labels' => [], 'data' => []]];
+$salesData = [
+  'daily' => ['labels' => [], 'data' => [], 'orders' => []],
+  'monthly' => ['labels' => [], 'data' => [], 'orders' => []]
+];
 $topProductosVentas = [];
 try {
- // Top 10 Productos
- $sqlTop = "SELECT d.nombre_producto, SUM(d.cantidad) as total_vendido, SUM(d.subtotal) as ingresos 
- FROM clientes_pedidos_detalle d 
- JOIN clientes_pedidos p ON d.pedido_id = p.id 
- WHERE p.estado_envio != 'CANCELADO' 
- GROUP BY d.producto_id, d.nombre_producto 
- ORDER BY total_vendido DESC LIMIT 10";
- $topProductosVentas = $pdo->query($sqlTop)->fetchAll(PDO::FETCH_ASSOC);
+  // Top 10 Productos
+  $sqlTop = "SELECT d.nombre_producto, SUM(d.cantidad) as total_vendido, SUM(d.subtotal) as ingresos 
+  FROM clientes_pedidos_detalle d 
+  JOIN clientes_pedidos p ON d.pedido_id = p.id 
+  WHERE p.estado_envio != 'CANCELADO' 
+  GROUP BY d.producto_id, d.nombre_producto 
+  ORDER BY total_vendido DESC LIMIT 10";
+  $topProductosVentas = $pdo->query($sqlTop)->fetchAll(PDO::FETCH_ASSOC);
 
- // Sales Daily
- $sqlDaily = "SELECT DATE(fecha_pedido) as d, SUM(monto_total) as t 
- FROM clientes_pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
- GROUP BY DATE(fecha_pedido)";
- $resDaily = $pdo->query($sqlDaily)->fetchAll(PDO::FETCH_ASSOC);
- $dMap = []; foreach($resDaily as $r) $dMap[$r['d']] = (float)$r['t'];
- for ($i = 29; $i >= 0; $i--) {
- $date = date('Y-m-d', strtotime("-$i days"));
- $salesData['daily']['labels'][] = date('d/m', strtotime("-$i days"));
- $salesData['daily']['data'][] = $dMap[$date] ?? 0;
- }
+  // Sales Daily
+  $sqlDaily = "SELECT DATE(fecha_pedido) as d, SUM(monto_total) as t, COUNT(id) as c 
+  FROM clientes_pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+  GROUP BY DATE(fecha_pedido)";
+  $resDaily = $pdo->query($sqlDaily)->fetchAll(PDO::FETCH_ASSOC);
+  $dMap = [];
+  $dCount = [];
+  foreach($resDaily as $r) {
+      $dMap[$r['d']] = (float)$r['t'];
+      $dCount[$r['d']] = (int)$r['c'];
+  }
+  for ($i = 29; $i >= 0; $i--) {
+      $date = date('Y-m-d', strtotime("-$i days"));
+      $salesData['daily']['labels'][] = date('d/m', strtotime("-$i days"));
+      $salesData['daily']['data'][] = $dMap[$date] ?? 0;
+      $salesData['daily']['orders'][] = $dCount[$date] ?? 0;
+  }
 
- // Sales Monthly
- $sqlMonthly = "SELECT DATE_FORMAT(fecha_pedido, '%Y-%m') as m, SUM(monto_total) as t 
- FROM clientes_pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 11 MONTH) 
- GROUP BY DATE_FORMAT(fecha_pedido, '%Y-%m')";
- $resMonthly = $pdo->query($sqlMonthly)->fetchAll(PDO::FETCH_ASSOC);
- $mMap = []; foreach($resMonthly as $r) $mMap[$r['m']] = (float)$r['t'];
- 
- $mesesES = ['Jan'=>'Ene','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Abr','May'=>'May','Jun'=>'Jun','Jul'=>'Jul','Aug'=>'Ago','Sep'=>'Sep','Oct'=>'Oct','Nov'=>'Nov','Dec'=>'Dic'];
- for ($i = 11; $i >= 0; $i--) {
- $month = date('Y-m', strtotime("first day of -$i month"));
- $mEn = date('M', strtotime("first day of -$i month"));
- $label = $mesesES[$mEn] . ' ' . date('y', strtotime("first day of -$i month"));
- $salesData['monthly']['labels'][] = $label;
- $salesData['monthly']['data'][] = $mMap[$month] ?? 0;
- }
+  // Sales Monthly
+  $sqlMonthly = "SELECT DATE_FORMAT(fecha_pedido, '%Y-%m') as m, SUM(monto_total) as t, COUNT(id) as c 
+  FROM clientes_pedidos WHERE estado_envio != 'CANCELADO' AND fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 11 MONTH) 
+  GROUP BY DATE_FORMAT(fecha_pedido, '%Y-%m')";
+  $resMonthly = $pdo->query($sqlMonthly)->fetchAll(PDO::FETCH_ASSOC);
+  $mMap = [];
+  $mCount = [];
+  foreach($resMonthly as $r) {
+      $mMap[$r['m']] = (float)$r['t'];
+      $mCount[$r['m']] = (int)$r['c'];
+  }
+  
+  $mesesES = ['Jan'=>'Ene','Feb'=>'Feb','Mar'=>'Mar','Apr'=>'Abr','May'=>'May','Jun'=>'Jun','Jul'=>'Jul','Aug'=>'Ago','Sep'=>'Sep','Oct'=>'Oct','Nov'=>'Nov','Dec'=>'Dic'];
+  for ($i = 11; $i >= 0; $i--) {
+      $month = date('Y-m', strtotime("first day of -$i month"));
+      $mEn = date('M', strtotime("first day of -$i month"));
+      $label = $mesesES[$mEn] . ' ' . date('y', strtotime("first day of -$i month"));
+      $salesData['monthly']['labels'][] = $label;
+      $salesData['monthly']['data'][] = $mMap[$month] ?? 0;
+      $salesData['monthly']['orders'][] = $mCount[$month] ?? 0;
+  }
 } catch (Exception $e) {}
 
 $pageTitle = 'MMPharma Portal - Dashboard';
@@ -268,7 +283,7 @@ include('../includes/sidebar.php');
  <div class="flex items-center justify-between mb-6">
  <h2 class="text-lg font-bold text-white flex items-center gap-2">
  <span class="material-symbols-outlined text-emerald-500">trending_up</span>
- Rendimiento de Ventas
+ Rendimiento de ventas
  </h2>
  <div class="flex bg-surface-container-lowest rounded-lg p-1 border border-outline-variant/10">
  <button onclick="updateChart('daily')" id="btnChartDaily" class="px-4 py-1.5 text-xs font-bold rounded-md bg-[#008151] text-white transition-all">Diario</button>
@@ -290,7 +305,7 @@ include('../includes/sidebar.php');
  <div class="p-6 rounded-2xl animate-fade-up" style="background:#071a10;border:1px solid rgba(0,129,81,0.15); animation-delay: 0.4s">
  <h2 class="text-sm font-bold text-white mb-6 flex items-center gap-2">
  <span class="material-symbols-outlined text-emerald-500 text-[18px]">pie_chart</span>
- Distribución del Catálogo
+ Distribución del catálogo
  </h2>
  <div class="space-y-5">
  <?php
@@ -324,7 +339,7 @@ include('../includes/sidebar.php');
  <div class="px-8 py-4 bg-surface-container-low border-b border-outline-variant/10 flex items-center justify-between">
  <h2 class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
  <span class="material-symbols-outlined text-emerald-500 text-[18px]">list_alt</span>
- Últimas Solicitudes
+ Últimas solicitudes
  </h2>
  <a href="../S_Registro/solicitudes.php" class="text-[10px] font-black text-emerald-500 hover:underline uppercase tracking-widest">
  Ver todas →
@@ -373,7 +388,7 @@ include('../includes/sidebar.php');
  <div class="p-6 rounded-2xl animate-fade-up" style="background:#071a10;border:1px solid rgba(0,129,81,0.15); animation-delay: 0.3s">
  <h2 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
  <span class="material-symbols-outlined text-emerald-500 text-[18px]">bolt</span>
- Acciones Rápidas
+ Acciones rápidas
  </h2>
  <div class="grid grid-cols-2 gap-3">
  <?php
@@ -401,7 +416,7 @@ include('../includes/sidebar.php');
  <div class="p-6 rounded-2xl animate-fade-up" style="background:#071a10;border:1px solid rgba(0,129,81,0.15); animation-delay: 0.4s">
  <h2 class="text-sm font-bold text-white mb-5 flex items-center gap-2">
  <span class="material-symbols-outlined text-tertiary text-[18px]">workspace_premium</span>
- Top 10 Más Vendidos
+ Top 10 más vendidos
  </h2>
  <div class="space-y-4">
  <?php if (empty($topProductosVentas)): ?>
@@ -476,59 +491,103 @@ let salesChart = null;
 function initChart() {
  const ctx = document.getElementById('salesChart');
  if (!ctx) return;
- 
+  
  Chart.defaults.color = 'rgba(255, 255, 255, 0.5)';
  Chart.defaults.font.family = "'Inter', sans-serif";
- 
+  
  salesChart = new Chart(ctx, {
- type: 'line',
  data: {
  labels: salesData.daily.labels,
- datasets: [{
- label: 'Ingresos (MXN)',
- data: salesData.daily.data,
- borderColor: '#008151',
- backgroundColor: 'rgba(0, 129, 81, 0.1)',
- borderWidth: 3,
- pointBackgroundColor: '#020d08',
- pointBorderColor: '#008151',
- pointBorderWidth: 2,
- pointRadius: 4,
- pointHoverRadius: 6,
- fill: true,
- tension: 0.4
- }]
+ datasets: [
+   {
+     type: 'line',
+     label: 'Ingresos (MXN)',
+     data: salesData.daily.data,
+     borderColor: '#34c47a',
+     backgroundColor: 'rgba(52, 196, 122, 0.1)',
+     borderWidth: 3,
+     pointBackgroundColor: '#020d08',
+     pointBorderColor: '#34c47a',
+     pointBorderWidth: 2,
+     pointRadius: 4,
+     pointHoverRadius: 6,
+     fill: true,
+     tension: 0.4,
+     yAxisID: 'y'
+   },
+   {
+     type: 'bar',
+     label: 'Pedidos',
+     data: salesData.daily.orders,
+     borderColor: '#0ea5e9',
+     backgroundColor: 'rgba(14, 165, 233, 0.25)',
+     borderWidth: 1.5,
+     borderRadius: 6,
+     barThickness: 16,
+     yAxisID: 'y1'
+   }
+ ]
  },
  options: {
  responsive: true,
  maintainAspectRatio: false,
  plugins: {
- legend: { display: false },
+ legend: { 
+   display: true,
+   position: 'top',
+   labels: {
+     color: 'rgba(255, 255, 255, 0.7)',
+     font: { size: 11, weight: 'bold' }
+   }
+ },
  tooltip: {
- backgroundColor: 'rgba(2, 13, 8, 0.9)',
- titleColor: '#fff',
- bodyColor: '#008151',
- borderColor: 'rgba(0, 129, 81, 0.3)',
- borderWidth: 1,
- padding: 12,
- displayColors: false,
- callbacks: {
- label: function(context) {
- return '$' + context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2}) + ' MXN';
- }
- }
+   backgroundColor: 'rgba(7, 26, 16, 0.95)',
+   titleColor: '#fff',
+   bodyColor: '#e8f0ff',
+   borderColor: 'rgba(52, 196, 122, 0.3)',
+   borderWidth: 1,
+   padding: 12,
+   displayColors: true,
+   callbacks: {
+     label: function(context) {
+       if (context.datasetIndex === 0) {
+         return 'Ingresos: $' + context.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2}) + ' MXN';
+       } else {
+         return 'Pedidos: ' + context.parsed.y + ' uds';
+       }
+     }
+   }
  }
  },
  scales: {
  y: {
- beginAtZero: true,
- grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
- ticks: {
- callback: function(value) { return '$' + value.toLocaleString('es-MX'); }
- }
+   type: 'linear',
+   display: true,
+   position: 'left',
+   beginAtZero: true,
+   grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+   ticks: {
+     callback: function(value) { return '$' + value.toLocaleString('es-MX'); }
+   }
+ },
+ y1: {
+   type: 'linear',
+   display: true,
+   position: 'right',
+   beginAtZero: true,
+   grid: { drawOnChartArea: false },
+   ticks: {
+     stepSize: 1,
+     callback: function(value) { 
+       if (Number.isInteger(value)) {
+         return value + (value === 1 ? ' pedido' : ' pedidos'); 
+       }
+       return null;
+     }
+   }
  },
  x: {
- grid: { display: false, drawBorder: false }
+   grid: { display: false, drawBorder: false }
  }
  }
  }
@@ -537,20 +596,21 @@ function initChart() {
 
 function updateChart(period) {
  if (!salesChart) return;
- 
+  
  const btnDaily = document.getElementById('btnChartDaily');
  const btnMonthly = document.getElementById('btnChartMonthly');
- 
+  
  if (period === 'daily') {
- btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-white transition-all";
- btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
+  btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-[#008151] text-white transition-all";
+  btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
  } else {
- btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-primary text-white transition-all";
- btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
+  btnMonthly.className = "px-4 py-1.5 text-xs font-bold rounded-md bg-[#008151] text-white transition-all";
+  btnDaily.className = "px-4 py-1.5 text-xs font-bold rounded-md text-on-surface-variant hover:text-white transition-all";
  }
  
  salesChart.data.labels = salesData[period].labels;
  salesChart.data.datasets[0].data = salesData[period].data;
+ salesChart.data.datasets[1].data = salesData[period].orders;
  salesChart.update();
 }
 

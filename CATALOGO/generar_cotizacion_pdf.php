@@ -34,6 +34,21 @@ $tipo_cliente = $_SESSION['cliente_tipo'] ?? 'FARMACIA';
 // Generar folio único (basado en timestamp y random)
 $folio = 'COT-' . date('Y') . '-' . strtoupper(substr(uniqid(), -5));
 
+// Calcular vigencia: 10 días hábiles (lunes–viernes)
+function sumarDiasHabilesVigencia(DateTime $fecha, int $dias): DateTime {
+    $agregados = 0;
+    while ($agregados < $dias) {
+        $fecha->modify('+1 day');
+        $dow = (int)$fecha->format('N'); // 1=Lun … 7=Dom
+        if ($dow < 6) {
+            $agregados++;
+        }
+    }
+    return $fecha;
+}
+$fecha_emision = new DateTime();
+$fecha_vigencia = sumarDiasHabilesVigencia(clone $fecha_emision, 10);
+
 // Calcular subtotal
 $subtotal_productos = 0;
 foreach ($carrito as $item) {
@@ -140,7 +155,7 @@ $pdf->Cell(55, 5, date('d/m/Y'), 0, 1, 'R');
 
 $pdf->SetXY(110, $y+10);
 $pdf->Cell(35, 5, 'Vigencia:', 0, 0, 'R');
-$pdf->Cell(55, 5, '15 Dias', 0, 1, 'R');
+$pdf->Cell(55, 5, mb_convert_encoding('Al ' . $fecha_vigencia->format('d/m/Y') . ' (10 ds. hab.)', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
 
 $pdf->Ln(20);
 
@@ -180,12 +195,12 @@ $pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(50, 50, 50);
 
 $pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, 'Subtotal Productos:', 0, 0, 'R');
+$pdf->Cell(35, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
 $pdf->Cell(120, 6, '', 0, 0);
 $pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
-$texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : ($mensaje_envio !== '' ? $mensaje_envio : mb_convert_encoding('Envío Gratis', 'ISO-8859-1', 'UTF-8'));
+$texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : ($mensaje_envio !== '' ? $mensaje_envio : mb_convert_encoding('Envío gratis', 'ISO-8859-1', 'UTF-8'));
 $pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');
 
 $pdf->Cell(120, 6, '', 0, 0);

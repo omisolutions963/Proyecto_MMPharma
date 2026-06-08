@@ -92,7 +92,7 @@ require_once '../includes/header.php';
  <span class="material-symbols-outlined text-sm">chevron_right</span>
  <a href="catalogo.php" class="hover:text-primary-light transition-colors">Catálogo</a>
  <span class="material-symbols-outlined text-sm">chevron_right</span>
- <span class="text-primary-light font-bold"><?= htmlspecialchars($p['nombre']) ?></span>
+ <span class="text-tertiary font-bold"><?= htmlspecialchars($p['nombre']) ?></span>
  </div>
 </div>
 
@@ -163,6 +163,7 @@ require_once '../includes/header.php';
  </div>
  </div>
  <?php endif; ?>
+ </div>
 
  <!-- Precios por nivel de cliente y Controles -->
  <?php if ($is_admin || $is_cliente): ?>
@@ -188,7 +189,6 @@ require_once '../includes/header.php';
  </div>
  <?php else: ?>
  <div class="mb-10 animate-reveal">
- <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-4">Tu precio especial (<?= htmlspecialchars($cliente_tipo) ?>)</p>
  <?php 
  $box_class = 'bg-primary/10 text-primary';
  if ($cliente_tipo === 'DISTRIBUIDORA') $box_class = 'bg-secondary/10 text-secondary';
@@ -307,7 +307,7 @@ require_once '../includes/header.php';
  <?php if (!empty($relacionados)): ?>
  <div>
  <h2 class="text-lg font-bold text-primary mb-6">Productos con sustancia similar</h2>
- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6" data-aos="fade-up">
+ <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" data-aos="fade-up">
  <?php foreach ($relacionados as $r): ?>
  <a href="producto.php?id=<?= $r['id'] ?>"
  class="bg-white border border-slate-200 rounded-[3rem] transition-all duration-300 p-8 flex flex-col group animate-fade-up min-h-[420px] hover:-translate-y-2 hover:border-primary/30 hover:">

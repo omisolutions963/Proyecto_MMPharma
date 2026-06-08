@@ -2,6 +2,17 @@
 if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
+if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true) {
+    if (isset($_SESSION['debe_cambiar_password']) && $_SESSION['debe_cambiar_password'] == 1) {
+        $current_script = basename($_SERVER['PHP_SELF']);
+        $current_dir = basename(dirname($_SERVER['PHP_SELF']));
+        if ($current_script !== 'cambiar_password_obligatorio.php' && $current_script !== 'logout.php') {
+            $redirect_url = ($current_dir === 'LOGIN') ? 'cambiar_password_obligatorio.php' : '../LOGIN/cambiar_password_obligatorio.php';
+            header("Location: " . $redirect_url);
+            exit;
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -99,8 +110,10 @@ if (session_status() === PHP_SESSION_NONE) {
   <div class="bg-primary text-white text-xs py-2 shadow-inner">
     <div class="max-w-[1369px] mx-auto px-4 md:px-8 flex flex-col sm:flex-row justify-between items-center gap-2">
       <div class="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
-        <a href="tel:3322207506" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
-          <span class="material-symbols-outlined text-[16px]">call</span>
+        <a href="https://wa.me/523322207506" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.50002 12C3.50002 7.30558 7.3056 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C10.3278 20.5 8.77127 20.0182 7.45798 19.1861C7.21357 19.0313 6.91408 18.9899 6.63684 19.0726L3.75769 19.9319L4.84173 17.3953C4.96986 17.0955 4.94379 16.7521 4.77187 16.4751C3.9657 15.176 3.50002 13.6439 3.50002 12ZM12 1.5C6.20103 1.5 1.50002 6.20101 1.50002 12C1.50002 13.8381 1.97316 15.5683 2.80465 17.0727L1.08047 21.107C0.928048 21.4637 0.99561 21.8763 1.25382 22.1657C1.51203 22.4552 1.91432 22.5692 2.28599 22.4582L6.78541 21.1155C8.32245 21.9965 10.1037 22.5 12 22.5C17.799 22.5 22.5 17.799 22.5 12C22.5 6.20101 17.799 1.5 12 1.5ZM14.2925 14.1824L12.9783 15.1081C12.3628 14.7575 11.6823 14.2681 10.9997 13.5855C10.2901 12.8759 9.76402 12.1433 9.37612 11.4713L10.2113 10.7624C10.5697 10.4582 10.6678 9.94533 10.447 9.53028L9.38284 7.53028C9.23954 7.26097 8.98116 7.0718 8.68115 7.01654C8.38113 6.96129 8.07231 7.046 7.84247 7.24659L7.52696 7.52195C6.76823 8.18414 6.3195 9.2723 6.69141 10.3741C7.07698 11.5163 7.89983 13.314 9.58552 14.9997C11.3991 16.8133 13.2413 17.5275 14.3186 17.8049C15.1866 18.0283 16.008 17.7288 16.5868 17.2572L17.1783 16.7752C17.4313 16.5691 17.5678 16.2524 17.544 15.9269C17.5201 15.6014 17.3389 15.308 17.0585 15.1409L15.3802 14.1409C15.0412 13.939 14.6152 13.9552 14.2925 14.1824Z" fill="currentColor"/>
+          </svg>
           <span>33 2220 7506</span>
         </a>
         <span class="hidden sm:inline text-white/30 text-xs">|</span>
@@ -189,7 +202,7 @@ if (session_status() === PHP_SESSION_NONE) {
  ?>
  <!-- Botón Ingresar al Portal -->
  <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full hover:bg-primary/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
- <span class="tracking-wide">Ingresar al Portal</span>
+ <span class="tracking-wide">Ingresar al portal</span>
  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
  <div class="flex items-center gap-1.5 sm:gap-3">
@@ -279,15 +292,14 @@ if (session_status() === PHP_SESSION_NONE) {
  }
  ?>
  <!-- Botón Ingresar al Portal para Admin -->
- <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-6 py-2.5 bg-[#4ade80] text-white font-bold rounded-full hover: hover:-translate-y-0.5 transition-all duration-300 ml-4 group relative overflow-hidden">
- <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
- <span class="relative z-10 tracking-wide">Ingresar al Portal</span>
- <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+ <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-[#008151] text-white font-bold text-sm rounded-full hover:bg-[#008151]/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
+ <span class="tracking-wide">Ingresar al portal</span>
+ <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
 
  <!-- Perfil de Admin con Dropdown -->
  <div class="lg:relative" id="profile-dropdown-admin">
- <button onclick="toggleProfileDropdownAdmin()" class="w-10 h-10 <?= $foto_admin ? 'bg-white' : 'bg-[#005132]' ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background ring-[#4ade80] focus:outline-none ml-2 overflow-hidden">
+ <button onclick="toggleProfileDropdownAdmin()" class="w-10 h-10 <?= $foto_admin ? 'bg-white' : 'bg-[#005132]' ?> text-white rounded-full flex items-center justify-center group hover:scale-105 transition-all ring-2 ring-offset-2 ring-offset-background ring-[#008151] focus:outline-none ml-2 overflow-hidden">
  <?php if ($foto_admin && $foto_admin !== 'PENDIENTE'): ?>
  <img src="<?= htmlspecialchars($foto_admin) ?>" alt="Perfil" class="w-full h-full object-cover">
  <?php else: ?>
@@ -300,7 +312,7 @@ if (session_status() === PHP_SESSION_NONE) {
  <div class="px-6 py-5 bg-slate-50">
  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Cuenta activa</p>
  <div class="flex items-center gap-3">
- <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#4ade80] overflow-hidden flex-shrink-0">
+ <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#008151] overflow-hidden flex-shrink-0">
  <?php if ($foto_admin && $foto_admin !== 'PENDIENTE'): ?>
  <img src="<?= htmlspecialchars($foto_admin) ?>" alt="Perfil" class="w-full h-full object-cover">
  <?php else: ?>
@@ -315,8 +327,8 @@ if (session_status() === PHP_SESSION_NONE) {
  </div>
  
  <div class="p-2 space-y-1">
- <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 hover:text-[#4ade80] hover:bg-green-50 rounded-xl transition-all group/item">
- <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center group-hover/item:bg-[#4ade80] group-hover/item:text-white transition-colors text-slate-500">
+ <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 hover:text-[#008151] hover:bg-emerald-50 rounded-xl transition-all group/item">
+ <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center group-hover/item:bg-[#008151] group-hover/item:text-white transition-colors text-slate-500 font-medium">
  <span class="material-symbols-outlined text-lg">dashboard</span>
  </div>
  <span>Panel de control</span>
@@ -510,10 +522,16 @@ if (menuClose && mobileMenu) {
  <span class="relative z-10 text-base tracking-wide">Confirmar pedido</span>
  <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:translate-x-1 transition-transform">send</span>
  </button>
- <button onclick="generarCotizacion()" class="w-full h-14 bg-white text-primary font-bold rounded-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-sm flex items-center justify-center gap-2 relative overflow-hidden group">
- <span class="relative z-10 tracking-wide">Ver cotización</span>
- <span class="material-symbols-outlined text-[20px] relative z-10 group-hover:-translate-y-1 transition-transform">visibility</span>
+ <div class="flex gap-2">
+ <button onclick="generarCotizacion()" class="flex-1 h-12 bg-white text-primary font-bold rounded-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-xs flex items-center justify-center gap-1.5 group" title="Descargar cotización en PDF">
+ <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+ <span>PDF</span>
  </button>
+ <button onclick="generarCotizacionExcel()" class="flex-1 h-12 bg-[#1a7f4b] text-white font-bold rounded-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-xs flex items-center justify-center gap-1.5 group" title="Descargar cotización en Excel/CSV">
+ <span class="material-symbols-outlined text-[18px]">table_view</span>
+ <span>Excel</span>
+ </button>
+ </div>
  </div>
  </div>
 </div>
@@ -819,6 +837,52 @@ function generarCotizacion() {
  document.body.removeChild(form);
 }
 
+function generarCotizacionExcel() {
+ if (carrito.length === 0) {
+ Swal.fire('Carrito vacío', 'Añade productos antes de generar la cotización', 'warning');
+ return;
+ }
+
+ const dirSelect = document.getElementById('cart-direccion');
+ const direccion_id = dirSelect ? dirSelect.value : null;
+
+ if (dirSelect && !direccion_id) {
+   Swal.fire('Atención', 'Debes seleccionar una dirección para cotizar.', 'warning');
+   return;
+ }
+
+ const isRecoger = document.getElementById('checkbox-recoger-sucursal')
+   ? document.getElementById('checkbox-recoger-sucursal').checked : false;
+
+ const form = document.createElement('form');
+ form.method = 'POST';
+ form.action = '<?= $base ?? '' ?>CATALOGO/generar_cotizacion_excel.php';
+ form.target = '_blank';
+
+ const input = document.createElement('input');
+ input.type = 'hidden';
+ input.name = 'carrito_data';
+ input.value = JSON.stringify(carrito);
+ form.appendChild(input);
+
+ if (direccion_id) {
+   const inputDir = document.createElement('input');
+   inputDir.type = 'hidden';
+   inputDir.name = 'direccion_id';
+   inputDir.value = direccion_id;
+   form.appendChild(inputDir);
+
+   const inputRecoger = document.createElement('input');
+   inputRecoger.type = 'hidden';
+   inputRecoger.name = 'recoger_sucursal';
+   inputRecoger.value = isRecoger ? '1' : '0';
+   form.appendChild(inputRecoger);
+ }
+ document.body.appendChild(form);
+ form.submit();
+ document.body.removeChild(form);
+}
+
 function confirmarPedido() {
  if (carrito.length === 0) {
  Swal.fire('Carrito vacío', 'Añade productos antes de confirmar el pedido', 'warning');
@@ -864,7 +928,7 @@ function confirmarPedido() {
  <div class="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-50"></div>
  <span class="material-symbols-outlined text-green-500 text-4xl relative z-10">check_circle</span>
  </div>
- <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">¡Pedido Enviado!</h2>
+ <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-2">¡Pedido enviado!</h2>
  ${data.folio ? `<p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Folio: ${data.folio}</p>` : ''}
  <p class="text-sm text-slate-500 font-medium text-center">Tu pedido ha sido recibido y está en revisión.</p>
  </div>
@@ -882,9 +946,17 @@ function confirmarPedido() {
  }).then(() => {
  window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
  });
- } else {
- Swal.fire('Error', 'Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'), 'error');
- }
+ } else if (data.red_fria) {
+    Swal.fire({
+      icon: 'warning',
+      title: '❄️ Producto de red fría',
+      text: data.message,
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#002451',
+    });
+  } else {
+    Swal.fire('Error', 'Hubo un error al procesar tu pedido: ' + (data.message || 'Error desconocido'), 'error');
+  }
  })
  .catch(err => {
  console.error(err);

@@ -83,10 +83,10 @@ include('Includes/sidebar.php');
  </div>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
  <a href="Cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
- <span class="material-symbols-outlined text-[18px]">download</span> Estado de Cuenta
+ <span class="material-symbols-outlined text-[18px]">download</span> Estado de cuenta
  </a>
  <a href="../CATALOGO/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
- <span class="material-symbols-outlined text-[18px]">add</span> Nueva Cotización
+ <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
  </div>
@@ -135,7 +135,7 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified_user</span>
  </div>
  <div>
- <h3 class="text-tertiary font-bold text-base mb-1">Cuenta Activa</h3>
+ <h3 class="text-tertiary font-bold text-base mb-1">Cuenta activa</h3>
  <p class="text-tertiary/80 text-xs mb-3 leading-relaxed">Tus documentos están al día. Puedes cotizar y comprar sin restricciones.</p>
  <a href="Documentos.php" class="text-tertiary text-xs font-bold hover:underline">Ver documentos</a>
  </div>
@@ -153,7 +153,7 @@ include('Includes/sidebar.php');
 
  <!-- Metric 2: Última Cotización -->
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Última Cotización</span>
+ <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Última cotización</span>
  <div>
  <span class="text-2xl font-extrabold text-white block mb-1"><?= $ultima_monto ?></span>
  <span class="text-[10px] text-on-surface-variant italic"><?= $ultima_fecha ?></span>
@@ -162,7 +162,7 @@ include('Includes/sidebar.php');
 
  <!-- Metric 3: Productos Favoritos -->
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Productos Comprados</span>
+ <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Productos comprados</span>
  <div class="flex items-center gap-2">
  <span class="text-3xl font-extrabold text-white leading-none"><?= $productos_favoritos ?></span>
  <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">inventory_2</span>
@@ -171,7 +171,7 @@ include('Includes/sidebar.php');
 
  <!-- Metric 4: Estado de Cuenta -->
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Estado de Cuenta</span>
+ <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Estado de cuenta</span>
  <div>
  <?php if($estatus_cliente === 'ACTIVO'): ?>
  <span class="px-2 py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded-md uppercase tracking-wider mb-2 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ACTIVO</span>
@@ -195,7 +195,7 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
  </div>
  <div>
- <h3 class="text-sm font-bold text-white">Inversión Total</h3>
+ <h3 class="text-sm font-bold text-white">Inversión total</h3>
  <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Histórico</p>
  </div>
  </div>
@@ -210,8 +210,8 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">receipt_long</span>
  </div>
  <div>
- <h3 class="text-sm font-bold text-white">Ticket Promedio</h3>
- <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Por Cotización</p>
+ <h3 class="text-sm font-bold text-white">Ticket promedio</h3>
+ <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Por cotización</p>
  </div>
  </div>
  <p class="text-4xl font-extrabold text-white relative z-10">$<?= number_format($ticket_promedio, 2) ?></p>
@@ -226,7 +226,7 @@ include('Includes/sidebar.php');
  </div>
  <div>
  <h3 class="text-sm font-bold text-white">Efectividad</h3>
- <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Tasa de Aprobación</p>
+ <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Tasa de aprobación</p>
  </div>
  </div>
  <div class="flex items-end gap-3 relative z-10">
@@ -236,8 +236,8 @@ include('Includes/sidebar.php');
  </div>
  </div>
  <div class="flex gap-4 mt-3 text-[10px] text-on-surface-variant font-bold relative z-10">
- <span class="text-tertiary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span> <?= $pedidos_exitosos ?> Aprobados</span>
- <span class="text-primary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> <?= $pedidos_pendientes ?> Pendientes</span>
+ <span class="text-tertiary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span> <?= $pedidos_exitosos ?> aprobados</span>
+ <span class="text-primary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> <?= $pedidos_pendientes ?> pendientes</span>
  </div>
  </div>
 

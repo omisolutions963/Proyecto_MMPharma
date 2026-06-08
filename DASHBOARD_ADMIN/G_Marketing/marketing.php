@@ -9,7 +9,7 @@ require_once '../clinical_core/db.php';
 $pdo = getDB();
 
 $activePage = 'marketing';
-$pageTitle = "Marketing & Comunicación | MMPharma Admin";
+$pageTitle = "Marketing | MMPharma Admin";
 
 // 1. Fetch Banners
 $stmt = $pdo->query("SELECT * FROM admin_banners_promocionales ORDER BY orden ASC");
@@ -37,7 +37,7 @@ include("../Includes/sidebar.php");
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Marketing</span>
  </nav>
- <h1 class="text-3xl font-extrabold text-on-surface tracking-tight animate-reveal">Marketing & Comunicación</h1>
+ <h1 class="text-3xl font-extrabold text-on-surface tracking-tight animate-reveal">Marketing</h1>
  <p class="text-on-surface-variant text-sm mt-1 animate-reveal delay-100">Gestiona banners promocionales y notificaciones directas a clientes.</p>
  </div>
  </div>
@@ -49,7 +49,7 @@ include("../Includes/sidebar.php");
  <div class="flex items-center justify-between mb-6">
  <h2 class="text-xl font-bold text-on-surface flex items-center gap-2">
  <span class="material-symbols-outlined text-primary">ads_click</span>
- Banners del Dashboard
+ Banners del dashboard
  </h2>
  <button onclick="abrirModalBanner()" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
  <span class="material-symbols-outlined text-[18px]">add</span> Nuevo banner
@@ -84,14 +84,14 @@ include("../Includes/sidebar.php");
  <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-2xl p-8 animate-reveal" style="animation-delay: 0.3s">
  <h2 class="text-xl font-bold text-on-surface flex items-center gap-2 mb-6">
  <span class="material-symbols-outlined text-primary">send</span>
- Enviar Notificación
+ Enviar notificación
  </h2>
 
  <form id="formNotif" class="space-y-6">
  <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Seleccionar Cliente</label>
+ <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Seleccionar cliente</label>
  <select name="cliente_id" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
- <option value="0">--- Seleccionar Cliente ---</option>
+ <option value="0">--- Seleccionar cliente ---</option>
  <?php foreach($clientes as $c): ?>
  <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['razon_social']) ?></option>
  <?php endforeach; ?>
@@ -99,7 +99,7 @@ include("../Includes/sidebar.php");
  </div>
 
  <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de Alerta</label>
+ <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de alerta</label>
  <div class="grid grid-cols-3 gap-3">
  <label class="cursor-pointer">
  <input type="radio" name="tipo" value="INFO" checked class="hidden peer">
@@ -131,7 +131,7 @@ include("../Includes/sidebar.php");
  <div class="xl:col-span-2 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl p-8 mt-8 animate-reveal" style="animation-delay: 0.4s">
  <h2 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
  <span class="material-symbols-outlined text-primary">history</span>
- Historial Reciente
+ Historial reciente
  </h2>
  <div class="overflow-hidden rounded-2xl border border-outline-variant/10">
  <table class="w-full text-left border-collapse">
@@ -195,7 +195,7 @@ include("../Includes/sidebar.php");
 
  function abrirModalBanner() {
  Swal.fire({
- title: 'Nuevo Banner',
+ title: 'Nuevo banner',
  html: `
  <div class="space-y-4 text-left p-2">
  <div>
@@ -207,12 +207,12 @@ include("../Includes/sidebar.php");
  <input type="text" id="b_url" class="w-full bg-surface border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-white outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
  </div>
  <div>
- <label class="text-[10px] font-bold text-primary uppercase">Imagen del Banner</label>
+ <label class="text-[10px] font-bold text-primary uppercase">Imagen del banner</label>
  <input type="file" id="b_file" class="w-full mt-2 text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30">
  </div>
  </div>
  `,
- confirmButtonText: 'Publicar Banner',
+ confirmButtonText: 'Publicar banner',
  showCancelButton: true,
  cancelButtonText: 'Cancelar',
  background: '#0d1f3c',

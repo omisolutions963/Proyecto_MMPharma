@@ -33,7 +33,7 @@ include('Includes/sidebar.php');
  <!-- Header -->
  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 animate-reveal">
  <div>
- <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Mis Direcciones</h1>
+ <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Mis direcciones</h1>
  <p class="text-on-surface-variant text-sm">Gestiona las ubicaciones donde recibirás tus pedidos.</p>
  </div>
  <button class="mt-4 md:mt-0 px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
@@ -113,7 +113,7 @@ include('Includes/sidebar.php');
  <p class="text-sm text-on-surface-variant mb-2">Agrega una dirección principal para poder recibir tus pedidos.</p>
  <p class="text-sm text-error font-bold mb-6 flex items-center gap-1.5 bg-error/10 px-3 py-1.5 rounded-lg border border-error/20"><span class="material-symbols-outlined text-[18px]">warning</span> Se requiere una dirección para poder cotizar</p>
  <button class="px-6 py-2 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all " onclick="abrirModalDireccion()">
- Agregar Dirección
+ Agregar dirección
  </button>
  </div>
  <?php endif; ?>
@@ -127,7 +127,7 @@ include('Includes/sidebar.php');
  <div class="bg-surface rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 relative">
  <div class="sticky top-0 bg-surface/95 backdrop-blur-md px-8 py-6 border-b border-outline-variant/20 flex justify-between items-center z-10">
  <h2 id="modalTitle" class="text-xl font-bold text-on-surface flex items-center gap-2">
- <span class="material-symbols-outlined text-primary">location_on</span> Agregar Nueva Dirección
+ <span class="material-symbols-outlined text-primary">location_on</span> Agregar nueva dirección
  </h2>
  <button class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors" onclick="cerrarModalDireccion()">
  <span class="material-symbols-outlined text-[20px]">close</span>
@@ -170,7 +170,7 @@ include('Includes/sidebar.php');
  </div>
  
  <div>
- <label class="block text-xs font-bold text-on-surface-variant mb-1.5 uppercase tracking-wide">Código Postal <span class="text-error">*</span></label>
+ <label class="block text-xs font-bold text-on-surface-variant mb-1.5 uppercase tracking-wide">Código postal <span class="text-error">*</span></label>
  <input type="text" name="cp" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface" required>
  </div>
  
@@ -212,7 +212,7 @@ include('Includes/sidebar.php');
  </div>
  
  <div>
- <label class="block text-xs font-bold text-on-surface-variant mb-1.5 uppercase tracking-wide">Delegación / Municipio <span class="text-error">*</span></label>
+ <label class="block text-xs font-bold text-on-surface-variant mb-1.5 uppercase tracking-wide">Delegación / municipio <span class="text-error">*</span></label>
  <input type="text" name="municipio" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface" required>
  </div>
  
@@ -267,7 +267,7 @@ include('Includes/sidebar.php');
  <div class="pt-6 border-t border-outline-variant/20 flex gap-4">
  <button type="button" class="flex-1 py-3 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold rounded-xl transition-colors" onclick="cerrarModalDireccion()">Cancelar</button>
  <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-fixed-dim text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
- <span class="material-symbols-outlined text-[18px]">save</span> Guardar Dirección
+ <span class="material-symbols-outlined text-[18px]">save</span> Guardar dirección
  </button>
  </div>
  </form>
@@ -290,7 +290,7 @@ include('Includes/sidebar.php');
  setTimeout(() => modalDireccion.classList.add('hidden'), 300);
  document.getElementById('formDireccion').reset();
  document.getElementById('direccion_id_input').value = '';
- document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined text-primary">location_on</span> Agregar Nueva Dirección';
+ document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined text-primary">location_on</span> Agregar nueva dirección';
  latInput.value = '';
  lngInput.value = '';
  geoToggle.checked = false;
@@ -358,7 +358,7 @@ include('Includes/sidebar.php');
     
     geoToggle.checked = !!(dir.latitud && dir.longitud);
 
-    document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined text-primary">edit</span> Editar Dirección';
+    document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined text-primary">edit</span> Editar dirección';
 
     abrirModalDireccion();
  }

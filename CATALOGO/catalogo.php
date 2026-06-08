@@ -127,74 +127,109 @@ require_once '../includes/header.php';
 
 
 <!-- ═══ FILTROS Y BUSCADOR ═══ -->
-<section class="w-full bg-tertiary py-4 md:py-6 z-30 <?= $is_logged_in ? 'sticky top-[56px] md:top-[72px]' : 'pointer-events-none opacity-60' ?>">
+<section class="w-full bg-tertiary py-5 md:py-7 z-30 <?= $is_logged_in ? 'sticky top-[64px] md:top-[72px]' : 'pointer-events-none opacity-60' ?>">
  <div class="max-w-[1369px] mx-auto px-4 lg:px-12" data-aos="fade" data-aos-delay="200">
- <form method="GET" action="catalogo.php" class="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-3 items-stretch lg:items-center">
+  <form method="GET" action="catalogo.php" class="flex flex-col gap-3 relative">
+    <!-- Fila Superior: Buscador, Botón Filtros, Botón Buscar, Vista -->
+    <div class="flex flex-wrap lg:flex-nowrap gap-2 items-center w-full">
+      <!-- Buscador -->
+      <div class="relative flex-1 min-w-[200px] group">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary">search</span>
+        <input
+          type="text"
+          name="q"
+          value="<?= htmlspecialchars($busqueda) ?>"
+          placeholder="Buscar producto..."
+          class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-0 text-slate-800 placeholder-slate-400 text-sm focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+        >
+      </div>
 
- <!-- Buscador -->
- <div class="relative sm:col-span-2 lg:flex-1 group">
- <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg transition-colors group-focus-within:text-primary">search</span>
- <input
- type="text"
- name="q"
- value="<?= htmlspecialchars($busqueda) ?>"
- placeholder="Buscar producto..."
- class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-0 text-slate-800 placeholder-slate-400 text-sm focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none transition-all"
- >
- </div>
+      <!-- Botón Filtros -->
+      <button type="button" id="btn-toggle-filtros" onclick="toggleFiltros()" class="h-11 px-3.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0">
+        <span class="material-symbols-outlined text-[20px]">tune</span>
+        <span class="hidden sm:inline text-xs">Filtros</span>
+        <?php 
+        $filtros_activos = ($tipo !== '' || $categoria_id > 0 || $orden !== 'nombre_asc');
+        if ($filtros_activos): ?>
+          <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        <?php endif; ?>
+      </button>
 
- <!-- Filtro Categoría -->
- <select name="cat" class="sm:col-span-1 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
- <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas las categorías</option>
- <?php foreach($categorias_db as $c): ?>
- <option value="<?= $c['id'] ?>" <?= $categoria_id === $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['nombre']) ?></option>
- <?php endforeach; ?>
- <?php if ($cat_otros): ?>
- <option value="<?= $cat_otros['id'] ?>" <?= $categoria_id === $cat_otros['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat_otros['nombre']) ?></option>
- <?php endif; ?>
- </select>
+      <!-- Botón Buscar -->
+      <button type="submit" class="h-11 bg-primary text-white px-3.5 sm:px-4 lg:px-6 py-0 rounded-xl text-sm font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0">
+        <span class="material-symbols-outlined text-lg">search</span>
+        <span class="hidden sm:inline">Buscar</span>
+      </button>
 
- <!-- Filtro tipo -->
- <select name="tipo" class="sm:col-span-1 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
- <option value="" <?= $tipo === '' ? 'selected' : '' ?>>Todos los tipos</option>
- <option value="seco" <?= $tipo === 'seco' ? 'selected' : '' ?>>Seco</option>
- <option value="red_fria" <?= $tipo === 'red_fria' ? 'selected' : '' ?>>Red Fría</option>
- </select>
+      <!-- Toggle vista -->
+      <div class="hidden lg:flex gap-1 h-11 bg-slate-100 rounded-xl p-1 border border-slate-200 shrink-0">
+        <button type="button" id="btn-lista" onclick="setVista('lista')"
+          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa" title="Vista lista">
+          <span class="material-symbols-outlined text-lg">view_list</span>
+        </button>
+        <button type="button" id="btn-grid" onclick="setVista('grid')"
+          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn" title="Vista cuadrícula">
+          <span class="material-symbols-outlined text-lg">grid_view</span>
+        </button>
+      </div>
+    </div>
 
- <!-- Ordenar -->
- <select name="orden" class="sm:col-span-2 lg:w-auto h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
- <option value="nombre_asc" <?= $orden === 'nombre_asc' ? 'selected' : '' ?>>Nombre A-Z</option>
- <option value="nombre_desc" <?= $orden === 'nombre_desc' ? 'selected' : '' ?>>Nombre Z-A</option>
- <option value="precio_asc" <?= $orden === 'precio_asc' ? 'selected' : '' ?>>Precio: menor a mayor</option>
- <option value="precio_desc" <?= $orden === 'precio_desc' ? 'selected' : '' ?>>Precio: mayor a menor</option>
- </select>
+    <!-- Panel de Filtros Secundarios (Flotante) -->
+    <div id="panel-filtros-secundarios" class="flex flex-col gap-3 w-full absolute left-0 right-0 lg:left-auto lg:right-0 lg:w-[600px] top-[calc(100%+12px)] z-50 bg-white p-4 rounded-2xl border border-slate-200/60 shadow-xl mt-1">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full items-stretch">
+        
+        <!-- Filtro Categoría -->
+        <div class="flex flex-col gap-1">
+          <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Categoría</span>
+          <select name="cat" class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+            <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas las categorías</option>
+            <?php foreach($categorias_db as $c): ?>
+              <option value="<?= $c['id'] ?>" <?= $categoria_id === $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['nombre']) ?></option>
+            <?php endforeach; ?>
+            <?php if ($cat_otros): ?>
+              <option value="<?= $cat_otros['id'] ?>" <?= $categoria_id === $cat_otros['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat_otros['nombre']) ?></option>
+            <?php endif; ?>
+          </select>
+        </div>
 
- <!-- Botón buscar -->
- <button type="submit" class="sm:col-span-2 lg:w-auto h-11 bg-primary text-white px-6 py-0 rounded-xl text-sm font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 whitespace-nowrap">
- <span class="material-symbols-outlined text-lg">search</span>
- Buscar
- </button>
+        <!-- Filtro tipo -->
+        <div class="flex flex-col gap-1">
+          <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Conservación</span>
+          <select name="tipo" class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+            <option value="" <?= $tipo === '' ? 'selected' : '' ?>>Todos los tipos</option>
+            <option value="seco" <?= $tipo === 'seco' ? 'selected' : '' ?>>Seco</option>
+            <option value="red_fria" <?= $tipo === 'red_fria' ? 'selected' : '' ?>>Red Fría</option>
+          </select>
+        </div>
 
- <!-- Limpiar filtros -->
- <?php if ($busqueda || $tipo || $categoria_id > 0 || $orden !== 'nombre_asc'): ?>
- <a href="catalogo.php" class="w-11 h-11 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all flex items-center justify-center border border-slate-200" title="Limpiar filtros">
- <span class="material-symbols-outlined text-lg">refresh</span>
- </a>
- <?php endif; ?>
+        <!-- Ordenar -->
+        <div class="flex flex-col gap-1">
+          <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 px-1">Ordenar por</span>
+          <select name="orden" class="w-full h-11 bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-0 text-sm text-slate-700 font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 outline-none appearance-none cursor-pointer truncate" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22none%22><path stroke=%22%2394a3b8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M6 8l4 4 4-4%22/></svg>');background-repeat:no-repeat;background-position:right 0.75rem center;background-size:1.1em;">
+            <option value="nombre_asc" <?= $orden === 'nombre_asc' ? 'selected' : '' ?>>Nombre A-Z</option>
+            <option value="nombre_desc" <?= $orden === 'nombre_desc' ? 'selected' : '' ?>>Nombre Z-A</option>
+            <option value="precio_asc" <?= $orden === 'precio_asc' ? 'selected' : '' ?>>Precio: menor a mayor</option>
+            <option value="precio_desc" <?= $orden === 'precio_desc' ? 'selected' : '' ?>>Precio: mayor a menor</option>
+          </select>
+        </div>
 
- <!-- Toggle vista -->
- <div class="flex gap-1 h-11 bg-slate-100 rounded-xl p-1 border border-slate-200">
- <button type="button" id="btn-lista" onclick="setVista('lista')"
- class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa">
- <span class="material-symbols-outlined text-lg">view_list</span>
- </button>
- <button type="button" id="btn-grid" onclick="setVista('grid')"
- class="flex-1 w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn">
- <span class="material-symbols-outlined text-lg">grid_view</span>
- </button>
- </div>
+        <!-- Acciones de Filtros -->
+        <div class="flex gap-2 w-full sm:col-span-3 items-center mt-2 border-t border-slate-100 pt-3">
+          <?php if ($busqueda || $tipo || $categoria_id > 0 || $orden !== 'nombre_asc'): ?>
+            <a href="catalogo.php" class="flex-1 h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-slate-200" title="Limpiar filtros">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+              Limpiar filtros
+            </a>
+          <?php endif; ?>
+          <button type="submit" class="flex-1 h-11 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-sm">done</span>
+            Aplicar filtros
+          </button>
+        </div>
 
- </form>
+      </div>
+    </div>
+  </form>
  </div>
 </section>
 
@@ -284,8 +319,32 @@ let paginaActual = 1;
 let cargando = false;
 let finDeCatalogo = false;
 let vistaActual = localStorage.getItem('mm_vista') || 'lista';
+if (window.innerWidth < 1024) {
+  vistaActual = 'grid';
+}
+
+function toggleFiltros() {
+  const panel = document.getElementById('panel-filtros-secundarios');
+  const btn = document.getElementById('btn-toggle-filtros');
+  panel.classList.toggle('show');
+  btn.classList.toggle('bg-slate-100');
+}
+
+// Cerrar filtros al hacer click fuera
+document.addEventListener('click', function(event) {
+  const panel = document.getElementById('panel-filtros-secundarios');
+  const btn = document.getElementById('btn-toggle-filtros');
+  if (panel && btn && !panel.contains(event.target) && !btn.contains(event.target)) {
+    panel.classList.remove('show');
+    btn.classList.remove('bg-slate-100');
+  }
+});
+
 
 function setVista(v) {
+ if (window.innerWidth < 1024) {
+  v = 'grid';
+ }
  vistaActual = v;
  const lista = document.getElementById('vista-lista');
  const grid = document.getElementById('vista-grid');
@@ -310,6 +369,14 @@ function setVista(v) {
 
 // Inicializar vista
 setVista(vistaActual);
+
+// Listener para forzar grid si se redimensiona a móvil
+window.addEventListener('resize', () => {
+  if (window.innerWidth < 1024 && vistaActual !== 'grid') {
+    setVista('grid');
+  }
+});
+
 
 async function cargarMasProductos() {
  if (cargando || finDeCatalogo) return;
@@ -358,6 +425,26 @@ if (trigger) {
 <style>
  .vista-btn { color: #94a3b8; }
  .vista-btn.activa { background: #003e79 !important; color: white !important; }
+ 
+ /* Animación de filtros en móvil y escritorio (flotante) */
+ #panel-filtros-secundarios {
+   display: flex !important;
+   opacity: 0;
+   transform: translateY(8px) scale(0.95);
+   pointer-events: none;
+   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+   transform-origin: top center;
+ }
+ #panel-filtros-secundarios.show {
+   opacity: 1 !important;
+   transform: translateY(0) scale(1) !important;
+   pointer-events: auto !important;
+ }
+ @media (min-width: 1024px) {
+   #panel-filtros-secundarios {
+     transform-origin: top right;
+   }
+ }
 </style>
 
 <?php require_once '../includes/footer.php'; ?>

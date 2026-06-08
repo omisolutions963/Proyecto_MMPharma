@@ -18,8 +18,8 @@ $menuLinks = [
 ?>
 
 <!-- SideNavBar -->
-<aside style="background:linear-gradient(180deg,#001a3d 0%,#002451 60%,#001830 100%)"
- class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50">
+<aside id="userSidebar" style="background:linear-gradient(180deg,#001a3d 0%,#002451 60%,#001830 100%)"
+ class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
  <!-- Logo -->
  <div class="mb-8 px-4">
@@ -63,26 +63,8 @@ $menuLinks = [
  <span class="material-symbols-outlined text-base">logout</span>
  Cerrar sesión
  </a>
-        <a href="Perfil.php" class="flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 hover:border-white/20 mt-2 cursor-pointer group relative">
-            <?php $fotoSide = $_SESSION['cliente_foto'] ?? ''; ?>
-            <?php if ($fotoSide): ?>
-                <img src="<?= htmlspecialchars($fotoSide) ?>"
-                     class="w-10 h-10 rounded-xl object-cover border-2 border-blue-400/40 flex-shrink-0"
-                     alt="Perfil">
-            <?php else: ?>
-                <div class="w-10 h-10 rounded-xl border border-blue-400/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-                     style="background:rgba(74,144,217,0.25)">
-                    <?= strtoupper(substr($_SESSION['cliente_nombre'] ?? 'C', 0, 1)) ?>
-                </div>
-            <?php endif; ?>
-            <div class="overflow-hidden flex-1">
-                <p class="text-white text-sm font-semibold truncate group-hover:text-blue-300 transition-colors">
-                    <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>
-                </p>
-                <p class="text-blue-400/50 text-[10px] uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                    <span class="material-symbols-outlined text-[12px]">manage_accounts</span> Mi Perfil
-                </p>
-            </div>
-            <span class="material-symbols-outlined text-white/30 group-hover:text-blue-300 absolute right-3 transition-colors">chevron_right</span>
-        </a>
+ </div>
 </aside>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div id="userSidebarOverlay" onclick="toggleUserSidebar()" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 lg:hidden"></div>

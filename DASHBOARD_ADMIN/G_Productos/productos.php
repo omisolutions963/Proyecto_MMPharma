@@ -163,7 +163,7 @@ include("../Includes/sidebar.php");
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Inventario</span>
  </nav>
- <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Inventario</h2>
+ <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de inventario</h2>
  <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
  </div>
  <div class="flex gap-3">
@@ -207,9 +207,9 @@ include("../Includes/sidebar.php");
  <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none "/>
  </div>
  <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
- <option value="">Todos los Tipos</option>
- <option value="SECO" <?= $tipo==='SECO'?'selected':'' ?>>Cadena Seca</option>
- <option value="RED FRIA" <?= $tipo==='RED FRIA'?'selected':'' ?>>Red Fría</option>
+ <option value="">Todos los tipos</option>
+ <option value="SECO" <?= $tipo==='SECO'?'selected':'' ?>>Cadena seca</option>
+ <option value="RED FRIA" <?= $tipo==='RED FRIA'?'selected':'' ?>>Red fría</option>
  </select>
  <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-opacity ">Filtrar</button>
 </form>
@@ -303,7 +303,7 @@ include("../Includes/sidebar.php");
  <div onclick="cerrarModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
  <div id="modalPanel" class="absolute right-0 top-0 h-full w-full max-w-2xl bg-surface transition-transform duration-300 translate-x-full flex flex-col">
  <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
- <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo Producto</h3>
+ <h3 id="modalTitle" class="text-xl font-black text-on-surface tracking-tight">Nuevo producto</h3>
  <p class="text-on-surface-variant text-xs mt-1">Registra o actualiza la información del catálogo.</p>
  </div>
  <form method="POST" class="flex-1 overflow-y-auto p-8 space-y-6">
@@ -318,7 +318,7 @@ include("../Includes/sidebar.php");
  <img id="previewModal" class="w-full h-full object-cover hidden">
  <div id="placeholderModal" class="flex flex-col items-center text-on-surface-variant/40">
  <span class="material-symbols-outlined text-3xl">add_a_photo</span>
- <span class="text-[10px] font-bold mt-1 uppercase">Subir Foto</span>
+ <span class="text-[10px] font-bold mt-1 uppercase">Subir foto</span>
  </div>
  <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
  <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
@@ -330,7 +330,7 @@ include("../Includes/sidebar.php");
  <div class="space-y-4">
  <div class="grid grid-cols-2 gap-4">
  <div class="col-span-2">
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre del Producto</label>
+ <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre del producto</label>
  <input type="text" name="nombre" id="prod_nombre" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
  </div>
  <div>
@@ -350,8 +350,8 @@ include("../Includes/sidebar.php");
   <div>
   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo</label>
   <select name="tipo" id="prod_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
-  <option value="SECO">Cadena Seca</option>
-  <option value="RED FRIA">Red Fría</option>
+  <option value="SECO">Cadena seca</option>
+  <option value="RED FRIA">Red fría</option>
   </select>
   </div>
   </div>
@@ -372,13 +372,13 @@ include("../Includes/sidebar.php");
  </div>
  <div class="grid grid-cols-2 gap-4">
   <div>
-  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en Inventario</label>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en inventario</label>
   <input type="number" name="stock" id="prod_stock" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm font-bold text-primary focus:ring-2 focus:ring-primary outline-none">
   </div>
   <div class="bg-error/5 border border-error/20 p-3 rounded-xl">
   <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-error mb-2 cursor-pointer">
   <input type="checkbox" name="en_promocion" id="prod_promo" value="1" class="rounded border-error/50 text-error focus:ring-error w-4 h-4 bg-transparent cursor-pointer">
-  Destacar en Promoción
+  Destacar en promoción
   </label>
  <div class="flex flex-col gap-2">
  <div class="flex items-center gap-2">
@@ -413,7 +413,7 @@ include("../Includes/sidebar.php");
  <div class="bg-surface w-full max-w-lg rounded-3xl overflow-hidden border border-white/10">
  <div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center">
  <h3 class="text-on-surface font-bold flex items-center gap-2">
- <span class="material-symbols-outlined text-primary">crop</span> Recortar Foto del Producto
+ <span class="material-symbols-outlined text-primary">crop</span> Recortar foto del producto
  </h3>
  <button onclick="cerrarCropper()" class="text-on-surface-variant hover:text-white"><span class="material-symbols-outlined">close</span></button>
  </div>
@@ -423,7 +423,7 @@ include("../Includes/sidebar.php");
  </div>
  <div class="flex gap-3">
  <button onclick="cerrarCropper()" class="flex-1 py-3 rounded-xl font-bold text-on-surface-variant bg-surface-container-low">Cancelar</button>
- <button id="btnConfirmarRecorte" class="flex-1 py-3 rounded-xl font-bold text-white bg-primary">Aplicar Recorte</button>
+ <button id="btnConfirmarRecorte" class="flex-1 py-3 rounded-xl font-bold text-white bg-primary">Aplicar recorte</button>
  </div>
  </div>
  </div>
@@ -483,7 +483,7 @@ document.getElementById('btnConfirmarRecorte').addEventListener('click', () => {
 function cerrarCropper() { document.getElementById('cropperModal').classList.add('hidden'); if(cropper) cropper.destroy(); }
 
 function abrirModal() {
- document.getElementById('modalTitle').textContent = "Nuevo Producto";
+ document.getElementById('modalTitle').textContent = "Nuevo producto";
  document.getElementById('prod_id').value = "0";
  document.getElementById('foto_base64').value = "";
  document.getElementById('previewModal').classList.add('hidden');
@@ -504,7 +504,7 @@ function abrirModal() {
 }
 
 function abrirEditar(p) {
- document.getElementById('modalTitle').textContent = "Editar Producto";
+ document.getElementById('modalTitle').textContent = "Editar producto";
  document.getElementById('prod_id').value = p.id;
  document.getElementById('foto_base64').value = "";
  if (p.imagen) {

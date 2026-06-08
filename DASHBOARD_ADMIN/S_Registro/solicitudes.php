@@ -2,20 +2,147 @@
 require_once '../clinical_core/db.php';
 $pdo = getDB();
 
+function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_cliente) {
+    $url_login = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Proyecto_MMPharma/LOGIN/login.php';
+    $asunto = "¡Bienvenido a MMPharma! Tu cuenta ha sido activada";
+    $headers = implode("\r\n", [
+        'From: MMPharma Portal <noreply@mmpharma.com>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+    ]);
+    
+    $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
+  <div style="background:#002451;padding:24px 32px;text-align:center">
+    <h1 style="margin:0;color:#fff;font-size:22px">🎉 ¡Tu cuenta ha sido activada!</h1>
+    <p style="margin:6px 0 0;color:#8baed4;font-size:14px">Bienvenido a MMPharma Clinical Systems</p>
+  </div>
+  <div style="padding:32px;color:#333;line-height:1.6">
+    <p style="font-size:16px;font-weight:bold;color:#002451;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
+    <p>Nos complace informarte que tu solicitud de registro ha sido aprobada con éxito. A partir de este momento, ya tienes acceso completo a nuestro catálogo de productos con precios personalizados para tu nivel de cliente.</p>
+    
+    <div style="background:#f0f5ff;border-radius:8px;padding:20px;margin:24px 0">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr>
+          <td style="padding:6px 0;color:#666;width:120px;font-weight:bold">Usuario/Email:</td>
+          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($email_cliente) . '</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#666;font-weight:bold">Nivel de Cliente:</td>
+          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($tipo_cliente) . '</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#666;font-weight:bold">Contraseña Temporal:</td>
+          <td style="color:#002451;font-weight:bold">cliente123</td>
+        </tr>
+      </table>
+    </div>
+    
+    <p>Puedes iniciar sesión en el portal utilizando tus credenciales registradas haciendo clic en el siguiente botón:</p>
+    
+    <div style="text-align:center;margin:32px 0 16px">
+      <a href="' . htmlspecialchars($url_login) . '"
+         style="display:inline-block;background:#002451;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,36,81,0.2)">
+        Iniciar Sesión en el Portal
+      </a>
+    </div>
+    
+    <p style="font-size:12px;color:#777;margin-top:40px;border-top:1px solid #eee;padding-top:20px">
+      Si tienes alguna duda o requieres asistencia adicional, no dudes en ponerte en contacto con nuestro equipo de atención a clientes.
+    </p>
+  </div>
+  <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
+    &copy; ' . date('Y') . ' MMPharma. Todos los derechos reservados.
+  </div>
+</div>
+</body></html>';
+    
+    @mail($email_cliente, $asunto, $html, $headers);
+}
+
 // ── Acción: Aprobar / Rechazar ────────────────────────────────────────────────
 $msgFlash = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id'])) {
- $id = (int)$_POST['id'];
- $action = $_POST['action'];
- if ($action === 'aprobar') {
- $pdo->prepare("UPDATE clientes_solicitudes_registro SET estatus='APROBADA' WHERE id=?")->execute([$id]);
- $msgFlash = 'aprobada';
- } elseif ($action === 'rechazar') {
- $pdo->prepare("UPDATE clientes_solicitudes_registro SET estatus='RECHAZADA' WHERE id=?")->execute([$id]);
- $msgFlash = 'rechazada';
- }
- header("Location: solicitudes.php?msg=$msgFlash");
- exit;
+  $id = (int)$_POST['id'];
+  $action = $_POST['action'];
+  if ($action === 'aprobar') {
+      // Obtener solicitud
+      $stmt = $pdo->prepare("SELECT * FROM clientes_solicitudes_registro WHERE id = ?");
+      $stmt->execute([$id]);
+      $sol = $stmt->fetch(PDO::FETCH_ASSOC);
+      
+      if ($sol) {
+          // Verificar duplicado de email
+          $checkUser = $pdo->prepare("SELECT COUNT(*) FROM clientes_usuarios WHERE email = ?");
+          $checkUser->execute([$sol['email']]);
+          if ($checkUser->fetchColumn() == 0) {
+              // Crear cuenta activa
+              $password_hash = password_hash('cliente123', PASSWORD_DEFAULT);
+              $stmtInsert = $pdo->prepare("
+                  INSERT INTO clientes_usuarios (
+                      tipo, razon_social, nombre_comercial, rfc, regimen_fiscal, 
+                      domicilio_fiscal, colonia_fiscal, cp_fiscal, ciudad_fiscal, estado_fiscal, 
+                      representante_legal, giro, persona_contacto, volumen_mensual, 
+                      telefono_local, telefono_celular, email, password_hash, documento_tipo, 
+                      metodo_pago, uso_cfdi, domicilio_entrega, colonia_entrega, 
+                      cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega, 
+                      receptor_entrega, horario_entrega, estatus
+                  ) VALUES (
+                      ?, ?, ?, ?, ?, 
+                      ?, ?, ?, ?, ?, 
+                      ?, ?, ?, ?, 
+                      ?, ?, ?, ?, ?, 
+                      ?, ?, ?, ?, 
+                      ?, ?, ?, ?, 
+                      ?, ?, 'ACTIVO'
+                  )
+              ");
+              
+              $stmtInsert->execute([
+                  $sol['tipo_cliente'],
+                  $sol['razon_social'],
+                  $sol['nombre_comercial'],
+                  $sol['rfc'],
+                  $sol['regimen_fiscal'],
+                  $sol['domicilio_fiscal'],
+                  $sol['colonia'],
+                  $sol['cp'],
+                  $sol['ciudad'],
+                  $sol['estado'],
+                  $sol['representante'],
+                  $sol['giro'],
+                  $sol['persona_contacto'],
+                  $sol['volumen_mensual'],
+                  $sol['telefono_local'],
+                  $sol['telefono_celular'],
+                  $sol['email'],
+                  $password_hash,
+                  $sol['documento_tipo'],
+                  $sol['metodo_pago'],
+                  $sol['uso_cfdi'],
+                  $sol['domicilio_entrega'],
+                  $sol['colonia_entrega'],
+                  $sol['cp_entrega'],
+                  $sol['ciudad_entrega'],
+                  $sol['municipio_entrega'],
+                  $sol['estado_entrega'],
+                  $sol['receptor_entrega'],
+                  $sol['horario_entrega']
+              ]);
+              
+              // Correo de bienvenida
+              enviarCorreoBienvenidaLocal($sol['email'], $sol['razon_social'], $sol['tipo_cliente']);
+          }
+          
+          $pdo->prepare("UPDATE clientes_solicitudes_registro SET estatus='APROBADA' WHERE id=?")->execute([$id]);
+          $msgFlash = 'aprobada';
+      }
+  } elseif ($action === 'rechazar') {
+      $pdo->prepare("UPDATE clientes_solicitudes_registro SET estatus='RECHAZADA' WHERE id=?")->execute([$id]);
+      $msgFlash = 'rechazada';
+  }
+  header("Location: solicitudes.php?msg=$msgFlash");
+  exit;
 }
 $msgFlash = $_GET['msg'] ?? '';
 
@@ -31,7 +158,7 @@ $solicitudes = $pdo->query(
  "SELECT * FROM clientes_solicitudes_registro $where ORDER BY created_at DESC LIMIT 50"
 )->fetchAll();
 
-$pageTitle = 'MMPharma Portal - Solicitudes de Registro';
+$pageTitle = 'MMPharma Portal - Solicitudes de registro';
 $activePage = 'solicitudes';
 include('../Includes/header.php');
 include('../Includes/sidebar.php');
@@ -56,7 +183,7 @@ include('../Includes/sidebar.php');
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Solicitudes</span>
  </nav>
- <h2 class="text-3xl font-extrabold tracking-tight text-on-surface animate-reveal">Solicitudes de Registro</h2>
+ <h2 class="text-3xl font-extrabold tracking-tight text-on-surface animate-reveal">Solicitudes de registro</h2>
  <p class="text-on-surface-variant text-sm mt-1">Solicitudes enviadas desde el sitio público.</p>
  </div>
  <div class="flex gap-2 flex-wrap bg-surface-container-low p-1.5 rounded-2xl">
@@ -99,9 +226,9 @@ include('../Includes/sidebar.php');
  <thead>
  <tr class="bg-surface-container-low text-on-surface-variant text-[10px] font-black uppercase tracking-widest">
  <th class="px-8 py-4 text-center">Solicitante / RFC</th>
- <th class="px-8 py-4 text-center">Tipo Cliente</th>
+ <th class="px-8 py-4 text-center">Tipo cliente</th>
  <th class="px-8 py-4 text-center">Contacto</th>
- <th class="px-8 py-4 text-center">Fecha Envío</th>
+ <th class="px-8 py-4 text-center">Fecha envío</th>
  <th class="px-8 py-4 text-center">Estatus</th>
  <th class="px-8 py-4 text-center">Acciones</th>
  </tr>

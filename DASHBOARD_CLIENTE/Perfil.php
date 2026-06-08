@@ -37,7 +37,7 @@ include('Includes/sidebar.php');
     
     <!-- Header -->
     <div class="mb-6 animate-reveal">
-        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi Perfil</h1>
+        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi perfil</h1>
     </div>
 
     <!-- Hero Profile Card -->
@@ -72,11 +72,11 @@ include('Includes/sidebar.php');
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
                     <?php if ($estatus === 'ACTIVO'): ?>
                         <span class="px-3 py-1.5 bg-tertiary/20 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">verified</span> Cuenta Activa
+                            <span class="material-symbols-outlined text-[14px]">verified</span> Cuenta activa
                         </span>
                     <?php else: ?>
                         <span class="px-3 py-1.5 bg-error/20 border border-error/30 text-error text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">warning</span> Docs Pendientes
+                            <span class="material-symbols-outlined text-[14px]">warning</span> Docs pendientes
                         </span>
                     <?php endif; ?>
                 </div>
@@ -84,7 +84,7 @@ include('Includes/sidebar.php');
 
             <!-- Actions -->
             <div class="flex flex-col gap-3 mt-4 md:mt-auto self-stretch md:self-end">
-                <a href="Documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver Documentos</a>
+                <a href="Documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver documentos</a>
             </div>
         </div>
     </div>
@@ -99,14 +99,14 @@ include('Includes/sidebar.php');
             <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
                 <div class="flex items-center justify-between mb-8">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">person</span> Datos Generales
+                        <span class="material-symbols-outlined text-primary">person</span> Datos generales
                     </h3>
-                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center gap-2 border-none cursor-pointer"><span class="material-symbols-outlined text-[18px]">save</span> Guardar Cambios</button>
+                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center gap-2 border-none cursor-pointer"><span class="material-symbols-outlined text-[18px]">save</span> Guardar cambios</button>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Razón Social</label>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Razón social</label>
                         <input type="text" name="razon_social" value="<?= $nombre ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
                     </div>
                     <div>
@@ -114,15 +114,15 @@ include('Includes/sidebar.php');
                         <input type="text" name="rfc" value="<?= $rfc ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Email Profesional</label>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Email profesional</label>
                         <input type="email" name="email" value="<?= $email ?>" required class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Teléfono Celular</label>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Teléfono celular</label>
                         <input type="text" name="telefono_celular" value="<?= $telefono ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Régimen Fiscal</label>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Régimen fiscal</label>
                         <input type="text" name="regimen_fiscal" value="<?= $regimen ?>" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all">
                     </div>
                 </div>
@@ -131,13 +131,13 @@ include('Includes/sidebar.php');
             <!-- Preferencias de Facturación -->
             <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
                 <div class="mb-6">
-                    <h3 class="text-lg font-bold text-white mb-1">Preferencias de Facturación</h3>
+                    <h3 class="text-lg font-bold text-white mb-1">Preferencias de facturación</h3>
                     <p class="text-xs text-on-surface-variant">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
                 </div>
                 
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de Documento</label>
+                        <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de documento</label>
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'FACTURA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border">
                                 <input type="radio" name="documento_tipo" value="FACTURA" <?= $tipo_doc === 'FACTURA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
@@ -145,21 +145,21 @@ include('Includes/sidebar.php');
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'NOTA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border hover:border-outline-variant">
                                 <input type="radio" name="documento_tipo" value="NOTA" <?= $tipo_doc === 'NOTA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
-                                <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-white' : 'text-on-surface-variant' ?>">Nota de Crédito</span>
+                                <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-white' : 'text-on-surface-variant' ?>">Nota de crédito</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de Pago</label>
+                            <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de pago</label>
                             <div class="relative">
                                 <select name="metodo_pago" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
                                     <option value="TRANSFERENCIA" <?= $metodo_pago == 'TRANSFERENCIA' ? 'selected' : '' ?>>Transferencia</option>
                                     <option value="EFECTIVO" <?= $metodo_pago == 'EFECTIVO' ? 'selected' : '' ?>>Efectivo</option>
                                     <option value="CHEQUE" <?= $metodo_pago == 'CHEQUE' ? 'selected' : '' ?>>Cheque</option>
-                                    <option value="CREDITO_30D" <?= $metodo_pago == 'CREDITO_30D' ? 'selected' : '' ?>>Crédito 30 Días</option>
-                                    <option value="CREDITO_60D" <?= $metodo_pago == 'CREDITO_60D' ? 'selected' : '' ?>>Crédito 60 Días</option>
+                                    <option value="CREDITO_30D" <?= $metodo_pago == 'CREDITO_30D' ? 'selected' : '' ?>>Crédito 30 días</option>
+                                    <option value="CREDITO_60D" <?= $metodo_pago == 'CREDITO_60D' ? 'selected' : '' ?>>Crédito 60 días</option>
                                 </select>
                                 <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
                             </div>
@@ -184,7 +184,7 @@ include('Includes/sidebar.php');
                     </div>
                 </div>
                 <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
-                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Próximamente', background:'#071628', color:'#fff'})">Solicitar</button>
+                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#071628', color:'#fff', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='Contacto.php'; } })">Solicitar</button>
                 </div>
             </div>
 
@@ -196,7 +196,7 @@ include('Includes/sidebar.php');
             <!-- Seguridad de la Cuenta -->
             <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ">
                 <h3 class="text-base font-bold text-white mb-5 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-[20px]">shield</span> Seguridad de la Cuenta
+                    <span class="material-symbols-outlined text-primary text-[20px]">shield</span> Seguridad de la cuenta
                 </h3>
                 
                 <div class="bg-surface-container-low border border-primary/30 rounded-xl p-4 mb-4 flex items-center justify-between">
@@ -212,7 +212,7 @@ include('Includes/sidebar.php');
 
                 <div class="space-y-3">
                     <button type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-outline-variant hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors" onclick="cambiarPassword()">
-                        <span class="material-symbols-outlined text-[18px]">key</span> Cambiar Contraseña
+                        <span class="material-symbols-outlined text-[18px]">key</span> Cambiar contraseña
                     </button>
                 </div>
             </div>
@@ -224,7 +224,7 @@ include('Includes/sidebar.php');
                     <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
                     <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
                     <a href="Contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary-container text-center text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors ">
-                        Contactar Soporte
+                        Contactar soporte
                     </a>
                 </div>
             </div>
@@ -326,19 +326,19 @@ function subirAvatar(input) {
 
 function cambiarPassword() {
     Swal.fire({
-        title: 'Cambiar Contraseña',
+        title: 'Cambiar contraseña',
         html: `
             <div class="flex flex-col gap-4 text-left">
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Contraseña Actual</label>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Contraseña actual</label>
                     <input type="password" id="curr_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Nueva Contraseña</label>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Nueva contraseña</label>
                     <input type="password" id="new_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Confirmar Nueva Contraseña</label>
+                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Confirmar nueva contraseña</label>
                     <input type="password" id="conf_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
             </div>

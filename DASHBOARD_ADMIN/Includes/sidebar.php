@@ -1,6 +1,7 @@
 <?php
 $badgePedidos = 0;
 $badgeSolicitudes = 0;
+$badgeSoporte = 0;
 
 if (!isset($pdo)) {
  require_once __DIR__ . '/../clinical_core/db.php';
@@ -10,6 +11,7 @@ if (!isset($pdo)) {
 try {
  $badgePedidos = (int)$pdo->query("SELECT COUNT(*) FROM clientes_pedidos WHERE estado_envio='PENDIENTE'")->fetchColumn();
  $badgeSolicitudes = (int)$pdo->query("SELECT COUNT(*) FROM clientes_solicitudes_registro WHERE estatus='PENDIENTE'")->fetchColumn();
+ $badgeSoporte = (int)$pdo->query("SELECT COUNT(*) FROM clientes_contacto_mensajes WHERE leido=0")->fetchColumn();
 } catch (Exception $e) {}
 
 $menuItems = [
@@ -18,6 +20,7 @@ $menuItems = [
  ['icon' => 'group', 'label' => 'Clientes', 'page' => 'clientes', 'badge' => 0],
  ['icon' => 'shopping_cart', 'label' => 'Pedidos', 'page' => 'pedidos', 'badge' => $badgePedidos],
  ['icon' => 'list_alt', 'label' => 'Solicitudes', 'page' => 'solicitudes', 'badge' => $badgeSolicitudes],
+ ['icon' => 'support_agent', 'label' => 'Soporte', 'page' => 'soporte', 'badge' => $badgeSoporte],
  ['icon' => 'campaign', 'label' => 'Marketing', 'page' => 'marketing', 'badge' => 0],
 ];
 
@@ -27,13 +30,14 @@ $menuLinks = [
  'clientes' => '../G_Clientes/clientes.php',
  'solicitudes'=> '../S_Registro/solicitudes.php',
  'pedidos' => '../G_Pedidos/pedidos.php',
+ 'soporte' => '../G_Soporte/mensajes.php',
  'marketing' => '../G_Marketing/marketing.php',
 ];
 ?>
 
 <!-- SideNavBar -->
-<aside style="background:linear-gradient(180deg,#020d08 0%,#051a10 60%,#010a06 100%)"
- class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 border-r border-white/5">
+<aside id="adminSidebar" style="background:linear-gradient(180deg,#020d08 0%,#051a10 60%,#010a06 100%)"
+ class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 border-r border-white/5 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
  <!-- Logo -->
  <div class="mb-8 px-4">
@@ -265,7 +269,7 @@ $menuLinks = [
  <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center">
  <h3 class="text-white font-bold flex items-center gap-2">
  <span class="material-symbols-outlined text-primary">crop</span>
- Recortar Foto de Perfil
+ Recortar foto de perfil
  </h3>
  <button onclick="cerrarCropperProfile()" class="text-on-surface-variant hover:text-white transition-colors">
  <span class="material-symbols-outlined">close</span>
@@ -281,7 +285,7 @@ $menuLinks = [
  </button>
  <button id="btnConfirmarRecorteProfile" class="flex-1 py-3 rounded-xl font-bold text-white bg-primary hover:opacity-90 transition-all flex items-center justify-center gap-2">
  <span class="material-symbols-outlined text-[18px]">check_circle</span>
- Aplicar y Subir
+ Aplicar y subir
  </button>
  </div>
  </div>
@@ -382,3 +386,6 @@ function togglePasswordVis(btn) {
  else { inp.type = 'password'; icon.textContent = 'visibility'; }
 }
 </script>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div id="adminSidebarOverlay" onclick="toggleAdminSidebar()" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 lg:hidden"></div>

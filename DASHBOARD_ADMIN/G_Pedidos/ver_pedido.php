@@ -2,6 +2,68 @@
 require_once '../clinical_core/db.php';
 $pdo = getDB();
 
+function enviarCorreoCambioEstatus($email_cliente, $razon_social, $folio, $nuevo_estado, $pedido_id) {
+    $url_pedido = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Proyecto_MMPharma/DASHBOARD_CLIENTE/Cotizacion-Detalle.php?id=' . $pedido_id;
+    $asunto = "Actualización de tu pedido $folio — MMPharma";
+    $headers = implode("\r\n", [
+        'From: MMPharma Portal <noreply@mmpharma.com>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+    ]);
+
+    $color_bg = '#747780';
+    switch ($nuevo_estado) {
+        case 'PROCESANDO':
+            $color_bg = '#1e60aa';
+            break;
+        case 'ENVIADO':
+            $color_bg = '#003e79';
+            break;
+        case 'ENTREGADO':
+            $color_bg = '#2ca1b5';
+            break;
+        case 'CANCELADO':
+            $color_bg = '#ba1a1a';
+            break;
+    }
+
+    $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
+  <div style="background:#002451;padding:24px 32px;text-align:center">
+    <h1 style="margin:0;color:#fff;font-size:22px">📦 Actualización de Pedido</h1>
+    <p style="margin:6px 0 0;color:#8baed4;font-size:14px">Tu pedido tiene novedades en el portal de clientes</p>
+  </div>
+  <div style="padding:32px;color:#333;line-height:1.6">
+    <p style="font-size:16px;font-weight:bold;color:#002451;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
+    <p>Queremos informarte que tu pedido con folio <strong>' . htmlspecialchars($folio) . '</strong> ha cambiado de estado.</p>
+    
+    <div style="text-align:center;margin:30px 0">
+      <span style="display:inline-block;background:' . $color_bg . ';color:#fff;font-weight:bold;font-size:16px;padding:12px 30px;border-radius:50px;text-transform:uppercase;letter-spacing:1px">
+        ' . htmlspecialchars($nuevo_estado) . '
+      </span>
+    </div>
+
+    <p>Para ver los detalles del pedido, la dirección de entrega asignada o subir tu comprobante de pago, haz clic en el siguiente enlace:</p>
+    
+    <div style="text-align:center;margin:32px 0 16px">
+      <a href="' . htmlspecialchars($url_pedido) . '"
+         style="display:inline-block;background:#002451;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,36,81,0.2)">
+        Ver Pedido en el Portal
+      </a>
+    </div>
+    
+    <p style="font-size:12px;color:#777;margin-top:40px;border-top:1px solid #eee;padding-top:20px">
+      Si consideras que este cambio es un error o requieres asistencia, ponte en contacto con tu agente de ventas asignado.
+    </p>
+  </div>
+  <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
+    MMPharma Clinical Systems S.A. de C.V. &bull; Notificación automática
+  </div>
+</div></body></html>';
+
+    @mail($email_cliente, $asunto, $html, $headers);
+}
+
 $id = (int)($_GET['id'] ?? 0);
 
 if (!$id) {
@@ -9,7 +71,7 @@ if (!$id) {
     exit;
 }
 
-// ── ACCIONES POST PARA ACTUALIZAR ESTATUS ──────────────────────────────────
+// ── ACCIONES POST PARA ACTUALIZAR ESTATUS Y PAGOS ───────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     
@@ -19,7 +81,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (in_array($nuevo_estado, $valid_states)) {
             $stmt = $pdo->prepare("UPDATE clientes_pedidos SET estado_envio = ? WHERE id = ?");
             $stmt->execute([$nuevo_estado, $id]);
+
+            // Obtener email y razon social del cliente para enviarle la notificación
+            $sqlInfo = "SELECT p.folio, c.email, c.razon_social 
+                        FROM clientes_pedidos p 
+                        JOIN clientes_usuarios c ON p.cliente_id = c.id 
+                        WHERE p.id = ?";
+            $stmtInfo = $pdo->prepare($sqlInfo);
+            $stmtInfo->execute([$id]);
+            $info = $stmtInfo->fetch(PDO::FETCH_ASSOC);
+
+            if ($info && !empty($info['email'])) {
+                enviarCorreoCambioEstatus($info['email'], $info['razon_social'], $info['folio'], $nuevo_estado, $id);
+            }
+
             header("Location: ver_pedido.php?id=$id&msg=status_updated");
+            exit;
+        }
+    }
+    
+    if ($action === 'update_payment_status') {
+        $nuevo_estatus_val = $_POST['nuevo_estatus_val'] ?? '';
+        $notas_admin = trim($_POST['notas_admin'] ?? '');
+        $comp_id = (int)($_POST['comprobante_id'] ?? 0);
+        
+        $valid_estatus = ['PENDIENTE', 'APROBADO', 'RECHAZADO'];
+        if ($comp_id && in_array($nuevo_estatus_val, $valid_estatus)) {
+            $stmt = $pdo->prepare("UPDATE clientes_pedidos_comprobantes SET estatus_validacion = ?, notas_admin = ? WHERE id = ?");
+            $stmt->execute([$nuevo_estatus_val, $notas_admin, $comp_id]);
+            
+            // Si el comprobante es aprobado y el pedido está PENDIENTE, pasarlo a PROCESANDO
+            if ($nuevo_estatus_val === 'APROBADO') {
+                $pdo->prepare("UPDATE clientes_pedidos SET estado_envio = 'PROCESANDO' WHERE id = ? AND estado_envio = 'PENDIENTE'")->execute([$id]);
+            }
+            
+            header("Location: ver_pedido.php?id=$id&msg=payment_updated");
             exit;
         }
     }
@@ -49,7 +145,7 @@ $stmtComp = $pdo->prepare("SELECT * FROM clientes_pedidos_comprobantes WHERE ped
 $stmtComp->execute([$id]);
 $comprobante = $stmtComp->fetch();
 
-$pageTitle = "MMPharma Portal - Detalle del Pedido " . $pedido['folio'];
+$pageTitle = "MMPharma Portal - Detalle del pedido " . $pedido['folio'];
 $activePage = "pedidos";
 include("../Includes/header.php");
 include("../Includes/sidebar.php");
@@ -65,7 +161,7 @@ include("../Includes/sidebar.php");
             <span class="material-symbols-outlined text-[12px]">chevron_right</span>
             <a href="pedidos.php" class="hover:text-primary transition-colors">Pedidos</a>
             <span class="material-symbols-outlined text-[12px]">chevron_right</span>
-            <span class="text-on-surface-variant">Detalle del Pedido</span>
+            <span class="text-on-surface-variant">Detalle del pedido</span>
         </nav>
         <h1 class="text-3xl font-black tracking-tight flex items-center gap-3">
             <?= htmlspecialchars($pedido['folio']) ?>
@@ -105,12 +201,12 @@ include("../Includes/sidebar.php");
             <div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
             <h2 class="text-sm font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">local_shipping</span>
-                Gestión de Envío
+                Gestión de envío
             </h2>
             <form method="POST" class="space-y-4">
                 <input type="hidden" name="action" value="update_status">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Estatus Actual</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Estatus actual</label>
                     <select name="nuevo_estado" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
                         <option value="PENDIENTE" <?= $pedido['estado_envio'] === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente</option>
                         <option value="PROCESANDO" <?= $pedido['estado_envio'] === 'PROCESANDO' ? 'selected' : '' ?>>Procesando</option>
@@ -121,7 +217,7 @@ include("../Includes/sidebar.php");
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-bold uppercase tracking-widest text-[11px] hover:opacity-90 transition-all flex justify-center items-center gap-2">
                     <span class="material-symbols-outlined text-[16px]">save</span>
-                    Actualizar Estatus
+                    Actualizar estatus
                 </button>
             </form>
         </div>
@@ -131,28 +227,28 @@ include("../Includes/sidebar.php");
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-sm font-black uppercase tracking-widest text-tertiary flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">account_circle</span>
-                    Datos del Cliente
+                    Datos del cliente
                 </h2>
-                <a href="../G_Clientes/ver_cliente.php?id=<?= $pedido['cliente_id'] ?>" class="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Ver Perfil</a>
+                <a href="../G_Clientes/ver_cliente.php?id=<?= $pedido['cliente_id'] ?>" class="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Ver perfil</a>
             </div>
             <div class="space-y-4">
                 <div>
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Razón Social</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Razón social</span>
                     <p class="text-sm font-medium text-white"><?= htmlspecialchars($pedido['razon_social']) ?></p>
                 </div>
                 <div>
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de Contacto</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de contacto</span>
                     <p class="text-sm font-medium text-white"><?= htmlspecialchars($pedido['persona_contacto'] ?: 'No asignado') ?></p>
                 </div>
                 <div>
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email / Teléfonos</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email / teléfonos</span>
                     <p class="text-sm font-medium text-white">
                         <?= htmlspecialchars($pedido['email']) ?><br>
                         <?= htmlspecialchars($pedido['telefono_local'] ?: '') ?> <?= $pedido['telefono_celular'] ? ' / ' . htmlspecialchars($pedido['telefono_celular']) : '' ?>
                     </p>
                 </div>
                 <div class="pt-2 border-t border-outline-variant/10">
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notas del Pedido</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notas del pedido</span>
                     <p class="text-sm font-medium text-white italic text-on-surface-variant"><?= nl2br(htmlspecialchars($pedido['notas'] ?: 'Sin notas.')) ?></p>
                 </div>
             </div>
@@ -162,7 +258,7 @@ include("../Includes/sidebar.php");
         <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 p-6 shadow-xl">
             <h2 class="text-sm font-black uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">payments</span>
-                Información de Pago
+                Información de pago
             </h2>
             <div class="space-y-4">
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
@@ -170,21 +266,57 @@ include("../Includes/sidebar.php");
                     <span class="text-sm font-black text-white"><?= str_replace('_', ' ', $pedido['metodo_pago']) ?></span>
                 </div>
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Costo Envío</span>
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Costo envío</span>
                     <span class="text-sm font-black text-white">$<?= number_format($pedido['costo_envio'], 2) ?></span>
                 </div>
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
-                    <span class="text-[12px] font-black uppercase tracking-widest text-primary">Monto Total</span>
+                    <span class="text-[12px] font-black uppercase tracking-widest text-primary">Monto total</span>
                     <span class="text-2xl font-black text-primary">$<?= number_format($pedido['monto_total'], 2) ?></span>
                 </div>
                 
                 <?php if ($comprobante): ?>
-                <div class="pt-2">
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Comprobante Recibido</span>
-                    <a href="../../<?= htmlspecialchars($comprobante['ruta_archivo']) ?>" target="_blank" class="w-full bg-surface-container-high border border-outline-variant/30 text-white py-3 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-secondary hover:border-secondary transition-all flex justify-center items-center gap-2">
-                        <span class="material-symbols-outlined text-[16px]">receipt_long</span>
-                        Ver Comprobante
-                    </a>
+                <div class="pt-2 space-y-4">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Comprobante recibido</span>
+                        <a href="../../uploads/comprobantes/<?= htmlspecialchars($comprobante['ruta_archivo']) ?>" target="_blank" class="w-full bg-surface-container-high border border-outline-variant/30 text-white py-3 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-secondary hover:border-secondary transition-all flex justify-center items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                            Ver comprobante
+                        </a>
+                        <?php
+                        $badgePayment = match($comprobante['estatus_validacion']){
+                            'APROBADO' => 'bg-tertiary-container/20 text-on-tertiary-container border border-tertiary-container/30',
+                            'RECHAZADO' => 'bg-error-container/20 text-error border border-error/30',
+                            default => 'bg-surface-container-high text-on-surface-variant border border-outline-variant/30'
+                        };
+                        ?>
+                        <div class="flex justify-between items-center mt-3 mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Estatus validación:</span>
+                            <span class="text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold <?= $badgePayment ?>">
+                                <?= $comprobante['estatus_validacion'] ?>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" class="pt-3 border-t border-outline-variant/10 space-y-3">
+                        <input type="hidden" name="action" value="update_payment_status">
+                        <input type="hidden" name="comprobante_id" value="<?= $comprobante['id'] ?>">
+                        <div>
+                            <label class="block text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Validar pago</label>
+                            <select name="nuevo_estatus_val" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs focus:ring-1 focus:ring-primary outline-none text-white font-semibold">
+                                <option value="PENDIENTE" <?= $comprobante['estatus_validacion'] === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente de validar</option>
+                                <option value="APROBADO" <?= $comprobante['estatus_validacion'] === 'APROBADO' ? 'selected' : '' ?>>Aprobado / pago verificado</option>
+                                <option value="RECHAZADO" <?= $comprobante['estatus_validacion'] === 'RECHAZADO' ? 'selected' : '' ?>>Rechazado (sube otro)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notas / motivo de rechazo</label>
+                            <textarea name="notas_admin" rows="2" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs text-white placeholder:text-outline/70 focus:ring-1 focus:ring-primary outline-none resize-none" placeholder="Escribe observaciones o motivo si rechazas el comprobante..."><?= htmlspecialchars($comprobante['notas_admin'] ?? '') ?></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-secondary text-white py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:opacity-90 transition-all flex justify-center items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">done</span>
+                            Guardar validación
+                        </button>
+                    </form>
                 </div>
                 <?php else: ?>
                 <div class="pt-2">
@@ -206,7 +338,7 @@ include("../Includes/sidebar.php");
                 <div>
                     <h2 class="text-lg font-black tracking-tight text-on-surface flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">inventory_2</span>
-                        Productos en el Pedido
+                        Productos en el pedido
                     </h2>
                     <p class="text-[11px] text-on-surface-variant mt-1">Lista detallada de artículos seleccionados por el cliente.</p>
                 </div>
@@ -257,11 +389,11 @@ include("../Includes/sidebar.php");
                     </tbody>
                     <tfoot class="bg-surface-container-low/20">
                         <tr>
-                            <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant">Subtotal Productos:</td>
+                            <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant">Subtotal productos:</td>
                             <td class="px-6 py-4 text-right text-sm font-black text-white">$<?= number_format($suma_subtotales, 2) ?></td>
                         </tr>
                         <tr>
-                            <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant border-t border-outline-variant/10">Costo de Envío:</td>
+                            <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant border-t border-outline-variant/10">Costo de envío:</td>
                             <td class="px-6 py-4 text-right text-sm font-black text-white border-t border-outline-variant/10">$<?= number_format($pedido['costo_envio'], 2) ?></td>
                         </tr>
                         <tr>
@@ -281,14 +413,26 @@ include("../Includes/sidebar.php");
 <!-- SweetAlert Notificaciones -->
 <?php if (isset($_GET['msg'])): ?>
 <script>
-    Swal.fire({
-        title: '¡Estatus Actualizado!',
-        text: 'El estado del envío ha sido actualizado exitosamente.',
-        icon: 'success',
-        confirmButtonColor: '#008151',
-        background: '#05160e',
-        color: '#f1fdf7'
-    });
+    const msg = '<?= htmlspecialchars($_GET['msg']) ?>';
+    if (msg === 'status_updated') {
+        Swal.fire({
+            title: '¡Estatus actualizado!',
+            text: 'El estado del envío ha sido actualizado exitosamente.',
+            icon: 'success',
+            confirmButtonColor: '#008151',
+            background: '#05160e',
+            color: '#f1fdf7'
+        });
+    } else if (msg === 'payment_updated') {
+        Swal.fire({
+            title: '¡Pago validado!',
+            text: 'La validación del comprobante de pago se guardó exitosamente.',
+            icon: 'success',
+            confirmButtonColor: '#008151',
+            background: '#05160e',
+            color: '#f1fdf7'
+        });
+    }
 </script>
 <?php endif; ?>
 

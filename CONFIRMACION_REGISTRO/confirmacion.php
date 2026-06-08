@@ -1,5 +1,5 @@
 <?php
-$titulo = 'Solicitud Enviada | MMPharma';
+$titulo = 'Solicitud enviada | MMPharma';
 $pagina_actual = 'confirmacion';
 $base = '../';
 ?>
@@ -207,7 +207,7 @@ $base = '../';
  </div>
  <div>
  <h4 class="text-base font-bold text-primary mb-1">Tiempo estimado de respuesta</h4>
- <p class="text-sm text-on-surface-variant font-medium leading-relaxed">De <strong class="font-bold">24 a 48 horas hábiles</strong>.<br>Lunes a Viernes de 8:00 AM a 6:00 PM.</p>
+ <p class="text-sm text-on-surface-variant font-medium leading-relaxed">De <strong class="font-bold">24 a 48 horas hábiles</strong>.<br>Lunes a Viernes de 8:00 AM a 6:00 PM (Hora del Centro).</p>
  </div>
  </div>
  

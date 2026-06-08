@@ -50,12 +50,12 @@ include('Includes/sidebar.php');
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Cotizaciones</span>
  </nav>
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Historial de Cotizaciones</h1>
+ <h1 class="text-3xl font-extrabold text-white tracking-tight">Historial de cotizaciones</h1>
  <p class="text-on-surface-variant mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
  </div>
  <div class="mt-4 md:mt-0">
  <a href="../CATALOGO/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
- <span class="material-symbols-outlined text-[18px]">add</span> Nueva Cotización
+ <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
  </div>
@@ -183,7 +183,7 @@ include('Includes/sidebar.php');
  <!-- Export Actions -->
  <div class="flex justify-end gap-3 mt-6 animate-reveal delay-400">
  <a href="descargar_resumen_pdf.php" target="_blank" class="px-5 py-2.5 bg-error/10 hover:bg-error/20 text-error text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
- <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar Reporte PDF
+ <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar reporte PDF
  </a>
  </div>
 

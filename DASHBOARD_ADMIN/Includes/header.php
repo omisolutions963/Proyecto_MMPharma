@@ -106,6 +106,9 @@ if (session_status() === PHP_SESSION_NONE) session_start();
  body {
  overflow-x: hidden !important;
  }
+ html.swal2-shown, body.swal2-shown {
+ overflow-y: scroll !important;
+ }
  .glass-card { background: rgba(0,129,81,0.05); backdrop-filter: blur(20px); }
  .card-glow { box-: 0 0 30px rgba(0,129,81,0.08); }
 
@@ -134,50 +137,86 @@ if (session_status() === PHP_SESSION_NONE) session_start();
  . { box-: 0 10px 25px rgba(0, 0, 0, 0.35) !important; }
  . { box-: 0 15px 35px rgba(0, 0, 0, 0.4) !important; }
  . { box-: 0 20px 50px rgba(0, 0, 0, 0.5) !important; }
+  /* Responsive Panel adjustments */
+  @media (max-width: 1023px) {
+    main.ml-64, main {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 1.5rem 1rem !important;
+    }
+    header {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 </style>
 
 <script>
- function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
- Swal.fire({ title, text, icon, confirmButtonColor: '#008151', confirmButtonText: 'Aceptar',
- background: '#05160e', color: '#f1fdf7' });
- }
- function confirmAction(title, text, confirmText, callback) {
- Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
- confirmButtonColor: '#f28b82', cancelButtonColor: '#284a3c',
- confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
- background: '#05160e', color: '#f1fdf7'
- }).then(r => { if (r.isConfirmed) callback(); });
- }
+  function toggleAdminSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('adminSidebarOverlay');
+    if (!sidebar || !overlay) return;
+    
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+      }, 10);
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('opacity-0');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 300);
+    }
+  }
+
+  function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
+  Swal.fire({ title, text, icon, confirmButtonColor: '#008151', confirmButtonText: 'Aceptar',
+  background: '#05160e', color: '#f1fdf7' });
+  }
+  function confirmAction(title, text, confirmText, callback) {
+  Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
+  confirmButtonColor: '#f28b82', cancelButtonColor: '#284a3c',
+  confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
+  background: '#05160e', color: '#f1fdf7'
+  }).then(r => { if (r.isConfirmed) callback(); });
+  }
 </script>
 </head>
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
 <header style="background:rgba(2,13,8,0.97);border-bottom:1px solid rgba(0,129,81,0.15)"
- class="h-16 sticky top-0 z-40 backdrop-blur-xl flex items-center justify-between px-8 ml-64 w-[calc(100%-16rem)]">
+ class="h-16 sticky top-0 z-40 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)]">
  
- <div class="flex items-center gap-5 flex-1">
- <!-- Portal Label -->
- <div class="flex items-center gap-3">
- <div class="flex flex-col leading-none">
- <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
- <span class="text-xl font-extrabold text-white tracking-tight uppercase">Portal de administrador</span>
- </div>
- </div>
- </div>
+  <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
+  <!-- Hamburger Menu Button -->
+  <button onclick="toggleAdminSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+    <span class="material-symbols-outlined text-2xl">menu</span>
+  </button>
+  <!-- Portal Label -->
+  <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
+  <div class="flex flex-col leading-none min-w-0">
+  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
+  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal de administrador</span>
+  </div>
+  </div>
+  </div>
 
- <div class="flex items-center gap-5">
- <!-- Search -->
- <div class="relative hidden md:block">
- <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
- <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-outline-variant/50
- bg-surface-container-low/60 text-on-surface text-sm placeholder:text-outline
- focus:ring-1 focus:ring-primary focus:outline-none"
- placeholder="Buscar en el portal..." type="text"/>
- </div>
- 
- <!-- Divider -->
- <div class="h-6 w-px bg-outline-variant/30"></div>
+  <div class="flex items-center gap-3 md:gap-5 shrink-0">
+  <!-- Search -->
+  <div class="relative hidden md:block">
+  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+  <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-outline-variant/50
+  bg-surface-container-low/60 text-on-surface text-sm placeholder:text-outline
+  focus:ring-1 focus:ring-primary focus:outline-none"
+  placeholder="Buscar en el portal..." type="text"/>
+  </div>
+  
+  <!-- Divider -->
+  <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
 
  <!-- User / Perfil Button -->
  <button onclick="abrirPerfil()"

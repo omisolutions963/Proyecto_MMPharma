@@ -7,11 +7,63 @@ $solicitud_ok = false;
 $solicitud_error = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
- // Collect fields
- // Add logic to save to database and process files
- // ...
- header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
- exit;
+    $campos = [
+        'tipo_cliente'      => 'DISTRIBUIDORA',
+        'razon_social'      => trim($_POST['razon_social'] ?? ''),
+        'rfc'               => trim($_POST['rfc'] ?? ''),
+        'regimen_fiscal'    => trim($_POST['regimen_fiscal'] ?? ''),
+        'domicilio_fiscal'  => trim($_POST['domicilio_fiscal'] ?? ''),
+        'colonia'           => trim($_POST['colonia'] ?? ''),
+        'cp'                => trim($_POST['cp'] ?? ''),
+        'ciudad'            => trim($_POST['ciudad'] ?? ''),
+        'estado'            => trim($_POST['estado'] ?? ''),
+        'representante'     => trim($_POST['representante_legal'] ?? ''),
+        'nombre_comercial'  => trim($_POST['nombre_comercial'] ?? ''),
+        'giro'              => 'Distribuidora',
+        'persona_contacto'  => trim($_POST['persona_contacto'] ?? ''),
+        'volumen_mensual'   => null,
+        'telefono_local'    => trim($_POST['telefono'] ?? ''),
+        'telefono_celular'  => trim($_POST['telefono_celular'] ?? ''),
+        'email'             => trim($_POST['email'] ?? ''),
+        'documento_tipo'    => 'FACTURA',
+        'metodo_pago'       => 'TRANSFERENCIA',
+        'uso_cfdi'          => null,
+        'domicilio_entrega' => null,
+        'colonia_entrega'   => null,
+        'cp_entrega'        => null,
+        'ciudad_entrega'    => null,
+        'municipio_entrega' => null,
+        'estado_entrega'    => null,
+        'receptor_entrega'  => null,
+        'horario_entrega'   => null,
+        'ip_origen'         => $_SERVER['REMOTE_ADDR'] ?? null,
+    ];
+
+    if ($campos['razon_social']) {
+        try {
+            require_once '../INCLUDES/db.php';
+            $pdo = getDB();
+            $sql = "INSERT INTO clientes_solicitudes_registro
+            (tipo_cliente, razon_social, rfc, regimen_fiscal, domicilio_fiscal, colonia, cp, ciudad, estado,
+            representante, nombre_comercial, giro, persona_contacto, volumen_mensual, telefono_local,
+            telefono_celular, email, documento_tipo, metodo_pago, uso_cfdi, domicilio_entrega,
+            colonia_entrega, cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega,
+            receptor_entrega, horario_entrega, ip_origen)
+            VALUES
+            (:tipo_cliente, :razon_social, :rfc, :regimen_fiscal, :domicilio_fiscal, :colonia, :cp, :ciudad, :estado,
+            :representante, :nombre_comercial, :giro, :persona_contacto, :volumen_mensual, :telefono_local,
+            :telefono_celular, :email, :documento_tipo, :metodo_pago, :uso_cfdi, :domicilio_entrega,
+            :colonia_entrega, :cp_entrega, :ciudad_entrega, :municipio_entrega, :estado_entrega,
+            :receptor_entrega, :horario_entrega, :ip_origen)";
+            $pdo->prepare($sql)->execute($campos);
+            header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
+            exit;
+        } catch (Exception $e) {
+            $solicitud_error = true;
+        }
+    } else {
+        $solicitud_error = true;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -19,8 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
  <meta charset="utf-8">
  <meta content="width=device-width, initial-scale=1.0" name="viewport">
- <title><?= $titulo ?></title>
- <!-- Include fonts and tailwind -->
+  <title><?= $titulo ?></title>
+  <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Include fonts and tailwind -->
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -65,219 +119,225 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <!-- TopNavBar -->
-<nav class="bg-background/80 backdrop-blur-md font-['Inter'] tracking-tight antialiased w-full top-0 sticky z-50 border-b border-white/5 ">
- <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
- <div class="flex-1 flex justify-start">
- <a class="flex items-center gap-3 px-4 py-2 bg-surface hover:bg-primary text-slate-300 hover:text-white rounded-xl transition-all duration-300 text-sm font-bold group border border-white/5 hover:border-primary" href="../SELECCIÓN_REGISTRO/selección_registro.php">
- <div class="w-6 h-6 flex items-center justify-center rounded-lg bg-background text-primary-light group-hover:bg-white/20 group-hover:text-white transition-colors">
- <span class="material-symbols-outlined text-[16px] font-bold group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
- </div>
- Volver
+<header class="relative z-50 flex justify-between items-center w-full px-4 sm:px-8 py-4 sm:py-6 bg-background/80 backdrop-blur-md border-b border-white/5 sticky top-0">
+ <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all group">
+  <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
  </a>
- </div>
- </div>
-</nav>
 
-<main class="max-w-4xl mx-auto px-4 py-8 md:py-12 flex-grow flex flex-col items-center w-full relative z-10">
- <div class="w-full bg-white text-slate-600 rounded-3xl border border-slate-100 overflow-hidden relative">
- <div class="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
- <div class="p-8 md:p-12">
- <header class="mb-10 text-center">
- <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary">
- <span class="material-symbols-outlined text-4xl">local_shipping</span>
- </div>
- <h1 class="text-3xl font-extrabold text-on-surface tracking-tight mb-3">Registro de Distribuidora</h1>
- <p class="text-on-surface-variant text-base">Completa tus datos y sube tus documentos para iniciar el proceso de alta.</p>
- </header>
+ <a href="../INDEX/index.php" class="absolute left-1/2 -translate-x-1/2">
+  <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-6 sm:h-8 w-auto hover:scale-105 transition-transform duration-300">
+ </a>
 
- <form action="" method="POST" class="space-y-12" id="registroForm" enctype="multipart/form-data">
- <!-- Sección 1: Datos Generales -->
- <section>
- <h2 class="flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">
- <span class="material-symbols-outlined">badge</span> 1. Datos Generales
- </h2>
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div class="md:col-span-2">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nombre o Razón Social <span class="text-red-500">*</span></label>
- <input name="razon_social" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Ej. Distribuidora Médica S.A. de C.V." type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nombre Comercial <span class="text-red-500">*</span></label>
- <input name="nombre_comercial" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Ej. DistriMed" type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">RFC <span class="text-red-500">*</span></label>
- <input name="rfc" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Ej. DME010101ABC" type="text" required>
- </div>
- <div class="md:col-span-2">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Régimen Fiscal <span class="text-red-500">*</span></label>
- <select id="regimen_fiscal" name="regimen_fiscal" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" required>
- <option value="" disabled selected>Selecciona tu régimen fiscal</option>
- <option value="moral">General de Ley Personas Morales</option>
- <option value="fisica">Personas Físicas con Actividades Empresariales</option>
- <option value="resico">Régimen Simplificado de Confianza</option>
- </select>
- </div>
- <div class="md:col-span-2">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Representante Legal <span class="text-red-500">*</span></label>
- <input name="representante_legal" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Nombre completo del representante legal" type="text" required>
- </div>
- </div>
- </section>
+ <div class="w-12 h-12"></div>
+</header>
 
- <!-- Sección 2: Dirección y Contacto -->
- <section>
- <h2 class="flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">
- <span class="material-symbols-outlined">location_on</span> 2. Dirección y Contacto
- </h2>
- <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
- <div class="md:col-span-3">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Domicilio Fiscal (Validación) <span class="text-red-500">*</span></label>
- <input name="domicilio_fiscal" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Calle, número exterior e interior" type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Colonia <span class="text-red-500">*</span></label>
- <input name="colonia" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">C.P. <span class="text-red-500">*</span></label>
- <input name="cp" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Ciudad/Municipio <span class="text-red-500">*</span></label>
- <input name="ciudad" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" type="text" required>
- </div>
- <div class="md:col-span-3">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Estado <span class="text-red-500">*</span></label>
- <select name="estado" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" required>
- <option value="" disabled selected>Selecciona tu estado</option>
- <option value="Aguascalientes">Aguascalientes</option>
- <option value="Baja California">Baja California</option>
- <option value="Baja California Sur">Baja California Sur</option>
- <option value="Campeche">Campeche</option>
- <option value="Chiapas">Chiapas</option>
- <option value="Chihuahua">Chihuahua</option>
- <option value="Ciudad de México">Ciudad de México</option>
- <option value="Coahuila">Coahuila</option>
- <option value="Colima">Colima</option>
- <option value="Durango">Durango</option>
- <option value="Estado de México">Estado de México</option>
- <option value="Guanajuato">Guanajuato</option>
- <option value="Guerrero">Guerrero</option>
- <option value="Hidalgo">Hidalgo</option>
- <option value="Jalisco">Jalisco</option>
- <option value="Michoacán">Michoacán</option>
- <option value="Morelos">Morelos</option>
- <option value="Nayarit">Nayarit</option>
- <option value="Nuevo León">Nuevo León</option>
- <option value="Oaxaca">Oaxaca</option>
- <option value="Puebla">Puebla</option>
- <option value="Querétaro">Querétaro</option>
- <option value="Quintana Roo">Quintana Roo</option>
- <option value="San Luis Potosí">San Luis Potosí</option>
- <option value="Sinaloa">Sinaloa</option>
- <option value="Sonora">Sonora</option>
- <option value="Tabasco">Tabasco</option>
- <option value="Tamaulipas">Tamaulipas</option>
- <option value="Tlaxcala">Tlaxcala</option>
- <option value="Veracruz">Veracruz</option>
- <option value="Yucatán">Yucatán</option>
- <option value="Zacatecas">Zacatecas</option>
- </select>
- </div>
- 
- <!-- Contacto Principal -->
- <div class="md:col-span-3 mt-4 border-t border-slate-100 pt-6">
- <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-4">Contacto Principal</h3>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Persona de contacto <span class="text-red-500">*</span></label>
- <input name="persona_contacto" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="Nombre de quien gestiona" type="text" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Teléfono (Principal) <span class="text-red-500">*</span></label>
- <input name="telefono" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="10 dígitos" type="tel" required>
- </div>
- <div>
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Teléfono Celular <span class="text-red-500">*</span></label>
- <input name="telefono_celular" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="10 dígitos" type="tel" required>
- </div>
- <div class="md:col-span-3">
- <label class="block text-xs font-semibold text-slate-600 mb-1.5">Correo Electrónico de Contacto (Será tu usuario) <span class="text-red-500">*</span></label>
- <input name="email" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors" placeholder="ejemplo@empresa.com" type="email" required>
- </div>
- </div>
- </section>
+<main class="max-w-4xl mx-auto px-4 py-8 md:py-12 flex-grow flex flex-col items-center w-full relative z-10" data-aos="fade-up">
+ <div class="w-full bg-surface/85 backdrop-blur-xl text-slate-200 rounded-3xl border border-white/10 overflow-hidden relative shadow-2xl">
+  <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-tertiary"></div>
+  <div class="p-8 md:p-12">
+   <header class="mb-10 text-center">
+    <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-tertiary-light">
+     <span class="material-symbols-outlined text-4xl">local_shipping</span>
+    </div>
+    <h1 class="text-3xl font-black text-white tracking-tight mb-3">Registro de Distribuidora</h1>
+    <p class="text-slate-400 text-base font-medium">Completa tus datos y sube tus documentos para iniciar el proceso de alta.</p>
+   </header>
 
- <!-- Sección 3: Documentación -->
- <section>
- <h2 class="flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">
- <span class="material-symbols-outlined">folder</span> 3. Documentación Requerida
- </h2>
- <p class="text-xs text-slate-500 mb-6">Sube los documentos escaneados. Formatos permitidos: PDF, JPG, PNG. Tamaño máximo por archivo: 15MB.</p>
+   <form action="" method="POST" class="space-y-12" id="registroForm" enctype="multipart/form-data">
+    <!-- Sección 1: Datos Generales -->
+    <section>
+     <h2 class="flex items-center gap-2 text-sm font-bold text-tertiary-light uppercase tracking-widest mb-6 border-b border-white/5 pb-3">
+      <span class="material-symbols-outlined">badge</span> 1. Datos Generales
+     </h2>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="md:col-span-2">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Nombre o Razón Social <span class="text-red-500">*</span></label>
+       <input name="razon_social" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Ej. Distribuidora Médica S.A. de C.V." type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Nombre Comercial <span class="text-red-500">*</span></label>
+       <input name="nombre_comercial" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Ej. DistriMed" type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">RFC <span class="text-red-500">*</span></label>
+       <input name="rfc" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Ej. DME010101ABC" type="text" required>
+      </div>
+      <div class="md:col-span-2">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Régimen Fiscal <span class="text-red-500">*</span></label>
+       <select id="regimen_fiscal" name="regimen_fiscal" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all outline-none" required>
+        <option value="" disabled selected class="bg-surface text-slate-400">Selecciona tu régimen fiscal</option>
+        <option value="moral" class="bg-surface text-white">General de Ley Personas Morales</option>
+        <option value="fisica" class="bg-surface text-white">Personas Físicas con Actividades Empresariales</option>
+        <option value="resico" class="bg-surface text-white">Régimen Simplificado de Confianza</option>
+       </select>
+      </div>
+      <div class="md:col-span-2">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Representante Legal <span class="text-red-500">*</span></label>
+       <input name="representante_legal" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Nombre completo del representante legal" type="text" required>
+      </div>
+     </div>
+    </section>
 
- <div class="space-y-4">
- <?php
- $documentos = [
- ['id' => 'licencia_sanitaria', 'titulo' => 'Aviso de funcionamiento o Licencia Sanitaria'],
- ['id' => 'comprobante_domicilio', 'titulo' => 'Comprobante de Domicilio'],
- ['id' => 'alta_hacienda', 'titulo' => 'Alta de Hacienda'],
- ['id' => 'identificacion_oficial', 'titulo' => 'Identificación oficial del representante legal o propietario']
- ];
- foreach($documentos as $doc): ?>
- <div class="file-upload-wrapper bg-slate-50 border border-slate-200 border-dashed rounded-xl p-4 transition-all duration-300 relative">
- <input type="file" name="<?= $doc['id'] ?>" id="<?= $doc['id'] ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png" required>
- <div class="flex items-center justify-between pointer-events-none">
- <div class="flex items-center gap-4">
- <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors icon-container">
- <span class="material-symbols-outlined file-icon">upload_file</span>
- </div>
- <div>
- <p class="text-sm font-bold text-slate-700"><?= $doc['titulo'] ?> <span class="text-red-500">*</span></p>
- <p class="text-xs text-slate-500 file-name-display">Arrastra y suelta tu archivo o haz clic para explorar</p>
- </div>
- </div>
- <div class="text-xs font-semibold text-primary px-3 py-1 bg-white border border-slate-200 rounded-md ">Examinar</div>
- </div>
- </div>
- <?php endforeach; ?>
+    <!-- Sección 2: Dirección y Contacto -->
+    <section>
+     <h2 class="flex items-center gap-2 text-sm font-bold text-tertiary-light uppercase tracking-widest mb-6 border-b border-white/5 pb-3">
+      <span class="material-symbols-outlined">location_on</span> 2. Dirección y Contacto
+     </h2>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-3">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Domicilio Fiscal (Validación) <span class="text-red-500">*</span></label>
+       <input name="domicilio_fiscal" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Calle, número exterior e interior" type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Colonia <span class="text-red-500">*</span></label>
+       <input name="colonia" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all outline-none" type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">C.P. <span class="text-red-500">*</span></label>
+       <input name="cp" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all outline-none" type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Ciudad/Municipio <span class="text-red-500">*</span></label>
+       <input name="ciudad" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all outline-none" type="text" required>
+      </div>
+      <div class="md:col-span-3">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Estado <span class="text-red-500">*</span></label>
+       <select name="estado" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all outline-none" required>
+        <option value="" disabled selected class="bg-surface text-slate-400">Selecciona tu estado</option>
+        <option value="Aguascalientes" class="bg-surface text-white">Aguascalientes</option>
+        <option value="Baja California" class="bg-surface text-white">Baja California</option>
+        <option value="Baja California Sur" class="bg-surface text-white">Baja California Sur</option>
+        <option value="Campeche" class="bg-surface text-white">Campeche</option>
+        <option value="Chiapas" class="bg-surface text-white">Chiapas</option>
+        <option value="Chihuahua" class="bg-surface text-white">Chihuahua</option>
+        <option value="Ciudad de México" class="bg-surface text-white">Ciudad de México</option>
+        <option value="Coahuila" class="bg-surface text-white">Coahuila</option>
+        <option value="Colima" class="bg-surface text-white">Colima</option>
+        <option value="Durango" class="bg-surface text-white">Durango</option>
+        <option value="Estado de México" class="bg-surface text-white">Estado de México</option>
+        <option value="Guanajuato" class="bg-surface text-white">Guanajuato</option>
+        <option value="Guerrero" class="bg-surface text-white">Guerrero</option>
+        <option value="Hidalgo" class="bg-surface text-white">Hidalgo</option>
+        <option value="Jalisco" class="bg-surface text-white">Jalisco</option>
+        <option value="Michoacán" class="bg-surface text-white">Michoacán</option>
+        <option value="Morelos" class="bg-surface text-white">Morelos</option>
+        <option value="Nayarit" class="bg-surface text-white">Nayarit</option>
+        <option value="Nuevo León" class="bg-surface text-white">Nuevo León</option>
+        <option value="Oaxaca" class="bg-surface text-white">Oaxaca</option>
+        <option value="Puebla" class="bg-surface text-white">Puebla</option>
+        <option value="Querétaro" class="bg-surface text-white">Querétaro</option>
+        <option value="Quintana Roo" class="bg-surface text-white">Quintana Roo</option>
+        <option value="San Luis Potosí" class="bg-surface text-white">San Luis Potosí</option>
+        <option value="Sinaloa" class="bg-surface text-white">Sinaloa</option>
+        <option value="Sonora" class="bg-surface text-white">Sonora</option>
+        <option value="Tabasco" class="bg-surface text-white">Tabasco</option>
+        <option value="Tamaulipas" class="bg-surface text-white">Tamaulipas</option>
+        <option value="Tlaxcala" class="bg-surface text-white">Tlaxcala</option>
+        <option value="Veracruz" class="bg-surface text-white">Veracruz</option>
+        <option value="Yucatán" class="bg-surface text-white">Yucatán</option>
+        <option value="Zacatecas" class="bg-surface text-white">Zacatecas</option>
+       </select>
+      </div>
+      
+      <!-- Contacto Principal -->
+      <div class="md:col-span-3 mt-4 border-t border-white/5 pt-6">
+       <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-4">Contacto Principal</h3>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Persona de contacto <span class="text-red-500">*</span></label>
+       <input name="persona_contacto" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="Nombre de quien gestiona" type="text" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Teléfono (Principal) <span class="text-red-500">*</span></label>
+       <input name="telefono" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="10 dígitos" type="tel" required>
+      </div>
+      <div>
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Teléfono Celular <span class="text-red-500">*</span></label>
+       <input name="telefono_celular" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="10 dígitos" type="tel" required>
+      </div>
+      <div class="md:col-span-3">
+       <label class="block text-xs font-semibold text-slate-300 mb-2">Correo Electrónico de Contacto (Será tu usuario) <span class="text-red-500">*</span></label>
+       <input name="email" class="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary text-white text-sm transition-all placeholder:text-slate-500 outline-none" placeholder="ejemplo@empresa.com" type="email" required>
+      </div>
+     </div>
+    </section>
 
- <!-- Acta Constitutiva (Condicional) -->
- <div id="wrapper_acta_constitutiva" class="file-upload-wrapper bg-slate-50 border border-slate-200 border-dashed rounded-xl p-4 transition-all duration-300 relative hidden">
- <input type="file" name="acta_constitutiva" id="acta_constitutiva" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
- <div class="flex items-center justify-between pointer-events-none">
- <div class="flex items-center gap-4">
- <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-colors icon-container">
- <span class="material-symbols-outlined file-icon">upload_file</span>
- </div>
- <div>
- <p class="text-sm font-bold text-slate-700">Copia del alta constitutiva <span class="text-red-500">*</span></p>
- <p class="text-xs text-slate-500 file-name-display">Arrastra y suelta tu archivo o haz clic para explorar</p>
- </div>
- </div>
- <div class="text-xs font-semibold text-primary px-3 py-1 bg-white border border-slate-200 rounded-md ">Examinar</div>
- </div>
- </div>
+    <!-- Sección 3: Documentación -->
+    <section>
+     <h2 class="flex items-center gap-2 text-sm font-bold text-tertiary-light uppercase tracking-widest mb-6 border-b border-white/5 pb-3">
+      <span class="material-symbols-outlined">folder</span> 3. Documentación Requerida
+     </h2>
+     <p class="text-xs text-slate-400 mb-6">Sube los documentos escaneados. Formatos permitidos: PDF, JPG, PNG. Tamaño máximo por archivo: 15MB.</p>
 
- </div>
- </section>
+     <div class="space-y-4">
+      <?php
+      $documentos = [
+       ['id' => 'licencia_sanitaria', 'titulo' => 'Aviso de funcionamiento o Licencia Sanitaria'],
+       ['id' => 'comprobante_domicilio', 'titulo' => 'Comprobante de Domicilio'],
+       ['id' => 'alta_hacienda', 'titulo' => 'Alta de Hacienda'],
+       ['id' => 'identificacion_oficial', 'titulo' => 'Identificación oficial del representante legal o propietario']
+      ];
+      foreach($documentos as $doc): ?>
+      <div class="file-upload-wrapper bg-background/40 border border-white/10 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-tertiary/50 hover:bg-tertiary/5">
+       <input type="file" name="<?= $doc['id'] ?>" id="<?= $doc['id'] ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png" required>
+       <div class="flex items-center justify-between pointer-events-none">
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-400 transition-colors icon-container group-hover:bg-tertiary/10 group-hover:text-tertiary">
+          <span class="material-symbols-outlined file-icon">upload_file</span>
+         </div>
+         <div>
+          <p class="text-sm font-bold text-white"><?= $doc['titulo'] ?> <span class="text-red-500">*</span></p>
+          <p class="text-xs text-slate-400 file-name-display">Arrastra y suelta tu archivo o haz clic para explorar</p>
+         </div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-tertiary group-hover:text-white border border-white/10 group-hover:border-tertiary flex items-center justify-center text-slate-300 transition-all duration-300">
+         <span class="material-symbols-outlined text-lg">upload</span>
+        </div>
+       </div>
+      </div>
+      <?php endforeach; ?>
 
- <!-- Validación Legal -->
- <section class="bg-slate-50 p-6 rounded-xl border border-slate-100">
- <label class="flex items-start gap-4 cursor-pointer group">
- <input class="mt-1 w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary/20" type="checkbox" required>
- <span class="text-sm text-slate-600 group-hover:text-primary transition-colors">He leído y acepto el <a href="#" class="font-bold underline text-primary">Aviso de Privacidad</a> de MMPharma y confirmo que los datos proporcionados son verídicos.</span>
- </label>
- </section>
+      <!-- Acta Constitutiva (Condicional) -->
+      <div id="wrapper_acta_constitutiva" class="file-upload-wrapper bg-background/40 border border-white/10 border-dashed rounded-xl p-5 transition-all duration-300 relative group hover:border-tertiary/50 hover:bg-tertiary/5 hidden">
+       <input type="file" name="acta_constitutiva" id="acta_constitutiva" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
+       <div class="flex items-center justify-between pointer-events-none">
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-400 transition-colors icon-container group-hover:bg-tertiary/10 group-hover:text-tertiary">
+          <span class="material-symbols-outlined file-icon">upload_file</span>
+         </div>
+         <div>
+          <p class="text-sm font-bold text-white">Copia del alta constitutiva <span class="text-red-500">*</span></p>
+          <p class="text-xs text-slate-400 file-name-display">Arrastra y suelta tu archivo o haz clic para explorar</p>
+         </div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-tertiary group-hover:text-white border border-white/10 group-hover:border-tertiary flex items-center justify-center text-slate-300 transition-all duration-300">
+         <span class="material-symbols-outlined text-lg">upload</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
 
- <div class="pt-4">
- <button class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary transition-all flex items-center justify-center gap-2 uppercase tracking-wide" type="submit">
- <span class="material-symbols-outlined text-xl">send</span> Enviar Solicitud de Registro
- </button>
- <p class="text-center text-xs text-slate-500 mt-4 font-semibold uppercase tracking-widest opacity-80">Proceso 100% Seguro</p>
- </div>
- </form>
- </div>
+    <!-- Final Section: Privacy and Submit -->
+    <section class="pt-8 border-t border-white/5">
+     <div class="space-y-8">
+      <div class="bg-background/40 p-6 rounded-xl border border-white/5 flex justify-center items-center">
+       <label class="flex items-center gap-4 cursor-pointer group">
+        <input class="w-5 h-5 rounded border-white/10 bg-background/50 text-tertiary focus:ring-tertiary/20 transition-all" type="checkbox" required>
+        <span class="text-sm text-slate-300 group-hover:text-white transition-colors">Confirmo que los datos proporcionados son verídicos.</span>
+       </label>
+      </div>
+
+      <div class="pt-4">
+       <button class="w-full py-4 bg-tertiary text-white font-bold rounded-xl hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-[0.98] transition-all flex items-center justify-center gap-2 tracking-wide shadow-lg shadow-tertiary/10" type="submit">
+        <span class="material-symbols-outlined text-xl">send</span> Enviar solicitud de registro
+       </button>
+       <p class="text-center text-xs text-slate-400 mt-4 font-semibold uppercase tracking-widest opacity-80">Proceso 100% Seguro</p>
+      </div>
+     </div>
+    </section>
+   </form>
+  </div>
  </div>
 </main>
 
@@ -288,77 +348,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  const actaInput = document.getElementById('acta_constitutiva');
 
  regimenSelect.addEventListener('change', (e) => {
- if(e.target.value === 'moral') {
- actaWrapper.classList.remove('hidden');
- actaInput.setAttribute('required', 'required');
- } else {
- actaWrapper.classList.add('hidden');
- actaInput.removeAttribute('required');
- }
+  if(e.target.value === 'moral') {
+   actaWrapper.classList.remove('hidden');
+   actaInput.setAttribute('required', 'required');
+  } else {
+   actaWrapper.classList.add('hidden');
+   actaInput.removeAttribute('required');
+  }
  });
 
  // File Upload Logic (Drag and Drop, Size, Preview)
  const maxFileSize = 15 * 1024 * 1024; // 15MB
 
  document.querySelectorAll('.file-input').forEach(input => {
- const wrapper = input.closest('.file-upload-wrapper');
- const nameDisplay = wrapper.querySelector('.file-name-display');
- const icon = wrapper.querySelector('.file-icon');
- const iconContainer = wrapper.querySelector('.icon-container');
+  const wrapper = input.closest('.file-upload-wrapper');
+  const nameDisplay = wrapper.querySelector('.file-name-display');
+  const icon = wrapper.querySelector('.file-icon');
+  const iconContainer = wrapper.querySelector('.icon-container');
 
- ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
- wrapper.addEventListener(eventName, preventDefaults, false);
- });
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+   wrapper.addEventListener(eventName, preventDefaults, false);
+  });
 
- function preventDefaults(e) {
- e.preventDefault();
- e.stopPropagation();
- }
+  function preventDefaults(e) {
+   e.preventDefault();
+   e.stopPropagation();
+  }
 
- ['dragenter', 'dragover'].forEach(eventName => {
- wrapper.addEventListener(eventName, () => wrapper.classList.add('drag-over'), false);
- });
+  ['dragenter', 'dragover'].forEach(eventName => {
+   wrapper.addEventListener(eventName, () => wrapper.classList.add('drag-over'), false);
+  });
 
- ['dragleave', 'drop'].forEach(eventName => {
- wrapper.addEventListener(eventName, () => wrapper.classList.remove('drag-over'), false);
- });
+  ['dragleave', 'drop'].forEach(eventName => {
+   wrapper.addEventListener(eventName, () => wrapper.classList.remove('drag-over'), false);
+  });
 
- wrapper.addEventListener('drop', (e) => {
- const dt = e.dataTransfer;
- const files = dt.files;
- if(files.length > 0) {
- input.files = files; 
- validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
- }
- });
+  wrapper.addEventListener('drop', (e) => {
+   const dt = e.dataTransfer;
+   const files = dt.files;
+   if(files.length > 0) {
+    input.files = files; 
+    validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
+   }
+  });
 
- input.addEventListener('change', (e) => {
- if(input.files.length > 0) {
- validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
- }
- });
+  input.addEventListener('change', (e) => {
+   if(input.files.length > 0) {
+    validateAndDisplay(input.files[0], nameDisplay, icon, iconContainer, input);
+   }
+  });
  });
 
  function validateAndDisplay(file, displayElement, iconElement, iconContainer, inputElement) {
- if (file.size > maxFileSize) {
- alert('El archivo "' + file.name + '" supera el límite de 15MB. Por favor, selecciona un archivo más pequeño.');
- inputElement.value = ''; 
- displayElement.textContent = "Arrastra y suelta tu archivo o haz clic para explorar";
- displayElement.classList.remove('text-green-600', 'font-medium');
- iconElement.textContent = "upload_file";
- iconContainer.classList.remove('bg-green-100', 'text-green-600');
- iconContainer.classList.add('bg-primary/10', 'text-primary');
- return;
- }
+  if (file.size > maxFileSize) {
+   alert('El archivo "' + file.name + '" supera el límite de 15MB. Por favor, selecciona un archivo más pequeño.');
+   inputElement.value = ''; 
+   displayElement.textContent = "Arrastra y suelta tu archivo o haz clic para explorar";
+   displayElement.classList.remove('text-green-400', 'font-medium');
+   iconElement.textContent = "upload_file";
+   iconContainer.classList.remove('bg-green-500/10', 'text-green-400');
+   iconContainer.classList.add('bg-white/5', 'text-slate-400');
+   return;
+  }
 
- displayElement.textContent = file.name;
- displayElement.classList.add('text-green-600', 'font-medium');
- iconElement.textContent = "check_circle";
- iconContainer.classList.remove('bg-primary/10', 'text-primary');
- iconContainer.classList.add('bg-green-100', 'text-green-600');
+  displayElement.textContent = file.name;
+  displayElement.classList.add('text-green-400', 'font-medium');
+  iconElement.textContent = "check_circle";
+  iconContainer.classList.remove('bg-white/5', 'text-slate-400');
+  iconContainer.classList.add('bg-green-500/10', 'text-green-400');
  }
 </script>
 
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+ AOS.init({
+  duration: 800,
+  once: true,
+ });
+</script>
 <?php require_once '../INCLUDES/footer.php'; ?>
-</body>
-</html>
