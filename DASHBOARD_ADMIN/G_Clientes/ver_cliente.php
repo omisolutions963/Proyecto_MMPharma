@@ -45,6 +45,31 @@ $stmtDoc = $pdo->prepare("SELECT * FROM clientes_documentos WHERE cliente_id = ?
 $stmtDoc->execute([$id]);
 $documentos = $stmtDoc->fetchAll();
 
+// Add registration documents from clientes_usuarios if they exist
+$docs_registro = [
+    'doc_constancia_fiscal' => 'Constancia Fiscal',
+    'doc_licencia_sanitaria' => 'Licencia Sanitaria',
+    'doc_comprobante_domicilio' => 'Comprobante Domicilio',
+    'doc_alta_hacienda' => 'Alta Hacienda',
+    'doc_identificacion_oficial' => 'Identificacion Oficial',
+    'doc_acta_constitutiva' => 'Acta Constitutiva'
+];
+
+foreach ($docs_registro as $col => $label) {
+    if (!empty($cliente[$col])) {
+        $documentos[] = [
+            'id' => 0,
+            'cliente_id' => $id,
+            'tipo_documento' => $label,
+            'ruta_archivo' => 'uploads/documentos_registro/' . $cliente[$col],
+            'estatus_validacion' => 'APROBADO',
+            'fecha_subida' => $cliente['created_at'],
+            'notas_admin' => 'Documento adjunto en el registro',
+            'is_registro' => true
+        ];
+    }
+}
+
 $pageTitle = "MMPharma Portal - Detalles de Cliente";
 $activePage = "clientes";
 include("../Includes/header.php");
@@ -232,10 +257,12 @@ include("../Includes/sidebar.php");
                                             <span class="material-symbols-outlined text-[16px]">visibility</span>
                                         </a>
                                         
+                                        <?php if (empty($doc['is_registro'])): ?>
                                         <!-- Botón Validar (Abre Modal) -->
                                         <button onclick='abrirValidacion(<?= json_encode($doc) ?>)' class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-tertiary transition-all" title="Validar documento">
                                             <span class="material-symbols-outlined text-[16px]">verified</span>
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

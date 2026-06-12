@@ -7,11 +7,81 @@ $solicitud_ok = false;
 $solicitud_error = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
- // Collect fields
- // Add logic to save to database and process files
- // ...
- header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
- exit;
+    $campos = [
+        'tipo_cliente'      => 'FARMACIA',
+        'razon_social'      => trim($_POST['razon_social'] ?? ''),
+        'rfc'               => trim($_POST['rfc'] ?? ''),
+        'regimen_fiscal'    => trim($_POST['regimen_fiscal'] ?? ''),
+        'domicilio_fiscal'  => trim($_POST['domicilio_fiscal'] ?? ''),
+        'colonia'           => trim($_POST['colonia'] ?? ''),
+        'cp'                => trim($_POST['cp'] ?? ''),
+        'ciudad'            => trim($_POST['ciudad'] ?? ''),
+        'estado'            => trim($_POST['estado'] ?? ''),
+        'representante'     => trim($_POST['representante_legal'] ?? ''),
+        'nombre_comercial'  => trim($_POST['nombre_comercial'] ?? ''),
+        'giro'              => 'Farmacia',
+        'persona_contacto'  => trim($_POST['persona_contacto'] ?? ''),
+        'volumen_mensual'   => null,
+        'telefono_local'    => trim($_POST['telefono'] ?? ''),
+        'telefono_celular'  => trim($_POST['telefono_celular'] ?? ''),
+        'email'             => trim($_POST['email'] ?? ''),
+        'documento_tipo'    => 'FACTURA',
+        'metodo_pago'       => 'TRANSFERENCIA',
+        'uso_cfdi'          => null,
+        'domicilio_entrega' => null,
+        'colonia_entrega'   => null,
+        'cp_entrega'        => null,
+        'ciudad_entrega'    => null,
+        'municipio_entrega' => null,
+        'estado_entrega'    => null,
+        'receptor_entrega'  => null,
+        'horario_entrega'   => null,
+        'ip_origen'         => $_SERVER['REMOTE_ADDR'] ?? null,
+    ];
+
+    if ($campos['razon_social']) {
+        try {
+            require_once '../INCLUDES/db.php';
+            $pdo = getDB();
+            
+            // --- File Upload Logic ---
+            $upload_dir = '../uploads/documentos_registro/';
+            $docs_keys = ['licencia_sanitaria', 'comprobante_domicilio', 'alta_hacienda', 'identificacion_oficial', 'acta_constitutiva'];
+            foreach ($docs_keys as $key) {
+                $campos["doc_{$key}"] = null;
+                if (isset($_FILES[$key]) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($_FILES[$key]['name'], PATHINFO_EXTENSION));
+                    $new_name = $key . '_' . time() . '_' . uniqid() . '.' . $ext;
+                    if (move_uploaded_file($_FILES[$key]['tmp_name'], $upload_dir . $new_name)) {
+                        $campos["doc_{$key}"] = $new_name;
+                    }
+                }
+            }
+            // -------------------------
+
+            $sql = "INSERT INTO clientes_solicitudes_registro
+            (tipo_cliente, razon_social, rfc, regimen_fiscal, domicilio_fiscal, colonia, cp, ciudad, estado,
+            representante, nombre_comercial, giro, persona_contacto, volumen_mensual, telefono_local,
+            telefono_celular, email, documento_tipo, metodo_pago, uso_cfdi, domicilio_entrega,
+            colonia_entrega, cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega,
+            receptor_entrega, horario_entrega, ip_origen, doc_licencia_sanitaria, doc_comprobante_domicilio,
+            doc_alta_hacienda, doc_identificacion_oficial, doc_acta_constitutiva)
+            VALUES
+            (:tipo_cliente, :razon_social, :rfc, :regimen_fiscal, :domicilio_fiscal, :colonia, :cp, :ciudad, :estado,
+            :representante, :nombre_comercial, :giro, :persona_contacto, :volumen_mensual, :telefono_local,
+            :telefono_celular, :email, :documento_tipo, :metodo_pago, :uso_cfdi, :domicilio_entrega,
+            :colonia_entrega, :cp_entrega, :ciudad_entrega, :municipio_entrega, :estado_entrega,
+            :receptor_entrega, :horario_entrega, :ip_origen, :doc_licencia_sanitaria, :doc_comprobante_domicilio,
+            :doc_alta_hacienda, :doc_identificacion_oficial, :doc_acta_constitutiva)";
+            $pdo->prepare($sql)->execute($campos);
+            header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
+            exit;
+        } catch (Exception $e) {
+            $solicitud_error = true;
+        }
+    } else {
+        $solicitud_error = true;
+    }
 }
 ?>
 <!DOCTYPE html>

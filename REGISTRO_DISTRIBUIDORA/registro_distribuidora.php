@@ -43,18 +43,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             require_once '../INCLUDES/db.php';
             $pdo = getDB();
+            
+            // --- File Upload Logic ---
+            $upload_dir = '../uploads/documentos_registro/';
+            $docs_keys = ['licencia_sanitaria', 'comprobante_domicilio', 'alta_hacienda', 'identificacion_oficial', 'acta_constitutiva'];
+            foreach ($docs_keys as $key) {
+                $campos["doc_{$key}"] = null;
+                if (isset($_FILES[$key]) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($_FILES[$key]['name'], PATHINFO_EXTENSION));
+                    $new_name = $key . '_' . time() . '_' . uniqid() . '.' . $ext;
+                    if (move_uploaded_file($_FILES[$key]['tmp_name'], $upload_dir . $new_name)) {
+                        $campos["doc_{$key}"] = $new_name;
+                    }
+                }
+            }
+            // -------------------------
+
             $sql = "INSERT INTO clientes_solicitudes_registro
             (tipo_cliente, razon_social, rfc, regimen_fiscal, domicilio_fiscal, colonia, cp, ciudad, estado,
             representante, nombre_comercial, giro, persona_contacto, volumen_mensual, telefono_local,
             telefono_celular, email, documento_tipo, metodo_pago, uso_cfdi, domicilio_entrega,
             colonia_entrega, cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega,
-            receptor_entrega, horario_entrega, ip_origen)
+            receptor_entrega, horario_entrega, ip_origen, doc_licencia_sanitaria, doc_comprobante_domicilio,
+            doc_alta_hacienda, doc_identificacion_oficial, doc_acta_constitutiva)
             VALUES
             (:tipo_cliente, :razon_social, :rfc, :regimen_fiscal, :domicilio_fiscal, :colonia, :cp, :ciudad, :estado,
             :representante, :nombre_comercial, :giro, :persona_contacto, :volumen_mensual, :telefono_local,
             :telefono_celular, :email, :documento_tipo, :metodo_pago, :uso_cfdi, :domicilio_entrega,
             :colonia_entrega, :cp_entrega, :ciudad_entrega, :municipio_entrega, :estado_entrega,
-            :receptor_entrega, :horario_entrega, :ip_origen)";
+            :receptor_entrega, :horario_entrega, :ip_origen, :doc_licencia_sanitaria, :doc_comprobante_domicilio,
+            :doc_alta_hacienda, :doc_identificacion_oficial, :doc_acta_constitutiva)";
             $pdo->prepare($sql)->execute($campos);
             header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
             exit;

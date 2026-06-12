@@ -57,7 +57,9 @@ function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_client
 </div>
 </body></html>';
     
-    @mail($email_cliente, $asunto, $html, $headers);
+    // En lugar de usar @mail() que falla en local, usamos PHPMailer
+    require_once __DIR__ . '/../../INCLUDES/mailer.php';
+    enviarCorreoPHPMailer($email_cliente, $asunto, $html);
 }
 
 // ── Acción: Aprobar / Rechazar ────────────────────────────────────────────────
@@ -86,7 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id'
                       telefono_local, telefono_celular, email, password_hash, documento_tipo, 
                       metodo_pago, uso_cfdi, domicilio_entrega, colonia_entrega, 
                       cp_entrega, ciudad_entrega, municipio_entrega, estado_entrega, 
-                      receptor_entrega, horario_entrega, estatus
+                      receptor_entrega, horario_entrega, estatus,
+                      doc_constancia_fiscal, doc_licencia_sanitaria, doc_comprobante_domicilio,
+                      doc_alta_hacienda, doc_identificacion_oficial, doc_acta_constitutiva
                   ) VALUES (
                       ?, ?, ?, ?, ?, 
                       ?, ?, ?, ?, ?, 
@@ -94,7 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id'
                       ?, ?, ?, ?, ?, 
                       ?, ?, ?, ?, 
                       ?, ?, ?, ?, 
-                      ?, ?, 'ACTIVO'
+                      ?, ?, 'ACTIVO',
+                      ?, ?, ?, ?, ?, ?
                   )
               ");
               
@@ -127,7 +132,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id'
                   $sol['municipio_entrega'],
                   $sol['estado_entrega'],
                   $sol['receptor_entrega'],
-                  $sol['horario_entrega']
+                  $sol['horario_entrega'],
+                  $sol['doc_constancia_fiscal'],
+                  $sol['doc_licencia_sanitaria'],
+                  $sol['doc_comprobante_domicilio'],
+                  $sol['doc_alta_hacienda'],
+                  $sol['doc_identificacion_oficial'],
+                  $sol['doc_acta_constitutiva']
               ]);
               
               // Correo de bienvenida
@@ -270,6 +281,13 @@ include('../Includes/sidebar.php');
  </td>
  <td class="px-8 py-5">
  <div class="flex justify-center gap-2">
+ <button type="button" title="Ver Detalles" onclick='openDetailsModal(<?= json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-secondary/10 text-secondary hover:bg-secondary hover:text-white transition-all">
+ <span class="material-symbols-outlined text-[18px]">info</span>
+ </button>
+ <button type="button" title="Ver Documentos" onclick='openDocsModal(<?= json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all">
+ <span class="material-symbols-outlined text-[18px]">visibility</span>
+ </button>
+
  <?php if ($s['estatus'] === 'PENDIENTE'): ?>
  <form method="POST">
  <input type="hidden" name="id" value="<?= $s['id'] ?>">
@@ -285,10 +303,6 @@ include('../Includes/sidebar.php');
  <span class="material-symbols-outlined text-[18px]">close</span>
  </button>
  </form>
- <?php else: ?>
- <button class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-on-surface-variant/30 cursor-not-allowed">
- <span class="material-symbols-outlined text-[18px]">visibility_off</span>
- </button>
  <?php endif; ?>
  </div>
  </td>
@@ -304,5 +318,229 @@ include('../Includes/sidebar.php');
 </div>
 </main>
 
+<!-- Modal Detalles -->
+<div id="detailsModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="bg-surface-container-lowest w-full max-w-4xl rounded-3xl shadow-2xl border border-outline-variant/10 transform scale-95 transition-transform duration-300 overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="px-6 py-5 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-secondary">assignment</span> 
+                Detalles de Solicitud
+            </h3>
+            <button onclick="closeDetailsModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto" id="detailsContent">
+            <!-- Se llena por JS -->
+        </div>
+        <div class="px-6 py-4 border-t border-outline-variant/10 bg-surface-container-low flex justify-end">
+            <button onclick="closeDetailsModal()" class="px-6 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-bold text-sm rounded-xl transition-colors">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Documentos -->
+<div id="docsModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="bg-surface-container-lowest w-full max-w-2xl rounded-3xl shadow-2xl border border-outline-variant/10 transform scale-95 transition-transform duration-300 overflow-hidden">
+        <div class="px-6 py-5 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">folder_open</span> 
+                Documentos de Registro
+            </h3>
+            <button onclick="closeDocsModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6">
+            <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Se llena por JS -->
+            </div>
+            <div id="noDocsMsg" class="hidden text-center py-8 text-on-surface-variant">
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50">description</span>
+                <p class="text-sm font-medium">No se encontraron documentos adjuntos para esta solicitud.</p>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-outline-variant/10 bg-surface-container-low flex justify-end">
+            <button onclick="closeDocsModal()" class="px-6 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-bold text-sm rounded-xl transition-colors">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDocsModal(data) {
+    const modal = document.getElementById('docsModal');
+    const docsList = document.getElementById('docsList');
+    const noDocsMsg = document.getElementById('noDocsMsg');
+    
+    docsList.innerHTML = '';
+    let hasDocs = false;
+    
+    const docs = [
+        { key: 'doc_constancia_fiscal', label: 'Constancia de Situación Fiscal', icon: 'receipt_long' },
+        { key: 'doc_licencia_sanitaria', label: 'Licencia Sanitaria / Aviso', icon: 'medical_services' },
+        { key: 'doc_comprobante_domicilio', label: 'Comprobante de Domicilio', icon: 'home_pin' },
+        { key: 'doc_alta_hacienda', label: 'Alta de Hacienda', icon: 'account_balance' },
+        { key: 'doc_identificacion_oficial', label: 'Identificación Oficial', icon: 'badge' },
+        { key: 'doc_acta_constitutiva', label: 'Acta Constitutiva', icon: 'gavel' }
+    ];
+    
+    const baseUrl = '../../uploads/documentos_registro/';
+    
+    docs.forEach(doc => {
+        if (data[doc.key]) {
+            hasDocs = true;
+            docsList.innerHTML += `
+                <a href="${baseUrl}${data[doc.key]}" target="_blank" class="flex items-center gap-3 p-4 rounded-xl border border-outline-variant/20 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+                    <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">${doc.icon}</span>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-sm font-bold text-on-surface truncate">${doc.label}</p>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-wider mt-0.5 font-medium">Ver documento</p>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+                </a>
+            `;
+        }
+    });
+    
+    if (hasDocs) {
+        docsList.classList.remove('hidden');
+        noDocsMsg.classList.add('hidden');
+    } else {
+        docsList.classList.add('hidden');
+        noDocsMsg.classList.remove('hidden');
+    }
+    
+    modal.classList.remove('hidden');
+    // Pequeño delay para la animación
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.querySelector('div').classList.remove('scale-95');
+    }, 10);
+}
+
+function closeDocsModal() {
+    const modal = document.getElementById('docsModal');
+    modal.classList.add('opacity-0');
+    modal.querySelector('div').classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function openDetailsModal(data) {
+    const modal = document.getElementById('detailsModal');
+    const content = document.getElementById('detailsContent');
+    
+    // Función helper para mostrar campos vacíos como 'N/A'
+    const v = (val) => val ? val : '<span class="text-on-surface-variant/50 italic">N/A</span>';
+
+    content.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Datos Generales -->
+            <div class="lg:col-span-3 pb-2 border-b border-outline-variant/10">
+                <h4 class="text-sm font-black text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">domain</span> Datos Generales
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Razón Social</span>
+                        <p class="text-sm font-medium text-white">${v(data.razon_social)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Nombre Comercial</span>
+                        <p class="text-sm font-medium text-white">${v(data.nombre_comercial)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">RFC</span>
+                        <p class="text-sm font-medium text-white">${v(data.rfc)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Régimen Fiscal</span>
+                        <p class="text-sm font-medium text-white">${v(data.regimen_fiscal)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Representante Legal</span>
+                        <p class="text-sm font-medium text-white">${v(data.representante)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Giro</span>
+                        <p class="text-sm font-medium text-white">${v(data.giro)}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacto -->
+            <div class="pb-2 border-b md:border-b-0 border-outline-variant/10">
+                <h4 class="text-sm font-black text-tertiary uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">contact_page</span> Contacto
+                </h4>
+                <div class="space-y-4">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de Contacto</span>
+                        <p class="text-sm font-medium text-white">${v(data.persona_contacto)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email</span>
+                        <p class="text-sm font-medium text-white">${v(data.email)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Teléfono Local</span>
+                        <p class="text-sm font-medium text-white">${v(data.telefono_local)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Celular</span>
+                        <p class="text-sm font-medium text-white">${v(data.telefono_celular)}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fiscal y Domicilio -->
+            <div class="lg:col-span-2 pb-2 border-outline-variant/10">
+                <h4 class="text-sm font-black text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">home_pin</span> Fiscal y Logística
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Domicilio Fiscal</span>
+                        <p class="text-sm font-medium text-white leading-relaxed">
+                            ${v(data.domicilio_fiscal)} ${v(data.colonia)}<br>
+                            ${v(data.ciudad)}, ${v(data.estado)} C.P. ${v(data.cp)}
+                        </p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Método de Pago Preferente</span>
+                        <p class="text-sm font-medium text-white">${v(data.metodo_pago)}</p>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Uso de CFDI</span>
+                        <p class="text-sm font-medium text-white">${v(data.uso_cfdi)}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.querySelector('div').classList.remove('scale-95');
+    }, 10);
+}
+
+function closeDetailsModal() {
+    const modal = document.getElementById('detailsModal');
+    modal.classList.add('opacity-0');
+    modal.querySelector('div').classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+</script>
 
 <?php include('../Includes/footer.php'); ?>

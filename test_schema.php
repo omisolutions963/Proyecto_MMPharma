@@ -1,8 +1,8 @@
 <?php
-require_once 'DASHBOARD_ADMIN/clinical_core/db.php';
+require_once 'INCLUDES/db.php';
 $pdo = getDB();
-$stmt = $pdo->query('DESCRIBE catalogo_productos');
-print_r($stmt->fetchAll());
+$stmt = $pdo->query('DESCRIBE clientes_documentos');
+print_r($stmt->fetchAll(PDO::FETCH_ASSOC));
 echo "\n====\n";
-$stmt2 = $pdo->query('DESCRIBE admin_inventario_stock');
-print_r($stmt2->fetchAll());
+$stmt2 = $pdo->query('DESCRIBE clientes_usuarios');
+print_r($stmt2->fetchAll(PDO::FETCH_ASSOC));

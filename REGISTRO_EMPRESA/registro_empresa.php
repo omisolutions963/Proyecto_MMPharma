@@ -44,18 +44,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  try {
  require_once '../INCLUDES/db.php';
  $pdo = getDB();
+
+ // --- File Upload Logic ---
+ $upload_dir = '../uploads/documentos_registro/';
+ $doc_constancia_fiscal = null;
+ 
+ if (isset($_FILES['constancia_fiscal']) && $_FILES['constancia_fiscal']['error'] === UPLOAD_ERR_OK) {
+ $ext = strtolower(pathinfo($_FILES['constancia_fiscal']['name'], PATHINFO_EXTENSION));
+ $new_name = 'constancia_' . time() . '_' . uniqid() . '.' . $ext;
+ if (move_uploaded_file($_FILES['constancia_fiscal']['tmp_name'], $upload_dir . $new_name)) {
+ $doc_constancia_fiscal = $new_name;
+ }
+ }
+ $campos['doc_constancia_fiscal'] = $doc_constancia_fiscal;
+ // -------------------------
+
  $sql = "INSERT INTO clientes_solicitudes_registro
  (tipo_cliente,razon_social,rfc,regimen_fiscal,domicilio_fiscal,colonia,cp,ciudad,estado,
  representante,nombre_comercial,giro,persona_contacto,volumen_mensual,telefono_local,
  telefono_celular,email,documento_tipo,metodo_pago,uso_cfdi,domicilio_entrega,
  colonia_entrega,cp_entrega,ciudad_entrega,municipio_entrega,estado_entrega,
- receptor_entrega,horario_entrega,ip_origen)
+ receptor_entrega,horario_entrega,ip_origen,doc_constancia_fiscal)
  VALUES
  (:tipo_cliente,:razon_social,:rfc,:regimen_fiscal,:domicilio_fiscal,:colonia,:cp,:ciudad,:estado,
  :representante,:nombre_comercial,:giro,:persona_contacto,:volumen_mensual,:telefono_local,
  :telefono_celular,:email,:documento_tipo,:metodo_pago,:uso_cfdi,:domicilio_entrega,
  :colonia_entrega,:cp_entrega,:ciudad_entrega,:municipio_entrega,:estado_entrega,
- :receptor_entrega,:horario_entrega,:ip_origen)";
+ :receptor_entrega,:horario_entrega,:ip_origen,:doc_constancia_fiscal)";
  $pdo->prepare($sql)->execute($campos);
  header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
  exit;
@@ -152,50 +167,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="grid grid-cols-1 md:grid-cols-6 gap-6">
 <div class="md:col-span-6">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Nombre o Razón Social</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl transition-all text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Grupo Empresarial del Norte S.A. de C.V." type="text">
+<input name="razon_social" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl transition-all text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Grupo Empresarial del Norte S.A. de C.V." type="text" required>
 </div>
 <div class="md:col-span-3">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">RFC</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. GEN010101ABC" type="text">
+<input name="rfc" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. GEN010101ABC" type="text" required>
 </div>
 <div class="md:col-span-3">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Régimen Fiscal</label>
-<select class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm">
-<option class="bg-surface text-white">601 - General de Ley Personas Morales</option>
-<option class="bg-surface text-white">603 - Personas Morales con Fines no Lucrativos</option>
+<select name="regimen_fiscal" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm" required>
+<option value="601 - General de Ley Personas Morales" class="bg-surface text-white">601 - General de Ley Personas Morales</option>
+<option value="603 - Personas Morales con Fines no Lucrativos" class="bg-surface text-white">603 - Personas Morales con Fines no Lucrativos</option>
 </select>
 </div>
 <div class="md:col-span-6">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Domicilio Fiscal (Calle y Número)</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Av. Juárez 1234, Local 5" type="text">
+<input name="domicilio" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Av. Juárez 1234, Local 5" type="text" required>
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Colonia</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Centro Histórico" type="text">
+<input name="colonia" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Centro Histórico" type="text" required>
 </div>
 <div class="md:col-span-1">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">C.P.</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 44100" type="text">
+<input name="cp" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 44100" type="text" required>
 </div>
 <div class="md:col-span-3">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Ciudad / Municipio</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Guadalajara" type="text">
+<input name="ciudad" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Guadalajara" type="text" required>
 </div>
 <div class="md:col-span-3">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Estado</label>
-<select class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm">
+<select name="estado" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm" required>
 <option disabled="" selected="" value="" class="bg-surface text-slate-400">Selecciona tu estado</option>
 <option value="Jalisco" class="bg-surface text-white">Jalisco</option>
-<option class="bg-surface text-white">Aguascalientes</option><option class="bg-surface text-white">Baja California</option><option class="bg-surface text-white">Baja California Sur</option><option class="bg-surface text-white">Campeche</option><option class="bg-surface text-white">Chiapas</option><option class="bg-surface text-white">Chihuahua</option><option class="bg-surface text-white">Ciudad de México</option><option class="bg-surface text-white">Coahuila</option><option class="bg-surface text-white">Colima</option><option class="bg-surface text-white">Durango</option><option class="bg-surface text-white">Estado de México</option><option class="bg-surface text-white">Guanajuato</option><option class="bg-surface text-white">Guerrero</option><option class="bg-surface text-white">Hidalgo</option><option class="bg-surface text-white">Michoacán</option><option class="bg-surface text-white">Morelos</option><option class="bg-surface text-white">Nayarit</option><option class="bg-surface text-white">Nuevo León</option><option class="bg-surface text-white">Oaxaca</option><option class="bg-surface text-white">Puebla</option><option class="bg-surface text-white">Querétaro</option><option class="bg-surface text-white">Quintana Roo</option><option class="bg-surface text-white">San Luis Potosí</option><option class="bg-surface text-white">Sinaloa</option><option class="bg-surface text-white">Sonora</option><option class="bg-surface text-white">Tabasco</option><option class="bg-surface text-white">Tamaulipas</option><option class="bg-surface text-white">Tlaxcala</option><option class="bg-surface text-white">Veracruz</option><option class="bg-surface text-white">Yucatán</option><option class="bg-surface text-white">Zacatecas</option>
+<option value="Aguascalientes" class="bg-surface text-white">Aguascalientes</option><option value="Baja California" class="bg-surface text-white">Baja California</option><option value="Baja California Sur" class="bg-surface text-white">Baja California Sur</option><option value="Campeche" class="bg-surface text-white">Campeche</option><option value="Chiapas" class="bg-surface text-white">Chiapas</option><option value="Chihuahua" class="bg-surface text-white">Chihuahua</option><option value="Ciudad de México" class="bg-surface text-white">Ciudad de México</option><option value="Coahuila" class="bg-surface text-white">Coahuila</option><option value="Colima" class="bg-surface text-white">Colima</option><option value="Durango" class="bg-surface text-white">Durango</option><option value="Estado de México" class="bg-surface text-white">Estado de México</option><option value="Guanajuato" class="bg-surface text-white">Guanajuato</option><option value="Guerrero" class="bg-surface text-white">Guerrero</option><option value="Hidalgo" class="bg-surface text-white">Hidalgo</option><option value="Michoacán" class="bg-surface text-white">Michoacán</option><option value="Morelos" class="bg-surface text-white">Morelos</option><option value="Nayarit" class="bg-surface text-white">Nayarit</option><option value="Nuevo León" class="bg-surface text-white">Nuevo León</option><option value="Oaxaca" class="bg-surface text-white">Oaxaca</option><option value="Puebla" class="bg-surface text-white">Puebla</option><option value="Querétaro" class="bg-surface text-white">Querétaro</option><option value="Quintana Roo" class="bg-surface text-white">Quintana Roo</option><option value="San Luis Potosí" class="bg-surface text-white">San Luis Potosí</option><option value="Sinaloa" class="bg-surface text-white">Sinaloa</option><option value="Sonora" class="bg-surface text-white">Sonora</option><option value="Tabasco" class="bg-surface text-white">Tabasco</option><option value="Tamaulipas" class="bg-surface text-white">Tamaulipas</option><option value="Tlaxcala" class="bg-surface text-white">Tlaxcala</option><option value="Veracruz" class="bg-surface text-white">Veracruz</option><option value="Yucatán" class="bg-surface text-white">Yucatán</option><option value="Zacatecas" class="bg-surface text-white">Zacatecas</option>
 </select>
 </div>
 <div class="md:col-span-3">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Teléfono Institucional</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 3312345678" type="tel">
+<input name="telefono_local" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. 3312345678" type="tel" required>
 </div>
 <div class="md:col-span-6">
 <label class="block text-sm font-semibold text-slate-300 mb-2" style="">Representante Legal</label>
-<input class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Juan García Martínez" type="text">
+<input name="representante_legal" class="w-full px-4 py-3 bg-background/50 border border-white/10 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 rounded-xl text-white outline-none text-sm placeholder:text-slate-500" placeholder="Ej. Juan García Martínez" type="text" required>
 </div>
 </div>
 </section>
