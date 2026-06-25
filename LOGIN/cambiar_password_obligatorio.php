@@ -7,7 +7,7 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
     exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $error = false;
 $error_msg = "";
 $success = false;
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+    <link rel="icon" type="image/png" href="../logos/mmpharma-isotipo.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
@@ -88,12 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Panel izquierdo: Branding -->
     <div class="hidden lg:flex w-1/2 bg-surface flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
         <div class="absolute inset-0 z-0 overflow-hidden">
-            <img src="../IMG/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] transform scale-125">
+            <img src="../img/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] transform scale-125">
             <div class="absolute inset-0 bg-background/80"></div>
         </div>
 
         <div class="relative z-10">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain">
+            <img src="../logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-10 object-contain">
         </div>
         <div class="relative z-10 mt-20">
             <h1 class="text-4xl lg:text-5xl font-black text-white leading-tight mb-6 tracking-tight">Actualiza tu<br><span class="text-tertiary">Contraseña</span></h1>
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="flex-1 flex flex-col items-center justify-start lg:justify-center px-6 pt-12 pb-12 sm:p-8 bg-background relative overflow-y-auto w-full min-h-screen lg:min-h-0">
         <!-- Logo para Móvil (Oculto en Desktop) -->
         <div class="lg:hidden mb-8 mt-2 z-10" data-aos="fade-down">
-            <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain">
+            <img src="../logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-10 object-contain">
         </div>
 
         <div class="w-full max-w-md relative z-10 bg-tertiary px-6 py-8 sm:p-10 rounded-3xl" data-aos="fade-left">
@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         showConfirmButton: false,
         allowOutsideClick: false
     }).then(() => {
-        window.location.href = '../DASHBOARD_CLIENTE/Dashboard.php';
+        window.location.href = '../dashboard_cliente/dashboard.php';
     });
 </script>
 <?php endif; ?>

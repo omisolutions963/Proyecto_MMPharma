@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 
 $error_login = false;
 $error_msg = "Correo o contraseña incorrectos.";
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  $_SESSION['admin_email'] = $email;
  $_SESSION['admin_nombre'] = $admin['nombre'];
  $_SESSION['admin_foto'] = $admin['foto_perfil'];
- header("Location: ../INDEX/index.php");
+ header("Location: ../index/index.php");
  exit;
  } else {
  $error_login = true;
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
   }
   
-  header("Location: ../INDEX/index.php");
+  header("Location: ../index/index.php");
   exit;
  } else {
  $error_login = true;
@@ -63,14 +63,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  }
  }
 
- // 3. Credenciales de emergencia (Admin)
- if (!$error_login && $email === 'omi.mendivil@gmail.com' && $password === 'MMPharma2024!') {
- $_SESSION['admin_logged_in'] = true;
- $_SESSION['admin_email'] = $email;
- $_SESSION['admin_nombre'] = 'Omar Alexis Alquicires Mendivil';
- header("Location: ../INDEX/index.php");
- exit;
- }
+  // 3. Credenciales de emergencia (Admin)
+  $emergency_user = getenv('ADMIN_EMERGENCY_USER') ?: 'omi.mendivil@gmail.com';
+  $emergency_pass = getenv('ADMIN_EMERGENCY_PASS') ?: 'MMPharma2024!';
+  if (!$error_login && $email === $emergency_user && $password === $emergency_pass) {
+  $_SESSION['admin_logged_in'] = true;
+  $_SESSION['admin_email'] = $email;
+  $_SESSION['admin_nombre'] = 'Omar Alexis Alquicires Mendivil';
+  header("Location: ../index/index.php");
+  exit;
+  }
 
  $error_login = true;
 
@@ -92,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+<link rel="icon" type="image/png" href="../logos/mmpharma-isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <style>
  body { font-family: 'Inter', sans-serif; min-height: 100vh; margin:0; }
@@ -133,13 +135,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  <div class="hidden lg:flex w-1/2 bg-surface flex-col justify-between p-16 relative overflow-hidden" data-aos="fade-right">
  <!-- Background Image Overlay -->
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../IMG/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] transform scale-125">
+ <img src="../img/33.webp" class="absolute inset-0 w-full h-full object-cover object-[center_60%] transform scale-125">
  <div class="absolute inset-0 bg-background/80"></div>
  </div>
 
  <div class="relative z-10">
- <a href="../INDEX/index.php">
- <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
+ <a href="../index/index.php">
+ <img src="../logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
  </a>
  </div>
  <div class="relative z-10 mt-20">
@@ -169,14 +171,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  <div class="flex-1 flex flex-col items-center justify-start lg:justify-center px-6 pt-12 pb-12 sm:p-8 bg-background relative overflow-y-auto w-full min-h-screen lg:min-h-0">
   <!-- Logo para Móvil (Oculto en Desktop) -->
   <div class="lg:hidden mb-8 mt-2 z-10" data-aos="fade-down">
-   <a href="../INDEX/index.php">
-    <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
+   <a href="../index/index.php">
+    <img src="../logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-10 object-contain hover:scale-105 transition-transform duration-300">
    </a>
   </div>
 
   <div class="w-full max-w-md relative z-10 bg-tertiary px-6 py-8 sm:p-10 rounded-3xl" data-aos="fade-left">
    <div class="flex items-center gap-4 mb-6 sm:mb-10">
- <a href="../INDEX/index.php" class="w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 text-white rounded-2xl transition-all group">
+ <a href="../index/index.php" class="w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 text-white rounded-2xl transition-all group">
  <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
  </a>
  <div>
@@ -229,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="mt-8 pt-6 sm:mt-10 sm:pt-8 border-t border-white/20 text-center">
   <p class="text-sm text-white mb-4 font-medium">¿Aún no tienes cuenta?</p>
-  <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="inline-flex items-center gap-2 text-white font-bold hover:text-white/80 transition-colors group">
+  <a href="../seleccion_registro/seleccion_registro.php" class="inline-flex items-center gap-2 text-white font-bold hover:text-white/80 transition-colors group">
   Solicitar acceso al portal <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
   </a>
   </div>
