@@ -7,6 +7,8 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../libs/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../libs/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/../libs/PHPMailer/src/SMTP.php';
+require_once __DIR__ . '/env_loader.php';
+loadEnv(__DIR__ . '/../.env');
 
 /**
  * Función genérica para enviar correos usando PHPMailer
@@ -22,22 +24,24 @@ function enviarCorreoPHPMailer($destinatario, $asunto, $cuerpo_html) {
     try {
         // Configuración del servidor SMTP
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';                      // Servidor SMTP (ej. Gmail)
-        $mail->SMTPAuth   = true;                                  // Habilitar autenticación SMTP
+        $mail->Host       = getenv('SMTP_HOST') ?: 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;                                  
         
-        // ---------------------------------------------------------------------
-        // TODO: CAMBIA ESTOS DATOS POR TU CORREO REAL PARA QUE FUNCIONE
-        // ---------------------------------------------------------------------
-        $mail->Username   = 'hjona7573@gmail.com';                  // Tu correo de Gmail
-        $mail->Password   = 'vspxbycvinkqytos';         // Contraseña de App (No la de tu correo normal)
-        // ---------------------------------------------------------------------
+        $mail->Username   = getenv('SMTP_USER') ?: 'hjona7573@gmail.com';                  
+        $mail->Password   = getenv('SMTP_PASS') ?: 'vspxbycvinkqytos';         
         
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;           // Habilitar encriptación TLS implícita
-        $mail->Port       = 465;                                   // Puerto TCP (465 para SMTPS)
+        $smtpSecure       = getenv('SMTP_SECURE') ?: 'ssl';
+        if ($smtpSecure === 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;           // Habilitar encriptación TLS implícita (SSL/SMTPS)
+        } else {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;        // Habilitar encriptación STARTTLS
+        }
+        $mail->Port       = (int)(getenv('SMTP_PORT') ?: 465);                                   
 
         // Configuración de Remitente
-        // El primer parámetro debe ser el mismo que Username, el segundo es el nombre que verá el cliente
-        $mail->setFrom('hjona7573@gmail.com', 'MMPharma Portal');
+        $fromEmail = getenv('SMTP_FROM_EMAIL') ?: (getenv('SMTP_USER') ?: 'hjona7573@gmail.com');
+        $fromName  = getenv('SMTP_FROM_NAME') ?: 'MMPharma Portal';
+        $mail->setFrom($fromEmail, $fromName);
         
         // Destinatario
         $mail->addAddress($destinatario);

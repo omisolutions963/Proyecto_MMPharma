@@ -7,7 +7,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
         $current_script = basename($_SERVER['PHP_SELF']);
         $current_dir = basename(dirname($_SERVER['PHP_SELF']));
         if ($current_script !== 'cambiar_password_obligatorio.php' && $current_script !== 'logout.php') {
-            $redirect_url = ($current_dir === 'LOGIN') ? 'cambiar_password_obligatorio.php' : '../LOGIN/cambiar_password_obligatorio.php';
+            $redirect_url = ($current_dir === 'login') ? 'cambiar_password_obligatorio.php' : '../login/cambiar_password_obligatorio.php';
             header("Location: " . $redirect_url);
             exit;
         }
@@ -23,7 +23,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="icon" type="image/png" href="<?= $base ?? '' ?>logos/MMPharma-Isotipo.png">
+<link rel="icon" type="image/png" href="<?= $base ?? '' ?>logos/mmpharma-isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <!-- SweetAlert2 para alertas animadas -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -139,16 +139,16 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
 <header class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm transition-all duration-300">
 <nav class="flex justify-between items-center w-full px-4 md:px-8 py-3 md:py-4 max-w-[1369px] mx-auto font-['Inter'] font-medium text-base antialiased gap-2">
  <div class="flex-1 flex items-center">
- <a href="<?= $base ?? '' ?>INDEX/index.php">
- <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-6 md:h-8 w-auto">
+ <a href="<?= $base ?? '' ?>index/index.php">
+ <img src="<?= $base ?? '' ?>logos/mmpharma-logotipo-horizontal.png" alt="MMPharma" class="h-6 md:h-8 w-auto">
  </a>
  </div>
 
  <div class="hidden lg:flex gap-8 xl:gap-12 text-sm xl:text-base font-semibold">
- <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>INDEX/index.php">Inicio</a>
- <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php">Nosotros</a>
- <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CATALOGO/catalogo.php">Productos</a>
- <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>CONTACTO/contacto.php">Contacto</a>
+ <a class="<?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>index/index.php">Inicio</a>
+ <a class="<?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>quienes_somos/quienes_somos.php">Nosotros</a>
+ <a class="<?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>catalogo/catalogo.php">Productos</a>
+ <a class="<?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-600 hover:text-primary transition-colors duration-200' ?>" href="<?= $base ?? '' ?>contacto/contacto.php">Contacto</a>
  </div>
 
   <?php
@@ -197,11 +197,11 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  $foto_cliente_raw = $_SESSION['cliente_foto'] ?? ''; 
  $foto_cliente = '';
  if ($foto_cliente_raw && $foto_cliente_raw !== 'PENDIENTE') {
- $foto_cliente = $base . 'DASHBOARD_CLIENTE/' . ltrim(str_replace('../', '', $foto_cliente_raw), '/');
+ $foto_cliente = $base . 'dashboard_cliente/' . ltrim(str_replace('../', '', $foto_cliente_raw), '/');
  }
  ?>
  <!-- Botón Ingresar al Portal -->
- <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full hover:bg-primary/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
+ <a href="<?= $base ?? '' ?>dashboard_cliente/dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-full hover:bg-primary/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
  <span class="tracking-wide">Ingresar al portal</span>
  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
@@ -236,13 +236,13 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  </div>
  
  <div class="p-2 space-y-1">
- <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
+ <a href="<?= $base ?? '' ?>dashboard_cliente/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
  <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center <?= $role_text ?> group-hover/item:text-white transition-colors <?= $role_icon_bg ?>">
  <span class="material-symbols-outlined text-lg">dashboard</span>
  </div>
  <span>Panel de control</span>
  </a>
- <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Perfil.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
+ <a href="<?= $base ?? '' ?>dashboard_cliente/perfil.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 <?= $role_hover_text ?> <?= $role_hover_bg ?> rounded-xl transition-all group/item">
  <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center <?= $role_text ?> group-hover/item:text-white transition-colors <?= $role_icon_bg ?>">
  <span class="material-symbols-outlined text-lg">manage_accounts</span>
  </div>
@@ -251,7 +251,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  </div>
  
  <div class="p-2 bg-slate-50 border-t border-slate-100">
- <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group/item">
+ <a href="<?= $base ?? '' ?>login/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group/item">
  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center text-red-500 group-hover/item:bg-red-500 group-hover/item:text-white transition-colors">
  <span class="material-symbols-outlined text-lg">logout</span>
  </div>
@@ -288,11 +288,11 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  $foto_admin_raw = $_SESSION['admin_foto'] ?? ''; 
  $foto_admin = '';
  if ($foto_admin_raw && $foto_admin_raw !== 'PENDIENTE') {
- $foto_admin = $base . 'DASHBOARD_ADMIN/' . ltrim(str_replace('../', '', $foto_admin_raw), '/');
+ $foto_admin = $base . 'dashboard_admin/' . ltrim(str_replace('../', '', $foto_admin_raw), '/');
  }
  ?>
  <!-- Botón Ingresar al Portal para Admin -->
- <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-[#008151] text-white font-bold text-sm rounded-full hover:bg-[#008151]/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
+ <a href="<?= $base ?? '' ?>dashboard_admin/dashboard/dashboard.php" class="hidden lg:flex items-center justify-center gap-2 px-5 py-2.5 bg-[#008151] text-white font-bold text-sm rounded-full hover:bg-[#008151]/95 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ml-4 group shadow-sm">
  <span class="tracking-wide">Ingresar al portal</span>
  <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
@@ -327,7 +327,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  </div>
  
  <div class="p-2 space-y-1">
- <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 hover:text-[#008151] hover:bg-emerald-50 rounded-xl transition-all group/item">
+ <a href="<?= $base ?? '' ?>dashboard_admin/dashboard/dashboard.php" class="flex items-center gap-3 p-3 text-sm font-bold text-slate-600 hover:text-[#008151] hover:bg-emerald-50 rounded-xl transition-all group/item">
  <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center group-hover/item:bg-[#008151] group-hover/item:text-white transition-colors text-slate-500 font-medium">
  <span class="material-symbols-outlined text-lg">dashboard</span>
  </div>
@@ -336,7 +336,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  </div>
  
  <div class="p-2 bg-slate-50 border-t border-slate-100">
- <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group/item">
+ <a href="<?= $base ?? '' ?>login/logout.php" class="flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all group/item">
  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover/item:bg-red-500 text-red-500 group-hover/item:text-white transition-colors">
  <span class="material-symbols-outlined text-lg">logout</span>
  </div>
@@ -363,11 +363,11 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  
  <?php else: ?>
   <div class="flex items-center gap-1.5 sm:gap-3">
-  <a href="<?= $base ?? '' ?>LOGIN/login.php"
+  <a href="<?= $base ?? '' ?>login/login.php"
   class="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-primary text-white font-bold text-[11px] sm:text-sm rounded-full hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 whitespace-nowrap">
   Iniciar sesi&oacute;n
   </a>
-  <a href="<?= $base ?? '' ?>SELECCIÓN_REGISTRO/selección_registro.php"
+  <a href="<?= $base ?? '' ?>seleccion_registro/seleccion_registro.php"
   class="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-tertiary text-white font-bold text-[11px] sm:text-sm rounded-full hover:bg-tertiary/90 hover:-translate-y-0.5 active:scale-95 hover: transition-all duration-300 whitespace-nowrap">
   Crear cuenta
   </a>
@@ -387,7 +387,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
 
   <!-- Top bar -->
   <div class="flex justify-between items-center px-6 py-5 border-b border-slate-100 flex-shrink-0">
-    <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal.png" alt="MMPharma" class="h-8 w-auto">
+    <img src="<?= $base ?? '' ?>logos/mmpharma-logotipo-horizontal.png" alt="MMPharma" class="h-8 w-auto">
     <button id="menu-close" class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary rounded-full hover:bg-slate-100 transition-all">
       <span class="material-symbols-outlined text-3xl">close</span>
     </button>
@@ -395,21 +395,21 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
 
   <!-- Nav links — centrados verticalmente con my-auto -->
   <div class="my-auto flex flex-col items-center gap-8 px-8 text-center">
-    <a href="<?= $base ?? '' ?>INDEX/index.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Inicio</a>
-    <a href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Nosotros</a>
-    <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Productos</a>
-    <a href="<?= $base ?? '' ?>CONTACTO/contacto.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Contacto</a>
+    <a href="<?= $base ?? '' ?>index/index.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'inicio' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Inicio</a>
+    <a href="<?= $base ?? '' ?>quienes_somos/quienes_somos.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'nosotros' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Nosotros</a>
+    <a href="<?= $base ?? '' ?>catalogo/catalogo.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'catalogo' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Productos</a>
+    <a href="<?= $base ?? '' ?>contacto/contacto.php" class="text-3xl font-semibold <?= ($pagina_actual ?? '') === 'contacto' ? 'text-primary border-b-2 border-tertiary pb-1' : 'text-slate-500 hover:text-primary transition-all duration-200' ?>">Contacto</a>
   </div>
 
   <!-- Bottom session links -->
   <?php if (isset($_SESSION['cliente_logged_in']) || isset($_SESSION['admin_logged_in'])): ?>
   <div class="flex-shrink-0 flex flex-col items-center gap-4 pb-10 pt-6 border-t border-slate-100">
     <?php if (isset($_SESSION['cliente_logged_in'])): ?>
-    <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Dashboard.php" class="text-base font-bold text-primary">Panel de control</a>
+    <a href="<?= $base ?? '' ?>dashboard_cliente/dashboard.php" class="text-base font-bold text-primary">Panel de control</a>
     <?php else: ?>
-    <a href="<?= $base ?? '' ?>DASHBOARD_ADMIN/dashboard/dashboard.php" class="text-base font-bold text-[#005132]">Panel admin</a>
+    <a href="<?= $base ?? '' ?>dashboard_admin/dashboard/dashboard.php" class="text-base font-bold text-[#005132]">Panel admin</a>
     <?php endif; ?>
-    <a href="<?= $base ?? '' ?>LOGIN/logout.php" class="text-base font-bold text-red-500">Cerrar sesión</a>
+    <a href="<?= $base ?? '' ?>login/logout.php" class="text-base font-bold text-red-500">Cerrar sesión</a>
   </div>
   <?php endif; ?>
 
@@ -509,7 +509,7 @@ if (menuClose && mobileMenu) {
  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-primary pointer-events-none">expand_more</span>
  </div>
  <?php else: ?>
- <p class="text-xs text-white bg-white/10 p-3 rounded-xl border border-white/5">No tienes direcciones registradas. <a href="<?= $base ?? '' ?>DASHBOARD_CLIENTE/Direcciones.php" class="font-bold underline hover:text-tertiary">Agregar una</a>.</p>
+ <p class="text-xs text-white bg-white/10 p-3 rounded-xl border border-white/5">No tienes direcciones registradas. <a href="<?= $base ?? '' ?>dashboard_cliente/direcciones.php" class="font-bold underline hover:text-tertiary">Agregar una</a>.</p>
  <?php endif; ?>
  </div>
  <?php endif; ?>
@@ -603,26 +603,31 @@ function renderCartItems() {
  let subtotal = 0;
 
  carrito.forEach((item, index) => {
- const totalLinea = item.precio * item.cantidad;
- subtotal += totalLinea;
- 
- let imagenHtml = '';
- if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
- imagenHtml = `<img src="<?= $base ?? '' ?>CATALOGO/imagenes/productos/${item.imagen}" class="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-300 group-hover:scale-110">`;
- } else {
- imagenHtml = `<span class="material-symbols-outlined text-slate-300 text-3xl transition-transform duration-300 group-hover:scale-110">medication</span>`;
- }
+  const totalLinea = item.precio * item.cantidad;
+  subtotal += totalLinea;
+  
+  const tasa = item.tasa_iva !== undefined ? parseFloat(item.tasa_iva) : 0.16;
+  const itemSinIva = totalLinea / (1 + tasa);
+  const itemIva = totalLinea - itemSinIva;
+  
+  let imagenHtml = '';
+  if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
+  imagenHtml = `<img src="<?= $base ?? '' ?>includes/image_cache.php?img=${encodeURIComponent(item.imagen)}&w=150" class="w-full h-full object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.03]">`;
+  } else {
+  imagenHtml = `<span class="material-symbols-outlined text-slate-400 text-3xl transition-transform duration-300 group-hover:scale-[1.03]">medication</span>`;
+  }
 
- html += `
- <div class="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl relative group hover:-translate-y-1 transition-all duration-300 animate-in slide-in-from-right-4 fade-in duration-300" style="animation-delay: ${index * 50}ms; animation-fill-mode: both;">
- <div class="w-20 h-20 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
- ${imagenHtml}
- </div>
- <div class="flex-1 min-w-0 py-1">
- <h4 class="text-sm font-bold text-white leading-tight mb-1 truncate pr-8 transition-colors group-hover:text-tertiary" title="${item.nombre}">${item.nombre}</h4>
- <p class="text-base font-black text-tertiary mb-3">${formatCurrency(item.precio)}</p>
- 
- <div class="flex items-center bg-white/10 rounded-xl w-fit p-1 border border-white/5">
+  html += `
+  <div class="flex gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl relative group hover:-translate-y-0.5 transition-all duration-300 animate-in slide-in-from-right-4 fade-in duration-300" style="animation-delay: ${index * 50}ms; animation-fill-mode: both;">
+  <div class="w-20 h-20 bg-white rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+  ${imagenHtml}
+  </div>
+  <div class="flex-1 min-w-0 py-1">
+  <h4 class="text-sm font-bold text-white leading-tight mb-1 truncate pr-8" title="${item.nombre}">${item.nombre}</h4>
+  <p class="text-base font-black text-tertiary mb-1">${formatCurrency(item.precio)}</p>
+  <p class="text-[10px] text-white/50 mb-3">Precios más IVA | IVA: ${(tasa * 100).toFixed(0)}% (+${formatCurrency(itemIva)})</p>
+  
+  <div class="flex items-center bg-white/10 rounded-xl w-fit p-1 border border-white/5">
  <button onclick="cambiarCantidad(${index}, -1)" class="w-7 h-7 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[18px]">remove</span></button>
  <span class="w-8 text-center text-sm font-black text-white">${item.cantidad}</span>
  <button onclick="cambiarCantidad(${index}, 1)" class="w-7 h-7 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all"><span class="material-symbols-outlined text-[18px]">add</span></button>
@@ -663,7 +668,7 @@ function calcularEnvioDynamic(subtotal) {
      return;
   }
 
-  fetch('<?= $base ?? '' ?>CATALOGO/api_calcular_envio.php', {
+  fetch('<?= $base ?? '' ?>catalogo/api_calcular_envio.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ direccion_id: direccion_id, subtotal: subtotal })
@@ -680,7 +685,11 @@ function calcularEnvioDynamic(subtotal) {
               currentShippingCost = 0;
               document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
               document.getElementById('checkbox-recoger-sucursal').checked = false;
-              envioEl.textContent = calc.mensaje;
+              if (subtotal < 4000.00) {
+                  envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
+              } else {
+                  envioEl.textContent = calc.mensaje;
+              }
               totalEl.textContent = formatCurrency(subtotal);
           }
       } else {
@@ -703,7 +712,10 @@ function actualizarTotalConEnvio() {
     const totalEl = document.getElementById('cart-total');
     const isRecoger = document.getElementById('checkbox-recoger-sucursal').checked;
     
-    if (isRecoger) {
+    if (currentSubtotal < 4000.00) {
+        envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
+        totalEl.textContent = formatCurrency(currentSubtotal);
+    } else if (isRecoger) {
         envioEl.innerHTML = `<span class="line-through text-white/50 text-xs mr-2">${formatCurrency(currentShippingCost)}</span><span class="text-white">Recoger en sucursal</span>`;
         totalEl.textContent = formatCurrency(currentSubtotal);
     } else {
@@ -809,7 +821,7 @@ function generarCotizacion() {
  // Create a hidden form to submit the cart data as POST and trigger download
  const form = document.createElement('form');
  form.method = 'POST';
- form.action = '<?= $base ?? '' ?>CATALOGO/generar_cotizacion_pdf.php';
+ form.action = '<?= $base ?? '' ?>catalogo/generar_cotizacion_pdf.php';
  form.target = '_blank';
  
  const input = document.createElement('input');
@@ -856,7 +868,7 @@ function generarCotizacionExcel() {
 
  const form = document.createElement('form');
  form.method = 'POST';
- form.action = '<?= $base ?? '' ?>CATALOGO/generar_cotizacion_excel.php';
+ form.action = '<?= $base ?? '' ?>catalogo/generar_cotizacion_excel.php';
  form.target = '_blank';
 
  const input = document.createElement('input');
@@ -906,7 +918,7 @@ function confirmarPedido() {
  
  const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
 
- fetch('<?= $base ?? '' ?>CATALOGO/procesar_pedido.php', {
+ fetch('<?= $base ?? '' ?>catalogo/procesar_pedido.php', {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
  body: JSON.stringify({ carrito: carrito, direccion_id: direccion_id, recoger_sucursal: isRecoger })
@@ -944,7 +956,7 @@ function confirmarPedido() {
  allowOutsideClick: false,
  backdrop: `rgba(15, 23, 42, 0.6)`
  }).then(() => {
- window.location.href = '<?= $base ?? '' ?>CATALOGO/catalogo.php';
+ window.location.href = '<?= $base ?? '' ?>catalogo/catalogo.php';
  });
  } else if (data.red_fria) {
     Swal.fire({

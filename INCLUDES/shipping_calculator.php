@@ -23,6 +23,15 @@ function haversineGreatCircleDistance($latFrom, $lonFrom, $latTo, $lonTo, $earth
  * @return array [ 'costo' => float, 'mensaje' => string, 'tipo' => string, 'puede_enviarse' => bool ]
  */
 function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
+    if ($subtotal < 4000.00) {
+        return [
+            'costo' => 0.00,
+            'mensaje' => 'Recoger en almacén',
+            'tipo' => 'SUCURSAL',
+            'puede_enviarse' => false
+        ];
+    }
+
     $estado = strtoupper(trim($estado));
     $origin_lat = 20.639194;
     $origin_lng = -103.403222;

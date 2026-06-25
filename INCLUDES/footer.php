@@ -1,14 +1,14 @@
 <footer class="bg-black text-white pt-16 pb-16">
  <div class="max-w-[1369px] mx-auto px-8 flex flex-col items-center text-center space-y-8">
  <!-- Logo -->
- <img src="<?= $base ?? '' ?>logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-10 w-auto">
+ <img src="<?= $base ?? '' ?>logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-10 w-auto">
  
  <!-- Navegación -->
  <nav class="grid grid-cols-2 justify-items-center max-w-xs mx-auto sm:flex sm:flex-wrap sm:justify-center sm:max-w-none gap-x-12 gap-y-4 text-xs font-bold uppercase tracking-[0.2em] text-white/60">
- <a href="<?= $base ?? '' ?>INDEX/index.php" class="hover:text-white transition-colors">Inicio</a>
- <a href="<?= $base ?? '' ?>QUIENES_SOMOS/quienes_somos.php" class="hover:text-white transition-colors">Nosotros</a>
- <a href="<?= $base ?? '' ?>CATALOGO/catalogo.php" class="hover:text-white transition-colors">Catálogo</a>
- <a href="<?= $base ?? '' ?>CONTACTO/contacto.php" class="hover:text-white transition-colors">Contacto</a>
+ <a href="<?= $base ?? '' ?>index/index.php" class="hover:text-white transition-colors">Inicio</a>
+ <a href="<?= $base ?? '' ?>quienes_somos/quienes_somos.php" class="hover:text-white transition-colors">Nosotros</a>
+ <a href="<?= $base ?? '' ?>catalogo/catalogo.php" class="hover:text-white transition-colors">Catálogo</a>
+ <a href="<?= $base ?? '' ?>contacto/contacto.php" class="hover:text-white transition-colors">Contacto</a>
  </nav>
 
  <!-- Redes Sociales -->
@@ -23,12 +23,13 @@
  </a>
  </div>
 
- <!-- Copyright -->
- <div class="w-full text-[10px] text-white/60 tracking-[0.3em] uppercase hover:text-white transition-colors cursor-default">
- <p>&copy; <span id="copyright-year">2026</span> MMPharma. Todos los derechos reservados.</p>
+  <!-- Copyright -->
+ <div class="w-full text-[10px] text-white/60 tracking-[0.3em] uppercase transition-colors text-center">
+ <p class="mb-2 cursor-default hover:text-white">&copy; <span id="copyright-year">2026</span> MMPharma. Todos los derechos reservados.</p>
+  <p class="normal-case tracking-wide text-white/40 text-[10px]">Sistema realizado por <a href="https://www.atomic.zone/" target="_blank" rel="noopener noreferrer" class="text-white/60 hover:text-white hover:underline transition-colors font-semibold decoration-white/20 underline-offset-4">Atomic Advertising</a></p>
  <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
  </div>
- </div>
+
 </footer>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
