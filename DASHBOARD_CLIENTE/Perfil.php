@@ -3,11 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
-    header("Location: ../LOGIN/login.php");
+    header("Location: ../login/login.php");
     exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 
@@ -30,8 +30,8 @@ $tipo_cliente = htmlspecialchars($cliente['tipo'] ?? 'FARMACIA');
 
 $pageTitle = 'MMPharma Portal - Mi Perfil';
 $activePage = 'perfil';
-include('Includes/header.php');
-include('Includes/sidebar.php');
+include('includes/header.php');
+include('includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
     
@@ -84,7 +84,7 @@ include('Includes/sidebar.php');
 
             <!-- Actions -->
             <div class="flex flex-col gap-3 mt-4 md:mt-auto self-stretch md:self-end">
-                <a href="Documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver documentos</a>
+                <a href="documentos.php" class="px-6 py-2 bg-transparent border border-outline hover:bg-white/5 text-white text-sm font-semibold rounded-xl transition-colors text-center">Ver documentos</a>
             </div>
         </div>
     </div>
@@ -154,7 +154,7 @@ include('Includes/sidebar.php');
                         <div>
                             <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Método de pago</label>
                             <div class="relative">
-                                <select name="metodo_pago" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none transition-all">
+                                <select name="metodo_pago" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none transition-all">
                                     <option value="TRANSFERENCIA" <?= $metodo_pago == 'TRANSFERENCIA' ? 'selected' : '' ?>>Transferencia</option>
                                     <option value="EFECTIVO" <?= $metodo_pago == 'EFECTIVO' ? 'selected' : '' ?>>Efectivo</option>
                                     <option value="CHEQUE" <?= $metodo_pago == 'CHEQUE' ? 'selected' : '' ?>>Cheque</option>
@@ -184,7 +184,7 @@ include('Includes/sidebar.php');
                     </div>
                 </div>
                 <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
-                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#071628', color:'#fff', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='Contacto.php'; } })">Solicitar</button>
+                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#071628', color:'#fff', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='contacto.php'; } })">Solicitar</button>
                 </div>
             </div>
 
@@ -223,7 +223,7 @@ include('Includes/sidebar.php');
                 <div class="relative z-10">
                     <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
                     <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
-                    <a href="Contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary-container text-center text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors ">
+                    <a href="contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary-container text-center text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors ">
                         Contactar soporte
                     </a>
                 </div>
@@ -233,7 +233,7 @@ include('Includes/sidebar.php');
     </div>
 
 </main>
-<?php include('Includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>
 
 <script>
 // Radio button styling toggle

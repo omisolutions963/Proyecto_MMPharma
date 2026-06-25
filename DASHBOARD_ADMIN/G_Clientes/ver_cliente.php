@@ -72,8 +72,8 @@ foreach ($docs_registro as $col => $label) {
 
 $pageTitle = "MMPharma Portal - Detalles de Cliente";
 $activePage = "clientes";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
@@ -379,4 +379,4 @@ function submitValidacion(actionStr) {
 }
 </script>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

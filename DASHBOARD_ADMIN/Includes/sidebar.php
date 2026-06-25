@@ -26,12 +26,12 @@ $menuItems = [
 
 $menuLinks = [
  'dashboard' => '../dashboard/dashboard.php',
- 'productos' => '../G_Productos/productos.php',
- 'clientes' => '../G_Clientes/clientes.php',
- 'solicitudes'=> '../S_Registro/solicitudes.php',
- 'pedidos' => '../G_Pedidos/pedidos.php',
- 'soporte' => '../G_Soporte/mensajes.php',
- 'marketing' => '../G_Marketing/marketing.php',
+ 'productos' => '../g_productos/productos.php',
+ 'clientes' => '../g_clientes/clientes.php',
+ 'solicitudes'=> '../s_registro/solicitudes.php',
+ 'pedidos' => '../g_pedidos/pedidos.php',
+ 'soporte' => '../g_soporte/mensajes.php',
+ 'marketing' => '../g_marketing/marketing.php',
 ];
 ?>
 
@@ -41,7 +41,7 @@ $menuLinks = [
 
  <!-- Logo -->
  <div class="mb-8 px-4">
- <img src="../Logos/MMPharma-Logotipo-Horizontal-Blanco.svg"
+ <img src="../logos/mmpharma-logotipo-horizontal-blanco.svg"
  alt="MMPharma" class="w-44 object-contain"/>
  </div>
 
@@ -75,12 +75,12 @@ $menuLinks = [
 
  <!-- Bottom: Ir al sitio + Perfil -->
  <div class="mt-auto pt-4 border-t border-white/10 flex flex-col gap-3 px-2">
- <a href="../../INDEX/index.php"
+ <a href="../../index/index.php"
  class="flex items-center gap-2 w-full py-2.5 px-3 bg-emerald-500/5 text-emerald-300/60 rounded-xl text-xs font-semibold hover:bg-emerald-500/15 hover:text-white transition-all border border-emerald-500/10">
  <span class="material-symbols-outlined text-base">language</span>
  Ir al sitio público
  </a>
- <a href="../../LOGIN/logout.php"
+ <a href="../../login/logout.php"
  class="flex items-center gap-2 w-full py-2.5 px-3 bg-red-500/10 text-red-300/80 rounded-xl text-xs font-semibold hover:bg-red-500/20 hover:text-red-200 transition-all">
  <span class="material-symbols-outlined text-base">logout</span>
  Cerrar sesión
@@ -294,7 +294,7 @@ $menuLinks = [
 
 <script>
 let cropperProfile = null;
-const base_perfil = '<?= str_replace('Includes','',dirname($_SERVER['PHP_SELF'])) ?>clinical_core/perfil_update.php';
+const base_perfil = '<?= str_replace('includes','',dirname($_SERVER['PHP_SELF'])) ?>clinical_core/perfil_update.php';
 
 function abrirPerfil() {
  document.getElementById('perfilOverlay').classList.remove('hidden');

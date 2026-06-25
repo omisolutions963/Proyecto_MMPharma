@@ -1,7 +1,7 @@
 <?php
 /**
  * MMPharma — Setup de columnas faltantes en la BD
- * Ejecutar UNA VEZ: http://localhost/Proyecto_MMPharma/DASHBOARD_ADMIN/clinical_core/setup_columns.php
+ * Ejecutar UNA VEZ: http://localhost/Proyecto_MMPharma/dashboard_admin/clinical_core/setup_columns.php
  * Borra o protege este archivo después de ejecutarlo.
  */
 require_once 'db.php';
@@ -68,7 +68,7 @@ $cols = $pdo->query("DESCRIBE administradores")->fetchAll();
 
 <p style="margin-top:2rem;color:#8aaad4;font-size:.8rem">
  ⚠️ Borra este archivo después de ejecutarlo:<br>
- <code>c:\xampp\htdocs\Proyecto_MMPharma\DASHBOARD_ADMIN\clinical_core\setup_columns.php</code>
+ <code>c:\xampp\htdocs\Proyecto_MMPharma\dashboard_admin\clinical_core\setup_columns.php</code>
 </p>
 <p><a href="../dashboard/dashboard.php" style="color:#4a90d9">← Volver al Dashboard</a></p>
 </body>

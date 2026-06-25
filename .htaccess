@@ -1,0 +1,11 @@
+# Impedir el acceso directo al archivo .env para proteger las credenciales
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Impedir acceso a carpetas ocultas y archivos de Git
+RedirectMatch 404 /\.(git|gitignore|gitattributes|env|gemini)
+
+# Impedir acceso al directorio de respaldos de base de datos
+RedirectMatch 403 /respaldo_bd(/.*)?$

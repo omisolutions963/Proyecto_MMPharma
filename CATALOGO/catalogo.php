@@ -6,7 +6,7 @@ $is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged
 $is_admin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 $is_logged_in = $is_cliente || $is_admin;
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 
 try {
  $pdo = getDB();
@@ -58,10 +58,13 @@ if ($categoria_id > 0) {
 
 // Filtro de visibilidad según tipo de cliente
 if ($cliente_tipo === 'EMPRESA') {
- $where[] = "p.solo_empresa = 'SI'";
+  $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+} else {
+  $where[] = "p.solo_empresa = 'NO'";
 }
 
-
+// Excluir productos internos de ajuste (Anticipo y Descuento)
+$where[] = "p.codigo NOT IN ('99999999999', 'DESCUENTO')";
 
 $where_sql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
@@ -104,19 +107,28 @@ function queryStr($extra = []) {
  unset($params['pagina']);
  return http_build_query($params);
 }
+
+// Obtener Banners Promocionales Activos
+$banners = [];
+try {
+ $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 ORDER BY orden ASC");
+ $banners = $stmt_banners->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+ // Silencioso
+}
 ?>
 
 <?php
 $titulo = 'Catálogo | MMPharma';
 $pagina_actual = 'catalogo'; // marca el link activo en el nav
-$base = '../'; // si estás en subcarpeta como CATALOGO/
+$base = '../'; // si estás en subcarpeta como catalogo/
 require_once '../includes/header.php';
 ?>
 
 <!-- ── HERO ── -->
 <section class="relative min-h-[250px] md:min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../IMG/23.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
+ <img src="../img/23.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-6 md:px-8 py-12 md:py-20 w-full" data-aos="fade-up">
@@ -233,11 +245,25 @@ require_once '../includes/header.php';
  </div>
 </section>
 
-<!-- ═══ PRODUCTOS ═══ -->
+<!-- ═══ productos ═══ -->
 <main class="bg-white py-12 min-h-screen relative">
  <div class="max-w-[1369px] mx-auto px-8 <?= !$is_logged_in ? 'pointer-events-none' : '' ?>">
  
  <div class="<?= !$is_logged_in ? 'filter blur-[8px] opacity-50 select-none' : '' ?>">
+
+  <!-- BANNERS PROMOCIONALES -->
+  <?php if(!empty($banners)): ?>
+  <div class="mb-8 grid grid-cols-1 md:grid-cols-<?= min(count($banners), 3) ?> gap-6" data-aos="fade-up">
+    <?php foreach($banners as $banner): ?>
+      <a href="<?= htmlspecialchars($banner['enlace_url'] ?? '#') ?>" class="block rounded-2xl overflow-hidden border border-slate-200/60 group hover:shadow-[0_0_20px_rgba(74,144,217,0.15)] hover:border-primary/30 transition-all relative">
+        <img src="<?= $base ?? '' ?><?= htmlspecialchars($banner['ruta_imagen']) ?>" alt="<?= htmlspecialchars($banner['titulo']) ?>" class="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-500">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5">
+          <h3 class="text-white font-bold text-lg"><?= htmlspecialchars($banner['titulo']) ?></h3>
+        </div>
+      </a>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
 
  <?php if (empty($productos)): ?>
  <div class="text-center py-24 text-slate-400 bg-white border border-slate-200 rounded-2xl " data-aos="zoom-in">
@@ -302,10 +328,10 @@ require_once '../includes/header.php';
  Para ver nuestros precios y existencias en tiempo real, es necesario contar con una cuenta aprobada.
  </p>
  <div class="flex flex-col gap-3">
-  <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-tertiary text-white font-bold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
+  <a href="../seleccion_registro/seleccion_registro.php" class="w-full py-4 bg-tertiary text-white font-bold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
  Solicitar acceso
  </a>
-  <a href="../LOGIN/login.php" class="w-full py-4 bg-white text-primary font-bold rounded-2xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
+  <a href="../login/login.php" class="w-full py-4 bg-white text-primary font-bold rounded-2xl hover:bg-slate-100 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center">
  Ya tengo cuenta
  </a>
  </div>

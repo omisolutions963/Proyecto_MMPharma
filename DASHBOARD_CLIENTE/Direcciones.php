@@ -3,11 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
+ header("Location: ../login/login.php");
  exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 
@@ -25,8 +25,8 @@ $tiene_direcciones = count($direcciones) > 0;
 
 $pageTitle = 'MMPharma Portal - Mis Direcciones';
 $activePage = 'direcciones';
-include('Includes/header.php');
-include('Includes/sidebar.php');
+include('includes/header.php');
+include('includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
  
@@ -107,15 +107,17 @@ include('Includes/sidebar.php');
  </div>
  <?php endforeach; ?>
  <?php else: ?>
- <div class="col-span-1 md:col-span-2 xl:col-span-3 text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col items-center">
- <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-4">location_off</span>
- <h3 class="text-xl font-bold text-white mb-2">No tienes direcciones registradas</h3>
- <p class="text-sm text-on-surface-variant mb-2">Agrega una dirección principal para poder recibir tus pedidos.</p>
- <p class="text-sm text-error font-bold mb-6 flex items-center gap-1.5 bg-error/10 px-3 py-1.5 rounded-lg border border-error/20"><span class="material-symbols-outlined text-[18px]">warning</span> Se requiere una dirección para poder cotizar</p>
- <button class="px-6 py-2 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all " onclick="abrirModalDireccion()">
- Agregar dirección
- </button>
- </div>
+  <div class="col-span-1 md:col-span-2 xl:col-span-3 text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col items-center">
+    <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-4">location_off</span>
+    <h3 class="text-xl font-bold text-white mb-2">No tienes direcciones registradas</h3>
+    <p class="text-sm text-on-surface-variant mb-4">Agrega una dirección principal para poder recibir tus pedidos.</p>
+    <p class="text-xs font-bold mb-6 flex items-center gap-2 bg-error/10 text-error px-4 py-2.5 rounded-xl border border-error/30 uppercase tracking-wider">
+      <span class="material-symbols-outlined text-[18px]">warning</span> Se requiere una dirección para poder cotizar
+    </p>
+    <button class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
+      <span class="material-symbols-outlined text-[18px]">add</span> Agregar dirección
+    </button>
+  </div>
  <?php endif; ?>
 
  </div>
@@ -180,7 +182,7 @@ include('Includes/sidebar.php');
     <input type="text" id="ciudadInput" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface" placeholder="Selecciona un estado primero" disabled>
     
     <div id="ciudadSelectWrapper" class="relative hidden">
-        <select id="ciudadSelect" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface appearance-none">
+        <select id="ciudadSelect" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface appearance-none bg-none">
             <option value="" disabled selected>Selecciona tu ciudad</option>
             <optgroup label="Más pobladas">
                 <option value="Zapopan">Zapopan</option>
@@ -219,7 +221,7 @@ include('Includes/sidebar.php');
  <div>
  <label class="block text-xs font-bold text-on-surface-variant mb-1.5 uppercase tracking-wide">Estado <span class="text-error">*</span></label>
  <div class="relative">
- <select name="estado" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface appearance-none" required>
+ <select name="estado" class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm text-on-surface appearance-none bg-none" required>
  <option value="" disabled selected>Selecciona tu estado</option>
  <option value="Jalisco">Jalisco</option>
  <option value="Aguascalientes">Aguascalientes</option>
@@ -275,7 +277,7 @@ include('Includes/sidebar.php');
  </div>
 </div>
 
-<?php include('Includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>
 
 <script>
  const modalDireccion = document.getElementById('modalDireccion');

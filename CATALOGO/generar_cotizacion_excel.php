@@ -4,8 +4,8 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
     die("No autorizado");
 }
 
-require_once '../INCLUDES/db.php';
-require_once '../INCLUDES/shipping_calculator.php';
+require_once '../includes/db.php';
+require_once '../includes/shipping_calculator.php';
 $pdo = getDB();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['carrito_data'])) {
@@ -53,19 +53,43 @@ if (!empty($_POST['direccion_id'])) {
         $msg_envio   = $recoger ? 'Recoger en sucursal' : $c['mensaje'];
     }
 }
-$total        = $subtotal_prod + $costo_envio;
-$sin_iva      = $total / 1.16;
-$iva          = $total - $sin_iva;
 
-// ── Tipos de producto ──────────────────────────────────────────────────────
+if ($subtotal_prod < 4000.00) {
+    $costo_envio = 0.00;
+    $msg_envio = 'Su pedido estará listo para que pase a recolectarlo';
+    $recoger = true;
+}
+
+// ── Tipos de producto, tasas de IVA y otros detalles de la BD ──────────────
 $ids = array_column($carrito, 'id');
-$tipos_map = [];
+$product_details = [];
 if ($ids) {
     $ph  = implode(',', array_fill(0, count($ids), '?'));
-    $st  = $pdo->prepare("SELECT id, tipo FROM catalogo_productos WHERE id IN ($ph)");
+    $st  = $pdo->prepare("SELECT id, tipo, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($ph)");
     $st->execute($ids);
-    foreach ($st->fetchAll() as $r) $tipos_map[$r['id']] = $r['tipo'];
+    $product_details = $st->fetchAll(PDO::FETCH_UNIQUE);
 }
+
+$total_items_sin_iva = 0;
+$total_items_iva = 0;
+foreach ($carrito as $item) {
+    $cant = (int)$item['cantidad'];
+    $precio = (float)$item['precio'];
+    $item_total = $cant * $precio;
+    $tasa = isset($product_details[$item['id']]['tasa_iva']) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
+    
+    $item_sin_iva = $item_total / (1 + $tasa);
+    $item_iva = $item_total - $item_sin_iva;
+    $total_items_sin_iva += $item_sin_iva;
+    $total_items_iva += $item_iva;
+}
+
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
+
+$sin_iva = $total_items_sin_iva + $envio_sin_iva;
+$iva = $total_items_iva + $envio_iva;
+$total = $subtotal_prod + $costo_envio;
 
 // ══════════════════════════════════════════════════════════════════════════
 // XLSX builder (ZipArchive + OOXML)
@@ -175,9 +199,10 @@ $merges = []; // merge refs
 $r = 1; // current row
 
 // Row 1 – Título
-$rows[$r] = cStr($r, 1, 'MMPharma Clinical Systems S.A. de C.V. — COTIZACIÓN DE PRODUCTOS', 1)
-           . cStr($r, 2, '', 1) . cStr($r, 3, '', 1) . cStr($r, 4, '', 1) . cStr($r, 5, '', 1);
-$merges[] = 'A'.$r.':E'.$r;
+$rows[$r] = cStr($r, 1, 'MMPharma Clinical Systems S.A. de C.V. — COTIZACIÓN DE productos', 1)
+           . cStr($r, 2, '', 1) . cStr($r, 3, '', 1) . cStr($r, 4, '', 1) . cStr($r, 5, '', 1)
+           . cStr($r, 6, '', 1) . cStr($r, 7, '', 1) . cStr($r, 8, '', 1);
+$merges[] = 'A'.$r.':H'.$r;
 $r++;
 
 // Row 2 – blanco
@@ -185,9 +210,11 @@ $rows[$r] = ''; $r++;
 
 // Row 3 – Encabezados secciones
 $rows[$r] = cStr($r, 1, 'DATOS DEL CLIENTE', 2) . cStr($r, 2, '', 0)
-          . cStr($r, 3, '', 0) . cStr($r, 4, 'DATOS DE COTIZACIÓN', 2) . cStr($r, 5, '', 0);
-$merges[] = 'A'.$r.':C'.$r;
-$merges[] = 'D'.$r.':E'.$r;
+          . cStr($r, 3, '', 0) . cStr($r, 4, '', 0)
+          . cStr($r, 5, 'DATOS DE COTIZACIÓN', 2) . cStr($r, 6, '', 0)
+          . cStr($r, 7, '', 0) . cStr($r, 8, '', 0);
+$merges[] = 'A'.$r.':D'.$r;
+$merges[] = 'E'.$r.':H'.$r;
 $r++;
 
 // Rows 4-7 – Metadatos
@@ -199,9 +226,11 @@ $meta = [
 ];
 foreach ($meta as $m) {
     $rows[$r] = cStr($r, 1, $m[0], 3) . cStr($r, 2, $m[1], 4)
-              . cStr($r, 3, '', 0)
-              . cStr($r, 4, $m[2], 3) . cStr($r, 5, $m[3], 4);
-    $merges[] = 'B'.$r.':C'.$r;
+              . cStr($r, 3, '', 0) . cStr($r, 4, '', 0)
+              . cStr($r, 5, $m[2], 3) . cStr($r, 6, $m[3], 4)
+              . cStr($r, 7, '', 0) . cStr($r, 8, '', 0);
+    $merges[] = 'B'.$r.':D'.$r;
+    $merges[] = 'F'.$r.':H'.$r;
     $r++;
 }
 
@@ -209,8 +238,14 @@ foreach ($meta as $m) {
 $rows[$r] = ''; $r++;
 
 // Row 9 – Encabezado tabla
-$rows[$r] = cStr($r, 1, 'CANTIDAD', 5) . cStr($r, 2, 'DESCRIPCIÓN DEL PRODUCTO', 5)
-          . cStr($r, 3, 'TIPO', 5) . cStr($r, 4, 'PRECIO UNITARIO', 5) . cStr($r, 5, 'SUBTOTAL', 5);
+$rows[$r] = cStr($r, 1, 'CANTIDAD', 5)
+          . cStr($r, 2, 'CÓDIGO DE BARRAS', 5)
+          . cStr($r, 3, 'DESCRIPCIÓN DEL PRODUCTO', 5)
+          . cStr($r, 4, 'SUSTANCIA ACTIVA', 5)
+          . cStr($r, 5, 'TIPO', 5)
+          . cStr($r, 6, 'TASA IVA', 5)
+          . cStr($r, 7, 'PRECIO UNITARIO', 5)
+          . cStr($r, 8, 'SUBTOTAL', 5);
 $r++;
 
 // Rows 10+ – Productos
@@ -223,13 +258,28 @@ foreach ($carrito as $item) {
     $cant  = (int)$item['cantidad'];
     $precio = (float)$item['precio'];
     $subtotalLinea = $cant * $precio;
-    $tipo  = $tipos_map[$item['id']] ?? 'SECO';
+    
+    $details = $product_details[$item['id']] ?? [];
+    $tipo  = $details['tipo'] ?? 'SECO';
+    $tasa  = isset($details['tasa_iva']) ? (float)$details['tasa_iva'] : 0.16;
+    
+    $item_sin_iva = $subtotalLinea / (1 + $tasa);
+    $item_iva = $subtotalLinea - $item_sin_iva;
+    
+    $tasa_percentage = ($tasa * 100) . '% (+$' . number_format($item_iva, 2) . ')';
+    $sustancia = $details['sustancia'] ?? 'No registrada';
+    $barcode = $details['codigo'] ?? '';
+
+    $nombre_con_iva = $item['nombre'] . ' (Precios más IVA)';
 
     $rows[$r] = cNum($r, 1, $cant, $sTxt)
-              . cStr($r, 2, $item['nombre'], $sTxt)
-              . cStr($r, 3, $tipo, $sTxt)
-              . cNum($r, 4, $precio, $sMon)
-              . cNum($r, 5, $subtotalLinea, $sMon);
+              . cStr($r, 2, $barcode, $sTxt)
+              . cStr($r, 3, $nombre_con_iva, $sTxt)
+              . cStr($r, 4, $sustancia, $sTxt)
+              . cStr($r, 5, $tipo, $sTxt)
+              . cStr($r, 6, $tasa_percentage, $sTxt)
+              . cNum($r, 7, $precio, $sMon)
+              . cNum($r, 8, $subtotalLinea, $sMon);
     $r++;
 }
 
@@ -241,39 +291,45 @@ $totales = [
     ['Subtotal productos:', $subtotal_prod],
     [($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio), $costo_envio],
     ['Subtotal (sin IVA):', $sin_iva],
-    ['IVA (16%):', $iva],
+    ['IVA:', $iva],
 ];
 foreach ($totales as $t) {
     $rows[$r] = cStr($r, 1, '', 0) . cStr($r, 2, '', 0) . cStr($r, 3, '', 0)
-              . cStr($r, 4, $t[0], 10) . cNum($r, 5, $t[1], 11);
+              . cStr($r, 4, '', 0) . cStr($r, 5, '', 0) . cStr($r, 6, '', 0)
+              . cStr($r, 7, $t[0], 10) . cNum($r, 8, $t[1], 11);
     $r++;
 }
 // TOTAL destacado
 $rows[$r] = cStr($r, 1, '', 0) . cStr($r, 2, '', 0) . cStr($r, 3, '', 0)
-          . cStr($r, 4, 'TOTAL:', 12) . cNum($r, 5, $total, 13);
+          . cStr($r, 4, '', 0) . cStr($r, 5, '', 0) . cStr($r, 6, '', 0)
+          . cStr($r, 7, 'TOTAL:', 12) . cNum($r, 8, $total, 13);
 $r++;
 
 // Blanco
 $rows[$r] = ''; $r++;
 
 // Nota legal
-$nota = '* Todos los precios incluyen 16% de IVA. Este documento es una cotización informativa. '
+$nota = '* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16% o 0%). Este documento es una cotización informativa. '
       . 'Los precios y disponibilidad están sujetos a cambios sin previo aviso. '
       . 'Vigencia: 10 días hábiles a partir de la fecha de emisión.';
 $rows[$r] = cStr($r, 1, $nota, 14) . cStr($r, 2, '', 14) . cStr($r, 3, '', 14)
-          . cStr($r, 4, '', 14) . cStr($r, 5, '', 14);
-$merges[] = 'A'.$r.':E'.$r;
+          . cStr($r, 4, '', 14) . cStr($r, 5, '', 14) . cStr($r, 6, '', 14)
+          . cStr($r, 7, '', 14) . cStr($r, 8, '', 14);
+$merges[] = 'A'.$r.':H'.$r;
 
 // ── Generar sheet XML ──────────────────────────────────────────────────────
 $sheetXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     . '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
     . '<sheetFormatPr defaultRowHeight="15"/>'
     . '<cols>'
-    . '<col min="1" max="1" width="9"  customWidth="1"/>'
-    . '<col min="2" max="2" width="52" customWidth="1"/>'
-    . '<col min="3" max="3" width="13" customWidth="1"/>'
-    . '<col min="4" max="4" width="20" customWidth="1"/>'
-    . '<col min="5" max="5" width="20" customWidth="1"/>'
+    . '<col min="1" max="1" width="10" customWidth="1"/>'
+    . '<col min="2" max="2" width="20" customWidth="1"/>'
+    . '<col min="3" max="3" width="52" customWidth="1"/>'
+    . '<col min="4" max="4" width="25" customWidth="1"/>'
+    . '<col min="5" max="5" width="15" customWidth="1"/>'
+    . '<col min="6" max="6" width="12" customWidth="1"/>'
+    . '<col min="7" max="7" width="18" customWidth="1"/>'
+    . '<col min="8" max="8" width="18" customWidth="1"/>'
     . '</cols>'
     . '<sheetData>';
 

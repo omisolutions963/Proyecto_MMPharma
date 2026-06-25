@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 
 if (!isset($_SESSION['cliente_id'])) {

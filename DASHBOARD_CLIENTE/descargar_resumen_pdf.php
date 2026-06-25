@@ -1,12 +1,12 @@
 <?php
 session_start();
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
+ header("Location: ../login/login.php");
  exit;
 }
 
-require_once '../INCLUDES/db.php';
-require_once '../DASHBOARD_ADMIN/Includes/fpdf/fpdf.php'; 
+require_once '../includes/db.php';
+require_once '../dashboard_admin/includes/fpdf/fpdf.php'; 
 
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
@@ -30,8 +30,8 @@ $cotizaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 class PDF extends FPDF {
  function Header() {
- if (file_exists('../logos/MMPharma-Logotipo-Horizontal.png')) {
-     $this->Image('../logos/MMPharma-Logotipo-Horizontal.png', 10, 10, 50);
+ if (file_exists('../logos/mmpharma-logotipo-horizontal.png')) {
+     $this->Image('../logos/mmpharma-logotipo-horizontal.png', 10, 10, 50);
  }
  
  $this->SetFont('Arial', 'B', 15);

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) {
- header("Location: ../../LOGIN/login.php");
+ header("Location: ../../login/login.php");
  exit;
 }
 
@@ -23,9 +23,12 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $pdo->query("SELECT n.*, c.razon_social FROM admin_alertas_notificaciones n JOIN clientes_usuarios c ON n.cliente_id = c.id ORDER BY n.created_at DESC LIMIT 10");
 $notif_recientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 
 <main class="ml-64 flex-1 p-8 min-h-screen bg-background text-on-surface">
  
@@ -208,7 +211,10 @@ include("../Includes/sidebar.php");
  </div>
  <div>
  <label class="text-[10px] font-bold text-primary uppercase">Imagen del banner</label>
- <input type="file" id="b_file" class="w-full mt-2 text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30">
+ <input type="file" id="b_file" class="w-full mt-2 text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30" accept="image/*">
+ </div>
+ <div id="crop_container" class="hidden mt-4 border border-outline-variant/30 rounded-xl overflow-hidden max-w-full bg-slate-950" style="max-height: 250px;">
+ <img id="crop_image" class="max-w-full block" style="height: auto; max-height: 240px; margin: 0 auto;">
  </div>
  </div>
  `,
@@ -218,16 +224,74 @@ include("../Includes/sidebar.php");
  background: '#0d1f3c',
  color: '#fff',
  customClass: { confirmButton: 'bg-primary px-8 py-3 rounded-xl font-bold', cancelButton: 'text-on-surface-variant font-bold' },
- preConfirm: () => {
- const titulo = document.getElementById('b_titulo').value;
- const url = document.getElementById('b_url').value;
- const file = document.getElementById('b_file').files[0];
- if (!titulo || !file) {
- Swal.showValidationMessage('Título e imagen son requeridos');
- return false;
- }
- return { titulo, url, file };
- }
+ didOpen: () => {
+    const fileInput = document.getElementById('b_file');
+    const cropContainer = document.getElementById('crop_container');
+    const cropImage = document.getElementById('crop_image');
+    let cropper = null;
+
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          cropImage.src = event.target.result;
+          cropContainer.classList.remove('hidden');
+          
+          if (cropper) {
+            cropper.destroy();
+          }
+          
+          cropper = new Cropper(cropImage, {
+            aspectRatio: 4 / 1, // Relación de aspecto del banner del catálogo (Widescreen 4:1)
+            viewMode: 1,
+            autoCropArea: 1,
+            responsive: true,
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+          });
+          window.currentCropper = cropper;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  },
+  willClose: () => {
+    if (window.currentCropper) {
+      window.currentCropper.destroy();
+      delete window.currentCropper;
+    }
+  },
+  preConfirm: async () => {
+    const titulo = document.getElementById('b_titulo').value;
+    const url = document.getElementById('b_url').value;
+    const fileInput = document.getElementById('b_file');
+    const file = fileInput.files[0];
+    
+    if (!titulo || !file) {
+      Swal.showValidationMessage('Título e imagen son requeridos');
+      return false;
+    }
+    
+    if (window.currentCropper) {
+      return new Promise((resolve) => {
+        window.currentCropper.getCroppedCanvas({
+          width: 1200,
+          height: 300,
+        }).toBlob((blob) => {
+          const croppedFile = new File([blob], file.name, { type: file.type });
+          resolve({ titulo, url, file: croppedFile });
+        }, file.type);
+      });
+    }
+    
+    return { titulo, url, file };
+  }
  }).then(async (result) => {
  if (result.isConfirmed) {
  const data = new FormData();
@@ -258,4 +322,4 @@ include("../Includes/sidebar.php");
  }
 </script>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

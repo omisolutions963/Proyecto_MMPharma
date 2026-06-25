@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: ../../LOGIN/login.php");
+    header("Location: ../../login/login.php");
     exit;
 }
 
@@ -47,8 +47,8 @@ $flash = $_GET['msg'] ?? '';
 
 $pageTitle = "MMPharma Portal - Configuración y usuarios";
 $activePage = "usuarios";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 
 <main class="ml-64 p-8 min-h-[calc(100vh-4rem)]">
@@ -528,4 +528,4 @@ async function eliminarAdmin(id, nombre) {
 }
 </script>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

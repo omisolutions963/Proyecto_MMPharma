@@ -7,8 +7,8 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
     exit;
 }
 
-require_once '../INCLUDES/db.php';
-require_once '../INCLUDES/shipping_calculator.php';
+require_once '../includes/db.php';
+require_once '../includes/shipping_calculator.php';
 
 $pdo = getDB();
 

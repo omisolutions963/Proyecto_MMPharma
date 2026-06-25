@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
  echo json_encode(['success' => false, 'message' => 'No autorizado']);

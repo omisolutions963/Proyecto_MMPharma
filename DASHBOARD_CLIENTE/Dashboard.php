@@ -3,11 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
+ header("Location: ../login/login.php");
  exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 
@@ -35,11 +35,11 @@ $stmt->execute([$cliente_id]);
 $productos_favoritos = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
 // 5. Estadísticas de Actividad (Nueva sección)
-$stmt = $pdo->prepare("SELECT COUNT(*) as total_pedidos, SUM(monto_total) as total_gastado, AVG(monto_total) as ticket_promedio FROM clientes_pedidos WHERE cliente_id = ? AND estado_envio NOT IN ('CANCELADO')");
+$stmt = $pdo->prepare("SELECT AVG(monto_total) as ticket_promedio FROM clientes_pedidos WHERE cliente_id = ? AND estado_envio NOT IN ('CANCELADO')");
 $stmt->execute([$cliente_id]);
 $stats_actividad = $stmt->fetch(PDO::FETCH_ASSOC);
-$total_gastado = $stats_actividad['total_gastado'] ?? 0;
 $ticket_promedio = $stats_actividad['ticket_promedio'] ?? 0;
+
 
 $stmt = $pdo->prepare("SELECT estado_envio, COUNT(*) as count FROM clientes_pedidos WHERE cliente_id = ? GROUP BY estado_envio");
 $stmt->execute([$cliente_id]);
@@ -68,8 +68,8 @@ $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = 'MMPharma Portal - Dashboard';
 $activePage = 'dashboard';
-include('Includes/header.php');
-include('Includes/sidebar.php');
+include('includes/header.php');
+include('includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)] bg-background text-on-surface">
  
@@ -82,10 +82,10 @@ include('Includes/sidebar.php');
  <p class="text-white/80 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
  </div>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
- <a href="Cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">download</span> Estado de cuenta
  </a>
- <a href="../CATALOGO/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
@@ -121,7 +121,7 @@ include('Includes/sidebar.php');
  <div>
  <h3 class="text-[#fde047] font-bold text-base mb-1">Documentos por vencer</h3>
  <p class="text-[#fef08a]/80 text-xs mb-3 leading-relaxed">Tu cuenta requiere cargar algunos documentos (aviso de funcionamiento, licencia) para estar completamente activa.</p>
- <a href="Documentos.php" class="text-[#facc15] text-xs font-bold hover:underline">Actualizar ahora</a>
+ <a href="documentos.php" class="text-[#facc15] text-xs font-bold hover:underline">Actualizar ahora</a>
  </div>
  </div>
  </div>
@@ -137,7 +137,7 @@ include('Includes/sidebar.php');
  <div>
  <h3 class="text-tertiary font-bold text-base mb-1">Cuenta activa</h3>
  <p class="text-tertiary/80 text-xs mb-3 leading-relaxed">Tus documentos están al día. Puedes cotizar y comprar sin restricciones.</p>
- <a href="Documentos.php" class="text-tertiary text-xs font-bold hover:underline">Ver documentos</a>
+ <a href="documentos.php" class="text-tertiary text-xs font-bold hover:underline">Ver documentos</a>
  </div>
  </div>
  </div>
@@ -185,23 +185,8 @@ include('Includes/sidebar.php');
  </div>
 
  <!-- ROW 2: Estadísticas -->
- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-reveal delay-200">
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-reveal delay-200">
  
- <!-- Inversión Histórica -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
- <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-tertiary/5 rounded-full blur-2xl group-hover:bg-tertiary/10 transition-colors"></div>
- <div class="flex items-center gap-4 mb-4 relative z-10">
- <div class="w-12 h-12 rounded-xl bg-tertiary/10 text-tertiary flex items-center justify-center shrink-0">
- <span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
- </div>
- <div>
- <h3 class="text-sm font-bold text-white">Inversión total</h3>
- <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Histórico</p>
- </div>
- </div>
- <p class="text-4xl font-extrabold text-white relative z-10">$<?= number_format($total_gastado, 2) ?></p>
- </div>
-
  <!-- Ticket Promedio -->
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden group">
  <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
@@ -247,7 +232,7 @@ include('Includes/sidebar.php');
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden animate-reveal delay-300">
  <div class="flex items-center justify-between p-6 border-b border-outline-variant/20">
  <h3 class="text-base font-bold text-on-surface">Cotizaciones recientes</h3>
- <a href="Cotizaciones.php" class="text-xs font-bold text-primary hover:text-primary-container transition-colors">Ver todas</a>
+ <a href="cotizaciones.php" class="text-xs font-bold text-primary hover:text-primary-container transition-colors">Ver todas</a>
  </div>
  <div class="overflow-x-auto">
  <table class="w-full text-left">
@@ -283,7 +268,7 @@ include('Includes/sidebar.php');
  <?php endif; ?>
  </td>
  <td class="py-4 px-6 text-center">
- <a href="Cotizacion-Detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+ <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
  </td>
  </tr>
  <?php endforeach; ?>
@@ -294,7 +279,7 @@ include('Includes/sidebar.php');
  </div>
 
 </main>
-<?php include('Includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>
 <script>
  console.log("MMPharma Dashboard Loaded");
 </script>

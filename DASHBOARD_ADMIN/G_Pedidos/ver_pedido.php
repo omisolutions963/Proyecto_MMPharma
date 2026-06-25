@@ -3,13 +3,8 @@ require_once '../clinical_core/db.php';
 $pdo = getDB();
 
 function enviarCorreoCambioEstatus($email_cliente, $razon_social, $folio, $nuevo_estado, $pedido_id) {
-    $url_pedido = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Proyecto_MMPharma/DASHBOARD_CLIENTE/Cotizacion-Detalle.php?id=' . $pedido_id;
+    $url_pedido = getAppURL() . '/dashboard_cliente/cotizacion-detalle.php?id=' . $pedido_id;
     $asunto = "Actualización de tu pedido $folio — MMPharma";
-    $headers = implode("\r\n", [
-        'From: MMPharma Portal <noreply@mmpharma.com>',
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-    ]);
 
     $color_bg = '#747780';
     switch ($nuevo_estado) {
@@ -28,13 +23,13 @@ function enviarCorreoCambioEstatus($email_cliente, $razon_social, $folio, $nuevo
     }
 
     $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
-<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
-  <div style="background:#002451;padding:24px 32px;text-align:center">
-    <h1 style="margin:0;color:#fff;font-size:22px">📦 Actualización de Pedido</h1>
-    <p style="margin:6px 0 0;color:#8baed4;font-size:14px">Tu pedido tiene novedades en el portal de clientes</p>
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,62,121,.15)">
+  <div style="background:#003e79;padding:24px 32px;text-align:center">
+    <h1 style="margin:0;color:#fff;font-size:22px">Actualización de pedido</h1>
+    <p style="margin:6px 0 0;color:#67e8f9;font-size:14px">Tu pedido tiene novedades en el portal de clientes</p>
   </div>
   <div style="padding:32px;color:#333;line-height:1.6">
-    <p style="font-size:16px;font-weight:bold;color:#002451;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
+    <p style="font-size:16px;font-weight:bold;color:#003e79;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
     <p>Queremos informarte que tu pedido con folio <strong>' . htmlspecialchars($folio) . '</strong> ha cambiado de estado.</p>
     
     <div style="text-align:center;margin:30px 0">
@@ -47,8 +42,8 @@ function enviarCorreoCambioEstatus($email_cliente, $razon_social, $folio, $nuevo
     
     <div style="text-align:center;margin:32px 0 16px">
       <a href="' . htmlspecialchars($url_pedido) . '"
-         style="display:inline-block;background:#002451;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,36,81,0.2)">
-        Ver Pedido en el Portal
+         style="display:inline-block;background:#003e79;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,62,121,0.2)">
+        Ver pedido en el portal
       </a>
     </div>
     
@@ -57,11 +52,12 @@ function enviarCorreoCambioEstatus($email_cliente, $razon_social, $folio, $nuevo
     </p>
   </div>
   <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
-    MMPharma Clinical Systems S.A. de C.V. &bull; Notificación automática
+    MMPharma &bull; Notificación automática
   </div>
 </div></body></html>';
 
-    @mail($email_cliente, $asunto, $html, $headers);
+    require_once __DIR__ . '/../../includes/mailer.php';
+    enviarCorreoPHPMailer($email_cliente, $asunto, $html);
 }
 
 $id = (int)($_GET['id'] ?? 0);
@@ -136,7 +132,12 @@ if (!$pedido) {
 }
 
 // Obtener detalles (productos) del pedido
-$stmtDetalle = $pdo->prepare("SELECT * FROM clientes_pedidos_detalle WHERE pedido_id = ?");
+$stmtDetalle = $pdo->prepare("
+    SELECT pd.*, cp.codigo, cp.sustancia, cp.tasa_iva 
+    FROM clientes_pedidos_detalle pd 
+    LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
+    WHERE pd.pedido_id = ?
+");
 $stmtDetalle->execute([$id]);
 $detalles = $stmtDetalle->fetchAll();
 
@@ -147,8 +148,8 @@ $comprobante = $stmtComp->fetch();
 
 $pageTitle = "MMPharma Portal - Detalle del pedido " . $pedido['folio'];
 $activePage = "pedidos";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
@@ -229,7 +230,7 @@ include("../Includes/sidebar.php");
                     <span class="material-symbols-outlined text-[18px]">account_circle</span>
                     Datos del cliente
                 </h2>
-                <a href="../G_Clientes/ver_cliente.php?id=<?= $pedido['cliente_id'] ?>" class="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Ver perfil</a>
+                <a href="../g_clientes/ver_cliente.php?id=<?= $pedido['cliente_id'] ?>" class="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline">Ver perfil</a>
             </div>
             <div class="space-y-4">
                 <div>
@@ -329,7 +330,7 @@ include("../Includes/sidebar.php");
         
     </div>
 
-    <!-- COLUMNA DERECHA: LISTA DE PRODUCTOS -->
+    <!-- COLUMNA DERECHA: LISTA DE productos -->
     <div class="lg:col-span-2 flex flex-col gap-6">
         
         <!-- Tarjeta: Productos del Pedido -->
@@ -370,7 +371,17 @@ include("../Includes/sidebar.php");
                             <tr class="group hover:bg-surface-container-low/30 transition-colors">
                                 <td class="px-6 py-4">
                                     <span class="text-sm font-bold text-on-surface"><?= htmlspecialchars($det['nombre_producto']) ?></span>
-                                    <span class="block text-[10px] text-on-surface-variant font-medium mt-0.5">ID: <?= $det['producto_id'] ?></span>
+                                    <span class="block text-[10px] text-on-surface-variant font-medium mt-0.5">
+                                        <?= htmlspecialchars($det['sustancia'] ?? '') ?> 
+                                        <?php if (!empty($det['sustancia'])): ?>| <?php endif; ?>
+                                        Precios más IVA | IVA: <?= (isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16) * 100 ?>% (+<?php
+                                            $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+                                            $subtotal_linea = (float)$det['subtotal'];
+                                            $item_sin_iva = $subtotal_linea / (1 + $tasa);
+                                            $item_iva = $subtotal_linea - $item_sin_iva;
+                                            echo '$' . number_format($item_iva, 2);
+                                        ?>)
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex px-3 py-1 rounded-lg bg-surface-container-high text-white text-xs font-black">
@@ -394,7 +405,16 @@ include("../Includes/sidebar.php");
                         </tr>
                         <tr>
                             <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant border-t border-outline-variant/10">Costo de envío:</td>
-                            <td class="px-6 py-4 text-right text-sm font-black text-white border-t border-outline-variant/10">$<?= number_format($pedido['costo_envio'], 2) ?></td>
+                            <td class="px-6 py-4 text-right text-sm font-black text-white border-t border-outline-variant/10">
+                                <?php if ($suma_subtotales < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO'): ?>
+                                    <div class="text-right inline-block">
+                                        <span class="text-sm font-bold text-green-400 block">Recoger en almacén</span>
+                                        <span class="text-[10px] text-green-400/80 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span>
+                                    </div>
+                                <?php else: ?>
+                                    $<?= number_format($pedido['costo_envio'], 2) ?>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="3" class="px-6 py-4 text-right text-[13px] font-black uppercase tracking-widest text-primary border-t border-outline-variant/20">Total:</td>
@@ -436,4 +456,4 @@ include("../Includes/sidebar.php");
 </script>
 <?php endif; ?>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

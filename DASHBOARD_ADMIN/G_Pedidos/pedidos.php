@@ -129,10 +129,10 @@ if (isset($_GET['ajax'])) {
 
 // ... Resto de lógica de pedidos ...
 
-$pageTitle = "MMPharma Portal - Gestión de Pedidos";
+$pageTitle = "MMPharma Portal - Gestión de pedidos";
 $activePage = "pedidos";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
@@ -145,7 +145,7 @@ include("../Includes/sidebar.php");
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Pedidos</span>
  </nav>
- <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de Pedidos</h2>
+ <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de pedidos</h2>
  <p class="text-on-surface-variant text-sm mt-1">Monitoreo de transacciones y logística en tiempo real.</p>
  </div>
  <div class="flex gap-3">
@@ -341,4 +341,4 @@ function verDetalle(id) {
 </script>
 
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

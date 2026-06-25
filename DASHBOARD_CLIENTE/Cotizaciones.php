@@ -3,11 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
+ header("Location: ../login/login.php");
  exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 
@@ -25,9 +25,12 @@ $aprobadas = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
 // 3. Obtener cotizaciones
 $stmt = $pdo->prepare("
- SELECT p.id, p.folio, p.monto_total, p.estado_envio, p.created_at, COUNT(pd.id) as total_items 
+ SELECT p.id, p.folio, p.monto_total, p.costo_envio, p.estado_envio, p.created_at, COUNT(pd.id) as total_items,
+        SUM(pd.subtotal / (1 + IFNULL(cp.tasa_iva, 0.00))) as subtotal_productos_sin_iva,
+        SUM(pd.subtotal - (pd.subtotal / (1 + IFNULL(cp.tasa_iva, 0.00)))) as iva_productos
  FROM clientes_pedidos p
  LEFT JOIN clientes_pedidos_detalle pd ON p.id = pd.pedido_id
+ LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id
  WHERE p.cliente_id = ?
  GROUP BY p.id
  ORDER BY p.created_at DESC
@@ -37,8 +40,8 @@ $cotizaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = 'MMPharma Portal - Cotizaciones';
 $activePage = 'cotizaciones';
-include('Includes/header.php');
-include('Includes/sidebar.php');
+include('includes/header.php');
+include('includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)] bg-background text-on-surface">
  
@@ -46,7 +49,7 @@ include('Includes/sidebar.php');
  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 animate-reveal">
  <div>
  <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
- <a href="Dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
+ <a href="dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Cotizaciones</span>
  </nav>
@@ -54,7 +57,7 @@ include('Includes/sidebar.php');
  <p class="text-on-surface-variant mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
  </div>
  <div class="mt-4 md:mt-0">
- <a href="../CATALOGO/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
@@ -98,12 +101,12 @@ include('Includes/sidebar.php');
  <input type="text" id="searchInput" placeholder="Buscar por folio..." class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" onkeyup="filterTable()">
  </div>
  <div class="relative w-48">
- <select id="statusFilter" class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none focus:border-primary outline-none" onchange="filterTable()">
- <option value="">Todos los estados</option>
- <option value="APROBADA">Aprobadas</option>
- <option value="PENDIENTE">Pendientes</option>
- <option value="CANCELADO">Canceladas</option>
- </select>
+  <select id="statusFilter" class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none" onchange="filterTable()">
+  <option value="">Todos los estados</option>
+  <option value="APROBADA">Aprobadas</option>
+  <option value="PENDIENTE">Pendientes</option>
+  <option value="CANCELADO">Canceladas</option>
+  </select>
  <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
  </div>
  </div>
@@ -130,11 +133,15 @@ include('Includes/sidebar.php');
  <td colspan="8" class="py-12 text-center text-on-surface-variant text-sm">No tienes cotizaciones registradas.</td>
  </tr>
  <?php else: ?>
- <?php foreach($cotizaciones as $cot): 
- $total = $cot['monto_total'];
- $subtotal = $total / 1.16;
- $iva = $total - $subtotal;
- ?>
+  <?php foreach($cotizaciones as $cot): 
+  $total = (float)$cot['monto_total'];
+  $costo_envio = (float)($cot['costo_envio'] ?? 0.00);
+  $envio_sin_iva = $costo_envio / 1.16;
+  $envio_iva = $costo_envio - $envio_sin_iva;
+  
+  $subtotal = (float)($cot['subtotal_productos_sin_iva'] ?? 0.00) + $envio_sin_iva;
+  $iva = (float)($cot['iva_productos'] ?? 0.00) + $envio_iva;
+  ?>
  <tr class="hover:bg-surface-container/30 transition-colors group cotizacion-row animate-fade-in" data-estado="<?= htmlspecialchars($cot['estado_envio']) ?>">
  <td class="py-4 px-6 text-sm font-bold text-primary folio-cell"><?= htmlspecialchars($cot['folio']) ?></td>
  <td class="py-4 px-6 text-xs text-on-surface-variant"><?= date('d M Y', strtotime($cot['created_at'])) ?></td>
@@ -153,7 +160,7 @@ include('Includes/sidebar.php');
  </td>
  <td class="py-4 px-6 text-center">
  <div class="flex items-center justify-center gap-3">
- <a href="Cotizacion-Detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors" title="Ver detalle">
+ <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors" title="Ver detalle">
  <span class="material-symbols-outlined text-[20px]">visibility</span>
  </a>
  <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>&action=view" class="text-on-surface-variant hover:text-primary transition-colors" title="Ver PDF" target="_blank">
@@ -188,7 +195,7 @@ include('Includes/sidebar.php');
  </div>
 
 </main>
-<?php include('Includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>
 
 <script>
 function filterTable() {

@@ -11,8 +11,8 @@ if (isset($_SESSION['debe_cambiar_password']) && $_SESSION['debe_cambiar_passwor
     exit;
 }
 
-require_once '../INCLUDES/db.php';
-require_once '../INCLUDES/shipping_calculator.php';
+require_once '../includes/db.php';
+require_once '../includes/shipping_calculator.php';
 $pdo = getDB();
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -45,7 +45,10 @@ try {
     $direccion_id     = $data['direccion_id'] ?? null;
     $costo_envio      = 0.00;
     $recoger_sucursal = isset($data['recoger_sucursal']) && $data['recoger_sucursal'];
-    $estado_envio     = $recoger_sucursal ? 'RECOGER EN SUCURSAL' : 'PENDIENTE';
+    if ($subtotal < 4000.00) {
+        $recoger_sucursal = true;
+    }
+    $estado_envio     = $recoger_sucursal ? ($subtotal < 4000.00 ? 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' : 'RECOGER EN SUCURSAL') : 'PENDIENTE';
     $estado_destino   = null;
     $lat = null;
     $lng = null;
@@ -142,54 +145,48 @@ try {
         $lista_li .= '<li style="padding:3px 0">' . htmlspecialchars($np) . '</li>';
     }
 
-    $url_pedido = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost')
-        . '/Proyecto_MMPharma/DASHBOARD_ADMIN/G_Pedidos/ver_pedido.php?id=' . $pedido_id;
+    $url_pedido = getAppURL() . '/dashboard_admin/g_pedidos/ver_pedido.php?id=' . $pedido_id;
 
     $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
-<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
-  <div style="background:#002451;padding:24px 32px">
-    <h1 style="margin:0;color:#fff;font-size:20px">🔔 Nuevo Pedido — MMPharma</h1>
-    <p style="margin:6px 0 0;color:#8baed4;font-size:13px">Se acaba de registrar un nuevo pedido en el portal de clientes.</p>
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,62,121,.15)">
+  <div style="background:#003e79;padding:24px 32px">
+    <h1 style="margin:0;color:#fff;font-size:20px">Nuevo pedido — MMPharma</h1>
+    <p style="margin:6px 0 0;color:#67e8f9;font-size:13px">Se acaba de registrar un nuevo pedido en el portal de clientes.</p>
   </div>
   <div style="padding:32px">
     <table style="width:100%;border-collapse:collapse;font-size:14px;color:#333">
       <tr><td style="padding:8px 0;color:#666;width:130px">Folio</td>
-          <td style="font-weight:bold;color:#002451">' . htmlspecialchars($folio) . '</td></tr>
+          <td style="font-weight:bold;color:#003e79">' . htmlspecialchars($folio) . '</td></tr>
       <tr><td style="padding:8px 0;color:#666">Cliente</td>
           <td style="font-weight:bold">' . htmlspecialchars($razon_social) . '</td></tr>
       <tr><td style="padding:8px 0;color:#666">Tipo</td>
           <td>' . htmlspecialchars($tipo_cliente) . '</td></tr>
       <tr><td style="padding:8px 0;color:#666">Email</td>
-          <td><a href="mailto:' . htmlspecialchars($email_cliente) . '" style="color:#002451">' . htmlspecialchars($email_cliente) . '</a></td></tr>
+          <td><a href="mailto:' . htmlspecialchars($email_cliente) . '" style="color:#003e79">' . htmlspecialchars($email_cliente) . '</a></td></tr>
       <tr><td style="padding:8px 0;color:#666">Teléfono</td>
           <td>' . htmlspecialchars($tel) . '</td></tr>
       <tr><td style="padding:8px 0;color:#666">Envío</td>
           <td>' . htmlspecialchars($estado_envio) . '</td></tr>
       <tr style="background:#f0f5ff">
-          <td style="padding:12px;color:#002451;font-weight:bold;font-size:15px">TOTAL</td>
-          <td style="padding:12px;font-size:22px;font-weight:bold;color:#002451">' . $total_fmt . '</td></tr>
+          <td style="padding:12px;color:#003e79;font-weight:bold;font-size:15px">TOTAL</td>
+          <td style="padding:12px;font-size:22px;font-weight:bold;color:#003e79">' . $total_fmt . '</td></tr>
     </table>
-    <h3 style="color:#002451;margin-top:24px;margin-bottom:8px">Productos:</h3>
+    <h3 style="color:#003e79;margin-top:24px;margin-bottom:8px">Productos:</h3>
     <ul style="margin:0;padding-left:20px;color:#333;font-size:13px;line-height:1.8">' . $lista_li . '</ul>
     <div style="margin-top:28px;text-align:center">
       <a href="' . htmlspecialchars($url_pedido) . '"
-         style="display:inline-block;background:#002451;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px">
-        Ver Pedido en el Panel
+         style="display:inline-block;background:#003e79;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px">
+        Ver pedido en el panel
       </a>
     </div>
   </div>
   <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
-    MMPharma Clinical Systems S.A. de C.V. &bull; Notificación automática
+    MMPharma &bull; Notificación automática
   </div>
 </div></body></html>';
 
+    require_once __DIR__ . '/../includes/mailer.php';
     $asunto  = "Nuevo Pedido $folio — $razon_social [$tipo_cliente] — $total_fmt";
-    $headers = implode("\r\n", [
-        'From: MMPharma Portal <noreply@mmpharma.com>',
-        'Reply-To: ' . $email_cliente,
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-    ]);
 
     // ── Lista de agentes de ventas ───────────────────────────────────────────
     $agentes = [
@@ -198,18 +195,17 @@ try {
         'ventas3@mmpharma.com',
     ];
     foreach ($agentes as $agente) {
-        @mail($agente, $asunto, $html, $headers);
+        enviarCorreoPHPMailer($agente, $asunto, $html);
     }
 
     // ── Correo de confirmación al cliente ────────────────────────────────────
-    $url_pedido_cliente = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost')
-        . '/Proyecto_MMPharma/DASHBOARD_CLIENTE/Cotizacion-Detalle.php?id=' . $pedido_id;
+    $url_pedido_cliente = getAppURL() . '/dashboard_cliente/cotizacion-detalle.php?id=' . $pedido_id;
 
     $html_cliente = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
-<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
-  <div style="background:#002451;padding:24px 32px">
-    <h1 style="margin:0;color:#fff;font-size:20px">🛍️ ¡Gracias por tu pedido!</h1>
-    <p style="margin:6px 0 0;color:#8baed4;font-size:13px">Hemos recibido tu solicitud y ya la estamos procesando.</p>
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,62,121,.15)">
+  <div style="background:#003e79;padding:24px 32px">
+    <h1 style="margin:0;color:#fff;font-size:20px">¡Gracias por tu pedido!</h1>
+    <p style="margin:6px 0 0;color:#67e8f9;font-size:13px">Hemos recibido tu solicitud y ya la estamos procesando.</p>
   </div>
   <div style="padding:32px">
     <p style="margin-top:0;font-size:15px;color:#333">Hola <strong>' . htmlspecialchars($razon_social) . '</strong>,</p>
@@ -217,38 +213,33 @@ try {
     
     <table style="width:100%;border-collapse:collapse;font-size:14px;color:#333;margin-top:20px">
       <tr><td style="padding:8px 0;color:#666;width:130px">Folio</td>
-          <td style="font-weight:bold;color:#002451">' . htmlspecialchars($folio) . '</td></tr>
+          <td style="font-weight:bold;color:#003e79">' . htmlspecialchars($folio) . '</td></tr>
       <tr><td style="padding:8px 0;color:#666">Envío</td>
           <td>' . htmlspecialchars($estado_envio) . '</td></tr>
       <tr style="background:#f0f5ff">
-          <td style="padding:12px;color:#002451;font-weight:bold;font-size:15px">TOTAL</td>
-          <td style="padding:12px;font-size:22px;font-weight:bold;color:#002451">' . $total_fmt . '</td></tr>
+          <td style="padding:12px;color:#003e79;font-weight:bold;font-size:15px">TOTAL</td>
+          <td style="padding:12px;font-size:22px;font-weight:bold;color:#003e79">' . $total_fmt . '</td></tr>
     </table>
     
-    <h3 style="color:#002451;margin-top:24px;margin-bottom:8px">Productos:</h3>
+    <h3 style="color:#003e79;margin-top:24px;margin-bottom:8px">Productos:</h3>
     <ul style="margin:0;padding-left:20px;color:#333;font-size:13px;line-height:1.8">' . $lista_li . '</ul>
     
     <div style="margin-top:28px;text-align:center">
       <a href="' . htmlspecialchars($url_pedido_cliente) . '"
-         style="display:inline-block;background:#002451;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px">
-        Ver Detalles / Subir Pago
+         style="display:inline-block;background:#003e79;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px">
+        Ver detalles / subir pago
       </a>
     </div>
   </div>
   <div style="background:#f0f5ff;padding:16px 32px;text-align:center;font-size:11px;color:#888">
-    MMPharma Clinical Systems S.A. de C.V. &bull; Notificación automática
+    MMPharma &bull; Notificación automática
   </div>
 </div></body></html>';
 
     $asunto_cliente  = "Recibimos tu Pedido $folio — MMPharma";
-    $headers_cliente = implode("\r\n", [
-        'From: MMPharma Portal <noreply@mmpharma.com>',
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-    ]);
     
     if (!empty($email_cliente)) {
-        @mail($email_cliente, $asunto_cliente, $html_cliente, $headers_cliente);
+        enviarCorreoPHPMailer($email_cliente, $asunto_cliente, $html_cliente);
     }
 
     echo json_encode(['success' => true, 'folio' => $folio]);

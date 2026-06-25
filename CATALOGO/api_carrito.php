@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 
 if (!isset($_SESSION['cliente_id'])) {
@@ -25,16 +25,32 @@ if ($action === 'save') {
  
  // Insert new items
  $stmt = $pdo->prepare("INSERT INTO clientes_carrito (cliente_id, producto_id, cantidad) VALUES (?, ?, ?)");
- $stmt_check = $pdo->prepare("SELECT solo_empresa FROM catalogo_productos WHERE id = ?");
- 
- foreach ($items as $item) {
- if ($cliente_tipo === 'EMPRESA') {
- $stmt_check->execute([$item['id']]);
- $prod = $stmt_check->fetch();
- if (!$prod || $prod['solo_empresa'] !== 'SI') continue;
- }
- $stmt->execute([$cliente_id, $item['id'], $item['cantidad']]);
- }
+  $stmt_check = $pdo->prepare("SELECT solo_empresa, nombre, sustancia FROM catalogo_productos WHERE id = ?");
+  
+  foreach ($items as $item) {
+  $stmt_check->execute([$item['id']]);
+  $prod = $stmt_check->fetch();
+  if (!$prod) continue;
+  if ($cliente_tipo === 'EMPRESA') {
+    $nombre_lower = mb_strtolower($prod['nombre']);
+    $sustancia_lower = mb_strtolower($prod['sustancia'] ?? '');
+    $es_excepcion = (
+      strpos($nombre_lower, 'aspirina') !== false || strpos($sustancia_lower, 'aspirina') !== false ||
+      strpos($nombre_lower, 'loratadina') !== false || strpos($sustancia_lower, 'loratadina') !== false ||
+      strpos($nombre_lower, 'loratidina') !== false || strpos($sustancia_lower, 'loratidina') !== false ||
+      strpos($nombre_lower, 'buscapina') !== false ||
+      strpos($nombre_lower, 'butilhioscina') !== false || strpos($sustancia_lower, 'butilhioscina') !== false
+    );
+    if ($prod['solo_empresa'] !== 'SI' && !$es_excepcion) {
+      continue;
+    }
+  } else {
+    if ($prod['solo_empresa'] === 'SI') {
+      continue;
+    }
+  }
+  $stmt->execute([$cliente_id, $item['id'], $item['cantidad']]);
+  }
  
  $pdo->commit();
  echo json_encode(['status' => 'success']);
@@ -46,7 +62,7 @@ if ($action === 'save') {
  $stmt = $pdo->prepare("
   SELECT c.cantidad, p.id, p.nombre, p.imagen, 
   p.precio_farmacia, p.precio_distribuidor, p.precio_empresa,
-  p.en_promocion, p.descuento_porcentaje
+  p.en_promocion, p.descuento_porcentaje, p.tasa_iva
   FROM clientes_carrito c
   JOIN catalogo_productos p ON c.producto_id = p.id
  WHERE c.cliente_id = ?
@@ -71,7 +87,8 @@ if ($action === 'save') {
   'nombre' => $db_item['nombre'],
   'precio' => $precio_final,
   'imagen' => $db_item['imagen'],
-  'cantidad' => (int)$db_item['cantidad']
+  'cantidad' => (int)$db_item['cantidad'],
+  'tasa_iva' => (float)$db_item['tasa_iva']
   ];
  }
  

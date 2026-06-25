@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) {
- header("Location: ../../LOGIN/login.php");
+ header("Location: ../../login/login.php");
  exit;
 }
 require_once '../clinical_core/db.php';
@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 $categorias = $pdo->query("SELECT * FROM catalogo_categorias ORDER BY nombre ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = "Gestión de Categorías | MMPharma Admin";
+$pageTitle = "Gestión de categorías | MMPharma Admin";
 $activePage = "productos";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 <main class="ml-64 p-8 min-h-screen" style="background:#051a10">
  <div class="flex justify-between items-end mb-8 animate-reveal">
@@ -119,4 +119,4 @@ function cerrarModalCat() {
 }
 </script>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

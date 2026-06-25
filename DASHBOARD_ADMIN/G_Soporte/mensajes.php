@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: ../../LOGIN/login.php");
+    header("Location: ../../login/login.php");
     exit;
 }
 
@@ -45,8 +45,8 @@ $mensajes = $pdo->query(
 
 $pageTitle = 'MMPharma Portal - Centro de Soporte';
 $activePage = 'soporte';
-include('../Includes/header.php');
-include('../Includes/sidebar.php');
+include('../includes/header.php');
+include('../includes/sidebar.php');
 ?>
 
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
@@ -165,7 +165,17 @@ include('../Includes/sidebar.php');
                         </td>
                         <td class="px-8 py-5">
                             <div class="flex justify-center gap-2">
-                                <button onclick="verMensaje(<?= $m['id'] ?>, '<?= htmlspecialchars(addslashes($m['nombre'])) ?>', '<?= htmlspecialchars(addslashes($m['email'])) ?>', '<?= htmlspecialchars(addslashes($m['telefono'])) ?>', '<?= htmlspecialchars(addslashes($m['empresa'])) ?>', '<?= htmlspecialchars(addslashes($m['mensaje'])) ?>', '<?= date('d/m/Y H:i', strtotime($m['created_at'])) ?>', '<?= htmlspecialchars($m['ip_origen']) ?>')" title="Ver mensaje" class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary/10 text-on-primary-container hover:bg-primary hover:text-white transition-all">
+                                <button type="button" 
+                                        class="btn-ver-mensaje w-9 h-9 flex items-center justify-center rounded-lg bg-primary/10 text-on-primary-container hover:bg-primary hover:text-white transition-all"
+                                        data-id="<?= $m['id'] ?>"
+                                        data-nombre="<?= htmlspecialchars($m['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        data-email="<?= htmlspecialchars($m['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        data-telefono="<?= htmlspecialchars($m['telefono'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        data-empresa="<?= htmlspecialchars($m['empresa'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        data-mensaje="<?= htmlspecialchars($m['mensaje'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        data-fecha="<?= date('d/m/Y H:i', strtotime($m['created_at'])) ?>"
+                                        data-ip="<?= htmlspecialchars($m['ip_origen'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                        title="Ver mensaje">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
                                 <button onclick="confirmarEliminar(<?= $m['id'] ?>)" title="Eliminar" class="w-9 h-9 flex items-center justify-center rounded-lg bg-error-container/20 text-error hover:bg-error hover:text-white transition-all">
@@ -291,6 +301,25 @@ function confirmarEliminar(id) {
         }
     );
 }
+
+// Listener para los botones de ver mensaje
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.btn-ver-mensaje').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute('data-id');
+            const nombre = this.getAttribute('data-nombre');
+            const email = this.getAttribute('data-email');
+            const telefono = this.getAttribute('data-telefono');
+            const empresa = this.getAttribute('data-empresa');
+            const mensaje = this.getAttribute('data-mensaje');
+            const fecha = this.getAttribute('data-fecha');
+            const ip = this.getAttribute('data-ip');
+            
+            verMensaje(id, nombre, email, telefono, empresa, mensaje, fecha, ip);
+        });
+    });
+});
 </script>
 
-<?php include('../Includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

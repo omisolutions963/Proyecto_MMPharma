@@ -132,14 +132,14 @@ include('../includes/sidebar.php');
  </p>
  </div>
  <div class="flex items-center gap-3">
- <a href="../G_Productos/productos.php"
+ <a href="../g_productos/productos.php"
  class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all
  text-white hover:scale-105"
  style="background:rgba(0,129,81,0.25);border:1px solid rgba(0,129,81,0.4)">
  <span class="material-symbols-outlined text-[18px]">inventory_2</span>
  Ver Catálogo
  </a>
- <a href="../S_Registro/solicitudes.php"
+ <a href="../s_registro/solicitudes.php"
  class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all
  hover:scale-105"
  style="background:#008151;color:#fff;border:1px solid #00a669">
@@ -156,7 +156,7 @@ include('../includes/sidebar.php');
 <?php if ($sinPrecio > 0 || $solPendientes > 0 || $contactoNuevos > 0): ?>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
  <?php if ($sinPrecio > 0): ?>
- <a href="../G_Productos/productos.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+ <a href="../g_productos/productos.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
  style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
  <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">price_check</span>
@@ -168,7 +168,7 @@ include('../includes/sidebar.php');
  </a>
  <?php endif; ?>
  <?php if ($solPendientes > 0): ?>
- <a href="../S_Registro/solicitudes.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+ <a href="../s_registro/solicitudes.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
  style="background:#071a10;border-left:3px solid #008151;border-top:1px solid rgba(0,129,81,0.15)">
  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(0,129,81,0.15)">
  <span class="material-symbols-outlined text-[18px] text-emerald-500">pending</span>
@@ -341,7 +341,7 @@ include('../includes/sidebar.php');
  <span class="material-symbols-outlined text-emerald-500 text-[18px]">list_alt</span>
  Últimas solicitudes
  </h2>
- <a href="../S_Registro/solicitudes.php" class="text-[10px] font-black text-emerald-500 hover:underline uppercase tracking-widest">
+ <a href="../s_registro/solicitudes.php" class="text-[10px] font-black text-emerald-500 hover:underline uppercase tracking-widest">
  Ver todas →
  </a>
  </div>
@@ -393,10 +393,10 @@ include('../includes/sidebar.php');
  <div class="grid grid-cols-2 gap-3">
  <?php
  $links = [
- ['href'=>'../G_Productos/productos.php', 'icon'=>'inventory_2', 'label'=>'Productos', 'color'=>'#008151'],
- ['href'=>'../G_Productos/productos.php','icon'=>'warehouse', 'label'=>'Inventario','color'=>'#00a669'],
- ['href'=>'../G_Clientes/clientes.php', 'icon'=>'group', 'label'=>'Clientes', 'color'=>'#34c47a'],
- ['href'=>'../G_Pedidos/pedidos.php', 'icon'=>'shopping_cart','label'=>'Pedidos', 'color'=>'#005132'],
+ ['href'=>'../g_productos/productos.php', 'icon'=>'inventory_2', 'label'=>'Productos', 'color'=>'#008151'],
+ ['href'=>'../g_productos/productos.php','icon'=>'warehouse', 'label'=>'Inventario','color'=>'#00a669'],
+ ['href'=>'../g_clientes/clientes.php', 'icon'=>'group', 'label'=>'Clientes', 'color'=>'#34c47a'],
+ ['href'=>'../g_pedidos/pedidos.php', 'icon'=>'shopping_cart','label'=>'Pedidos', 'color'=>'#005132'],
  ];
  foreach ($links as $l): ?>
  <a href="<?= $l['href'] ?>"
@@ -443,7 +443,7 @@ include('../includes/sidebar.php');
  <?php endforeach; ?>
  <?php endif; ?>
  </div>
- <a href="../G_Pedidos/pedidos.php"
+ <a href="../g_pedidos/pedidos.php"
  class="flex items-center justify-center gap-2 w-full mt-6 py-3 bg-primary text-white px-6 rounded-xl font-bold hover:opacity-90 transition-all">
  Ir a pedidos <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
  </a>

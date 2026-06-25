@@ -1,16 +1,6 @@
 <?php
-$host = 'localhost';
-$port = 3307;
-$dbname = 'mm_pharma';
-$user = 'root';
-$pass = '';
-
-try {
- $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8", $user, $pass);
- $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
- die('Error de conexión: ' . $e->getMessage());
-}
+require_once '../includes/db.php';
+$pdo = getDB();
 
 // Obtener ID del producto
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -41,17 +31,35 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 $is_cliente_check = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
 $cliente_tipo_check = $is_cliente_check ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
-if ($cliente_tipo_check === 'EMPRESA' && $p['solo_empresa'] !== 'SI') {
- header('Location: catalogo.php');
- exit;
+if ($cliente_tipo_check === 'EMPRESA') {
+  $nombre_lower = mb_strtolower($p['nombre']);
+  $sustancia_lower = mb_strtolower($p['sustancia'] ?? '');
+  $es_excepcion = (
+    strpos($nombre_lower, 'aspirina') !== false || strpos($sustancia_lower, 'aspirina') !== false ||
+    strpos($nombre_lower, 'loratadina') !== false || strpos($sustancia_lower, 'loratadina') !== false ||
+    strpos($nombre_lower, 'loratidina') !== false || strpos($sustancia_lower, 'loratidina') !== false ||
+    strpos($nombre_lower, 'buscapina') !== false ||
+    strpos($nombre_lower, 'butilhioscina') !== false || strpos($sustancia_lower, 'butilhioscina') !== false
+  );
+  if ($p['solo_empresa'] !== 'SI' && !$es_excepcion) {
+    header('Location: catalogo.php');
+    exit;
+  }
+} else {
+  if ($p['solo_empresa'] === 'SI') {
+    header('Location: catalogo.php');
+    exit;
+  }
 }
 
 // Productos relacionados (misma sustancia, diferente id)
-$where_rel = ["sustancia LIKE ?", "id != ?"];
+$where_rel = ["sustancia LIKE ?", "id != ?", "codigo NOT IN ('99999999999', 'DESCUENTO')"];
 $params_rel = ['%' . explode(' ', $p['sustancia'])[0] . '%', $id];
 
 if ($cliente_tipo_check === 'EMPRESA') {
- $where_rel[] = "solo_empresa = 'SI'";
+  $where_rel[] = "(solo_empresa = 'SI' OR nombre LIKE '%ASPIRINA%' OR sustancia LIKE '%ASPIRINA%' OR nombre LIKE '%LORATADINA%' OR sustancia LIKE '%LORATADINA%' OR nombre LIKE '%LORATIDINA%' OR sustancia LIKE '%LORATIDINA%' OR nombre LIKE '%BUSCAPINA%' OR nombre LIKE '%BUTILHIOSCINA%' OR sustancia LIKE '%BUTILHIOSCINA%')";
+} else {
+  $where_rel[] = "solo_empresa = 'NO'";
 }
 
 $rel_sql = "SELECT * FROM catalogo_productos WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
@@ -81,14 +89,14 @@ $precio_mostrar = $precio_base;
 <?php
 $titulo = htmlspecialchars($p['nombre']); 
 $pagina_actual = 'catalogo'; // marca el link activo en el nav
-$base = '../'; // si estás en subcarpeta como CATALOGO/
+$base = '../'; // si estás en subcarpeta como catalogo/
 require_once '../includes/header.php';
 ?>
 
 <!-- ═══ BREADCRUMB ═══ -->
 <div class="max-w-[1600px] mx-auto px-12 py-8" data-aos="fade-down">
  <div class="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-500">
- <a href="../INDEX/index.php" class="hover:text-primary-light transition-colors">Inicio</a>
+ <a href="../index/index.php" class="hover:text-primary-light transition-colors">Inicio</a>
  <span class="material-symbols-outlined text-sm">chevron_right</span>
  <a href="catalogo.php" class="hover:text-primary-light transition-colors">Catálogo</a>
  <span class="material-symbols-outlined text-sm">chevron_right</span>
@@ -102,7 +110,7 @@ require_once '../includes/header.php';
  <div class="grid md:grid-cols-2 gap-10 mb-16">
 
  <!-- Imagen del producto -->
- <div class="bg-white border border-slate-200 rounded-[2rem] flex items-center justify-center min-h-[400px] p-12 relative" data-aos="fade-right">
+ <div class="flex items-center justify-center min-h-[400px] p-4 relative" data-aos="fade-right">
   <?php if ($p['tipo'] === 'RED FRIA'): ?>
   <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full">
   <span class="material-symbols-outlined text-sm">ac_unit</span>
@@ -115,9 +123,9 @@ require_once '../includes/header.php';
   <?php endif; ?>
 
  <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
- <img src="../IMG/productos/<?= htmlspecialchars($p['imagen']) ?>"
+ <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=600"
  alt="<?= htmlspecialchars($p['nombre']) ?>"
- class="max-h-64 object-contain mix-blend-multiply">
+ class="max-h-[380px] w-auto object-contain mix-blend-multiply rounded-3xl">
  <?php else: ?>
  <div class="text-center">
  <span class="material-symbols-outlined text-8xl text-slate-300">medication</span>
@@ -237,7 +245,7 @@ require_once '../includes/header.php';
  
  <button type="button" onclick="anadirMultipleAlCarrito()" class="flex-1 h-[58px] bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all text-base flex items-center justify-center gap-2 group">
  <span class="material-symbols-outlined text-xl group-hover:translate-x-0.5 transition-transform">add_shopping_cart</span>
- Añadir al Carrito
+ Añadir al carrito
  </button>
  </div>
  <a href="catalogo.php" class="w-full h-[50px] bg-white text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 text-sm flex items-center justify-center gap-2 border border-slate-200 group">
@@ -286,7 +294,7 @@ require_once '../includes/header.php';
  </p>
  </div>
  <div class="flex flex-col sm:flex-row gap-4">
- <a href="../LOGIN/login.php"
+ <a href="../login/login.php"
  class="flex-1 h-[58px] bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all text-base flex items-center justify-center gap-2 group">
  Iniciar sesión para acceder
  <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -303,7 +311,7 @@ require_once '../includes/header.php';
  </div>
  </div>
 
- <!-- ═══ PRODUCTOS RELACIONADOS ═══ -->
+ <!-- ═══ productos RELACIONADOS ═══ -->
  <?php if (!empty($relacionados)): ?>
  <div>
  <h2 class="text-lg font-bold text-primary mb-6">Productos con sustancia similar</h2>
@@ -313,10 +321,10 @@ require_once '../includes/header.php';
  class="bg-white border border-slate-200 rounded-[3rem] transition-all duration-300 p-8 flex flex-col group animate-fade-up min-h-[420px] hover:-translate-y-2 hover:border-primary/30 hover:">
  
  <!-- Contenedor de Imagen -->
- <div class="w-full aspect-square bg-slate-50 rounded-2xl flex items-center justify-center mb-6 relative group-hover:scale-105 transition-transform duration-500 overflow-hidden">
- <?php if (!empty($r['imagen']) && $r['imagen'] !== 'PENDIENTE'): ?>
- <img src="../IMG/productos/<?= htmlspecialchars($r['imagen']) ?>"
- class="w-full h-full object-contain p-4 mix-blend-multiply">
+ <div class="w-full aspect-square flex items-center justify-center mb-6 relative group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+  <?php if (!empty($r['imagen']) && $r['imagen'] !== 'PENDIENTE'): ?>
+  <img src="../includes/image_cache.php?img=<?= urlencode($r['imagen']) ?>&w=300"
+  class="w-full h-full object-contain p-2 mix-blend-multiply rounded-2xl">
  <?php else: ?>
  <span class="material-symbols-outlined text-slate-300 text-7xl">medication</span>
  <?php endif; ?>
@@ -391,11 +399,11 @@ require_once '../includes/header.php';
  Para ver precios detallados, existencias y poder cotizar este producto, es necesario contar con una cuenta aprobada.
  </p>
  <div class="flex flex-col gap-3">
- <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
+ <a href="../seleccion_registro/seleccion_registro.php" class="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
  Solicitar acceso
  <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
  </a>
- <a href="../LOGIN/login.php" class="w-full py-4 bg-white text-primary font-semibold rounded-xl hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 border border-slate-200 flex items-center justify-center gap-2 group">
+ <a href="../login/login.php" class="w-full py-4 bg-white text-primary font-semibold rounded-xl hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 border border-slate-200 flex items-center justify-center gap-2 group">
  Iniciar sesión
  <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">login</span>
  </a>

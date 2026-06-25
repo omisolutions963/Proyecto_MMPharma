@@ -3,7 +3,7 @@ require_once '../clinical_core/db.php';
 $pdo = getDB();
 
 function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_cliente) {
-    $url_login = 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/Proyecto_MMPharma/LOGIN/login.php';
+    $url_login = getAppURL() . '/login/login.php';
     $asunto = "¡Bienvenido a MMPharma! Tu cuenta ha sido activada";
     $headers = implode("\r\n", [
         'From: MMPharma Portal <noreply@mmpharma.com>',
@@ -12,28 +12,28 @@ function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_client
     ]);
     
     $html = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#f4f7ff;padding:30px">
-<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,36,81,.15)">
-  <div style="background:#002451;padding:24px 32px;text-align:center">
-    <h1 style="margin:0;color:#fff;font-size:22px">🎉 ¡Tu cuenta ha sido activada!</h1>
-    <p style="margin:6px 0 0;color:#8baed4;font-size:14px">Bienvenido a MMPharma Clinical Systems</p>
+<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,62,121,.15)">
+  <div style="background:#003e79;padding:24px 32px;text-align:center">
+    <h1 style="margin:0;color:#fff;font-size:22px">¡Tu cuenta ha sido activada!</h1>
+    <p style="margin:6px 0 0;color:#67e8f9;font-size:14px">Bienvenido a MMPharma</p>
   </div>
   <div style="padding:32px;color:#333;line-height:1.6">
-    <p style="font-size:16px;font-weight:bold;color:#002451;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
+    <p style="font-size:16px;font-weight:bold;color:#003e79;margin-top:0">Estimado(a) ' . htmlspecialchars($razon_social) . ',</p>
     <p>Nos complace informarte que tu solicitud de registro ha sido aprobada con éxito. A partir de este momento, ya tienes acceso completo a nuestro catálogo de productos con precios personalizados para tu nivel de cliente.</p>
     
     <div style="background:#f0f5ff;border-radius:8px;padding:20px;margin:24px 0">
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         <tr>
-          <td style="padding:6px 0;color:#666;width:120px;font-weight:bold">Usuario/Email:</td>
-          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($email_cliente) . '</td>
+          <td style="padding:6px 0;color:#666;width:120px;font-weight:bold">Usuario/email:</td>
+          <td style="color:#003e79;font-weight:bold">' . htmlspecialchars($email_cliente) . '</td>
         </tr>
         <tr>
-          <td style="padding:6px 0;color:#666;font-weight:bold">Nivel de Cliente:</td>
-          <td style="color:#002451;font-weight:bold">' . htmlspecialchars($tipo_cliente) . '</td>
+          <td style="padding:6px 0;color:#666;font-weight:bold">Nivel de cliente:</td>
+          <td style="color:#003e79;font-weight:bold">' . htmlspecialchars($tipo_cliente) . '</td>
         </tr>
         <tr>
-          <td style="padding:6px 0;color:#666;font-weight:bold">Contraseña Temporal:</td>
-          <td style="color:#002451;font-weight:bold">cliente123</td>
+          <td style="padding:6px 0;color:#666;font-weight:bold">Contraseña temporal:</td>
+          <td style="color:#003e79;font-weight:bold">cliente123</td>
         </tr>
       </table>
     </div>
@@ -42,8 +42,8 @@ function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_client
     
     <div style="text-align:center;margin:32px 0 16px">
       <a href="' . htmlspecialchars($url_login) . '"
-         style="display:inline-block;background:#002451;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,36,81,0.2)">
-        Iniciar Sesión en el Portal
+         style="display:inline-block;background:#003e79;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;box-shadow:0 4px 10px rgba(0,62,121,0.2)">
+        Iniciar sesión en el portal
       </a>
     </div>
     
@@ -58,7 +58,7 @@ function enviarCorreoBienvenidaLocal($email_cliente, $razon_social, $tipo_client
 </body></html>';
     
     // En lugar de usar @mail() que falla en local, usamos PHPMailer
-    require_once __DIR__ . '/../../INCLUDES/mailer.php';
+    require_once __DIR__ . '/../../includes/mailer.php';
     enviarCorreoPHPMailer($email_cliente, $asunto, $html);
 }
 
@@ -171,8 +171,8 @@ $solicitudes = $pdo->query(
 
 $pageTitle = 'MMPharma Portal - Solicitudes de registro';
 $activePage = 'solicitudes';
-include('../Includes/header.php');
-include('../Includes/sidebar.php');
+include('../includes/header.php');
+include('../includes/sidebar.php');
 ?>
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
 
@@ -543,4 +543,4 @@ function closeDetailsModal() {
 }
 </script>
 
-<?php include('../Includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

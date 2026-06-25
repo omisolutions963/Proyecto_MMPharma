@@ -8,12 +8,12 @@ $menuItems = [
 ];
 
 $menuLinks = [
- 'dashboard' => 'Dashboard.php',
- 'cotizaciones' => 'Cotizaciones.php',
- 'perfil' => 'Perfil.php',
- 'documentos' => 'Documentos.php',
- 'direcciones' => 'Direcciones.php',
- 'contacto' => 'Contacto.php',
+ 'dashboard' => 'dashboard.php',
+ 'cotizaciones' => 'cotizaciones.php',
+ 'perfil' => 'perfil.php',
+ 'documentos' => 'documentos.php',
+ 'direcciones' => 'direcciones.php',
+ 'contacto' => 'contacto.php',
 ];
 ?>
 
@@ -23,8 +23,8 @@ $menuLinks = [
 
  <!-- Logo -->
  <div class="mb-8 px-4">
- <img src="../Logos/MMPharma-Logotipo-Horizontal-Blanco.svg"
- alt="MMPharma" class="w-44 object-contain" onerror="this.src='../logos/MMPharma-Logotipo-Horizontal-Blanco.png'"/>
+ <img src="../logos/mmpharma-logotipo-horizontal-blanco.svg"
+ alt="MMPharma" class="w-44 object-contain" onerror="this.src='../logos/mmpharma-logotipo-horizontal-blanco.png'"/>
  </div>
 
  <!-- Navigation -->
@@ -53,12 +53,12 @@ $menuLinks = [
 
  <!-- Bottom: Ir al sitio + Cerrar Sesión -->
  <div class="mt-auto pt-4 border-t border-white/10 flex flex-col gap-3 px-2">
- <a href="../INDEX/index.php"
+ <a href="../index/index.php"
  class="flex items-center gap-2 w-full py-2.5 px-3 bg-white/5 text-blue-200/70 rounded-xl text-xs font-semibold hover:bg-white/10 hover:text-white transition-all">
  <span class="material-symbols-outlined text-base">language</span>
  Ir al sitio público
  </a>
- <a href="../LOGIN/logout.php"
+ <a href="../login/logout.php"
  class="flex items-center gap-2 w-full py-2.5 px-3 bg-red-500/10 text-red-300/80 rounded-xl text-xs font-semibold hover:bg-red-500/20 hover:text-red-200 transition-all">
  <span class="material-symbols-outlined text-base">logout</span>
  Cerrar sesión

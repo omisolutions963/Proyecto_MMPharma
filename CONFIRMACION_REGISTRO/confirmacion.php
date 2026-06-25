@@ -226,7 +226,7 @@ $base = '../';
  </div>
  
  <div class="w-full lg:w-[320px] shrink-0 flex flex-col gap-4">
- <a href="../INDEX/index.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover: hover:-translate-y-0.5 active:scale-[0.98] transition-all text-center flex items-center justify-center gap-2">
+ <a href="../index/index.php" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover: hover:-translate-y-0.5 active:scale-[0.98] transition-all text-center flex items-center justify-center gap-2">
  <span class="material-symbols-outlined text-[20px]">home</span> Volver al inicio
  </a>
  <a href="mailto:ventas@mmpharma.com" target="_blank" class="w-full py-4 bg-white border-2 border-primary text-primary font-bold rounded-xl hover:bg-primary/5 active:scale-[0.98] transition-all text-center flex items-center justify-center gap-2">

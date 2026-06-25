@@ -7,7 +7,7 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
     exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 

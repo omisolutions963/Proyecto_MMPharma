@@ -7,37 +7,43 @@ $enviado = false;
 $error = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
- $nombre = trim($_POST['nombre'] ?? '');
- $empresa = trim($_POST['empresa'] ?? '');
- $correo = trim($_POST['correo'] ?? '');
- $telefono = trim($_POST['telefono'] ?? '');
- $mensaje = trim($_POST['mensaje'] ?? '');
-
- if ($nombre && $correo && filter_var($correo, FILTER_VALIDATE_EMAIL) && $mensaje) {
- // 1. Guardar en BD
- try {
- require_once '../INCLUDES/db.php';
- $pdo = getDB();
- $pdo->prepare(
- "INSERT INTO clientes_contacto_mensajes (nombre, email, telefono, empresa, mensaje, ip_origen)
- VALUES (?, ?, ?, ?, ?, ?)"
- )->execute([$nombre, $correo, $telefono, $empresa, $mensaje, $_SERVER['REMOTE_ADDR'] ?? null]);
- $enviado = true;
- } catch (Exception $e) {
- $enviado = false;
- $error = true;
- }
-
- // 2. Intentar enviar email (opcional, no bloquea si falla)
- if ($enviado) {
- $para = 'ventas@mmpharma.com';
- $asunto = "Nuevo mensaje de contacto — $nombre ($empresa)";
- $cuerpo = "Nombre: $nombre\nEmpresa: $empresa\nCorreo: $correo\nTeléfono: $telefono\n\nMensaje:\n$mensaje";
- $headers = "From: $correo\r\nReply-To: $correo\r\nContent-Type: text/plain; charset=UTF-8";
- @mail($para, $asunto, $cuerpo, $headers);
- }
+ $honeypot = trim($_POST['contacto_website'] ?? '');
+ if ($honeypot !== '') {
+  // Es un bot de spam. Fingimos éxito pero no guardamos ni enviamos nada.
+  $enviado = true;
  } else {
- $error = true;
+  $nombre = trim($_POST['nombre'] ?? '');
+  $empresa = trim($_POST['empresa'] ?? '');
+  $correo = trim($_POST['correo'] ?? '');
+  $telefono = trim($_POST['telefono'] ?? '');
+  $mensaje = trim($_POST['mensaje'] ?? '');
+
+  if ($nombre && $correo && filter_var($correo, FILTER_VALIDATE_EMAIL) && $mensaje) {
+  // 1. Guardar en BD
+  try {
+  require_once '../includes/db.php';
+  $pdo = getDB();
+  $pdo->prepare(
+  "INSERT INTO clientes_contacto_mensajes (nombre, email, telefono, empresa, mensaje, ip_origen)
+  VALUES (?, ?, ?, ?, ?, ?)"
+  )->execute([$nombre, $correo, $telefono, $empresa, $mensaje, $_SERVER['REMOTE_ADDR'] ?? null]);
+  $enviado = true;
+  } catch (Exception $e) {
+  $enviado = false;
+  $error = true;
+  }
+
+  // 2. Intentar enviar email (opcional, no bloquea si falla)
+  if ($enviado) {
+  $para = 'ventas@mmpharma.com';
+  $asunto = "Nuevo mensaje de contacto — $nombre ($empresa)";
+  $cuerpo = "Nombre: $nombre\nEmpresa: $empresa\nCorreo: $correo\nTeléfono: $telefono\n\nMensaje:\n$mensaje";
+  $headers = "From: $correo\r\nReply-To: $correo\r\nContent-Type: text/plain; charset=UTF-8";
+  @mail($para, $asunto, $cuerpo, $headers);
+  }
+  } else {
+  $error = true;
+  }
  }
 }
 
@@ -46,7 +52,7 @@ require_once '../includes/header.php';
 <!-- ── HERO ── -->
 <section class="relative min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../IMG/60.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
+ <img src="../img/60.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-8 py-20 w-full text-center md:text-left" data-aos="fade-up">
@@ -178,6 +184,11 @@ require_once '../includes/header.php';
  <?php endif; ?>
 
  <form method="POST" action="contacto.php" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+ <!-- Campo Honeypot invisible para humanos pero atractivo para bots -->
+ <div class="hidden" style="display: none !important;">
+   <input type="text" name="contacto_website" id="contacto_website" autocomplete="off" tabindex="-1">
+ </div>
 
  <div class="space-y-2">
  <label class="text-sm font-bold text-white uppercase tracking-wider ml-1">Nombre completo *</label>

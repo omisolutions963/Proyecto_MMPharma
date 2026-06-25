@@ -3,17 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !== true) {
- header("Location: ../LOGIN/login.php");
+ header("Location: ../login/login.php");
  exit;
 }
 
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 $pedido_id = $_GET['id'] ?? null;
 
 if (!$pedido_id) {
- header("Location: Cotizaciones.php");
+ header("Location: cotizaciones.php");
  exit;
 }
 
@@ -23,13 +23,13 @@ $stmt->execute([$pedido_id, $cliente_id]);
 $pedido = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$pedido) {
- header("Location: Cotizaciones.php");
+ header("Location: cotizaciones.php");
  exit;
 }
 
 // Fetch Detalles
 $stmt = $pdo->prepare("
- SELECT pd.*, cp.codigo, cp.sustancia, cp.tipo 
+ SELECT pd.*, cp.codigo, cp.sustancia, cp.tipo, cp.tasa_iva 
  FROM clientes_pedidos_detalle pd 
  LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
  WHERE pd.pedido_id = ?
@@ -48,8 +48,16 @@ $stmt->execute([$cliente_id]);
 $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $subtotal_productos = 0;
+$total_items_sin_iva = 0;
+$total_items_iva = 0;
 foreach($detalles as $det) {
-    $subtotal_productos += (float)$det['subtotal'];
+    $subtotal_linea = (float)$det['subtotal'];
+    $subtotal_productos += $subtotal_linea;
+    $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.00;
+    $item_sin_iva = $subtotal_linea / (1 + $tasa);
+    $item_iva = $subtotal_linea - $item_sin_iva;
+    $total_items_sin_iva += $item_sin_iva;
+    $total_items_iva += $item_iva;
 }
 
 $costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
@@ -59,24 +67,27 @@ if ($costo_envio == 0 && abs($monto_total - $subtotal_productos) > 0.01) {
     $costo_envio = $monto_total - $subtotal_productos;
 }
 
-$subtotal_sin_iva = $monto_total / 1.16;
-$iva = $monto_total - $subtotal_sin_iva;
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
+
+$subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
+$iva = $total_items_iva + $envio_iva;
 
 $fecha_pedido = date('d M, Y', strtotime($pedido['created_at']));
 $vence_pedido = date('d M, Y', strtotime($pedido['created_at'] . ' + 7 days'));
 
 $pageTitle = 'MMPharma Portal - Detalle de cotización';
 $activePage = 'cotizaciones';
-include('Includes/header.php');
-include('Includes/sidebar.php');
+include('includes/header.php');
+include('includes/sidebar.php');
 ?>
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)] bg-background text-on-surface">
  
  <!-- Top Nav -->
  <nav class="flex items-center gap-2 mb-6 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
- <a href="Dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
+ <a href="dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
- <a href="Cotizaciones.php" class="hover:text-primary transition-colors">Cotizaciones</a>
+ <a href="cotizaciones.php" class="hover:text-primary transition-colors">Cotizaciones</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <span class="text-on-surface-variant">Detalle #<?= htmlspecialchars($pedido['folio']) ?></span>
  </nav>
@@ -134,12 +145,12 @@ include('Includes/sidebar.php');
           $enviado = in_array($estado, ['ENVIADO', 'ENTREGADO']);
           $entregado = ($estado === 'ENTREGADO');
           
-          $recoger_sucursal = ($estado === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal']));
-          $label_paso4 = $recoger_sucursal ? 'Listo para recoger' : 'Enviado';
+          $recoger_sucursal = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00);
+          $label_paso4 = ($estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $subtotal_productos < 4000.00) ? 'Listo para recolectar' : ($recoger_sucursal ? 'Listo para recoger' : 'Enviado');
           $icon_paso4 = $recoger_sucursal ? 'store' : 'local_shipping';
           
           if ($recoger_sucursal) {
-              $enviado = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'ENTREGADO');
+              $enviado = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $estado === 'ENTREGADO');
           }
           
           $cancelado = ($estado === 'CANCELADO');
@@ -280,7 +291,18 @@ include('Includes/sidebar.php');
  <td class="py-5 px-4 text-xs font-bold text-white"><?= htmlspecialchars($det['codigo'] ?? 'N/A') ?></td>
  <td class="py-5 px-4">
  <p class="text-sm font-bold text-white mb-0.5"><?= htmlspecialchars($det['nombre_producto']) ?></p>
- <p class="text-[10px] text-on-surface-variant max-w-xs truncate"><?= htmlspecialchars($det['sustancia'] ?? '') ?></p>
+ <p class="text-[10px] text-on-surface-variant max-w-xs truncate">
+ <?= htmlspecialchars($det['sustancia'] ?? '') ?>
+ <span class="ml-2 text-[9px] font-bold text-primary">
+ Precios más IVA | IVA: <?= (isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16) * 100 ?>% (+<?php
+      $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+      $subtotal_linea = (float)$det['subtotal'];
+      $item_sin_iva = $subtotal_linea / (1 + $tasa);
+      $item_iva = $subtotal_linea - $item_sin_iva;
+      echo '$' . number_format($item_iva, 2);
+  ?>)
+ </span>
+ </p>
  </td>
  <td class="py-5 px-4 text-sm font-bold text-white text-center"><?= $det['cantidad'] ?></td>
  <td class="py-5 px-4 text-sm text-on-surface-variant text-right">$<?= number_format($det['precio_unitario'], 2) ?></td>
@@ -298,36 +320,40 @@ include('Includes/sidebar.php');
  <span class="text-sm text-on-surface-variant">Subtotal productos:</span>
  <span class="text-sm font-bold text-white">$<?= number_format($subtotal_productos, 2) ?></span>
  </div>
- <div class="flex justify-between items-center mb-3">
- <span class="text-sm text-on-surface-variant">Envío:</span>
- <?php
- if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
-     $texto_envio = 'Recoger en sucursal';
-     $color_envio = 'text-green-400';
- } else {
-     $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío gratis';
-     $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400';
- }
- ?>
- <span class="text-sm font-bold <?= $color_envio ?>"><?= $texto_envio ?></span>
- </div>
+  <div class="flex justify-between items-start mb-3 gap-4">
+  <span class="text-sm text-on-surface-variant shrink-0">Envío:</span>
+  <?php
+  if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO') {
+      echo '<div class="text-right">
+              <span class="text-sm font-bold text-green-400 block">Recoger en almacén</span>
+              <span class="text-[10px] text-green-400/80 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span>
+            </div>';
+  } else if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+      echo '<span class="text-sm font-bold text-green-400">Recoger en sucursal</span>';
+  } else {
+      $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío gratis';
+      $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400 font-bold';
+      echo '<span class="text-sm ' . $color_envio . '">' . $texto_envio . '</span>';
+  }
+  ?>
+  </div>
  <div class="flex justify-between items-center mb-3 pt-3 border-t border-outline-variant/10">
  <span class="text-sm text-on-surface-variant">Subtotal (sin IVA):</span>
  <span class="text-sm font-bold text-white">$<?= number_format($subtotal_sin_iva, 2) ?></span>
  </div>
  <div class="flex justify-between items-center mb-6">
- <span class="text-sm text-on-surface-variant">IVA (16%):</span>
+ <span class="text-sm text-on-surface-variant">IVA:</span>
  <span class="text-sm font-bold text-white">$<?= number_format($iva, 2) ?></span>
  </div>
  <div class="flex justify-between items-center bg-surface-container-high rounded-xl p-4">
  <span class="text-lg font-black text-white uppercase tracking-widest">Total:</span>
  <span class="text-2xl font-extrabold text-primary">$<?= number_format($monto_total, 2) ?></span>
  </div>
- <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Todos los precios incluyen 16% de IVA. Moneda: MXN.</p>
+ <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Los precios unitarios y de envío mostrados incluyen el IVA (16%). Moneda: MXN.</p>
  </div>
  </div>
  
- <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])): ?>
+ <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00): ?>
  <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
      <div class="flex items-center gap-2 text-primary font-bold mb-1">
          <span class="material-symbols-outlined text-[18px]">store</span>
@@ -387,7 +413,7 @@ include('Includes/sidebar.php');
  <h3 class="text-sm font-bold text-white mb-2">Soporte MMPharma</h3>
  <p class="text-[10px] text-on-primary-container leading-relaxed mb-6">¿Tiene dudas sobre esta cotización? Envíe un mensaje.</p>
  
- <a href="Contacto.php" class="flex items-center justify-center gap-3 bg-surface-container-lowest/40 hover:bg-surface-container-lowest transition-colors rounded-xl p-3 border border-outline-variant/30 backdrop-blur-sm relative z-10 font-bold text-xs text-white">
+ <a href="contacto.php" class="flex items-center justify-center gap-3 bg-surface-container-lowest/40 hover:bg-surface-container-lowest transition-colors rounded-xl p-3 border border-outline-variant/30 backdrop-blur-sm relative z-10 font-bold text-xs text-white">
  <span class="material-symbols-outlined text-[18px]">support_agent</span> Contactar soporte
  </a>
  </div>
@@ -397,7 +423,7 @@ include('Includes/sidebar.php');
  </div>
 
 </main>
-<?php include('Includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>
 
 <script>
 function procesarArchivo() {

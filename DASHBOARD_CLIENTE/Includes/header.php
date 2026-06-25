@@ -6,7 +6,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
         $current_script = basename($_SERVER['PHP_SELF']);
         $current_dir = basename(dirname($_SERVER['PHP_SELF']));
         if ($current_script !== 'cambiar_password_obligatorio.php' && $current_script !== 'logout.php') {
-            $redirect_url = ($current_dir === 'LOGIN') ? 'cambiar_password_obligatorio.php' : '../LOGIN/cambiar_password_obligatorio.php';
+            $redirect_url = ($current_dir === 'login') ? 'cambiar_password_obligatorio.php' : '../login/cambiar_password_obligatorio.php';
             header("Location: " . $redirect_url);
             exit;
         }
@@ -33,7 +33,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title><?= $pageTitle ?? 'MMPharma Portal Cliente' ?></title>
-<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+<link rel="icon" type="image/png" href="../logos/mmpharma-isotipo.png">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -223,104 +223,268 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  }
  }
 
- async function marcarNotificacionLeida(element, id) {
-     const indicator = element.querySelector('.unread-indicator');
-     if (!indicator) return;
+  async function marcarNotificacionLeida(element, id) {
+      const indicator = element.querySelector('.unread-indicator');
+      if (!indicator) return;
 
-     try {
-         const response = await fetch('api_notificaciones.php', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ action: 'marcar_leida', id: id })
-         });
-         const data = await response.json();
-         if (data.success) {
-             indicator.remove();
-             const badge = document.querySelector('#notif-btn .bg-error');
-             const unreadText = document.querySelector('.unread-count-text');
-             let currentCount = parseInt(unreadText.textContent) || 0;
-             if (currentCount > 0) {
-                 currentCount--;
-                 unreadText.textContent = currentCount + ' sin leer';
-                 if (currentCount === 0) {
-                     if (badge) badge.remove();
-                 }
-             }
-         }
-     } catch (error) {
-         console.error('Error al marcar notificación como leída:', error);
-     }
- }
+      try {
+          const response = await fetch('api_notificaciones.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'marcar_leida', id: id })
+          });
+          const data = await response.json();
+          if (data.success) {
+              indicator.remove();
+              const badge = document.querySelector('#notif-btn .bg-error');
+              const unreadText = document.querySelector('.unread-count-text');
+              let currentCount = parseInt(unreadText.textContent) || 0;
+              if (currentCount > 0) {
+                  currentCount--;
+                  unreadText.textContent = currentCount + ' sin leer';
+                  if (currentCount === 0) {
+                      if (badge) badge.remove();
+                      const btnMarcarTodas = document.getElementById('btn-marcar-todas');
+                      if (btnMarcarTodas) btnMarcarTodas.remove();
+                      const divider = document.getElementById('notif-header-divider');
+                      if (divider) divider.remove();
+                  }
+              }
+          }
+      } catch (error) {
+          console.error('Error al marcar notificación como leída:', error);
+      }
+  }
 
- async function marcarTodasLeidas() {
-     try {
-         const response = await fetch('api_notificaciones.php', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ action: 'marcar_todas_leidas' })
-         });
-         const data = await response.json();
-         if (data.success) {
-             document.querySelectorAll('.unread-indicator').forEach(el => el.remove());
-             const badge = document.querySelector('#notif-btn .bg-error');
-             if (badge) badge.remove();
-             const unreadText = document.querySelector('.unread-count-text');
-             if (unreadText) {
-                 unreadText.textContent = '0 sin leer';
-             }
-         }
-     } catch (error) {
-         console.error('Error al marcar todas las notificaciones como leídas:', error);
-     }
- }
+  async function marcarTodasLeidas() {
+      try {
+          const response = await fetch('api_notificaciones.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'marcar_todas_leidas' })
+          });
+          const data = await response.json();
+          if (data.success) {
+              document.querySelectorAll('.unread-indicator').forEach(el => el.remove());
+              const badge = document.querySelector('#notif-btn .bg-error');
+              if (badge) badge.remove();
+              const unreadText = document.querySelector('.unread-count-text');
+              if (unreadText) {
+                  unreadText.textContent = '0 sin leer';
+              }
+              const btnMarcarTodas = document.getElementById('btn-marcar-todas');
+              if (btnMarcarTodas) btnMarcarTodas.remove();
+              const divider = document.getElementById('notif-header-divider');
+              if (divider) divider.remove();
+          }
+      } catch (error) {
+          console.error('Error al marcar todas las notificaciones como leídas:', error);
+      }
+  }
 
- async function verTodasNotificaciones() {
-     try {
-         const response = await fetch('api_notificaciones.php', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ action: 'listar' })
-         });
-         const data = await response.json();
-         if (data.success && data.notificaciones) {
-             let htmlList = '<div class="text-left space-y-4 max-h-96 overflow-y-auto pr-2">';
-             if (data.notificaciones.length === 0) {
-                 htmlList += '<p class="text-sm text-center text-slate-400">No tienes notificaciones.</p>';
-             } else {
-                 data.notificaciones.forEach(n => {
-                     const dateFmt = new Date(n.created_at).toLocaleString('es-MX', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-                     const isUnread = !parseInt(n.leida);
-                     const borderStyle = isUnread ? 'border-l-4 border-primary pl-3' : 'pl-3';
-                     const bgStyle = isUnread ? 'bg-surface-container-high/40' : '';
-                     
-                     htmlList += `
-                     <div class="p-3 rounded-xl border border-outline-variant/30 ${borderStyle} ${bgStyle} transition-all">
-                         <div class="flex justify-between items-start gap-2">
-                             <h4 class="text-sm font-bold text-white">${n.tipo || 'INFORMACIÓN'}</h4>
-                             <span class="text-[9px] text-slate-400 shrink-0">${dateFmt}</span>
-                         </div>
-                         <p class="text-xs text-slate-300 mt-1">${n.mensaje}</p>
-                     </div>`;
-                 });
-             }
-             htmlList += '</div>';
+  async function eliminarNotificacion(event, id) {
+      if (event) event.stopPropagation();
+      
+      try {
+          const response = await fetch('api_notificaciones.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'eliminar', id: id })
+          });
+          const data = await response.json();
+          if (data.success) {
+              let wasUnread = false;
 
-             Swal.fire({
-                 title: 'Historial de Notificaciones',
-                 html: htmlList,
-                 width: '500px',
-                 confirmButtonColor: '#4a90d9',
-                 confirmButtonText: 'Cerrar',
-                 background: '#102245',
-                 color: '#e8f0ff'
-             });
+              // Check dropdown item
+              const dropdownItem = document.getElementById(`notif-item-${id}`);
+              if (dropdownItem) {
+                  if (dropdownItem.querySelector('.unread-indicator')) {
+                      wasUnread = true;
+                  }
+                  dropdownItem.remove();
+              }
 
-             marcarTodasLeidas();
-         }
-     } catch (error) {
-         console.error('Error al listar notificaciones:', error);
-     }
- }
+              // Check modal item
+              const modalItem = document.getElementById(`modal-notif-item-${id}`);
+              if (modalItem) {
+                  if (modalItem.className.includes('border-primary')) {
+                      wasUnread = true;
+                  }
+                  modalItem.remove();
+              }
+
+              // Update badge & counter if it was unread
+              if (wasUnread) {
+                  const badge = document.querySelector('#notif-btn .bg-error');
+                  const unreadText = document.querySelector('.unread-count-text');
+                  if (unreadText) {
+                      let currentCount = parseInt(unreadText.textContent) || 0;
+                      if (currentCount > 0) {
+                          currentCount--;
+                          unreadText.textContent = currentCount + ' sin leer';
+                          if (currentCount === 0) {
+                              if (badge) badge.remove();
+                              const btnMarcarTodas = document.getElementById('btn-marcar-todas');
+                              if (btnMarcarTodas) btnMarcarTodas.remove();
+                              const divider = document.getElementById('notif-header-divider');
+                              if (divider) divider.remove();
+                          }
+                      }
+                  }
+              }
+
+              // Check dropdown list container
+              const listContainer = document.getElementById('notif-items-list');
+              if (listContainer) {
+                  const items = listContainer.querySelectorAll('.notification-item');
+                  if (items.length === 0) {
+                      listContainer.innerHTML = `
+                          <div class="p-8 text-center">
+                              <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
+                              <p class="text-xs text-on-surface-variant">No tienes notificaciones por ahora.</p>
+                          </div>
+                      `;
+                      const actionHeader = document.getElementById('notif-actions-header');
+                      if (actionHeader) {
+                          actionHeader.innerHTML = '<span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text">0 sin leer</span>';
+                      }
+                  }
+              }
+
+              // Check modal container
+              const modalList = document.querySelector('.swal2-html-container .space-y-3');
+              if (modalList && modalList.querySelectorAll('[id^="modal-notif-item-"]').length === 0) {
+                  modalList.innerHTML = '<p class="text-sm text-center text-slate-400">No tienes notificaciones.</p>';
+                  const headerDeleteAll = document.querySelector('.swal2-html-container .flex.justify-between');
+                  if (headerDeleteAll) {
+                      headerDeleteAll.remove();
+                  }
+              }
+          }
+      } catch (error) {
+          console.error('Error al eliminar la notificación:', error);
+      }
+  }
+
+  async function eliminarTodasNotificaciones(event) {
+      if (event) event.stopPropagation();
+      
+      confirmAction('¿Eliminar todas?', 'Esta acción borrará todo tu historial de notificaciones permanentemente.', 'Sí, eliminar', async () => {
+          try {
+              const response = await fetch('api_notificaciones.php', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ action: 'eliminar_todas' })
+              });
+              const data = await response.json();
+              if (data.success) {
+                  // Clear dropdown list container
+                  const listContainer = document.getElementById('notif-items-list');
+                  if (listContainer) {
+                      listContainer.innerHTML = `
+                          <div class="p-8 text-center">
+                              <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
+                              <p class="text-xs text-on-surface-variant">No tienes notificaciones por ahora.</p>
+                          </div>
+                      `;
+                  }
+
+                  // Clear badge & counter
+                  const badge = document.querySelector('#notif-btn .bg-error');
+                  if (badge) badge.remove();
+                  const unreadText = document.querySelector('.unread-count-text');
+                  if (unreadText) {
+                      unreadText.textContent = '0 sin leer';
+                  }
+                  
+                  const actionHeader = document.getElementById('notif-actions-header');
+                  if (actionHeader) {
+                      actionHeader.innerHTML = '<span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text">0 sin leer</span>';
+                  }
+
+                  // Close SweetAlert modal if open
+                  if (Swal.isVisible()) {
+                      Swal.close();
+                  }
+                  
+                  // Show success toast
+                  Swal.fire({
+                      toast: true,
+                      position: 'top-end',
+                      icon: 'success',
+                      title: 'Notificaciones eliminadas',
+                      showConfirmButton: false,
+                      timer: 2000,
+                      background: '#102245',
+                      color: '#e8f0ff'
+                  });
+              }
+          } catch (error) {
+              console.error('Error al eliminar todas las notificaciones:', error);
+          }
+      });
+  }
+
+  async function verTodasNotificaciones() {
+      try {
+          const response = await fetch('api_notificaciones.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'listar' })
+          });
+          const data = await response.json();
+          if (data.success && data.notificaciones) {
+              let htmlList = '';
+              if (data.notificaciones.length === 0) {
+                  htmlList += '<div class="space-y-4 max-h-96 overflow-y-auto pr-2"><p class="text-sm text-center text-slate-400">No tienes notificaciones.</p></div>';
+              } else {
+                  htmlList += `<div class="flex justify-between items-center mb-4 pb-2 border-b border-outline-variant/30">
+                      <span class="text-xs text-slate-400 font-medium">${data.notificaciones.length} notificaciones</span>
+                      <button onclick="eliminarTodasNotificaciones(event)" class="text-[10px] text-error hover:underline font-bold uppercase tracking-wider flex items-center gap-1">
+                          <span class="material-symbols-outlined text-[14px]">delete_sweep</span> Eliminar todas
+                      </button>
+                  </div>`;
+                  
+                  htmlList += '<div class="text-left space-y-3 max-h-96 overflow-y-auto pr-2">';
+                  data.notificaciones.forEach(n => {
+                      const dateFmt = new Date(n.created_at).toLocaleString('es-MX', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+                      const isUnread = !parseInt(n.leida);
+                      const borderStyle = isUnread ? 'border-l-4 border-primary pl-3' : 'pl-3';
+                      const bgStyle = isUnread ? 'bg-surface-container-high/40' : '';
+                      
+                      htmlList += `
+                      <div class="p-3 rounded-xl border border-outline-variant/30 ${borderStyle} ${bgStyle} flex justify-between items-start gap-3 transition-all" id="modal-notif-item-${n.id}">
+                          <div class="min-w-0 flex-1">
+                              <div class="flex justify-between items-start gap-2">
+                                  <h4 class="text-xs font-bold text-white">${n.tipo || 'INFORMACIÓN'}</h4>
+                                  <span class="text-[9px] text-slate-400 shrink-0">${dateFmt}</span>
+                              </div>
+                              <p class="text-xs text-slate-300 mt-1 break-words">${n.mensaje}</p>
+                          </div>
+                          <button onclick="eliminarNotificacion(event, ${n.id})" class="text-slate-400 hover:text-error transition-colors p-1 rounded-lg hover:bg-white/5 shrink-0" title="Eliminar">
+                              <span class="material-symbols-outlined text-[16px]">delete</span>
+                          </button>
+                      </div>`;
+                  });
+                  htmlList += '</div>';
+              }
+
+              Swal.fire({
+                  title: 'Historial de Notificaciones',
+                  html: htmlList,
+                  width: '500px',
+                  confirmButtonColor: '#4a90d9',
+                  confirmButtonText: 'Cerrar',
+                  background: '#102245',
+                  color: '#e8f0ff'
+              });
+
+              marcarTodasLeidas();
+          }
+      } catch (error) {
+          console.error('Error al listar notificaciones:', error);
+      }
+  }
 </script>
 </head>
 <body class="bg-background text-on-surface">
@@ -366,14 +530,20 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
  <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
- <div class="flex flex-col items-end gap-1">
+ <div class="flex flex-col items-end gap-1" id="notif-actions-header">
  <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> sin leer</span>
+ <?php if (!empty($notificaciones)): ?>
+ <div class="flex items-center gap-1.5">
  <?php if ($unread_count > 0): ?>
- <button onclick="marcarTodasLeidas(); event.stopPropagation();" class="text-[9px] text-secondary hover:underline font-bold uppercase tracking-wider">Marcar todas leídas</button>
+ <button id="btn-marcar-todas" onclick="marcarTodasLeidas(); event.stopPropagation();" class="text-[9px] text-secondary hover:underline font-bold uppercase tracking-wider">Marcar leídas</button>
+ <span class="text-[9px] text-outline-variant/60" id="notif-header-divider">|</span>
+ <?php endif; ?>
+ <button onclick="eliminarTodasNotificaciones(event);" class="text-[9px] text-error hover:underline font-bold uppercase tracking-wider">Eliminar todas</button>
+ </div>
  <?php endif; ?>
  </div>
  </div>
- <div class="max-h-96 overflow-y-auto">
+ <div class="max-h-96 overflow-y-auto" id="notif-items-list">
  <?php if (empty($notificaciones)): ?>
  <div class="p-8 text-center">
  <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
@@ -381,11 +551,12 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  </div>
  <?php else: ?>
  <?php foreach($notificaciones as $n): ?>
- <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item">
+ <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item" id="notif-item-<?= $n['id'] ?>">
  <?php if(!$n['leida']): ?>
  <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary unread-indicator"></div>
  <?php endif; ?>
- <div class="flex gap-3">
+ <div class="flex items-start justify-between gap-3">
+ <div class="flex gap-3 items-start min-w-0 flex-1">
  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 
  <?= $n['tipo'] === 'SUCCESS' ? 'bg-tertiary/10 text-tertiary' : 
  ($n['tipo'] === 'WARNING' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary') ?>">
@@ -394,10 +565,14 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  ($n['tipo'] === 'WARNING' ? 'warning' : 'info') ?>
  </span>
  </div>
- <div>
- <p class="text-xs font-bold text-white mb-0.5"><?= htmlspecialchars($n['mensaje']) ?></p>
+ <div class="min-w-0 flex-1">
+ <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
  <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
  </div>
+ </div>
+ <button onclick="eliminarNotificacion(event, <?= $n['id'] ?>)" class="text-on-surface-variant hover:text-error transition-colors p-1 rounded-lg hover:bg-white/5 shrink-0" title="Eliminar">
+ <span class="material-symbols-outlined text-[18px]">delete</span>
+ </button>
  </div>
  </div>
  <?php endforeach; ?>
@@ -414,7 +589,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
 
  <!-- User / Perfil Button -->
- <a href="Perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
+ <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
  <?php
  $foto = $_SESSION['cliente_foto'] ?? '';
  $nombre = $_SESSION['cliente_nombre'] ?? 'Cliente';

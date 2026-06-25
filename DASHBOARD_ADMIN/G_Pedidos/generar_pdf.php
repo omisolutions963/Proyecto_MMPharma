@@ -1,12 +1,12 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
- header("Location: ../../LOGIN/login.php");
+ header("Location: ../../login/login.php");
  exit;
 }
 
 require_once '../clinical_core/db.php';
-require_once '../Includes/fpdf/fpdf.php';
+require_once '../includes/fpdf/fpdf.php';
 
 $pdo = getDB();
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -21,7 +21,12 @@ $pedido = $stmt->fetch();
 if (!$pedido) die("Pedido no encontrado");
 
 // Obtener detalles
-$stmt = $pdo->prepare("SELECT * FROM clientes_pedidos_detalle WHERE pedido_id = ?");
+$stmt = $pdo->prepare("
+    SELECT pd.*, cp.tasa_iva, cp.codigo, cp.sustancia 
+    FROM clientes_pedidos_detalle pd 
+    LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
+    WHERE pd.pedido_id = ?
+");
 $stmt->execute([$id]);
 $detalles = $stmt->fetchAll();
 
@@ -29,14 +34,14 @@ $detalles = $stmt->fetchAll();
 class PDF extends FPDF {
  function Header() {
  // Logo (Asegúrate de que la ruta sea correcta)
- if (file_exists('../../logos/MMPharma-Logotipo-Horizontal.png')) {
- $this->Image('../../logos/MMPharma-Logotipo-Horizontal.png', 10, 10, 50);
+ if (file_exists('../../logos/mmpharma-logotipo-horizontal.png')) {
+ $this->Image('../../logos/mmpharma-logotipo-horizontal.png', 10, 10, 50);
  }
  
  $this->SetFont('Arial', 'B', 15);
  $this->SetTextColor(0, 36, 81); // Primary color
  $this->Cell(80);
- $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE PRODUCTOS', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
+ $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE productos', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
  
  $this->SetFont('Arial', '', 10);
  $this->SetTextColor(100, 100, 100);
@@ -113,19 +118,47 @@ $pdf->SetTextColor(50, 50, 50);
 
 $fill = false;
 foreach ($detalles as $det) {
- $pdf->SetFillColor(245, 245, 245);
- $pdf->Cell(15, 8, $det['cantidad'], 1, 0, 'C', $fill);
- 
- // Truncar nombre si es muy largo
- $nombre = mb_convert_encoding($det['nombre_producto'], 'ISO-8859-1', 'UTF-8');
- if (strlen($nombre) > 55) {
- $nombre = substr($nombre, 0, 52) . '...';
- }
- 
- $pdf->Cell(105, 8, $nombre, 1, 0, 'L', $fill);
- $pdf->Cell(35, 8, '$' . number_format($det['precio_unitario'], 2), 1, 0, 'R', $fill);
- $pdf->Cell(35, 8, '$' . number_format($det['subtotal'], 2), 1, 1, 'R', $fill);
- $fill = !$fill;
+  $pdf->SetFillColor(245, 245, 245);
+  $pdf->Cell(15, 10, $det['cantidad'], 1, 0, 'C', $fill);
+  
+  // Truncar nombre si es muy largo
+  $nombre = mb_convert_encoding($det['nombre_producto'], 'ISO-8859-1', 'UTF-8');
+  if (strlen($nombre) > 55) {
+  $nombre = substr($nombre, 0, 52) . '...';
+  }
+  
+  $x = $pdf->GetX();
+  $y = $pdf->GetY();
+  $pdf->Rect($x, $y, 105, 10, $fill ? 'DF' : 'D');
+  $pdf->SetXY($x + 2, $y + 1);
+  $pdf->SetFont('Arial', 'B', 8);
+  $pdf->Cell(101, 4, $nombre, 0, 1, 'L');
+  
+  $pdf->SetXY($x + 2, $y + 5);
+  $pdf->SetFont('Arial', 'I', 7);
+  $pdf->SetTextColor(100, 100, 100);
+  
+  $subst = $det['sustancia'] ?? '';
+  $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+  $subtotal_linea = (float)$det['subtotal'];
+  $item_sin_iva = $subtotal_linea / (1 + $tasa);
+  $item_iva = $subtotal_linea - $item_sin_iva;
+  
+  // Truncar sustancia si es muy larga para evitar desbordamiento
+  $subst_txt = $subst ?: 'No registrada';
+  if (strlen($subst_txt) > 45) {
+      $subst_txt = substr($subst_txt, 0, 42) . '...';
+  }
+  $desc_secundaria = 'Sustancia: ' . $subst_txt . ' | IVA: +$' . number_format($item_iva, 2);
+  
+  $pdf->Cell(101, 4, mb_convert_encoding($desc_secundaria, 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
+  $pdf->SetTextColor(50, 50, 50);
+  $pdf->SetFont('Arial', '', 9);
+  $pdf->SetXY($x + 105, $y);
+  
+  $pdf->Cell(35, 10, '$' . number_format($det['precio_unitario'], 2), 1, 0, 'R', $fill);
+  $pdf->Cell(35, 10, '$' . number_format($det['subtotal'], 2), 1, 1, 'R', $fill);
+  $fill = !$fill;
 }
 
 // Totales

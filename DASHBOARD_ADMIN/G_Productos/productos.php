@@ -45,7 +45,7 @@ if (isset($_GET['ajax'])) {
  <div class="flex flex-col items-center gap-3">
  <div class="w-12 h-12 rounded-xl overflow-hidden bg-surface-container-high border border-outline-variant/10">
  <?php if($p['imagen']): ?>
- <img src="../../IMG/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+ <img src="../../img/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
  <?php else: ?>
  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
  <span class="material-symbols-outlined text-[20px]">image</span>
@@ -54,10 +54,9 @@ if (isset($_GET['ajax'])) {
  </div>
  <div class="flex flex-col items-center">
  <span class="text-sm font-bold text-on-surface leading-tight text-center"><?= htmlspecialchars($p['nombre']) ?></span>
- <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
+ <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5 text-center"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
  <?php if ($p['en_promocion']): ?>
- <span class="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
- <span class="material-symbols-outlined text-[10px]">local_fire_department</span>
+ <span class="mt-2 inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
  Promoción <?= (float)$p['descuento_porcentaje'] > 0 ? '-' . (float)$p['descuento_porcentaje'] . '%' : '' ?> <?= $p['promocion_perfil'] !== 'TODOS' ? '(' . $p['promocion_perfil'] . ')' : '' ?>
  </span>
  <?php endif; ?>
@@ -77,6 +76,9 @@ if (isset($_GET['ajax'])) {
  </td>
  <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+ </td>
+ <td class="px-8 py-4 text-center text-sm text-on-surface-variant">
+ <?= ($p['tasa_iva'] * 100) ?>%
  </td>
  <td class="px-8 py-4">
  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -110,6 +112,42 @@ if (isset($_GET['ajax'])) {
  header("Location: " . $redirect_url . "msg=deleted"); exit;
  }
 
+  if ($action === 'ajuste_masivo') {
+    $categoria_id = (int)($_POST['categoria_id'] ?? 0);
+    $tipo_ajuste = $_POST['tipo_ajuste'] ?? '';
+    $valor = (float)($_POST['valor'] ?? 0);
+    $precios_seleccionados = $_POST['precios'] ?? [];
+
+    if (!empty($precios_seleccionados) && in_array($tipo_ajuste, ['porcentaje', 'fijo'])) {
+      $updates = [];
+      $params = [];
+      $i = 0;
+      foreach ($precios_seleccionados as $col) {
+        if (in_array($col, ['precio_farmacia', 'precio_distribuidor', 'precio_empresa'])) {
+          $param_name = ":valor_" . $i;
+          if ($tipo_ajuste === 'porcentaje') {
+            $updates[] = "$col = ROUND($col * (1 + ($param_name / 100)), 2)";
+          } else {
+            $updates[] = "$col = ROUND($col + $param_name, 2)";
+          }
+          $params[$param_name] = $valor;
+          $i++;
+        }
+      }
+      if (!empty($updates)) {
+        $sql = "UPDATE catalogo_productos SET " . implode(", ", $updates);
+        if ($categoria_id > 0) {
+          $sql .= " WHERE categoria_id = :categoria_id";
+          $params[':categoria_id'] = $categoria_id;
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        header("Location: " . $redirect_url . "msg=bulk_updated"); exit;
+      }
+    }
+    header("Location: " . $redirect_url . "msg=bulk_error"); exit;
+  }
+
  if ($action === 'upsert') {
  $nombre = $_POST['nombre'] ?? ''; $codigo = $_POST['codigo'] ?? ''; $tipo = $_POST['tipo'] ?? 'SECO';
  $cat_id = (int)($_POST['categoria_id'] ?? 0);
@@ -119,6 +157,7 @@ if (isset($_GET['ajax'])) {
  $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
  $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
  $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
+ $tasa_iva = 0.16;
  $foto_base64 = $_POST['foto_base64'] ?? '';
  
  $nombre_archivo = null;
@@ -126,19 +165,19 @@ if (isset($_GET['ajax'])) {
  $data = explode(',', $foto_base64);
  $img_content = base64_decode($data[1]);
  $nombre_archivo = 'prod_' . time() . '_' . uniqid() . '.jpg';
- $ruta = '../../IMG/productos/' . $nombre_archivo;
+ $ruta = '../../img/productos/' . $nombre_archivo;
  file_put_contents($ruta, $img_content);
  }
 
  if ($id > 0) {
- $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?";
- $params = [$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil];
+ $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?";
+ $params = [$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva];
  if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
  $sql .= " WHERE id=?"; $params[] = $id;
  $pdo->prepare($sql)->execute($params);
  } else {
- $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, en_promocion, descuento_porcentaje, promocion_perfil, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
- $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $nombre_archivo]);
+ $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, en_promocion, descuento_porcentaje, promocion_perfil, tasa_iva, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+ $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $nombre_archivo]);
  $id = $pdo->lastInsertId();
  }
  $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
@@ -147,10 +186,10 @@ if (isset($_GET['ajax'])) {
  }
 }
 
-$pageTitle = "MMPharma Portal - Gestión de Inventario";
+$pageTitle = "MMPharma Portal - Gestión de inventario";
 $activePage = "productos";
-include("../Includes/header.php");
-include("../Includes/sidebar.php");
+include("../includes/header.php");
+include("../includes/sidebar.php");
 ?>
 
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
@@ -167,12 +206,18 @@ include("../Includes/sidebar.php");
  <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
  </div>
  <div class="flex gap-3">
- <a href="categorias.php" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
- <span class="material-symbols-outlined text-[18px]">category</span> Categorías
- </a>
- <button onclick="abrirModal()" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
- <span class="material-symbols-outlined text-[18px]">add_box</span> Nuevo producto
- </button>
+  <a href="sync_images.php" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
+   <span class="material-symbols-outlined text-[18px]">sync</span> Sincronizar fotos
+  </a>
+  <button onclick="abrirModalAjuste()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
+   <span class="material-symbols-outlined text-[18px]">price_change</span> Ajuste masivo
+  </button>
+  <a href="categorias.php" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
+  <span class="material-symbols-outlined text-[18px]">category</span> Categorías
+  </a>
+  <button onclick="abrirModal()" class="bg-primary text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:opacity-90 transition-all">
+  <span class="material-symbols-outlined text-[18px]">add_box</span> Nuevo producto
+  </button>
  </div>
 </div>
 
@@ -225,12 +270,13 @@ include("../Includes/sidebar.php");
  <th class="px-8 py-4 text-center">Tipo</th>
  <th class="px-8 py-4 text-center">Existencias</th>
  <th class="px-8 py-4 text-center">Precios (F/D/E)</th>
+ <th class="px-8 py-4 text-center">IVA</th>
  <th class="px-8 py-4 text-center">Acciones</th>
  </tr>
  </thead>
  <tbody id="tableBody" class="divide-y divide-outline-variant/10">
  <?php if (empty($productos)): ?>
- <tr><td colspan="6" class="px-8 py-20 text-center text-on-surface-variant text-sm font-medium italic animate-reveal">No se encontraron productos.</td></tr>
+ <tr><td colspan="7" class="px-8 py-20 text-center text-on-surface-variant text-sm font-medium italic animate-reveal">No se encontraron productos.</td></tr>
  <?php else: ?>
  <?php foreach ($productos as $p): ?>
  <tr class="group hover:bg-surface-container-low/30 transition-colors animate-fade-in">
@@ -238,19 +284,18 @@ include("../Includes/sidebar.php");
  <div class="flex flex-col items-center gap-2">
  <div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container-high border border-outline-variant/10">
  <?php if($p['imagen']): ?>
- <img src="../../IMG/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
+ <img src="../../img/productos/<?= $p['imagen'] ?>" class="w-full h-full object-cover">
  <?php else: ?>
  <div class="w-full h-full flex items-center justify-center text-on-surface-variant/20">
  <span class="material-symbols-outlined text-[18px]">image</span>
  </div>
  <?php endif; ?>
  </div>
- <div class="flex flex-col">
- <span class="text-sm font-bold text-on-surface leading-tight"><?= htmlspecialchars($p['nombre']) ?></span>
- <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
+ <div class="flex flex-col items-center">
+ <span class="text-sm font-bold text-on-surface leading-tight text-center"><?= htmlspecialchars($p['nombre']) ?></span>
+ <span class="text-[10px] text-on-surface-variant font-bold uppercase mt-0.5 text-center"><?= htmlspecialchars($p['sustancia'] ?: 'Sustancia no registrada') ?></span>
  <?php if ($p['en_promocion']): ?>
- <span class="mt-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
- <span class="material-symbols-outlined text-[10px]">local_fire_department</span>
+ <span class="mt-2 inline-flex justify-center items-center gap-1 px-2.5 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-black tracking-widest uppercase border border-error/20">
  Promoción <?= (float)$p['descuento_porcentaje'] > 0 ? '-' . (float)$p['descuento_porcentaje'] . '%' : '' ?> <?= $p['promocion_perfil'] !== 'TODOS' ? '(' . $p['promocion_perfil'] . ')' : '' ?>
  </span>
  <?php endif; ?>
@@ -271,6 +316,7 @@ include("../Includes/sidebar.php");
  <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
  </td>
+ <td class="px-8 py-4 text-center text-sm text-on-surface-variant"><?= ($p['tasa_iva'] * 100) ?>%</td>
  <td class="px-8 py-4">
  <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
  <button onclick='abrirEditar(<?= json_encode($p) ?>)' class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all">
@@ -314,7 +360,7 @@ include("../Includes/sidebar.php");
  <!-- Subir Foto -->
  <div class="flex flex-col items-center gap-4">
  <div class="relative group cursor-pointer w-32 h-32 rounded-2xl overflow-hidden bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex items-center justify-center transition-all hover:border-primary/50" 
- onclick="document.getElementById('fotoInput').click()">
+ onclick="document.getElementById('fotoInputProducto').click()">
  <img id="previewModal" class="w-full h-full object-cover hidden">
  <div id="placeholderModal" class="flex flex-col items-center text-on-surface-variant/40">
  <span class="material-symbols-outlined text-3xl">add_a_photo</span>
@@ -324,7 +370,7 @@ include("../Includes/sidebar.php");
  <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
  </div>
  </div>
- <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
+ <input type="file" id="fotoInputProducto" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
  </div>
 
  <div class="space-y-4">
@@ -337,7 +383,7 @@ include("../Includes/sidebar.php");
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Código</label>
  <input type="text" name="codigo" id="prod_codigo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
  </div>
-  <div class="col-span-2 grid grid-cols-2 gap-4">
+  <div class="col-span-2 grid grid-cols-3 gap-4">
   <div>
   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Categoría</label>
   <select name="categoria_id" id="prod_cat" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
@@ -354,6 +400,13 @@ include("../Includes/sidebar.php");
   <option value="RED FRIA">Red fría</option>
   </select>
   </div>
+   <div>
+   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tasa IVA</label>
+   <input type="hidden" name="tasa_iva" value="0.16">
+   <select id="prod_tasa_iva" disabled class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none opacity-60 cursor-not-allowed">
+   <option value="0.16">16%</option>
+   </select>
+   </div>
   </div>
   </div>
   <div class="grid grid-cols-3 gap-4 p-4 bg-surface-container-low rounded-2xl">
@@ -405,6 +458,78 @@ include("../Includes/sidebar.php");
  </button>
  </div>
  </form>
+ </div>
+</div>
+
+<!-- MODAL AJUSTE MASIVO DE PRECIOS -->
+<div id="modalAjusteMasivo" class="fixed inset-0 z-[100] hidden">
+ <div onclick="cerrarModalAjuste()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+ <div id="panelAjusteMasivo" class="absolute right-0 top-0 h-full w-full max-w-md bg-surface transition-transform duration-300 translate-x-full flex flex-col border-l border-outline-variant/30 shadow-2xl font-body">
+  <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
+   <h3 class="text-xl font-black text-on-surface tracking-tight">Ajuste masivo de precios</h3>
+   <p class="text-on-surface-variant text-xs mt-1">Aplica incrementos o disminuciones a precios en lote.</p>
+  </div>
+  <form id="formAjusteMasivo" method="POST" class="flex-1 overflow-y-auto p-8 space-y-6" onsubmit="confirmarAjusteMasivo(event)">
+   <input type="hidden" name="action" value="ajuste_masivo">
+
+   <!-- Categorías -->
+   <div>
+    <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Categoría a afectar</label>
+    <select name="categoria_id" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+     <option value="0">Todas las categorías</option>
+     <?php foreach($categorias as $cat): ?>
+     <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
+     <?php endforeach; ?>
+    </select>
+   </div>
+
+   <!-- Precios a ajustar (Checkboxes) -->
+   <div>
+    <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-3">Precios a modificar</label>
+    <div class="space-y-2.5 bg-surface-container-low p-4 rounded-xl">
+     <label class="flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+      <input type="checkbox" name="precios[]" value="precio_farmacia" checked class="rounded border-primary/50 text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
+      <span>Precio farmacia</span>
+     </label>
+     <label class="flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+      <input type="checkbox" name="precios[]" value="precio_distribuidor" checked class="rounded border-primary/50 text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
+      <span>Precio distribuidor</span>
+     </label>
+     <label class="flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+      <input type="checkbox" name="precios[]" value="precio_empresa" checked class="rounded border-primary/50 text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
+      <span>Precio empresa</span>
+     </label>
+    </div>
+   </div>
+
+   <!-- Tipo de Ajuste -->
+   <div>
+    <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-3">Tipo de ajuste</label>
+    <div class="grid grid-cols-2 gap-3 bg-surface-container-low p-2 rounded-xl">
+     <label class="flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-bold text-on-surface bg-surface-container-lowest border border-outline-variant/30 cursor-pointer hover:bg-surface-container-high transition-colors">
+      <input type="radio" name="tipo_ajuste" value="porcentaje" checked class="text-primary focus:ring-primary bg-transparent cursor-pointer">
+      <span>Porcentual (%)</span>
+     </label>
+     <label class="flex items-center justify-center gap-2 p-2.5 rounded-lg text-xs font-bold text-on-surface bg-surface-container-lowest border border-outline-variant/30 cursor-pointer hover:bg-surface-container-high transition-colors">
+      <input type="radio" name="tipo_ajuste" value="fijo" class="text-primary focus:ring-primary bg-transparent cursor-pointer">
+      <span>Monto fijo ($)</span>
+     </label>
+    </div>
+   </div>
+
+   <!-- Valor del Ajuste -->
+   <div>
+    <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Valor del ajuste (positivo para incremento, negativo para descuento)</label>
+    <input type="number" step="0.01" name="valor" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none font-bold text-white" placeholder="0.00">
+   </div>
+
+   <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
+    <button type="button" onclick="cerrarModalAjuste()" class="flex-1 py-4 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-all font-bold">Cancelar</button>
+    <button type="submit" class="flex-1 py-4 bg-primary text-white text-xs font-bold rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2">
+     <span class="material-symbols-outlined text-[18px]">price_change</span> Aplicar ajuste
+    </button>
+   </div>
+  </form>
  </div>
 </div>
 
@@ -483,42 +608,50 @@ document.getElementById('btnConfirmarRecorte').addEventListener('click', () => {
 function cerrarCropper() { document.getElementById('cropperModal').classList.add('hidden'); if(cropper) cropper.destroy(); }
 
 function abrirModal() {
- document.getElementById('modalTitle').textContent = "Nuevo producto";
- document.getElementById('prod_id').value = "0";
- document.getElementById('foto_base64').value = "";
- document.getElementById('previewModal').classList.add('hidden');
- document.getElementById('placeholderModal').classList.remove('hidden');
- document.getElementById('prod_nombre').value = "";
- document.getElementById('prod_codigo').value = "";
- document.getElementById('prod_tipo').value = "SECO";
- document.getElementById('prod_cat').value = "0";
- document.getElementById('prod_pf').value = "0";
- document.getElementById('prod_pd').value = "0";
- document.getElementById('prod_pe').value = "0";
- document.getElementById('prod_stock').value = "0";
- document.getElementById('prod_promo').checked = false;
- document.getElementById('prod_desc').value = "0";
- document.getElementById('prod_promo_perfil').value = "TODOS";
- document.getElementById('modalProducto').classList.remove('hidden');
- setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
+  document.getElementById('modalTitle').textContent = "Nuevo producto";
+  document.getElementById('prod_id').value = "0";
+  document.getElementById('foto_base64').value = "";
+  if (document.getElementById('fotoInputProducto')) {
+    document.getElementById('fotoInputProducto').value = "";
+  }
+  document.getElementById('previewModal').classList.add('hidden');
+  document.getElementById('placeholderModal').classList.remove('hidden');
+  document.getElementById('prod_nombre').value = "";
+  document.getElementById('prod_codigo').value = "";
+  document.getElementById('prod_tipo').value = "SECO";
+  document.getElementById('prod_cat').value = "0";
+  document.getElementById('prod_tasa_iva').value = "0.00";
+  document.getElementById('prod_pf').value = "0";
+  document.getElementById('prod_pd').value = "0";
+  document.getElementById('prod_pe').value = "0";
+  document.getElementById('prod_stock').value = "0";
+  document.getElementById('prod_promo').checked = false;
+  document.getElementById('prod_desc').value = "0";
+  document.getElementById('prod_promo_perfil').value = "TODOS";
+  document.getElementById('modalProducto').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modalPanel').classList.remove('translate-x-full'), 10);
 }
 
 function abrirEditar(p) {
- document.getElementById('modalTitle').textContent = "Editar producto";
- document.getElementById('prod_id').value = p.id;
- document.getElementById('foto_base64').value = "";
- if (p.imagen) {
- document.getElementById('previewModal').src = "../../IMG/productos/" + p.imagen;
- document.getElementById('previewModal').classList.remove('hidden');
- document.getElementById('placeholderModal').classList.add('hidden');
- } else {
- document.getElementById('previewModal').classList.add('hidden');
- document.getElementById('placeholderModal').classList.remove('hidden');
- }
+  document.getElementById('modalTitle').textContent = "Editar producto";
+  document.getElementById('prod_id').value = p.id;
+  document.getElementById('foto_base64').value = "";
+  if (document.getElementById('fotoInputProducto')) {
+    document.getElementById('fotoInputProducto').value = "";
+  }
+  if (p.imagen) {
+  document.getElementById('previewModal').src = "../../img/productos/" + p.imagen;
+  document.getElementById('previewModal').classList.remove('hidden');
+  document.getElementById('placeholderModal').classList.add('hidden');
+  } else {
+  document.getElementById('previewModal').classList.add('hidden');
+  document.getElementById('placeholderModal').classList.remove('hidden');
+  }
  document.getElementById('prod_nombre').value = p.nombre;
  document.getElementById('prod_codigo').value = p.codigo || '';
  document.getElementById('prod_tipo').value = p.tipo;
  document.getElementById('prod_cat').value = p.categoria_id || "0";
+ document.getElementById('prod_tasa_iva').value = parseFloat(p.tasa_iva || 0).toFixed(2);
  document.getElementById('prod_pf').value = p.precio_farmacia;
  document.getElementById('prod_pd').value = p.precio_distribuidor;
  document.getElementById('prod_pe').value = p.precio_empresa;
@@ -534,7 +667,96 @@ function cerrarModal() {
  document.getElementById('modalPanel').classList.add('translate-x-full');
  setTimeout(() => document.getElementById('modalProducto').classList.add('hidden'), 300);
 }
+
+function abrirModalAjuste() {
+  document.getElementById('modalAjusteMasivo').classList.remove('hidden');
+  setTimeout(() => document.getElementById('panelAjusteMasivo').classList.remove('translate-x-full'), 10);
+}
+
+function cerrarModalAjuste() {
+  document.getElementById('panelAjusteMasivo').classList.add('translate-x-full');
+  setTimeout(() => document.getElementById('modalAjusteMasivo').classList.add('hidden'), 300);
+}
+
+function confirmarAjusteMasivo(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const checkboxes = form.querySelectorAll('input[name="precios[]"]:checked');
+  if (checkboxes.length === 0) {
+    Swal.fire({
+      title: 'Atención',
+      text: 'Debes seleccionar al menos un precio para modificar.',
+      icon: 'warning',
+      confirmButtonColor: '#008151',
+      background: '#05160e',
+      color: '#f1fdf7'
+    });
+    return;
+  }
+  
+  const categoriaSelect = form.querySelector('select[name="categoria_id"]');
+  const categoriaNombre = categoriaSelect.options[categoriaSelect.selectedIndex].text;
+  const tipoAjuste = form.querySelector('input[name="tipo_ajuste"]:checked').value;
+  const valor = parseFloat(form.querySelector('input[name="valor"]').value);
+  
+  let textoAjuste = '';
+  if (tipoAjuste === 'porcentaje') {
+    textoAjuste = (valor > 0 ? 'un incremento del ' : 'un descuento del ') + Math.abs(valor) + '%';
+  } else {
+    textoAjuste = (valor > 0 ? 'un incremento de $' : 'un descuento de $') + Math.abs(valor);
+  }
+  
+  const preciosList = Array.from(checkboxes).map(cb => {
+    if (cb.value === 'precio_farmacia') return 'precio farmacia';
+    if (cb.value === 'precio_distribuidor') return 'precio distribuidor';
+    if (cb.value === 'precio_empresa') return 'precio empresa';
+  }).join(', ');
+
+  Swal.fire({
+    title: '¿Confirmar ajuste masivo?',
+    text: `Se aplicará ${textoAjuste} en los siguientes precios: [${preciosList}] para la categoría: "${categoriaNombre}". Esta acción afectará a todos los productos correspondientes.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#f28b82',
+    cancelButtonColor: '#284a3c',
+    confirmButtonText: 'Sí, aplicar',
+    cancelButtonText: 'Cancelar',
+    background: '#05160e',
+    color: '#f1fdf7'
+  }).then(result => {
+    if (result.isConfirmed) {
+      form.submit();
+    }
+  });
+}
 </script>
 
+<!-- SweetAlert Notificaciones -->
+<?php if (isset($_GET['msg'])): ?>
+<script>
+  let msgText = '';
+  if ('<?= $_GET['msg'] ?>' === 'deleted') {
+    msgText = 'El producto ha sido eliminado.';
+  } else if ('<?= $_GET['msg'] ?>' === 'saved') {
+    msgText = 'El producto ha sido guardado correctamente.';
+  } else if ('<?= $_GET['msg'] ?>' === 'bulk_updated') {
+    msgText = 'Los precios se han ajustado de forma masiva correctamente.';
+  } else if ('<?= $_GET['msg'] ?>' === 'bulk_error') {
+    msgText = 'Ocurrió un error al realizar el ajuste masivo de precios.';
+  }
+  
+  if (msgText) {
+    Swal.fire({
+      title: '<?= $_GET['msg'] === 'bulk_error' ? 'Error' : '¡Operación Exitosa!' ?>',
+      text: msgText,
+      icon: '<?= $_GET['msg'] === 'bulk_error' ? 'error' : 'success' ?>',
+      confirmButtonColor: '#008151',
+      background: '#05160e',
+      color: '#f1fdf7'
+    });
+  }
+</script>
+<?php endif; ?>
 
-<?php include("../Includes/footer.php"); ?>
+<?php include("../includes/footer.php"); ?>

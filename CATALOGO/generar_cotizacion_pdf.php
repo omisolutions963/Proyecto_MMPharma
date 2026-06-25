@@ -4,9 +4,9 @@ if (!isset($_SESSION['cliente_logged_in']) || $_SESSION['cliente_logged_in'] !==
  die("No autorizado");
 }
 
-require_once '../INCLUDES/db.php';
-require_once '../INCLUDES/shipping_calculator.php';
-require_once '../DASHBOARD_ADMIN/Includes/fpdf/fpdf.php';
+require_once '../includes/db.php';
+require_once '../includes/shipping_calculator.php';
+require_once '../dashboard_admin/includes/fpdf/fpdf.php';
 
 $pdo = getDB();
 
@@ -49,10 +49,29 @@ function sumarDiasHabilesVigencia(DateTime $fecha, int $dias): DateTime {
 $fecha_emision = new DateTime();
 $fecha_vigencia = sumarDiasHabilesVigencia(clone $fecha_emision, 10);
 
+// Obtener detalles de los productos desde la base de datos (tasa_iva, sustancia, codigo)
+$product_ids = array_column($carrito, 'id');
+$product_details = [];
+if (!empty($product_ids)) {
+    $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+    $stmt = $pdo->prepare("SELECT id, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($placeholders)");
+    $stmt->execute($product_ids);
+    $product_details = $stmt->fetchAll(PDO::FETCH_UNIQUE);
+}
+
 // Calcular subtotal
 $subtotal_productos = 0;
+$total_items_sin_iva = 0;
+$total_items_iva = 0;
 foreach ($carrito as $item) {
- $subtotal_productos += (float)$item['precio'] * (int)$item['cantidad'];
+    $item_total = (float)$item['precio'] * (int)$item['cantidad'];
+    $subtotal_productos += $item_total;
+    $tasa = isset($product_details[$item['id']]) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
+    
+    $item_sin_iva = $item_total / (1 + $tasa);
+    $item_iva = $item_total - $item_sin_iva;
+    $total_items_sin_iva += $item_sin_iva;
+    $total_items_iva += $item_iva;
 }
 
 $costo_envio = 0.00;
@@ -80,21 +99,30 @@ if (!empty($_POST['direccion_id'])) {
     }
 }
 
+if ($subtotal_productos < 4000.00) {
+    $costo_envio = 0.00;
+    $mensaje_envio = mb_convert_encoding('Recoger en almacén (Pickup)', 'ISO-8859-1', 'UTF-8');
+    $recoger_sucursal = true;
+}
+
 $monto_total = $subtotal_productos + $costo_envio;
-$subtotal_sin_iva = $monto_total / 1.16;
-$iva = $monto_total - $subtotal_sin_iva;
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
+
+$subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
+$iva = $total_items_iva + $envio_iva;
 
 // Crear PDF
 class PDF extends FPDF {
  function Header() {
- if (file_exists('../logos/MMPharma-Logotipo-Horizontal.png')) {
- $this->Image('../logos/MMPharma-Logotipo-Horizontal.png', 10, 10, 50);
+ if (file_exists('../logos/mmpharma-logotipo-horizontal.png')) {
+ $this->Image('../logos/mmpharma-logotipo-horizontal.png', 10, 10, 50);
  }
  
  $this->SetFont('Arial', 'B', 15);
  $this->SetTextColor(0, 36, 81); // Primary color
  $this->Cell(80);
- $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE PRODUCTOS', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
+ $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE productos', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
  
  $this->SetFont('Arial', '', 10);
  $this->SetTextColor(100, 100, 100);
@@ -165,7 +193,8 @@ $pdf->SetTextColor(255, 255, 255);
 $pdf->SetFont('Arial', 'B', 9);
 
 $pdf->Cell(15, 8, 'CANT.', 1, 0, 'C', true);
-$pdf->Cell(105, 8, 'DESCRIPCION', 1, 0, 'C', true);
+$pdf->Cell(90, 8, 'DESCRIPCION', 1, 0, 'C', true);
+$pdf->Cell(15, 8, 'IVA', 1, 0, 'C', true);
 $pdf->Cell(35, 8, 'P. UNITARIO', 1, 0, 'C', true);
 $pdf->Cell(35, 8, 'SUBTOTAL', 1, 1, 'C', true);
 
@@ -175,17 +204,46 @@ $pdf->SetTextColor(50, 50, 50);
 $fill = false;
 foreach ($carrito as $item) {
  $pdf->SetFillColor(245, 245, 245);
- $pdf->Cell(15, 8, $item['cantidad'], 1, 0, 'C', $fill);
+ $pdf->Cell(15, 10, $item['cantidad'], 1, 0, 'C', $fill);
  
  // Truncar nombre si es muy largo
  $nombre = mb_convert_encoding($item['nombre'], 'ISO-8859-1', 'UTF-8');
- if (strlen($nombre) > 55) {
- $nombre = substr($nombre, 0, 52) . '...';
+ if (strlen($nombre) > 48) {
+ $nombre = substr($nombre, 0, 45) . '...';
  }
  
- $pdf->Cell(105, 8, $nombre, 1, 0, 'L', $fill);
- $pdf->Cell(35, 8, '$' . number_format($item['precio'], 2), 1, 0, 'R', $fill);
- $pdf->Cell(35, 8, '$' . number_format($item['precio'] * $item['cantidad'], 2), 1, 1, 'R', $fill);
+ $x = $pdf->GetX();
+ $y = $pdf->GetY();
+ $pdf->Rect($x, $y, 90, 10, $fill ? 'DF' : 'D');
+ $pdf->SetXY($x + 2, $y + 1);
+ $pdf->SetFont('Arial', 'B', 8);
+ $pdf->Cell(86, 4, $nombre, 0, 1, 'L');
+  $pdf->SetXY($x + 2, $y + 5);
+  $pdf->SetFont('Arial', 'I', 7);
+  $pdf->SetTextColor(100, 100, 100);
+  $subst = isset($product_details[$item['id']]) ? $product_details[$item['id']]['sustancia'] : '';
+  $tasa = isset($product_details[$item['id']]) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.16;
+  $item_total = (float)$item['precio'] * (int)$item['cantidad'];
+  $item_sin_iva = $item_total / (1 + $tasa);
+  $item_iva = $item_total - $item_sin_iva;
+  
+  // Truncar sustancia si es muy larga para evitar desbordamiento
+  $subst_txt = $subst ?: 'No registrada';
+  if (strlen($subst_txt) > 40) {
+      $subst_txt = substr($subst_txt, 0, 37) . '...';
+  }
+  $desc_secundaria = 'Sustancia: ' . $subst_txt . ' | IVA: +$' . number_format($item_iva, 2);
+  $pdf->Cell(86, 4, mb_convert_encoding($desc_secundaria, 'ISO-8859-1', 'UTF-8'), 0, 1, 'L');
+ $pdf->SetTextColor(50, 50, 50);
+ $pdf->SetFont('Arial', '', 9);
+ $pdf->SetXY($x + 90, $y);
+ 
+ $tasa = isset($product_details[$item['id']]) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
+ $tasa_percentage = ($tasa * 100) . '%';
+ $pdf->Cell(15, 10, $tasa_percentage, 1, 0, 'C', $fill);
+ 
+ $pdf->Cell(35, 10, '$' . number_format($item['precio'], 2), 1, 0, 'R', $fill);
+ $pdf->Cell(35, 10, '$' . number_format($item['precio'] * $item['cantidad'], 2), 1, 1, 'R', $fill);
  $fill = !$fill;
 }
 
@@ -194,32 +252,32 @@ $pdf->Ln(4);
 $pdf->SetFont('Arial', '', 9);
 $pdf->SetTextColor(50, 50, 50);
 
-$pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, 'Subtotal productos:', 0, 0, 'R');
-$pdf->Cell(35, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
+$pdf->Cell(90, 6, '', 0, 0);
+$pdf->Cell(50, 6, 'Subtotal productos:', 0, 0, 'R');
+$pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
-$pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+$pdf->Cell(90, 6, '', 0, 0);
+$pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
 $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : ($mensaje_envio !== '' ? $mensaje_envio : mb_convert_encoding('Envío gratis', 'ISO-8859-1', 'UTF-8'));
-$pdf->Cell(35, 6, $texto_envio, 0, 1, 'R');
+$pdf->Cell(50, 6, $texto_envio, 0, 1, 'R');
 
-$pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, 'Subtotal (sin IVA):', 0, 0, 'R');
-$pdf->Cell(35, 6, '$' . number_format($subtotal_sin_iva, 2), 0, 1, 'R');
+$pdf->Cell(90, 6, '', 0, 0);
+$pdf->Cell(50, 6, 'Subtotal (sin IVA):', 0, 0, 'R');
+$pdf->Cell(50, 6, '$' . number_format($subtotal_sin_iva, 2), 0, 1, 'R');
 
-$pdf->Cell(120, 6, '', 0, 0);
-$pdf->Cell(35, 6, 'IVA (16%):', 0, 0, 'R');
-$pdf->Cell(35, 6, '$' . number_format($iva, 2), 0, 1, 'R');
+$pdf->Cell(90, 6, '', 0, 0);
+$pdf->Cell(50, 6, 'IVA:', 0, 0, 'R');
+$pdf->Cell(50, 6, '$' . number_format($iva, 2), 0, 1, 'R');
 
 $pdf->SetFont('Arial', 'B', 10);
-$pdf->Cell(120, 8, '', 0, 0);
-$pdf->Cell(35, 8, 'TOTAL:', 1, 0, 'R');
+$pdf->Cell(90, 8, '', 0, 0);
+$pdf->Cell(50, 8, 'TOTAL:', 1, 0, 'R');
 $pdf->SetTextColor(0, 36, 81);
-$pdf->Cell(35, 8, '$' . number_format($monto_total, 2), 1, 1, 'R');
+$pdf->Cell(50, 8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 
 $pdf->Ln(20);
 
-if ($costo_envio > 0 || ($recoger_sucursal && $costo_envio_original > 0)) {
+if ($costo_envio > 0 || $recoger_sucursal) {
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->SetTextColor(0, 36, 81);
     $pdf->MultiCell(0, 5, mb_convert_encoding(
@@ -232,7 +290,7 @@ if ($costo_envio > 0 || ($recoger_sucursal && $costo_envio_original > 0)) {
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding(
-    "* Todos los precios unitarios y de envío mostrados incluyen el 16% de IVA.\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
+    "* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16% o 0%).\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
     'ISO-8859-1', 'UTF-8'
 ), 0, 'C');
 

@@ -1,5 +1,5 @@
 <?php
-require_once '../INCLUDES/db.php';
+require_once '../includes/db.php';
 $pdo = getDB();
 
 $busqueda = isset($_GET['q']) ? trim($_GET['q']) : '';
@@ -58,9 +58,13 @@ if ($categoria_id > 0) {
 
 // Filtro de visibilidad según tipo de cliente
 if ($cliente_tipo === 'EMPRESA') {
- $where[] = "p.solo_empresa = 'SI'";
+  $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+} else {
+  $where[] = "p.solo_empresa = 'NO'";
 }
 
+// Excluir productos internos de ajuste (Anticipo y Descuento)
+$where[] = "p.codigo NOT IN ('99999999999', 'DESCUENTO')";
 
 $where_sql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 $orden_sql = match($orden) {
@@ -92,7 +96,7 @@ foreach ($productos as $p) {
  <div class="flex items-center gap-4">
  <div class="w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-colors">
  <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
- <img src="../IMG/productos/<?= htmlspecialchars($p['imagen']) ?>" class="w-full h-full object-contain p-1 mix-blend-multiply">
+  <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=150" class="w-full h-full object-contain p-1 mix-blend-multiply">
  <?php else: ?>
  <span class="material-symbols-outlined text-slate-300 text-xl">medication</span>
  <?php endif; ?>
@@ -123,6 +127,7 @@ foreach ($productos as $p) {
   <?php else: ?>
   <p class="text-sm font-black text-primary">$<?= number_format($precio_base, 2) ?></p>
   <?php endif; ?>
+
   <?php else: ?>
   <p class="text-[10px] font-bold text-slate-400 leading-tight">Inicia sesión<br>para ver precio</p>
   <?php endif; ?>
@@ -153,7 +158,7 @@ foreach ($productos as $p) {
  <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
  </div>
  <?php else: ?>
- <button type="button" onclick="event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../LOGIN/login.php';" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all" title="Añadir al carrito">
+ <button type="button" onclick="event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../login/login.php';" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all" title="Añadir al carrito">
  <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
  </button>
  <?php endif; ?>
@@ -164,9 +169,9 @@ foreach ($productos as $p) {
  ?>
  <a href="producto.php?id=<?= $p['id'] ?>"
  class="bg-white border border-slate-200 rounded-[2rem] hover: hover:border-primary/30 transition-all duration-300 p-6 flex flex-col group animate-fade-up hover:-translate-y-2">
- <div class="w-full aspect-square bg-slate-50 rounded-2xl flex items-center justify-center mb-4 relative overflow-hidden group-hover:bg-slate-100 transition-colors">
+ <div class="w-full aspect-square flex items-center justify-center mb-4 relative overflow-hidden">
   <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
-  <img src="../IMG/productos/<?= htmlspecialchars($p['imagen']) ?>" class="w-full h-full object-contain p-2 mix-blend-multiply">
+   <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=300" class="w-full h-full object-contain p-1 mix-blend-multiply rounded-2xl">
   <?php else: ?>
   <span class="material-symbols-outlined text-slate-300 text-5xl">medication</span>
   <?php endif; ?>
@@ -204,6 +209,7 @@ foreach ($productos as $p) {
   <?php else: ?>
   <p class="text-base font-black text-primary">$<?= number_format($precio_base, 2) ?></p>
   <?php endif; ?>
+
   <?php else: ?>
   <p class="text-[10px] font-bold text-slate-400">Inicia sesión<br>para ver precio</p>
   <?php endif; ?>
@@ -216,7 +222,7 @@ foreach ($productos as $p) {
  <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
  </div>
  <?php else: ?>
- <button type="button" onclick="event.preventDefault(); event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../LOGIN/login.php';" class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all" title="Añadir al carrito">
+ <button type="button" onclick="event.preventDefault(); event.stopPropagation(); alert('Inicia sesión como cliente para poder cotizar y añadir productos.'); window.location.href='../login/login.php';" class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-primary transition-all" title="Añadir al carrito">
  <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
  </button>
  <?php endif; ?>
