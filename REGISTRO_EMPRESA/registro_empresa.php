@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
  if ($campos['razon_social']) {
  try {
- require_once '../INCLUDES/db.php';
+ require_once '../includes/db.php';
  $pdo = getDB();
 
  // --- File Upload Logic ---
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  :colonia_entrega,:cp_entrega,:ciudad_entrega,:municipio_entrega,:estado_entrega,
  :receptor_entrega,:horario_entrega,:ip_origen,:doc_constancia_fiscal)";
  $pdo->prepare($sql)->execute($campos);
- header("Location: ../CONFIRMACION_REGISTRO/confirmacion.php");
+ header("Location: ../confirmacion_registro/confirmacion.php");
  exit;
  } catch (Exception $e) {
  $solicitud_error = true;
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Alta de Empresa - MMPharma</title>
-<link rel="icon" type="image/png" href="../logos/MMPharma-Isotipo.png">
+<link rel="icon" type="image/png" href="../logos/mmpharma-isotipo.png">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
@@ -133,12 +133,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Top Navigation Bar -->
 <header class="relative z-50 flex justify-between items-center w-full px-4 sm:px-8 py-4 sm:py-6 bg-background/80 backdrop-blur-md border-b border-white/5 sticky top-0">
- <a href="../SELECCIÓN_REGISTRO/selección_registro.php" class="w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all group">
+ <a href="../seleccion_registro/seleccion_registro.php" class="w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all group">
   <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
  </a>
 
- <a href="../INDEX/index.php" class="absolute left-1/2 -translate-x-1/2">
-  <img src="../logos/MMPharma-Logotipo-Horizontal-Blanco.png" alt="MMPharma" class="h-6 sm:h-8 w-auto hover:scale-105 transition-transform duration-300">
+ <a href="../index/index.php" class="absolute left-1/2 -translate-x-1/2">
+  <img src="../logos/mmpharma-logotipo-horizontal-blanco.png" alt="MMPharma" class="h-6 sm:h-8 w-auto hover:scale-105 transition-transform duration-300">
  </a>
 
  <div class="w-12 h-12"></div>

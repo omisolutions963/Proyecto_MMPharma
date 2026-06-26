@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "mm-pharma-fotos",
+  "private_key_id": "1ea0a5bfda48b8689c1146c35a5acef0933afdb9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDdxQA2eVXPGfa1\nFlViHp6wzo/WzBSTqVuzmudG2tkiiQUhKUWk800C1PdujMSxeM3iyFLea28MfPc8\nkAbyztdJiP8V5oZj0spdS1rLvkYgPR0ndLYDAac+ZA/iVhTZoO28Wj3Dq5Iz/zUO\njui+x022RHb8S9K7XzjzI34EEWCBCEBwQGh496fuq3Fc31XkqbAgi8LFAHRMZwNT\nrUB7S1Ik5TDli7C+aBeXR9daqCzna/8A2waCWK5SK0CWz6AYs9s+JaFsfVjlJW4D\nDuH2fJt1iM6SLnlbAE0Aog7pW9xhd9jiIXHQmuV0lynFuM+jco5ZWr/BPS/GZmBH\n9oKQ1TcrAgMBAAECggEAVHQItDX5yRAUpPqX0nFhsmg/W6fFMERfASM87v05kk7G\nzs2WUY475hevEID4CLO+CB6MfFpCZGmUh5I7qyy8zKqopbDvvcUQvn2LWqqfrvhH\nCXcHN1biVz6o0+M/Nm90CXX+Lm1AlJ+cF2qx1LE2dXJWM5c2bZeCKwl5nFf3vbru\nuyT8BMq1+otIERsTD+JCI2SchZUP6LKn0I1DUXICxaN6GtqcydCBSh+wTH74RWXd\nONtiJSWLFNaZtCJ5uyA8E21j6sSXNvVYBpLiNToeu8aRPcEkleY1/cvPVxqhsuMJ\ndJwDuj0/L5B1v/bx5UXaKD1fh8SNQeEwqnphxjWxnQKBgQDyF8eF2wRy0vo2EiBv\n1UojhqNJMXrsBdUHcv5Y/YfcHFJ0/TcOlpkkpgr1e8ihMsj5FLPnGv963YJW7voF\nlrQVuIBj1u7CeOP4tsZ0JjjPylGwfQiwbCPxY46McoSsjehOZD+O5HvZroXA0ZNw\n7nlEDYt2K5WwRoVh8zGDwtyXZwKBgQDqgliSlzvzTylVtg68V+5aYRWft2/qNLTN\nedyjbQe/azYWGllIoRweqICna/y3E05zB1A9VahVtN1IGTqAkNJLC+0KAhiSIS+g\nNKflrPnTEMQXJoEeZxhtMdt02n3rGfSAXbsRneIHx8Y9gQO2K3xVt4MzO3B01R5k\n332YiXebnQKBgQDFfd6XdMcZQME7UOhDMvUrLA+Sixni5xMU45tYT2MAjd46b8L1\nVKeTvRydjCBsWDiY8Wmdc2nM+lz0vDkcTAeW3I9oYxMddG9NGxWj9PZNlJe1aRqo\niV988SF9s4JGHfHP2Xn8AKqENxoH5S/pZbFpcb8+ZGnVhoITGMhg25sGqwKBgQCY\nhhiXl1d9o3IN9jBVXZeAHv7Sd5uJp6gksGrJvEM6w79U1uRVMbw5UH0E515hsGPo\nusv8aHbo746wsv/y2L594w7T4JMckAsK1tSQtFV0asYvDHMUVBd2BeRndyhIvgPh\nbZUbGyYEy3FrVTsVw+jFU2s46iL1ShvPnfBxQo+RnQKBgHlgN/GWpDQz6T2IhHAb\nujn9snI/OK51vPwxabItuZgjkVunTbKKPC2IkNoQwWD6elERe0+MLS0stWDHe4Ok\n942zslmgeloB7PkJqx26xnW9A7rvjA2VzS6kDmZEKypecxfPLqwhxj++PoqST+xY\n0wm7nsm3oNDfbAEYgbJi09fQ\n-----END PRIVATE KEY-----\n",
+  "client_email": "vision-bot@mm-pharma-fotos.iam.gserviceaccount.com",
+  "client_id": "108770587397600841734",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/vision-bot%40mm-pharma-fotos.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

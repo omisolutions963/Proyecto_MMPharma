@@ -8,7 +8,7 @@ require_once '../includes/header.php';
 <!-- ── HERO ── -->
 <section class="relative min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../IMG/5.webp" class="w-full h-full object-cover object-center parallax-bg scale-125 origin-top opacity-50" data-speed="0.2">
+ <img src="../img/5.webp" class="w-full h-full object-cover object-center parallax-bg scale-125 origin-top opacity-50" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-8 py-24 w-full text-center md:text-left" data-aos="fade-up">
@@ -32,7 +32,7 @@ require_once '../includes/header.php';
  <div class="relative group" data-aos="fade-left">
  <!-- Contenedor con overflow-hidden solo para la imagen -->
  <div class="relative rounded-3xl overflow-hidden">
- <img src="../IMG/30.webp" alt="Nuestra Historia" class="w-full object-cover aspect-[4/3] rounded-3xl group-hover:scale-105 transition-transform duration-700">
+ <img src="../img/30.webp" alt="Nuestra Historia" class="w-full object-cover aspect-[4/3] rounded-3xl group-hover:scale-105 transition-transform duration-700">
  <div class="absolute inset-0 bg-primary mix-blend-overlay opacity-10"></div>
  </div>
  
@@ -63,12 +63,28 @@ require_once '../includes/header.php';
  </div>
 </section>
 
+<!-- ── VIDEO CORPORATIVO ── -->
+<section class="py-16 bg-slate-50">
+ <div class="max-w-[1369px] mx-auto px-8">
+ <div class="text-center mb-10" data-aos="fade-up">
+  <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Video <span class="text-tertiary">corporativo</span></h2>
+  <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">Conoce más acerca de cómo trabajamos y nuestra infraestructura.</p>
+  </div>
+  <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-4xl mx-auto bg-black" data-aos="zoom-in">
+  <video controls class="w-full aspect-video object-cover" preload="metadata">
+ <source src="../Videos/coorporativo (1).mp4" type="video/mp4">
+ Tu navegador no soporta la etiqueta de video.
+ </video>
+ </div>
+ </div>
+</section>
+
 <!-- ── MISIÓN Y VISIÓN ── -->
 <section class="py-24 bg-white overflow-hidden">
  <div class="max-w-[1369px] mx-auto px-8">
  <div class="text-center mb-16" data-aos="fade-up">
- <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Lo que nos <span class="text-tertiary">mueve</span></h2>
- <p class="text-slate-900 max-w-2xl mx-auto font-medium">La base que sustenta cada una de nuestras operaciones.</p>
+  <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Lo que nos <span class="text-tertiary">mueve</span></h2>
+  <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">La base que sustenta cada una de nuestras operaciones.</p>
  </div>
  <div class="grid md:grid-cols-2 gap-8 relative z-10">
  <!-- Misión -->
@@ -104,7 +120,7 @@ require_once '../includes/header.php';
 
  <!-- Background Image Overlay -->
  <div class="absolute inset-0 pointer-events-none">
- <img src="../IMG/15.webp" alt="" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+ <img src="../img/15.webp" alt="" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
 
@@ -114,7 +130,7 @@ require_once '../includes/header.php';
  Únete a la red de distribución farmacéutica más confiable de México. Solicita tu acceso al portal B2B y comienza a optimizar tu abastecimiento hoy mismo.
  </p>
  <div class="flex justify-center">
- <a href="../SELECCIÓN_REGISTRO/selección_registro.php"
+ <a href="../seleccion_registro/seleccion_registro.php"
   class="px-10 py-4 bg-tertiary text-white font-semibold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all text-base flex items-center gap-2 whitespace-nowrap group">
  Solicitar acceso
  <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
