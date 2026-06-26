@@ -483,7 +483,7 @@ foreach ($google_files as $file) {
     if ($p) {
         $stats_google_matched++;
         $id = $p['id'];
-        $dest_filename = $file;
+        $dest_filename = strtolower($file);
         $dest_path = $dest_dir . $dest_filename;
         
         if (copy($path, $dest_path)) {
@@ -509,7 +509,7 @@ foreach ($frente_files as $file) {
     if ($p) {
         $stats_frente_matched++;
         $id = $p['id'];
-        $dest_filename = $file;
+        $dest_filename = strtolower($file);
         $dest_path = $dest_dir . $dest_filename;
         
         if (copy($path, $dest_path)) {
@@ -534,7 +534,7 @@ foreach ($atras_files as $file) {
     
     if ($p) {
         $stats_atras_matched++;
-        $dest_filename = $file;
+        $dest_filename = strtolower($file);
         $dest_path = $dest_dir . $dest_filename;
         
         if (copy($path, $dest_path)) {
@@ -559,7 +559,7 @@ foreach ($manual_files as $file) {
     if ($p) {
         $stats_manual_matched++;
         $id = $p['id'];
-        $dest_filename = $file;
+        $dest_filename = strtolower($file);
         $dest_path = $dest_dir . $dest_filename;
         
         if (copy($path, $dest_path)) {

@@ -13,8 +13,6 @@ $cliente_tipo_idx = $is_cliente_idx ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 $where_idx = ["codigo NOT IN ('99999999999', 'DESCUENTO')"];
 if ($cliente_tipo_idx === 'EMPRESA') {
  $where_idx[] = "(solo_empresa = 'SI' OR nombre LIKE '%ASPIRINA%' OR sustancia LIKE '%ASPIRINA%' OR nombre LIKE '%LORATADINA%' OR sustancia LIKE '%LORATADINA%' OR nombre LIKE '%LORATIDINA%' OR sustancia LIKE '%LORATIDINA%' OR nombre LIKE '%BUSCAPINA%' OR nombre LIKE '%BUTILHIOSCINA%' OR sustancia LIKE '%BUTILHIOSCINA%')";
-} else {
- $where_idx[] = "solo_empresa = 'NO'";
 }
 
 $where_sql_idx = $where_idx ? 'WHERE ' . implode(' AND ', $where_idx) : '';
