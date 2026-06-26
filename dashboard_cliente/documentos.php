@@ -195,12 +195,12 @@ include('includes/sidebar.php');
     <div class="w-10 h-10 rounded-xl <?= $bgIcon ?> flex items-center justify-center mb-4">
       <span class="material-symbols-outlined text-[20px]"><?= $statusIcon ?></span>
     </div>
-    <h3 class="text-base font-bold text-white mb-2"><?= $info['titulo'] ?></h3>
+    <h3 class="text-base font-bold text-slate-900 mb-2"><?= $info['titulo'] ?></h3>
     <p class="text-xs font-bold <?= $statusColor ?> leading-relaxed mb-4"><?= $statusText ?></p>
     
     <div class="text-[10px] font-bold uppercase tracking-wider mb-5">
       <span class="block text-on-surface-variant/70 mb-1">Última carga</span>
-      <span class="text-white"><?= $subido ? date('d M Y', strtotime($doc['fecha_subida'])) : 'Nunca' ?></span>
+      <span class="text-slate-900"><?= $subido ? date('d M Y', strtotime($doc['fecha_subida'])) : 'Nunca' ?></span>
     </div>
 
     <!-- File Area -->
@@ -220,7 +220,7 @@ include('includes/sidebar.php');
                 <span class="material-symbols-outlined text-[20px]">description</span>
             </div>
             <div class="overflow-hidden flex-1">
-                <p class="text-white text-xs font-bold truncate" title="<?= $file_name ?>"><?= $file_name ?></p>
+                <p class="text-slate-900 text-xs font-bold truncate" title="<?= $file_name ?>"><?= $file_name ?></p>
                 <p class="text-on-surface-variant text-[10px] mt-0.5"><?= $file_size ?></p>
             </div>
         </div>

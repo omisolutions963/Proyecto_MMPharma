@@ -71,7 +71,7 @@ include('includes/sidebar.php');
  </div>
  <div>
  <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Este mes</p>
- <h3 class="text-3xl font-extrabold text-white leading-none"><?= $cotizaciones_mes ?></h3>
+ <h3 class="text-3xl font-extrabold text-slate-900 leading-none"><?= $cotizaciones_mes ?></h3>
  </div>
  </div>
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex items-center gap-5 ">
@@ -80,7 +80,7 @@ include('includes/sidebar.php');
  </div>
  <div>
  <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Monto mensual</p>
- <h3 class="text-3xl font-extrabold text-white leading-none">$<?= number_format($monto_mes, 2) ?></h3>
+ <h3 class="text-3xl font-extrabold text-slate-900 leading-none">$<?= number_format($monto_mes, 2) ?></h3>
  </div>
  </div>
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 flex items-center gap-5 ">
@@ -89,7 +89,7 @@ include('includes/sidebar.php');
  </div>
  <div>
  <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Aprobadas</p>
- <h3 class="text-3xl font-extrabold text-white leading-none"><?= $aprobadas ?></h3>
+ <h3 class="text-3xl font-extrabold text-slate-900 leading-none"><?= $aprobadas ?></h3>
  </div>
  </div>
  </div>
@@ -98,14 +98,14 @@ include('includes/sidebar.php');
  <div class="flex flex-wrap items-center gap-4 mb-6 animate-reveal delay-200">
  <div class="relative flex-1 min-w-[250px]">
  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
- <input type="text" id="searchInput" placeholder="Buscar por folio..." class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" onkeyup="filterTable()">
+ <input type="text" id="searchInput" placeholder="Buscar por folio..." class="w-full bg-surface-container-lowest border border-outline-variant/50 text-slate-900 rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" onkeyup="filterTable()">
  </div>
  <div class="relative w-48">
-  <select id="statusFilter" class="w-full bg-surface-container-lowest border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none" onchange="filterTable()">
+  <select id="statusFilter" class="w-full bg-surface-container-lowest border border-outline-variant/50 text-slate-900 rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none" onchange="filterTable()">
   <option value="">Todos los estados</option>
-  <option value="APROBADA">Aprobadas</option>
-  <option value="PENDIENTE">Pendientes</option>
-  <option value="CANCELADO">Canceladas</option>
+  <option value="APROBADA" class="text-slate-900">Aprobadas</option>
+  <option value="PENDIENTE" class="text-slate-900">Pendientes</option>
+  <option value="CANCELADO" class="text-slate-900">Canceladas</option>
   </select>
  <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
  </div>
@@ -148,7 +148,7 @@ include('includes/sidebar.php');
  <td class="py-4 px-6 text-xs text-on-surface-variant text-center"><?= $cot['total_items'] ?></td>
  <td class="py-4 px-6 text-sm text-on-surface text-right">$<?= number_format($subtotal, 2) ?></td>
  <td class="py-4 px-6 text-sm text-on-surface text-right">$<?= number_format($iva, 2) ?></td>
- <td class="py-4 px-6 text-sm font-bold text-white text-right">$<?= number_format($total, 2) ?></td>
+ <td class="py-4 px-6 text-sm font-bold text-slate-900 text-right">$<?= number_format($total, 2) ?></td>
  <td class="py-4 px-6 text-center">
  <?php if ($cot['estado_envio'] === 'PENDIENTE'): ?>
  <span class="px-3 py-1 bg-secondary/20 text-secondary text-[10px] font-bold rounded-md uppercase tracking-wider">Pendiente</span>
@@ -160,7 +160,7 @@ include('includes/sidebar.php');
  </td>
  <td class="py-4 px-6 text-center">
  <div class="flex items-center justify-center gap-3">
- <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors" title="Ver detalle">
+ <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-primary transition-colors" title="Ver detalle">
  <span class="material-symbols-outlined text-[20px]">visibility</span>
  </a>
  <a href="descargar_cotizacion.php?id=<?= $cot['id'] ?>&action=view" class="text-on-surface-variant hover:text-primary transition-colors" title="Ver PDF" target="_blank">

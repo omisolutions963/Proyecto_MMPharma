@@ -99,7 +99,7 @@ include('includes/sidebar.php');
   
   <!-- Form Column (Left) -->
   <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
-  <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-8">
+  <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2 mb-8">
   <span class="material-symbols-outlined text-primary">send</span> Enviar un mensaje
   </h2>
   
@@ -107,7 +107,7 @@ include('includes/sidebar.php');
   <div>
   <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Categoría</label>
   <div class="relative">
-  <select name="categoria" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none transition-all">
+  <select name="categoria" class="w-full bg-surface-container-low border border-outline-variant/50 text-slate-900 rounded-xl pl-4 pr-10 py-3 text-sm appearance-none bg-none focus:border-primary outline-none transition-all">
   <option value="Soporte Técnico">Soporte técnico</option>
   <option value="Dudas de Facturación">Dudas de facturación</option>
   <option value="Estatus de Pedido">Estatus de pedido</option>
@@ -119,12 +119,12 @@ include('includes/sidebar.php');
 
   <div>
   <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Asunto</label>
-  <input type="text" name="asunto" placeholder="Escribe el título de tu consulta" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" required>
+  <input type="text" name="asunto" placeholder="Escribe el título de tu consulta" class="w-full bg-surface-container-low border border-outline-variant/50 text-slate-900 rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" required>
   </div>
 
   <div>
   <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2 ml-1">Mensaje</label>
-  <textarea name="mensaje" rows="5" placeholder="Describe tu situación con el mayor detalle posible..." class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all resize-none" required></textarea>
+  <textarea name="mensaje" rows="5" placeholder="Describe tu situación con el mayor detalle posible..." class="w-full bg-surface-container-low border border-outline-variant/50 text-slate-900 rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all resize-none" required></textarea>
   </div>
 
   <div>
@@ -139,24 +139,25 @@ include('includes/sidebar.php');
   <div class="space-y-6">
   
     <!-- Contacto Directo -->
-    <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 relative">
-      <div class="flex items-center justify-between mb-6">
+    <div class="bg-[#003e79] border border-white/10 rounded-2xl p-6 relative overflow-hidden shadow-lg">
+      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-xl"></div>
+      <div class="flex items-center justify-between mb-6 relative z-10">
         <h3 class="text-base font-bold text-white">Contacto directo</h3>
-        <span class="px-2.5 py-1 bg-primary/10 text-primary text-[9px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Soporte de Ventas
+        <span class="px-2.5 py-1 bg-white/15 text-white text-[9px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Soporte de Ventas
         </span>
       </div>
       
-      <div class="space-y-6">
+      <div class="space-y-6 relative z-10">
         <!-- WhatsApp -->
-        <a href="https://wa.me/523322207506" target="_blank" rel="noopener noreferrer" class="flex gap-4 p-3 rounded-xl border border-transparent hover:border-emerald-500/20 hover:bg-emerald-500/5 transition-all group">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+        <a href="https://wa.me/523322207506" target="_blank" rel="noopener noreferrer" class="flex gap-4 p-3 rounded-xl border border-transparent hover:border-emerald-500/30 hover:bg-white/5 transition-all group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
             <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
               <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 0 0 1.333 4.993L2 22l5.233-1.371a9.936 9.936 0 0 0 4.777 1.21h.005c5.505 0 9.988-4.478 9.99-9.984 0-2.669-1.038-5.176-2.924-7.062C17.197 2.906 14.685 2.001 12.012 2zm5.727 14.06c-.313.882-1.528 1.621-2.122 1.708-.594.087-1.18.324-3.79-.714-3.14-1.251-5.143-4.436-5.3-4.647-.156-.212-1.272-1.69-1.272-3.226 0-1.536.804-2.292 1.089-2.597.285-.304.624-.381.832-.381.208 0 .416.002.597.01.187.008.437-.072.686.529.25.602.854 2.08.927 2.229.073.149.122.323.023.522-.099.2-.149.323-.298.497-.149.174-.312.387-.446.519-.149.147-.304.307-.13.606.174.299.773 1.275 1.658 2.06.136.12.261.23.364.316.593.504 1.134.75 1.554.925.321.133.626.088.847-.149.27-.291 1.077-1.251 1.365-1.678.287-.427.575-.357.969-.211 1.01.373 2.522.929 2.622.978.1.049.167.243.117.551z"/>
             </svg>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">WhatsApp</p>
+            <p class="text-[10px] font-black text-blue-200/70 uppercase tracking-widest mb-0.5">WhatsApp</p>
             <p class="text-sm font-bold text-white mb-0.5">33 2220 7506</p>
             <p class="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
               Enviar mensaje directo <span class="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">open_in_new</span>
@@ -166,33 +167,33 @@ include('includes/sidebar.php');
 
         <!-- Teléfonos Fijos -->
         <div class="flex gap-4 p-3 rounded-xl border border-transparent">
-          <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
             <span class="material-symbols-outlined text-[20px]">call</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-1.5">Líneas fijas</p>
+            <p class="text-[10px] font-black text-blue-200/70 uppercase tracking-widest mb-1.5">Líneas fijas</p>
             <div class="space-y-2.5">
-              <a href="tel:3343480581" class="group/phone flex items-center justify-between text-sm font-bold text-white hover:text-primary transition-colors">
+              <a href="tel:3343480581" class="group/phone flex items-center justify-between text-sm font-bold text-white hover:text-blue-300 transition-colors">
                 <span>33 4348 0581</span>
-                <span class="material-symbols-outlined text-[16px] text-on-surface-variant/40 group-hover/phone:text-primary transition-colors">call</span>
+                <span class="material-symbols-outlined text-[16px] text-blue-200/40 group-hover/phone:text-blue-300 transition-colors">call</span>
               </a>
-              <a href="tel:3343480582" class="group/phone flex items-center justify-between text-sm font-bold text-white hover:text-primary transition-colors">
+              <a href="tel:3343480582" class="group/phone flex items-center justify-between text-sm font-bold text-white hover:text-blue-300 transition-colors">
                 <span>33 4348 0582</span>
-                <span class="material-symbols-outlined text-[16px] text-on-surface-variant/40 group-hover/phone:text-primary transition-colors">call</span>
+                <span class="material-symbols-outlined text-[16px] text-blue-200/40 group-hover/phone:text-blue-300 transition-colors">call</span>
               </a>
             </div>
           </div>
         </div>
 
         <!-- Correo Electrónico -->
-        <a href="mailto:<?= htmlspecialchars($empresa_email) ?>" class="flex gap-4 p-3 rounded-xl border border-transparent hover:border-secondary/20 hover:bg-secondary/5 transition-all group">
-          <div class="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+        <a href="mailto:<?= htmlspecialchars($empresa_email) ?>" class="flex gap-4 p-3 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all group">
+          <div class="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
             <span class="material-symbols-outlined text-[20px]">mail</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Correo electrónico</p>
+            <p class="text-[10px] font-black text-blue-200/70 uppercase tracking-widest mb-0.5">Correo electrónico</p>
             <p class="text-sm font-bold text-white mb-0.5"><?= htmlspecialchars($empresa_email) ?></p>
-            <p class="text-[10px] text-secondary font-medium flex items-center gap-1">
+            <p class="text-[10px] text-blue-300 font-medium flex items-center gap-1">
               Enviar correo directo <span class="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">open_in_new</span>
             </p>
           </div>

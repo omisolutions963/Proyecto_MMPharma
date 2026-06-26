@@ -41,139 +41,369 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 
 <script id="tailwind-config">
  tailwind.config = {
- darkMode: "class",
- theme: { extend: {
- colors: {
- "surface-container-lowest": "#0d1f3c",
- "surface-container-low": "#102245",
- "surface-container": "#152a52",
- "surface-container-high": "#1a3260",
- "surface-container-highest":"#1e3a6e",
- "surface": "#0a1929",
- "surface-bright": "#112038",
- "surface-dim": "#061422",
- "surface-variant": "#1a3260",
- "background": "#ffffff",
- "on-surface": "#e8f0ff",
- "on-surface-variant": "#8aaad4",
- "on-background": "#e8f0ff",
- "primary": "#4a90d9",
- "primary-container": "#1a3a6b",
- "on-primary": "#ffffff",
- "on-primary-container": "#abc7ff",
- "on-primary-fixed": "#001b3f",
- "on-primary-fixed-variant": "#284678",
- "primary-fixed": "#1d3a70",
- "primary-fixed-dim": "#3a7abf",
- "secondary": "#5bb8f5",
- "secondary-container": "#0a3a5c",
- "on-secondary": "#ffffff",
- "on-secondary-container": "#9dd4f7",
- "secondary-fixed": "#1a4a72",
- "secondary-fixed-dim": "#4a9fd4",
- "on-secondary-fixed": "#d0eaff",
- "on-secondary-fixed-variant":"#7bbfe0",
- "tertiary": "#34c47a",
- "tertiary-container": "#0a3d20",
- "on-tertiary": "#ffffff",
- "on-tertiary-container": "#52e098",
- "tertiary-fixed": "#7efba4",
- "tertiary-fixed-dim": "#61de8a",
- "on-tertiary-fixed": "#00210c",
- "on-tertiary-fixed-variant":"#005228",
- "error": "#f28b82",
- "error-container": "#5c1010",
- "on-error": "#ffffff",
- "on-error-container": "#ffb4ab",
- "outline": "#3a5a8a",
- "outline-variant": "#1e3a6e",
- "inverse-surface": "#e8f0ff",
- "inverse-on-surface": "#071628",
- "inverse-primary": "#002451",
- "surface-tint": "#4a90d9",
- },
- fontFamily: { headline: ["Inter"], body: ["Inter"], label: ["Inter"] },
- }}
- }
+  darkMode: "class",
+  theme: { extend: {
+  colors: {
+  "surface-container-lowest": "#ffffff",
+  "surface-container-low": "#f8fafc",
+  "surface-container": "#f1f5f9",
+  "surface-container-high": "#e2e8f0",
+  "surface-container-highest":"#cbd5e1",
+  "surface": "#ffffff",
+  "surface-bright": "#ffffff",
+  "surface-dim": "#eef4fc",
+  "surface-variant": "#f1f5f9",
+  "background": "#eef4fc",
+  "on-surface": "#0f172a",
+  "on-surface-variant": "#475569",
+  "on-background": "#0f172a",
+  "primary": "#003e79",
+  "primary-container": "#e0f2fe",
+  "on-primary": "#ffffff",
+  "on-primary-container": "#0369a1",
+  "secondary": "#1e60aa",
+  "secondary-container": "#dbeafe",
+  "on-secondary": "#ffffff",
+  "on-secondary-container": "#1d4ed8",
+  "tertiary": "#2ca1b5",
+  "tertiary-container": "#ecfeff",
+  "on-tertiary": "#ffffff",
+  "on-tertiary-container": "#0e7490",
+  "error": "#ef4444",
+  "error-container": "#fee2e2",
+  "on-error": "#ffffff",
+  "on-error-container": "#b91c1c",
+  "outline": "#cbd5e1",
+  "outline-variant": "#cbd5e1",
+  "inverse-surface": "#0f172a",
+  "inverse-on-surface": "#f8fafc",
+  "inverse-primary": "#e0f2fe",
+  "surface-tint": "#003e79",
+  },
+  fontFamily: { headline: ["Inter"], body: ["Inter"], label: ["Inter"] },
+  }}
+  }
 </script>
 <style>
  * { font-family: 'Inter', sans-serif; }
  /* ══ ANTI-FOUC: Colores hardcoded antes de que Tailwind CDN procese ══ */
- html, body, main { background-color: #ffffff !important; }
- aside { background-color: #1e3a5f !important; }
- body { color: #1e293b; }
+ html, body, main { background-color: #eef4fc !important; }
+  aside { background: #003e79 !important; }
+  body { color: #0f172a; }
  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
- /* ══ SCROLLBAR GLOBAL AGRESIVA ══════════════════════════════════════════ */
- /* Forzamos el estilo en todos los elementos para evitar el comportamiento de Windows 11 */
- *::-webkit-scrollbar {
- width: 10px !important;
- height: 10px !important;
- }
- *::-webkit-scrollbar-track {
- background: rgba(0,0,0,0.05) !important;
- }
- *::-webkit-scrollbar-thumb {
- background: rgba(74,144,217,0.3) !important;
- border-radius: 10px !important;
- border: 2px solid transparent !important;
- background-clip: content-box !important;
- }
- *::-webkit-scrollbar-thumb:hover {
- background: rgba(74,144,217,0.6) !important;
- background-clip: content-box !important;
- }
 
- html { 
- scrollbar-gutter: stable !important; 
- scrollbar-width: auto !important; 
- overflow-y: scroll !important;
- }
- body {
- overflow-x: hidden !important;
- }
- html.swal2-shown, body.swal2-shown {
- overflow-y: scroll !important;
- }
- .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
- .card-glow { box-: 0 0 30px rgba(74,144,217,0.08); }
-
- /* ══ ESTANDARIZACIÓN DE SOMBRAS GLOBALES ══ */
- . { box-: 0 2px 8px rgba(0, 0, 0, 0.1) !important; }
- . { box-: 0 4px 12px rgba(0, 0, 0, 0.15) !important; }
- . { box-: 0 6px 16px rgba(0, 0, 0, 0.2) !important; }
- . { box-: 0 10px 25px rgba(0, 0, 0, 0.25) !important; }
- . { box-: 0 15px 35px rgba(0, 0, 0, 0.3) !important; }
- . { box-: 0 20px 50px rgba(0, 0, 0, 0.4) !important; }
-
- /* --- ANIMACIONES NATIVAS --- */
- @keyframes revealUp {
- 0% { opacity: 0; transform: translateY(5px); }
- 100% { opacity: 1; transform: translateY(0); }
- }
- @keyframes scaleIn {
- 0% { opacity: 0; transform: scale(0.98); }
- 100% { opacity: 1; transform: scale(1); }
- }
- .animate-reveal, .animate-fade-up { animation: revealUp 0.6s ease-out forwards; opacity: 0; }
- .animate-scale-in { animation: scaleIn 0.6s ease-out forwards; opacity: 0; }
- 
- .delay-100 { animation-delay: 0.1s; }
- .delay-200 { animation-delay: 0.2s; }
- .delay-300 { animation-delay: 0.3s; }
- .delay-400 { animation-delay: 0.4s; }
- .delay-500 { animation-delay: 0.5s; }
-  /* Responsive Panel adjustments */
-  @media (max-width: 1023px) {
-    main.ml-64, main {
-      margin-left: 0 !important;
-      width: 100% !important;
-      padding: 1.5rem 1rem !important;
-    }
-    header {
-      padding-left: 1rem !important;
-      padding-right: 1rem !important;
-    }
+  /* Asegurar que el texto blanco de botones o insignias reales con fondo de color permanezca blanco */
+  main .bg-primary,
+  main .bg-primary *,
+  main .bg-secondary,
+  main .bg-secondary *,
+  main .bg-tertiary,
+  main .bg-tertiary *,
+  main .bg-error,
+  main .bg-error *,
+  main .bg-red-500,
+  main .bg-red-500 *,
+  main .bg-green-600,
+  main .bg-green-600 *,
+  main .bg-orange-600,
+  main .bg-orange-600 *,
+  main .bg-blue-600,
+  main .bg-blue-600 *,
+  main .bg-indigo-600,
+  main .bg-indigo-600 *,
+  main button.bg-primary,
+  main button.bg-secondary,
+  main button.bg-tertiary,
+  main a.bg-primary,
+  main a.bg-secondary,
+  main a.bg-tertiary {
+      color: #ffffff !important;
   }
+
+  /* Excluir el texto dentro de la barra de alerta de error/validación de documentos para que tenga contraste */
+  main .bg-red-50 .text-white,
+  main .bg-red-100 .text-white,
+  main .bg-yellow-50 .text-white,
+  main .bg-yellow-100 .text-white {
+      color: inherit !important;
+  }
+
+  /* Estilos específicos para la tarjeta Hero de Perfil */
+  main .bg-gradient-to-r.from-surface-container-highest.to-surface-container {
+      background: linear-gradient(135deg, #003e79 0%, #1e60aa 100%) !important;
+      border: none !important;
+  }
+  main .bg-gradient-to-r.from-surface-container-highest.to-surface-container .text-white,
+  main .bg-gradient-to-r.from-surface-container-highest.to-surface-container .text-on-surface-variant {
+      color: #ffffff !important;
+  }
+  main .bg-gradient-to-r.from-surface-container-highest.to-surface-container .text-primary {
+      color: #93c5fd !important;
+  }
+
+  /* ══ ESTILIZACIÓN DE ALERTAS E ICONOS DE ALTA VISIBILIDAD (FONDO CLARO + ICONO/TEXTO FUERTE) ══ */
+  /* 1. Contenedores de iconos (Badges / Círculos / Recuadros) */
+  main .bg-primary\/10 {
+      background-color: rgba(0, 62, 121, 0.1) !important;
+      color: #003e79 !important;
+  }
+  main .bg-primary\/10 * {
+      color: #003e79 !important;
+  }
+
+  main .bg-secondary\/10 {
+      background-color: rgba(30, 96, 170, 0.1) !important;
+      color: #1e60aa !important;
+  }
+  main .bg-secondary\/10 * {
+      color: #1e60aa !important;
+  }
+
+  main .bg-tertiary\/10,
+  main .bg-tertiary\/20,
+  main .bg-tertiary\/30 {
+      background-color: rgba(44, 161, 181, 0.15) !important;
+      color: #0e7490 !important;
+  }
+  main .bg-tertiary\/10 *,
+  main .bg-tertiary\/20 *,
+  main .bg-tertiary\/30 * {
+      color: #0e7490 !important;
+  }
+
+  main .bg-error\/10,
+  main .bg-error\/20,
+  main .bg-error\/30 {
+      background-color: rgba(239, 68, 68, 0.12) !important;
+      color: #b91c1c !important;
+  }
+  main .bg-error\/10 *,
+  main .bg-error\/20 *,
+  main .bg-error\/30 * {
+      color: #b91c1c !important;
+  }
+
+  main .bg-emerald-500\/10,
+  main .bg-emerald-500\/20 {
+      background-color: rgba(16, 185, 129, 0.15) !important;
+      color: #15803d !important;
+  }
+  main .bg-emerald-500\/10 *,
+  main .bg-emerald-500\/20 * {
+      color: #15803d !important;
+  }
+
+  main .bg-sky-500\/10,
+  main .bg-sky-500\/20 {
+      background-color: rgba(14, 165, 233, 0.15) !important;
+      color: #0369a1 !important;
+  }
+  main .bg-sky-500\/10 *,
+  main .bg-sky-500\/20 * {
+      color: #0369a1 !important;
+  }
+
+  main .bg-amber-500\/10,
+  main .bg-amber-500\/20,
+  main .bg-\[\#eab308\]\/20 {
+      background-color: rgba(245, 158, 11, 0.15) !important;
+      color: #b45309 !important;
+  }
+  main .bg-amber-500\/10 *,
+  main .bg-amber-500\/20 *,
+  main .bg-\[\#eab308\]\/20 * {
+      color: #b45309 !important;
+  }
+
+  /* 2. Contenedores de Banners de Alerta Completos */
+  /* Alerta Documentos en el Dashboard (bg-[#422c10] en HTML) */
+  main .bg-\[\#422c10\] {
+      background-color: #fef8e7 !important;
+      border: 1px solid #fde68a !important;
+  }
+  main .bg-\[\#422c10\] h3 {
+      color: #854d0e !important;
+  }
+  main .bg-\[\#422c10\] p {
+      color: #a16207 !important;
+  }
+  main .bg-\[\#422c10\] a {
+      color: #ca8a04 !important;
+  }
+  
+  /* Alerta Documentos Aprobados/Activos (bg-tertiary-container/30 en HTML) */
+  main .bg-tertiary-container\/30 {
+      background-color: #f0fdf4 !important;
+      border: 1px solid #dcfce7 !important;
+  }
+  main .bg-tertiary-container\/30 h3 {
+      color: #166534 !important;
+  }
+  main .bg-tertiary-container\/30 p {
+      color: #15803d !important;
+  }
+  main .bg-tertiary-container\/30 a {
+      color: #16a34a !important;
+  }
+
+  /* Alertas Estándar de Tailwind (en documentos.php) */
+  /* Aprobados (Verde) */
+  main .bg-emerald-500\/10 {
+      background-color: #f0fdf4 !important;
+      border-color: #dcfce7 !important;
+  }
+  main .bg-emerald-500\/10 h3 {
+      color: #166534 !important;
+  }
+  main .bg-emerald-500\/10 p {
+      color: #15803d !important;
+  }
+  
+  /* Atención requerida / Warning (Ámbar) */
+  main .bg-amber-500\/10 {
+      background-color: #fffbeb !important;
+      border-color: #fde68a !important;
+  }
+  main .bg-amber-500\/10 h3 {
+      color: #78350f !important;
+  }
+  main .bg-amber-500\/10 p {
+      color: #b45309 !important;
+  }
+
+  /* Revisión (Celeste/Sky) */
+  main .bg-sky-500\/10 {
+      background-color: #f0f9ff !important;
+      border-color: #bae6fd !important;
+  }
+  main .bg-sky-500\/10 h3 {
+      color: #0c4a6e !important;
+  }
+  main .bg-sky-500\/10 p {
+      color: #0369a1 !important;
+  }
+
+  /* Inputs, selects y textareas */
+  main input:not([type="checkbox"]):not([type="radio"]), 
+  main select, 
+  main textarea {
+      color: #0f172a !important;
+      background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+  }
+  main input::placeholder, 
+  main textarea::placeholder {
+      color: #94a3b8 !important;
+  }
+  main input:focus, 
+  main select:focus, 
+  main textarea:focus {
+      border-color: #003e79 !important;
+      box-shadow: 0 0 0 1px #003e79 !important;
+  }
+
+  /* Forzar colores correctos de texto en Notificaciones del Header */
+  #notificaciones-dropdown .text-white,
+  .swal2-popup .text-white {
+      color: #0f172a !important;
+  }
+  #notificaciones-dropdown .bg-surface-container\/50 {
+      background-color: #f1f5f9 !important;
+  }
+
+  /* Ajustes generales de tablas basados en la imagen de referencia */
+  main table {
+      color: #0f172a !important;
+  }
+  main th {
+      background-color: #003e79 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      font-size: 11px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.1em !important;
+      padding: 16px 20px !important;
+      border: none !important;
+      opacity: 1 !important;
+  }
+  main td {
+      border-bottom: 1px solid #e2e8f0 !important;
+      color: #334155 !important;
+      background-color: #ffffff !important;
+      padding: 16px 20px !important;
+  }
+  main tr:hover td {
+      background-color: #f8fafc !important;
+  }
+
+  /* ══ SCROLLBAR GLOBAL AGRESIVA ══════════════════════════════════════════ */
+  /* Forzamos el estilo en todos los elementos para evitar el comportamiento de Windows 11 */
+  *::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  }
+  *::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05) !important;
+  }
+  *::-webkit-scrollbar-thumb {
+  background: rgba(74,144,217,0.3) !important;
+  border-radius: 10px !important;
+  border: 2px solid transparent !important;
+  background-clip: content-box !important;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+  background: rgba(74,144,217,0.6) !important;
+  background-clip: content-box !important;
+  }
+
+  html { 
+  scrollbar-gutter: stable !important; 
+  scrollbar-width: auto !important; 
+  overflow-y: scroll !important;
+  }
+  body {
+  overflow-x: hidden !important;
+  }
+  html.swal2-shown, body.swal2-shown {
+  overflow-y: scroll !important;
+  }
+  .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); }
+  .card-glow { box-shadow: 0 0 30px rgba(74,144,217,0.08); }
+
+  /* ══ ESTANDARIZACIÓN DE SOMBRAS GLOBALES ══ */
+  .shadow-sm { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important; }
+  .shadow-md { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; }
+  .shadow-lg { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important; }
+
+  /* --- ANIMACIONES NATIVAS --- */
+  @keyframes revealUp {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+  0% { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+  }
+  .animate-reveal, .animate-fade-up { animation: revealUp 0.6s ease-out forwards; opacity: 0; }
+  .animate-scale-in { animation: scaleIn 0.6s ease-out forwards; opacity: 0; }
+  
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+   /* Responsive Panel adjustments */
+   @media (max-width: 1023px) {
+     main.ml-64, main {
+       margin-left: 0 !important;
+       width: 100% !important;
+       padding: 1.5rem 1rem !important;
+     }
+     header {
+       padding-left: 1rem !important;
+       padding-right: 1rem !important;
+     }
+   }
 </style>
 
 <script>
@@ -491,19 +721,19 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
-<header style="background:rgba(255,255,255,0.97);border-bottom:1px solid rgba(15,23,42,0.08)"
- class="h-16 fixed top-0 z-40 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)]">
+<header style="background:#2ca1b5;border-bottom:1px solid rgba(255,255,255,0.15)"
+ class="h-16 fixed top-0 z-40 flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)] shadow-md">
  
   <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
   <!-- Hamburger Menu Button -->
-  <button onclick="toggleUserSidebar()" class="lg:hidden text-slate-700 hover:bg-slate-100 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+  <button onclick="toggleUserSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
     <span class="material-symbols-outlined text-2xl">menu</span>
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
   <div class="flex flex-col leading-none min-w-0">
-  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
-  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
+  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/80 mb-1">MMPharma</span>
+  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
   </div>
   </div>
   </div>
@@ -511,16 +741,16 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  <div class="flex items-center gap-5">
  <!-- Search -->
  <div class="relative hidden md:block">
- <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
- <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-outline-variant/50
- bg-surface-container-low/60 text-on-surface text-sm placeholder:text-outline
- focus:ring-1 focus:ring-primary focus:outline-none"
+ <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm">search</span>
+ <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-white/20
+ bg-white/15 text-white text-sm placeholder:text-white/60
+ focus:ring-1 focus:ring-white focus:outline-none focus:bg-white/25"
  placeholder="Buscar..." type="text"/>
  </div>
 
  <!-- Notifications -->
  <div class="relative">
- <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low/60 border border-outline-variant/30 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all relative group">
+ <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 border border-white/10 text-white hover:bg-white/25 transition-all relative group">
  <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform">notifications</span>
  <?php if ($unread_count > 0): ?>
  <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
@@ -587,30 +817,30 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 
  
   <!-- Divider -->
-  <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
+  <div class="h-6 w-px bg-white/20 hidden md:block"></div>
 
  <!-- User / Perfil Button -->
- <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-slate-100 group">
+ <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/10 group">
  <?php
  $foto = $_SESSION['cliente_foto'] ?? '';
  $nombre = $_SESSION['cliente_nombre'] ?? 'Cliente';
  ?>
  <?php if ($foto): ?>
  <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
- class="w-8 h-8 rounded-lg object-cover border-2 border-primary/40"
+ class="w-8 h-8 rounded-lg object-cover border-2 border-white/50"
  alt="Perfil">
  <?php else: ?>
  <div id="headerProfileImg"
- class="w-8 h-8 rounded-lg flex items-center justify-center text-primary font-bold text-sm border-2 border-primary/30 group-hover:border-primary/60 transition-colors"
- style="background:rgba(74,144,217,0.2)">
+ class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/40 group-hover:border-white/70 transition-colors"
+ style="background:rgba(255,255,255,0.2)">
  <?= strtoupper(substr($nombre, 0, 1)) ?>
  </div>
  <?php endif; ?>
  <div class="hidden lg:flex flex-col items-start leading-none">
- <span class="text-sm font-semibold text-slate-800"><?= htmlspecialchars($nombre) ?></span>
- <span class="text-[10px] text-slate-400">Mi cuenta</span>
+ <span class="text-sm font-semibold text-white"><?= htmlspecialchars($nombre) ?></span>
+ <span class="text-[10px] text-white/70">Mi cuenta</span>
  </div>
- <span class="material-symbols-outlined text-slate-400 text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
+ <span class="material-symbols-outlined text-white/70 text-[16px] hidden lg:block group-hover:text-white transition-colors">expand_more</span>
  </a>
  </div>
 </header>

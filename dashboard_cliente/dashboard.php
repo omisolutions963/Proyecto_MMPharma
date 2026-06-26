@@ -12,10 +12,39 @@ $pdo = getDB();
 $cliente_id = $_SESSION['cliente_id'];
 
 // 1. Obtener datos del cliente
-$stmt = $pdo->prepare("SELECT estatus FROM clientes_usuarios WHERE id = ?");
+$stmt = $pdo->prepare("SELECT estatus, regimen_fiscal, tipo FROM clientes_usuarios WHERE id = ?");
 $stmt->execute([$cliente_id]);
 $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 $estatus_cliente = $cliente['estatus'] ?? 'ACTIVO';
+$regimen_fiscal = $cliente['regimen_fiscal'] ?? '';
+$tipo_cliente = $cliente['tipo'] ?? 'EMPRESA';
+
+// Obtener documentos subidos por el cliente
+$stmt_docs = $pdo->prepare("SELECT tipo_documento, estatus_validacion FROM clientes_documentos WHERE cliente_id = ?");
+$stmt_docs->execute([$cliente_id]);
+$docs_subidos = [];
+while ($row = $stmt_docs->fetch(PDO::FETCH_ASSOC)) {
+    $docs_subidos[$row['tipo_documento']] = $row['estatus_validacion'];
+}
+
+// Configuración de documentos requeridos
+if ($tipo_cliente === 'EMPRESA') {
+    $documentos_requeridos = ['CONSTANCIA_FISCAL'];
+} else {
+    $documentos_requeridos = ['AVISO_FUNCIONAMIENTO', 'COMPROBANTE_DOMICILIO', 'ALTA_HACIENDA', 'IDENTIFICACION_OFICIAL'];
+    if (strtolower($regimen_fiscal) === 'moral' || strtolower($regimen_fiscal) === 'personas morales') {
+        $documentos_requeridos[] = 'ACTA_CONSTITUTIVA';
+    }
+}
+
+// Determinar si hay documentos pendientes o rechazados
+$tiene_documentos_pendientes = false;
+foreach ($documentos_requeridos as $tipo) {
+    if (!isset($docs_subidos[$tipo]) || $docs_subidos[$tipo] === 'RECHAZADO' || $docs_subidos[$tipo] === 'PENDIENTE') {
+        $tiene_documentos_pendientes = true;
+        break;
+    }
+}
 
 // 2. Cotizaciones este mes
 $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM clientes_pedidos WHERE cliente_id = ? AND MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())");
@@ -82,7 +111,7 @@ include('includes/sidebar.php');
  <p class="text-slate-500 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
  </div>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
- <a href="cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-slate-850 text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">download</span> Estado de cuenta
  </a>
  <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
@@ -109,7 +138,7 @@ include('includes/sidebar.php');
  <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8 animate-reveal delay-100">
  
  <!-- Alerta Documentos (Col-span-2) -->
- <?php if ($estatus_cliente === 'DOCS_PENDIENTES'): ?>
+ <?php if ($estatus_cliente === 'DOCS_PENDIENTES' || $tiene_documentos_pendientes): ?>
  <div class="md:col-span-2 bg-[#422c10] border border-[#a66a1d] rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden">
  <div class="absolute -right-4 -top-4 text-yellow-500/10 rotate-12">
  <span class="material-symbols-outlined" style="font-size: 120px; font-variation-settings: 'FILL' 1;">warning</span>
@@ -147,7 +176,7 @@ include('includes/sidebar.php');
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
  <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Cotizaciones este mes</span>
  <div class="flex items-end justify-between">
- <span class="text-3xl font-extrabold text-white leading-none"><?= $cotizaciones_mes ?></span>
+ <span class="text-3xl font-extrabold text-slate-900 leading-none"><?= $cotizaciones_mes ?></span>
  </div>
  </div>
 
@@ -155,7 +184,7 @@ include('includes/sidebar.php');
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
  <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Última cotización</span>
  <div>
- <span class="text-2xl font-extrabold text-white block mb-1"><?= $ultima_monto ?></span>
+ <span class="text-2xl font-extrabold text-slate-900 block mb-1"><?= $ultima_monto ?></span>
  <span class="text-[10px] text-on-surface-variant italic"><?= $ultima_fecha ?></span>
  </div>
  </div>
@@ -164,7 +193,7 @@ include('includes/sidebar.php');
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
  <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Productos comprados</span>
  <div class="flex items-center gap-2">
- <span class="text-3xl font-extrabold text-white leading-none"><?= $productos_favoritos ?></span>
+ <span class="text-3xl font-extrabold text-slate-900 leading-none"><?= $productos_favoritos ?></span>
  <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">inventory_2</span>
  </div>
  </div>
@@ -195,11 +224,11 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">receipt_long</span>
  </div>
  <div>
- <h3 class="text-sm font-bold text-white">Ticket promedio</h3>
+ <h3 class="text-sm font-bold text-slate-900">Ticket promedio</h3>
  <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Por cotización</p>
  </div>
  </div>
- <p class="text-4xl font-extrabold text-white relative z-10">$<?= number_format($ticket_promedio, 2) ?></p>
+ <p class="text-4xl font-extrabold text-slate-900 relative z-10">$<?= number_format($ticket_promedio, 2) ?></p>
  </div>
 
  <!-- Efectividad -->
@@ -210,12 +239,12 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-[24px]">pie_chart</span>
  </div>
  <div>
- <h3 class="text-sm font-bold text-white">Efectividad</h3>
+ <h3 class="text-sm font-bold text-slate-900">Efectividad</h3>
  <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Tasa de aprobación</p>
  </div>
  </div>
  <div class="flex items-end gap-3 relative z-10">
- <p class="text-4xl font-extrabold text-white"><?= $porcentaje_exito ?>%</p>
+ <p class="text-4xl font-extrabold text-slate-900"><?= $porcentaje_exito ?>%</p>
  <div class="flex-1 mb-2.5 h-2 bg-surface-container rounded-full overflow-hidden">
  <div class="h-full bg-secondary rounded-full" style="width: <?= $porcentaje_exito ?>%"></div>
  </div>
@@ -254,10 +283,10 @@ include('includes/sidebar.php');
  <?php else: ?>
  <?php foreach($cotizaciones_recientes as $cot): ?>
  <tr class="hover:bg-surface-container/30 transition-colors group">
- <td class="py-4 px-6 text-sm font-bold text-white"><?= htmlspecialchars($cot['folio']) ?></td>
+ <td class="py-4 px-6 text-sm font-bold text-slate-900"><?= htmlspecialchars($cot['folio']) ?></td>
  <td class="py-4 px-6 text-xs text-on-surface-variant"><?= date('d M, Y', strtotime($cot['created_at'])) ?></td>
  <td class="py-4 px-6 text-xs text-on-surface-variant text-center"><?= $cot['total_items'] ?> items</td>
- <td class="py-4 px-6 text-sm font-bold text-white text-right">$<?= number_format($cot['monto_total'], 2) ?></td>
+ <td class="py-4 px-6 text-sm font-bold text-slate-900 text-right">$<?= number_format($cot['monto_total'], 2) ?></td>
  <td class="py-4 px-6 text-center">
  <?php if ($cot['estado_envio'] === 'PENDIENTE'): ?>
  <span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded-md uppercase tracking-wider"><span class="material-symbols-outlined text-[10px] mr-1 align-middle">schedule</span>Pendiente</span>
@@ -268,7 +297,7 @@ include('includes/sidebar.php');
  <?php endif; ?>
  </td>
  <td class="py-4 px-6 text-center">
- <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
+ <a href="cotizacion-detalle.php?id=<?= $cot['id'] ?>" class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">visibility</span></a>
  </td>
  </tr>
  <?php endforeach; ?>

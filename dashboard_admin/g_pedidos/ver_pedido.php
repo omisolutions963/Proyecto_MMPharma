@@ -186,6 +186,10 @@ include("../includes/sidebar.php");
             <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
             Descargar PDF
         </a>
+        <a href="generar_excel.php?id=<?= $pedido['id'] ?>" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-emerald-600/30 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">table_view</span>
+            Descargar Excel
+        </a>
         <a href="pedidos.php" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
             Volver

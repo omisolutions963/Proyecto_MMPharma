@@ -110,6 +110,9 @@ if (isset($_GET['ajax'])) {
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
+ <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all" title="Descargar cotización Excel">
+ <span class="material-symbols-outlined text-[18px]">table_view</span>
+ </a>
  <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>
  </a>
@@ -261,6 +264,9 @@ include("../includes/sidebar.php");
  <?php endif; ?>
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+ </a>
+ <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all" title="Descargar cotización Excel">
+ <span class="material-symbols-outlined text-[18px]">table_view</span>
  </a>
  <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
  <span class="material-symbols-outlined text-[18px]">visibility</span>

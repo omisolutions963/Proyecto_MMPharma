@@ -18,7 +18,7 @@ $menuLinks = [
 ?>
 
 <!-- SideNavBar -->
-<aside id="userSidebar" style="background:linear-gradient(180deg,#334155 0%,#1e3a5f 50%,#0a2540 100%)"
+<aside id="userSidebar" style="background:#003e79"
  class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
  <!-- Logo -->

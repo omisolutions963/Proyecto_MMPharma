@@ -61,7 +61,7 @@ include('includes/sidebar.php');
  <?php if($dir['predeterminada']): ?>
  <span class="px-2.5 py-1 bg-primary/20 text-primary text-[10px] font-black rounded-lg uppercase tracking-wider inline-block mb-3">Principal</span>
  <?php endif; ?>
- <h3 class="text-lg font-bold text-white"><?= htmlspecialchars($dir['alias']) ?></h3>
+ <h3 class="text-lg font-bold text-slate-900"><?= htmlspecialchars($dir['alias']) ?></h3>
  </div>
  <span class="px-3 py-1 bg-primary/20 text-primary-light border border-primary/30 text-[10px] font-bold rounded-lg uppercase flex items-center gap-1 shadow-sm shrink-0">
     <span class="material-symbols-outlined text-[14px]">info</span> Envío se calcula al cotizar
@@ -88,7 +88,7 @@ include('includes/sidebar.php');
  </div>
 
  <div class="flex items-center gap-3 mt-auto">
- <button class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 text-white text-sm font-bold rounded-xl transition-colors" onclick='editarDireccion(<?= htmlspecialchars(json_encode($dir), ENT_QUOTES, "UTF-8") ?>)'>Editar</button>
+ <button class="flex-1 py-2.5 bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 text-slate-800 text-sm font-bold rounded-xl transition-colors" onclick='editarDireccion(<?= htmlspecialchars(json_encode($dir), ENT_QUOTES, "UTF-8") ?>)'>Editar</button>
  <?php if(count($direcciones) === 1): ?>
  <div class="relative group">
  <button class="px-4 py-2.5 border border-outline-variant/30 text-on-surface-variant/50 rounded-xl cursor-not-allowed flex items-center justify-center" disabled>
@@ -109,7 +109,7 @@ include('includes/sidebar.php');
  <?php else: ?>
   <div class="col-span-1 md:col-span-2 xl:col-span-3 text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col items-center">
     <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-4">location_off</span>
-    <h3 class="text-xl font-bold text-white mb-2">No tienes direcciones registradas</h3>
+    <h3 class="text-xl font-bold text-slate-900 mb-2">No tienes direcciones registradas</h3>
     <p class="text-sm text-on-surface-variant mb-4">Agrega una dirección principal para poder recibir tus pedidos.</p>
     <p class="text-xs font-bold mb-6 flex items-center gap-2 bg-error/10 text-error px-4 py-2.5 rounded-xl border border-error/30 uppercase tracking-wider">
       <span class="material-symbols-outlined text-[18px]">warning</span> Se requiere una dirección para poder cotizar
@@ -146,7 +146,7 @@ include('includes/sidebar.php');
  <!-- Geolocation Toggle -->
  <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/30 flex items-center justify-between mb-2">
     <div>
-        <p class="text-sm font-bold text-white flex items-center gap-2"><span class="material-symbols-outlined text-primary text-xl">my_location</span> Usar mi ubicación actual</p>
+        <p class="text-sm font-bold text-slate-900 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-xl">my_location</span> Usar mi ubicación actual</p>
         <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed pr-4">Actívalo si estás en la sucursal o domicilio de entrega en este momento. Esto calculará con exactitud tu tarifa de envío (Envío gratis a 10km a la redonda).</p>
     </div>
     <label class="relative inline-flex items-center cursor-pointer shrink-0">

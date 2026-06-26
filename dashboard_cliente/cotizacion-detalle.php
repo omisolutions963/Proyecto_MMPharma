@@ -234,15 +234,15 @@ include('includes/sidebar.php');
  MM
  </div>
  <div>
- <h2 class="text-xl font-extrabold text-white">MMPharma S.A. de C.V.</h2>
+  <h2 class="text-xl font-extrabold text-slate-900">MMPharma S.A. de C.V.</h2>
  <p class="text-[10px] text-on-surface-variant max-w-xs leading-relaxed mt-1">Av. Insurgentes Sur 1200, Col. Extremadura Insurgentes, CP 03740, CDMX, México.</p>
  </div>
  </div>
  <div class="text-left md:text-right">
- <div class="inline-block bg-surface-container-high text-white text-sm font-black px-4 py-1.5 rounded-lg uppercase tracking-widest mb-3">Cotización</div>
- <p class="text-xs text-on-surface-variant mb-1">Folio: <span class="text-white font-semibold"><?= htmlspecialchars($pedido['folio']) ?></span></p>
- <p class="text-xs text-on-surface-variant mb-1">Fecha: <span class="text-white font-semibold"><?= $fecha_pedido ?></span></p>
- <p class="text-xs text-on-surface-variant">Vence: <span class="text-white font-semibold"><?= $vence_pedido ?></span></p>
+  <div class="inline-block bg-surface-container-high text-slate-900 text-sm font-black px-4 py-1.5 rounded-lg uppercase tracking-widest mb-3">Cotización</div>
+  <p class="text-xs text-on-surface-variant mb-1">Folio: <span class="text-slate-900 font-semibold"><?= htmlspecialchars($pedido['folio']) ?></span></p>
+  <p class="text-xs text-on-surface-variant mb-1">Fecha: <span class="text-slate-900 font-semibold"><?= $fecha_pedido ?></span></p>
+  <p class="text-xs text-on-surface-variant">Vence: <span class="text-slate-900 font-semibold"><?= $vence_pedido ?></span></p>
  </div>
  </div>
 
@@ -250,8 +250,8 @@ include('includes/sidebar.php');
  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
  <div class="bg-surface-container-low/50 rounded-xl p-6 border border-outline-variant/20">
  <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Datos del cliente</h3>
- <p class="text-base font-bold text-white mb-1"><?= htmlspecialchars($cliente['razon_social'] ?? 'N/A') ?></p>
- <p class="text-xs text-on-surface-variant mb-3">RFC: <span class="text-white"><?= htmlspecialchars($cliente['rfc'] ?? 'Pendiente') ?></span></p>
+  <p class="text-base font-bold text-slate-900 mb-1"><?= htmlspecialchars($cliente['razon_social'] ?? 'N/A') ?></p>
+  <p class="text-xs text-on-surface-variant mb-3">RFC: <span class="text-slate-900"><?= htmlspecialchars($cliente['rfc'] ?? 'Pendiente') ?></span></p>
  <p class="text-xs text-on-surface-variant leading-relaxed mb-4"><?= htmlspecialchars($cliente['domicilio_fiscal'] ?? 'Sin domicilio fiscal registrado.') ?></p>
  <p class="text-xs text-primary font-bold flex items-center gap-2">
  <span class="material-symbols-outlined text-[16px]">mail</span> <?= htmlspecialchars($cliente['email'] ?? '') ?>
@@ -259,10 +259,10 @@ include('includes/sidebar.php');
  </div>
  <div class="bg-surface-container-low/50 rounded-xl p-6 border border-outline-variant/20">
  <h3 class="text-[10px] font-black text-primary uppercase tracking-widest mb-4">Lugar de entrega</h3>
- <p class="text-base font-bold text-white mb-2"><?= htmlspecialchars($cliente['receptor_entrega'] ?? $cliente['razon_social']) ?></p>
- <p class="text-xs text-on-surface-variant leading-relaxed mb-5"><?= htmlspecialchars($cliente['domicilio_entrega'] ?? 'Sin domicilio de entrega.') ?></p>
- <div class="flex gap-2">
- <span class="px-2 py-1 bg-surface-container border border-outline-variant/30 text-white text-[9px] font-black rounded-md uppercase tracking-wider flex items-center gap-1">
+  <p class="text-base font-bold text-slate-900 mb-2"><?= htmlspecialchars($cliente['receptor_entrega'] ?? $cliente['razon_social']) ?></p>
+  <p class="text-xs text-on-surface-variant leading-relaxed mb-5"><?= htmlspecialchars($cliente['domicilio_entrega'] ?? 'Sin domicilio de entrega.') ?></p>
+  <div class="flex gap-2">
+  <span class="px-2 py-1 bg-surface-container border border-outline-variant/30 text-slate-900 text-[9px] font-black rounded-md uppercase tracking-wider flex items-center gap-1">
  <?= htmlspecialchars($pedido['tipo_cliente']) ?>
  </span>
  </div>
@@ -272,7 +272,7 @@ include('includes/sidebar.php');
  <!-- Items Table -->
  <div class="mb-12 overflow-x-auto">
  <table class="w-full text-left whitespace-nowrap">
- <thead class="bg-surface-container border-b border-outline-variant/30 text-[10px] font-black text-white uppercase tracking-widest">
+  <thead class="bg-surface-container border-b border-outline-variant/30 text-[10px] font-black text-slate-900 uppercase tracking-widest">
  <tr>
  <th class="py-3 px-4 rounded-tl-xl">Código</th>
  <th class="py-3 px-4">Producto</th>
@@ -284,9 +284,9 @@ include('includes/sidebar.php');
  <tbody class="divide-y divide-outline-variant/10">
  <?php foreach($detalles as $det): ?>
  <tr>
- <td class="py-5 px-4 text-xs font-bold text-white"><?= htmlspecialchars($det['codigo'] ?? 'N/A') ?></td>
- <td class="py-5 px-4">
- <p class="text-sm font-bold text-white mb-0.5"><?= htmlspecialchars($det['nombre_producto']) ?></p>
+  <td class="py-5 px-4 text-xs font-bold text-slate-900"><?= htmlspecialchars($det['codigo'] ?? 'N/A') ?></td>
+  <td class="py-5 px-4">
+  <p class="text-sm font-bold text-slate-900 mb-0.5"><?= htmlspecialchars($det['nombre_producto']) ?></p>
  <div class="flex items-center gap-2">
  <p class="text-[10px] text-on-surface-variant max-w-xs truncate" title="<?= htmlspecialchars($det['sustancia'] ?? '') ?>">
  <?= htmlspecialchars($det['sustancia'] ?? '') ?>
@@ -302,9 +302,9 @@ include('includes/sidebar.php');
  </span>
  </div>
  </td>
- <td class="py-5 px-4 text-sm font-bold text-white text-center"><?= $det['cantidad'] ?></td>
- <td class="py-5 px-4 text-sm text-on-surface-variant text-right">$<?= number_format($det['precio_unitario'], 2) ?></td>
- <td class="py-5 px-4 text-sm font-bold text-white text-right">$<?= number_format($det['subtotal'], 2) ?></td>
+  <td class="py-5 px-4 text-sm font-bold text-slate-900 text-center"><?= $det['cantidad'] ?></td>
+  <td class="py-5 px-4 text-sm text-on-surface-variant text-right">$<?= number_format($det['precio_unitario'], 2) ?></td>
+  <td class="py-5 px-4 text-sm font-bold text-slate-900 text-right">$<?= number_format($det['subtotal'], 2) ?></td>
  </tr>
  <?php endforeach; ?>
  </tbody>
@@ -316,7 +316,7 @@ include('includes/sidebar.php');
  <div class="w-full max-w-sm">
  <div class="flex justify-between items-center mb-3">
  <span class="text-sm text-on-surface-variant">Subtotal productos:</span>
- <span class="text-sm font-bold text-white">$<?= number_format($subtotal_productos, 2) ?></span>
+  <span class="text-sm font-bold text-slate-900">$<?= number_format($subtotal_productos, 2) ?></span>
  </div>
   <div class="flex justify-between items-start mb-3 gap-4">
   <span class="text-sm text-on-surface-variant shrink-0">Envío:</span>
@@ -328,21 +328,21 @@ include('includes/sidebar.php');
             </div>';
   } else {
       $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío gratis';
-      $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400 font-bold';
+      $color_envio = $costo_envio > 0 ? 'text-slate-900' : 'text-green-600 font-bold';
       echo '<span class="text-sm ' . $color_envio . '">' . $texto_envio . '</span>';
   }
   ?>
   </div>
  <div class="flex justify-between items-center mb-3 pt-3 border-t border-outline-variant/10">
  <span class="text-sm text-on-surface-variant">Subtotal (sin IVA):</span>
- <span class="text-sm font-bold text-white">$<?= number_format($subtotal_sin_iva, 2) ?></span>
+  <span class="text-sm font-bold text-slate-900">$<?= number_format($subtotal_sin_iva, 2) ?></span>
  </div>
  <div class="flex justify-between items-center mb-6">
  <span class="text-sm text-on-surface-variant">IVA:</span>
- <span class="text-sm font-bold text-white">$<?= number_format($iva, 2) ?></span>
+  <span class="text-sm font-bold text-slate-900">$<?= number_format($iva, 2) ?></span>
  </div>
  <div class="flex justify-between items-center bg-surface-container-high rounded-xl p-4">
- <span class="text-lg font-black text-white uppercase tracking-widest">Total:</span>
+  <span class="text-lg font-black text-slate-900 uppercase tracking-widest">Total:</span>
  <span class="text-2xl font-extrabold text-primary">$<?= number_format($monto_total, 2) ?></span>
  </div>
  <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Los precios incluyen el IVA aplicable (16%). Moneda: MXN.</p>
@@ -350,12 +350,12 @@ include('includes/sidebar.php');
  </div>
  
  <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00): ?>
- <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
-     <div class="flex items-center gap-2 text-primary font-bold mb-1">
-         <span class="material-symbols-outlined text-[18px]">store</span>
-         Información de entrega en sucursal
-     </div>
-     <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-white">De 9am a 6pm todos los días de la semana.</strong></p>
+  <div class="mt-8 bg-surface-container border border-outline-variant/30 rounded-xl p-4 text-sm text-slate-900">
+      <div class="flex items-center gap-2 text-primary font-bold mb-1">
+          <span class="material-symbols-outlined text-[18px]">store</span>
+          Información de entrega en sucursal
+      </div>
+      <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-slate-900">De 9am a 6pm todos los días de la semana.</strong></p>
      <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
  </div>
  <?php endif; ?>
@@ -385,7 +385,7 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-[10px] font-bold">check</span>
  </div>
  <div>
- <p class="text-sm font-bold text-white mb-0.5">Cotización generada</p>
+  <p class="text-sm font-bold text-slate-900 mb-0.5">Cotización generada</p>
  <p class="text-[10px] text-on-surface-variant"><?= $fecha_pedido ?></p>
  </div>
  </div>
@@ -397,7 +397,7 @@ include('includes/sidebar.php');
  </div>
  <div>
  <p class="text-sm font-extrabold <?= $pedido['estado_envio'] === 'CANCELADO' ? 'text-error' : 'text-primary' ?> mb-0.5"><?= htmlspecialchars($pedido['estado_envio']) ?></p>
- <p class="text-xs text-white"><?= $pedido['estado_envio'] === 'PENDIENTE' ? 'Esperando validación de la orden' : 'Actualizado' ?></p>
+  <p class="text-xs text-slate-500"><?= $pedido['estado_envio'] === 'PENDIENTE' ? 'Esperando validación de la orden' : 'Actualizado' ?></p>
  </div>
  </div>
  </div>
@@ -406,10 +406,10 @@ include('includes/sidebar.php');
  <!-- Support Box -->
  <div class="bg-primary-container border border-primary/20 rounded-2xl p-6 relative overflow-hidden ">
  <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/30 rounded-full blur-xl"></div>
- <h3 class="text-sm font-bold text-white mb-2">Soporte MMPharma</h3>
- <p class="text-[10px] text-on-primary-container leading-relaxed mb-6">¿Tiene dudas sobre esta cotización? Envíe un mensaje.</p>
+  <h3 class="text-sm font-bold text-primary mb-2">Soporte MMPharma</h3>
+  <p class="text-[10px] text-on-primary-container leading-relaxed mb-6">¿Tiene dudas sobre esta cotización? Envíe un mensaje.</p>
  
- <a href="contacto.php" class="flex items-center justify-center gap-3 bg-surface-container-lowest/40 hover:bg-surface-container-lowest transition-colors rounded-xl p-3 border border-outline-variant/30 backdrop-blur-sm relative z-10 font-bold text-xs text-white">
+  <a href="contacto.php" class="flex items-center justify-center gap-3 bg-white/40 hover:bg-white text-primary transition-colors rounded-xl p-3 border border-outline-variant/30 backdrop-blur-sm relative z-10 font-bold text-xs">
  <span class="material-symbols-outlined text-[18px]">support_agent</span> Contactar soporte
  </a>
  </div>
