@@ -74,7 +74,7 @@ require_once '../includes/header.php';
  <div class="text-center lg:text-left mb-8">
  <h2 class="text-3xl font-black text-primary mb-3">Canales <span class="text-tertiary">directos</span></h2>
  <p class="text-slate-900 text-base leading-relaxed">
- Atendemos de lunes a viernes de <span class="text-primary font-bold">9:00 AM a 6:00 PM (Hora del Centro)</span>. Selecciona el medio que más te convenga.
+ Atendemos de lunes a viernes de <span class="text-primary font-bold">9:00 a.m. a 6:00 p.m. (hora del centro)</span>. Selecciona el medio que más te convenga.
  </p>
  </div>
 
@@ -115,7 +115,7 @@ require_once '../includes/header.php';
  <span class="material-symbols-outlined text-3xl">call</span>
  </div>
  <div>
- <h3 class="font-bold text-white text-lg mb-0.5">Línea telefónica 2</h3>
+ <h3 class="font-bold text-white text-lg mb-0.5">Línea telefónica 1</h3>
  <p class="text-white text-sm font-medium tracking-tight">
  33 4348 0581
  </p>
@@ -129,7 +129,7 @@ require_once '../includes/header.php';
  <span class="material-symbols-outlined text-3xl">call</span>
  </div>
  <div>
- <h3 class="font-bold text-white text-lg mb-0.5">Línea telefónica 3</h3>
+ <h3 class="font-bold text-white text-lg mb-0.5">Línea telefónica 2</h3>
  <p class="text-white text-sm font-medium tracking-tight">
  33 4348 0582
  </p>

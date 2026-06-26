@@ -92,8 +92,9 @@ function roundStatIndex($num) {
  </div>
 
  <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="200">
- <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">local_shipping</span>
- <p class="font-black text-tertiary text-base">Entregas rápidas</p>
+ <span class="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-all duration-300">medication</span>
+ <p class="font-black text-tertiary text-base">Catálogo especializado</p>
+ <p class="text-xs text-slate-500 font-medium">Más de <?= number_format($total_productos) ?> productos farmacéuticos</p>
  </div>
 
  <div class="flex flex-col items-center text-center gap-4 group cursor-default" data-aos="fade-up" data-aos-delay="300">

@@ -97,41 +97,41 @@ $activePage = 'documentos';
 include('includes/header.php');
 include('includes/sidebar.php');
 ?>
-<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
- 
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#ffffff">
+
  <!-- Header -->
  <div class="mb-8 animate-reveal">
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Mis documentos</h1>
+ <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mis documentos</h1>
  </div>
   <!-- Alert Banner -->
   <?php if ($aprobados === $total_req): ?>
   <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+    <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
       <span class="material-symbols-outlined text-[24px]">check_circle</span>
     </div>
     <div>
-      <h3 class="text-base font-bold text-white mb-1">Todos tus documentos están vigentes</h3>
-      <p class="text-sm text-emerald-200/80">Tu cuenta se encuentra al día y autorizada para compras controladas.</p>
+      <h3 class="text-base font-bold text-slate-900 mb-1">Todos tus documentos están vigentes</h3>
+      <p class="text-sm text-emerald-700">Tu cuenta se encuentra al día y autorizada para compras controladas.</p>
     </div>
   </div>
   <?php elseif ($faltantes > 0 || $rechazados > 0): ?>
   <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+    <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
       <span class="material-symbols-outlined text-[24px]">warning</span>
     </div>
     <div>
-      <h3 class="text-base font-bold text-white mb-1">Atención requerida</h3>
-      <p class="text-sm text-amber-200/80">Tienes documentos pendientes por subir o rechazados que requieren tu acción.</p>
+      <h3 class="text-base font-bold text-slate-900 mb-1">Atención requerida</h3>
+      <p class="text-sm text-amber-700">Tienes documentos pendientes por subir o rechazados que requieren tu acción.</p>
     </div>
   </div>
   <?php elseif ($pendientes > 0): ?>
   <div class="bg-sky-500/10 border border-sky-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
+    <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
       <span class="material-symbols-outlined text-[24px]">pending</span>
     </div>
     <div>
-      <h3 class="text-base font-bold text-white mb-1">Documentos en revisión</h3>
-      <p class="text-sm text-sky-200/80">Hemos recibido tus documentos. Nuestro equipo de operaciones los validará pronto.</p>
+      <h3 class="text-base font-bold text-slate-900 mb-1">Documentos en revisión</h3>
+      <p class="text-sm text-sky-700">Hemos recibido tus documentos. Nuestro equipo de operaciones los validará pronto.</p>
     </div>
   </div>
   <?php endif; ?>
@@ -250,8 +250,8 @@ include('includes/sidebar.php');
  <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary mb-6 ">
  <span class="material-symbols-outlined text-[32px]">upload_file</span>
  </div>
- <h3 class="text-xl font-bold text-white mb-2">Gestión segura</h3>
- <p class="text-on-surface-variant text-sm mb-8 max-w-md">Todos los documentos cargados son almacenados en un entorno seguro y validados por nuestro equipo de operaciones.</p>
+ <h3 class="text-xl font-bold text-slate-900 mb-2">Gestión segura</h3>
+ <p class="text-slate-500 text-sm mb-8 max-w-md">Todos los documentos cargados son almacenados en un entorno seguro y validados por nuestro equipo de operaciones.</p>
  </div>
 
  <!-- Input file oculto para cargar archivos -->
@@ -325,7 +325,7 @@ include('includes/sidebar.php');
 
  function validateAndUpload(file, displayElement, iconElement, inputElement) {
  if (file.size > maxFileSize) {
- Swal.fire({icon: 'error', title: 'Archivo muy grande', text: 'El archivo supera el límite de 15MB.', background: '#071628', color: '#fff'});
+ Swal.fire({icon: 'error', title: 'Archivo muy grande', text: 'El archivo supera el límite de 15MB.', background: '#ffffff', color: '#1e293b'});
  inputElement.value = ''; 
  if (displayElement) displayElement.textContent = "Arrastra o haz clic para subir";
  if (iconElement) iconElement.textContent = "cloud_upload";
@@ -360,15 +360,15 @@ include('includes/sidebar.php');
  .then(r => r.json())
  .then(data => {
  if(data.status === 'success') {
- Swal.fire({icon: 'success', title: '¡Documento subido!', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
+ Swal.fire({icon: 'success', title: '¡Documento subido!', background: '#ffffff', color: '#1e293b', showConfirmButton: false, timer: 1500}).then(() => location.reload());
  } else {
- Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+ Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#ffffff', color: '#1e293b'});
  if (displayElement) displayElement.textContent = "Arrastra o haz clic para subir";
  if (iconElement) iconElement.textContent = "cloud_upload";
  inputElement.value = '';
  }
  }).catch(e => {
- Swal.fire({icon: 'error', title: 'Error de red', background: '#071628', color: '#fff'});
+ Swal.fire({icon: 'error', title: 'Error de red', background: '#ffffff', color: '#1e293b'});
  });
  }
 
@@ -382,8 +382,8 @@ function eliminarDocumento(tipo) {
  cancelButtonColor: '#747780',
  confirmButtonText: 'Sí, eliminar',
  cancelButtonText: 'Cancelar',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  }).then((result) => {
  if (result.isConfirmed) {
  Swal.fire({
@@ -403,12 +403,12 @@ function eliminarDocumento(tipo) {
  .then(r => r.json())
  .then(data => {
  if(data.status === 'success') {
- Swal.fire({icon: 'success', title: 'Documento eliminado', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500}).then(() => location.reload());
+ Swal.fire({icon: 'success', title: 'Documento eliminado', background: '#ffffff', color: '#1e293b', showConfirmButton: false, timer: 1500}).then(() => location.reload());
  } else {
- Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+ Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#ffffff', color: '#1e293b'});
  }
  }).catch(e => {
- Swal.fire({icon: 'error', title: 'Error de red', background: '#071628', color: '#fff'});
+ Swal.fire({icon: 'error', title: 'Error de red', background: '#ffffff', color: '#1e293b'});
  });
  }
  });

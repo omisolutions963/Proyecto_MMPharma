@@ -80,22 +80,22 @@ include('includes/sidebar.php');
 <main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)] bg-background text-on-surface">
  
  <!-- Top Nav -->
- <nav class="flex items-center gap-2 mb-6 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
+ <nav class="flex items-center gap-2 mb-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
  <a href="dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
  <a href="cotizaciones.php" class="hover:text-primary transition-colors">Cotizaciones</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
- <span class="text-on-surface-variant">Detalle #<?= htmlspecialchars($pedido['folio']) ?></span>
+ <span class="text-slate-500">Detalle #<?= htmlspecialchars($pedido['folio']) ?></span>
  </nav>
 
  <!-- Header Actions -->
  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 animate-reveal">
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Folio #<?= htmlspecialchars($pedido['folio']) ?></h1>
+ <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Folio #<?= htmlspecialchars($pedido['folio']) ?></h1>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
- <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=view" target="_blank" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
+ <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=view" target="_blank" class="bg-sky-50 text-sky-600 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-sky-200 hover:bg-sky-100 transition-all">
  <span class="material-symbols-outlined text-[18px]">visibility</span> Ver
  </a>
- <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=download" class="bg-surface-container-high/40 text-secondary px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-secondary/20 hover:bg-secondary/10 transition-all">
+ <a href="descargar_cotizacion.php?id=<?= $pedido_id ?>&action=download" class="bg-sky-50 text-sky-600 px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold border border-sky-200 hover:bg-sky-100 transition-all">
  <span class="material-symbols-outlined text-[18px]">download</span> PDF
  </a>
   <?php if ((!$comprobante || $comprobante['estatus_validacion'] === 'RECHAZADO') && $pedido['estado_envio'] !== 'CANCELADO'): ?>
@@ -104,7 +104,7 @@ include('includes/sidebar.php');
   <span class="material-symbols-outlined text-[18px]">upload_file</span> Subir comprobante
   </button>
   <?php elseif ($comprobante): ?>
-  <span class="px-4 py-2 bg-tertiary/10 text-tertiary text-sm font-bold rounded-xl flex items-center gap-2 border border-tertiary/20">
+  <span class="px-4 py-2 bg-emerald-50 text-emerald-600 text-sm font-bold rounded-xl flex items-center gap-2 border border-emerald-200">
   <span class="material-symbols-outlined text-[18px]">receipt</span> Comprobante enviado (<?= htmlspecialchars($comprobante['estatus_validacion']) ?>)
   </span>
   <?php endif; ?>
@@ -112,15 +112,15 @@ include('includes/sidebar.php');
   </div>
 
   <?php if ($comprobante && $comprobante['estatus_validacion'] === 'RECHAZADO'): ?>
-  <div class="mb-6 bg-error/15 border border-error/30 text-error px-6 py-4 rounded-2xl flex items-start gap-3 animate-reveal">
+  <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-2xl flex items-start gap-3 animate-reveal">
       <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">error</span>
       <div>
-          <h4 class="font-bold text-white text-sm">Comprobante de pago rechazado</h4>
-          <p class="text-xs text-on-surface-variant mt-1">Tu comprobante anterior fue rechazado por el administrador.</p>
+          <h4 class="font-bold text-red-900 text-sm">Comprobante de pago rechazado</h4>
+          <p class="text-xs text-red-700 mt-1">Tu comprobante anterior fue rechazado por el administrador.</p>
           <?php if (!empty($comprobante['notas_admin'])): ?>
-          <p class="text-xs text-white font-semibold mt-2">Motivo: <span class="italic font-normal">"<?= htmlspecialchars($comprobante['notas_admin']) ?>"</span></p>
+          <p class="text-xs text-red-900 font-semibold mt-2">Motivo: <span class="italic font-normal">"<?= htmlspecialchars($comprobante['notas_admin']) ?>"</span></p>
           <?php endif; ?>
-          <p class="text-xs text-on-surface-variant mt-2 font-medium">Por favor, sube un nuevo comprobante válido utilizando el botón de arriba.</p>
+          <p class="text-xs text-red-700 mt-2 font-medium">Por favor, sube un nuevo comprobante válido utilizando el botón de arriba.</p>
       </div>
   </div>
   <?php endif; ?>
@@ -436,8 +436,8 @@ function procesarArchivo() {
  text: 'Por favor espera un momento.',
  allowOutsideClick: false,
  didOpen: () => { Swal.showLoading(); },
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  });
 
  fetch('api_subir_comprobante.php', {
@@ -451,8 +451,8 @@ function procesarArchivo() {
  icon: 'success',
  title: '¡Éxito!',
  text: 'El comprobante ha sido enviado para validación.',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  }).then(() => {
  location.reload();
  });
@@ -461,14 +461,14 @@ function procesarArchivo() {
  icon: 'error',
  title: 'Error',
  text: data.message || 'No se pudo subir el archivo.',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  });
  }
  })
  .catch(err => {
  console.error(err);
- Swal.fire({ icon: 'error', title: 'Error de red', background: '#071628', color: '#fff' });
+ Swal.fire({ icon: 'error', title: 'Error de red', background: '#ffffff', color: '#1e293b' });
  });
 }
 </script>

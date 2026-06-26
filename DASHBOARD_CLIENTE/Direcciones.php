@@ -28,13 +28,13 @@ $activePage = 'direcciones';
 include('includes/header.php');
 include('includes/sidebar.php');
 ?>
-<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
- 
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#ffffff">
+
  <!-- Header -->
  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 animate-reveal">
  <div>
- <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">Mis direcciones</h1>
- <p class="text-on-surface-variant text-sm">Gestiona las ubicaciones donde recibirás tus pedidos.</p>
+ <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-1">Mis direcciones</h1>
+ <p class="text-slate-500 text-sm">Gestiona las ubicaciones donde recibirás tus pedidos.</p>
  </div>
  <button class="mt-4 md:mt-0 px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
  <span class="material-symbols-outlined text-[18px]">add</span> Agregar nueva dirección
@@ -475,7 +475,7 @@ include('includes/sidebar.php');
                             Swal.close();
                             Swal.fire({
                                 icon: 'success', title: 'Ubicación obtenida', text: 'Se autocompletaron los datos basados en tu ubicación actual. Revisa que sean correctos.',
-                                background: '#071628', color: '#fff', showConfirmButton: true, confirmButtonColor: '#003e79'
+                                background: '#ffffff', color: '#1e293b', showConfirmButton: true, confirmButtonColor: '#003e79'
                             });
                         } else {
                             throw new Error("No address data");
@@ -486,7 +486,7 @@ include('includes/sidebar.php');
                         Swal.close();
                         Swal.fire({
                             icon: 'warning', title: 'Coordenadas obtenidas', text: 'Obtuvimos tus coordenadas, pero no pudimos autocompletar la dirección. Por favor, llénala manualmente.',
-                            background: '#071628', color: '#fff', showConfirmButton: true, confirmButtonColor: '#003e79'
+                            background: '#ffffff', color: '#1e293b', showConfirmButton: true, confirmButtonColor: '#003e79'
                         });
                     });
                 },
@@ -495,7 +495,7 @@ include('includes/sidebar.php');
                     Swal.close();
                     Swal.fire({
                         icon: 'error', title: 'Error', text: 'No se pudo obtener tu ubicación. Por favor, asegúrate de dar permisos o ingresa la dirección manualmente.',
-                        background: '#071628', color: '#fff'
+                        background: '#ffffff', color: '#1e293b'
                     });
                 }, { enableHighAccuracy: true }
             );
@@ -503,7 +503,7 @@ include('includes/sidebar.php');
             this.checked = false;
             Swal.fire({
                 icon: 'error', title: 'Error', text: 'Tu navegador no soporta geolocalización',
-                background: '#071628', color: '#fff'
+                background: '#ffffff', color: '#1e293b'
             });
         }
     } else {
@@ -533,21 +533,21 @@ include('includes/sidebar.php');
      if(res.success) {
          Swal.fire({
             icon: 'success', title: 'Dirección agregada', text: 'La dirección se guardó correctamente.',
-            background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500
+            background: '#ffffff', color: '#1e293b', showConfirmButton: false, timer: 1500
          }).then(() => {
             location.reload();
          });
      } else {
          Swal.fire({
             icon: 'error', title: 'Error', text: res.error || 'Ocurrió un error',
-            background: '#071628', color: '#fff'
+            background: '#ffffff', color: '#1e293b'
          });
      }
  })
  .catch(err => {
     Swal.fire({
         icon: 'error', title: 'Error', text: 'Ocurrió un error de red.',
-        background: '#071628', color: '#fff'
+        background: '#ffffff', color: '#1e293b'
     });
  });
  });
@@ -562,8 +562,8 @@ include('includes/sidebar.php');
  cancelButtonColor: '#747780',
  confirmButtonText: 'Sí, eliminar',
  cancelButtonText: 'Cancelar',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  }).then((result) => {
  if (result.isConfirmed) {
  Swal.fire({
@@ -584,8 +584,8 @@ include('includes/sidebar.php');
              icon: 'success',
              title: 'Eliminada',
              text: 'La dirección fue eliminada.',
-             background: '#071628',
-             color: '#fff',
+             background: '#ffffff',
+             color: '#1e293b',
              showConfirmButton: false,
              timer: 1500
          }).then(() => {
@@ -596,8 +596,8 @@ include('includes/sidebar.php');
              icon: 'error',
              title: 'Error',
              text: res.error || 'Ocurrió un error',
-             background: '#071628',
-             color: '#fff'
+             background: '#ffffff',
+             color: '#1e293b'
          });
      }
  })
@@ -606,8 +606,8 @@ include('includes/sidebar.php');
          icon: 'error',
          title: 'Error',
          text: 'Error de red al eliminar la dirección.',
-         background: '#071628',
-         color: '#fff'
+         background: '#ffffff',
+         color: '#1e293b'
      });
  });
  }

@@ -76,10 +76,10 @@ include('includes/sidebar.php');
  <!-- HEADER -->
  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 animate-reveal">
  <div>
- <h1 class="text-3xl font-extrabold text-white tracking-tight">
+ <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
  Hola, <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>
  </h1>
- <p class="text-white/80 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
+ <p class="text-slate-500 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
  </div>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
  <a href="cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">

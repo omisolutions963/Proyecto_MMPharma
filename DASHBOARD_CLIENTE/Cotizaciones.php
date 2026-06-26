@@ -48,13 +48,13 @@ include('includes/sidebar.php');
  <!-- Breadcrumb & Header -->
  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 animate-reveal">
  <div>
- <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
+ <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
  <a href="dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
- <span class="text-on-surface-variant">Cotizaciones</span>
+ <span class="text-slate-500">Cotizaciones</span>
  </nav>
- <h1 class="text-3xl font-extrabold text-white tracking-tight">Historial de cotizaciones</h1>
- <p class="text-on-surface-variant mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
+ <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Historial de cotizaciones</h1>
+ <p class="text-slate-500 mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
  </div>
  <div class="mt-4 md:mt-0">
  <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
@@ -189,7 +189,7 @@ include('includes/sidebar.php');
 
  <!-- Export Actions -->
  <div class="flex justify-end gap-3 mt-6 animate-reveal delay-400">
- <a href="descargar_resumen_pdf.php" target="_blank" class="px-5 py-2.5 bg-error/10 hover:bg-error/20 text-error text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
+ <a href="descargar_resumen_pdf.php" target="_blank" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar reporte PDF
  </a>
  </div>
@@ -232,8 +232,8 @@ async function borrarCotizacion(id, folio) {
  cancelButtonColor: '#747780',
  confirmButtonText: 'Sí, eliminar',
  cancelButtonText: 'Cancelar',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  });
 
  if (result.isConfirmed) {
@@ -250,8 +250,8 @@ async function borrarCotizacion(id, folio) {
  title: 'Eliminado',
  text: 'La cotización ha sido eliminada correctamente.',
  icon: 'success',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  }).then(() => {
  location.reload();
  });
@@ -260,8 +260,8 @@ async function borrarCotizacion(id, folio) {
  title: 'Error',
  text: data.message || 'No se pudo eliminar la cotización.',
  icon: 'error',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  });
  }
  } catch (error) {
@@ -269,8 +269,8 @@ async function borrarCotizacion(id, folio) {
  title: 'Error',
  text: 'Error de conexión con el servidor.',
  icon: 'error',
- background: '#071628',
- color: '#fff'
+ background: '#ffffff',
+ color: '#1e293b'
  });
  }
  }

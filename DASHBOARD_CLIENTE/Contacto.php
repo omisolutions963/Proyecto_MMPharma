@@ -86,12 +86,12 @@ $activePage = 'contacto';
 include('includes/header.php');
 include('includes/sidebar.php');
 ?>
-<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
- 
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#ffffff">
+
   <!-- Header -->
   <div class="mb-10 animate-reveal">
-  <h1 class="text-3xl font-extrabold text-white tracking-tight mb-2">Centro de soporte</h1>
-  <p class="text-on-surface-variant text-sm max-w-2xl">Bienvenido a nuestro canal de atención directa. Si tienes dudas sobre un pedido o necesitas asistencia técnica, nuestro equipo especializado está listo para apoyarte.</p>
+  <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Centro de soporte</h1>
+  <p class="text-slate-500 text-sm max-w-2xl">Bienvenido a nuestro canal de atención directa. Si tienes dudas sobre un pedido o necesitas asistencia técnica, nuestro equipo especializado está listo para apoyarte.</p>
   </div>
 
   <!-- Main Grid -->
@@ -212,8 +212,8 @@ include('includes/sidebar.php');
          icon: 'success',
          title: '¡Mensaje enviado!',
          text: 'Tu solicitud de soporte ha sido recibida con éxito. Te responderemos a la brevedad.',
-         background: '#071628',
-         color: '#fff',
+         background: '#ffffff',
+         color: '#1e293b',
          confirmButtonColor: '#4a90d9',
          confirmButtonText: 'Aceptar'
      });
@@ -224,8 +224,8 @@ include('includes/sidebar.php');
          icon: 'error',
          title: 'Error de envío',
          text: 'Ocurrió un error al procesar tu solicitud. Por favor intenta de nuevo más tarde.',
-         background: '#071628',
-         color: '#fff',
+         background: '#ffffff',
+         color: '#1e293b',
          confirmButtonColor: '#f28b82',
          confirmButtonText: 'Cerrar'
      });
