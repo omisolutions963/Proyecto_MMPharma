@@ -2,6 +2,140 @@
 require_once '../clinical_core/db.php';
 $pdo = getDB();
 
+/**
+ * Mezcla una imagen de origen (con transparencia PNG) en una de destino con opacidad personalizada.
+ */
+function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct) {
+    imagealphablending($dst_im, true);
+    for ($x = 0; $x < $src_w; $x++) {
+        for ($y = 0; $y < $src_h; $y++) {
+            $color = imagecolorat($src_im, $src_x + $x, $src_y + $y);
+            $rgba = imagecolorsforindex($src_im, $color);
+            
+            $alpha = $rgba['alpha']; // 0 (opaco) a 127 (transparente)
+            if ($alpha >= 127) {
+                continue;
+            }
+            
+            // Combinar la opacidad original de cada píxel del PNG con la opacidad global ($pct)
+            $src_alpha_pct = 1 - ($alpha / 127);
+            $target_alpha_pct = $src_alpha_pct * ($pct / 100);
+            $new_alpha = (int)(127 * (1 - $target_alpha_pct));
+            
+            $bg_x = $dst_x + $x;
+            $bg_y = $dst_y + $y;
+            if ($bg_x >= 0 && $bg_x < imagesx($dst_im) && $bg_y >= 0 && $bg_y < imagesy($dst_im)) {
+                $allocated_color = imagecolorallocatealpha($dst_im, $rgba['red'], $rgba['green'], $rgba['blue'], $new_alpha);
+                imagesetpixel($dst_im, $bg_x, $bg_y, $allocated_color);
+            }
+        }
+    }
+}
+
+/**
+ * Procesa la imagen del producto para encuadrarla (hacerla cuadrada con fondo blanco),
+ * aplicar un enfoque suave (retoque sutil) e insertar la marca de agua centrada con baja opacidad.
+ */
+function procesarImagenProducto($img_binary, $dest_path) {
+    $src_img = imagecreatefromstring($img_binary);
+    if (!$src_img) {
+        return false;
+    }
+    
+    $orig_w = imagesx($src_img);
+    $orig_h = imagesy($src_img);
+    
+    // 1. Determinar tamaño del lienzo cuadrado (máximo de ancho/alto para conservar calidad, cap a 1200px)
+    $max_dim = max($orig_w, $orig_h);
+    $target_size = min(1200, max(600, $max_dim)); // Entre 600px y 1200px
+    
+    // Crear lienzo de destino cuadrado
+    $dst_img = imagecreatetruecolor($target_size, $target_size);
+    
+    // Rellenar fondo con blanco limpio (para encuadrar de forma estética)
+    $white = imagecolorallocate($dst_img, 255, 255, 255);
+    imagefill($dst_img, 0, 0, $white);
+    
+    // Redimensionar y centrar la imagen original dentro del cuadrado blanco conservando relación de aspecto
+    // Se deja un pequeño margen a los lados (el producto ocupa el 90% del lienzo cuadrado)
+    $inner_size = (int)($target_size * 0.90);
+    $ratio = $orig_w / $orig_h;
+    if ($ratio > 1) {
+        // Más ancho que alto (horizontal)
+        $new_w = $inner_size;
+        $new_h = (int)($inner_size / $ratio);
+    } else {
+        // Más alto que ancho (vertical)
+        $new_h = $inner_size;
+        $new_w = (int)($inner_size * $ratio);
+    }
+    
+    $dst_x = (int)(($target_size - $new_w) / 2);
+    $dst_y = (int)(($target_size - $new_h) / 2);
+    
+    // Copiar la imagen redimensionándola con interpolación suave
+    imagecopyresampled($dst_img, $src_img, $dst_x, $dst_y, 0, 0, $new_w, $new_h, $orig_w, $orig_h);
+    imagedestroy($src_img);
+    
+    // 2. Retoque sutil: Enfoque ligero (sharpen) para que la imagen se vea nítida y profesional
+    $sharpen_matrix = [
+        [-0.1, -0.1, -0.1],
+        [-0.1,  1.8, -0.1],
+        [-0.1, -0.1, -0.1]
+    ];
+    $div = array_sum(array_map('array_sum', $sharpen_matrix)); // Da 1.0 para mantener el brillo
+    imageconvolution($dst_img, $sharpen_matrix, $div, 0);
+    
+    // 3. Insertar marca de agua si existe
+    $watermark_path = '../../productos/marca_agua.png';
+    if (!file_exists($watermark_path)) {
+        $watermark_path = '../../img/productos/marca_agua.png';
+    }
+    if (!file_exists($watermark_path)) {
+        $watermark_path = '../../logos/mmpharma-isotipo.png';
+    }
+    
+    if (file_exists($watermark_path)) {
+        $wmark_src = imagecreatefrompng($watermark_path);
+        if ($wmark_src) {
+            imagealphablending($wmark_src, false);
+            imagesavealpha($wmark_src, true);
+            
+            $wmark_orig_w = imagesx($wmark_src);
+            $wmark_orig_h = imagesy($wmark_src);
+            
+            // Tamaño de marca de agua: "mediano" -> 48% del tamaño de la foto
+            $wmark_target_w = (int)($target_size * 0.48);
+            $wmark_target_h = (int)($wmark_orig_h * ($wmark_target_w / $wmark_orig_w));
+            
+            // Crear copia a escala de la marca de agua
+            $wmark_scaled = imagecreatetruecolor($wmark_target_w, $wmark_target_h);
+            imagealphablending($wmark_scaled, false);
+            imagesavealpha($wmark_scaled, true);
+            $transparent = imagecolorallocatealpha($wmark_scaled, 0, 0, 0, 127);
+            imagefill($wmark_scaled, 0, 0, $transparent);
+            
+            imagecopyresampled($wmark_scaled, $wmark_src, 0, 0, 0, 0, $wmark_target_w, $wmark_target_h, $wmark_orig_w, $wmark_orig_h);
+            
+            // Calcular posición centrada
+            $wmark_x = (int)(($target_size - $wmark_target_w) / 2);
+            $wmark_y = (int)(($target_size - $wmark_target_h) / 2);
+            
+            // Mezclar marca de agua con opacidad baja (20%)
+            imagecopymerge_alpha($dst_img, $wmark_scaled, $wmark_x, $wmark_y, 0, 0, $wmark_target_w, $wmark_target_h, 20);
+            
+            imagedestroy($wmark_src);
+            imagedestroy($wmark_scaled);
+        }
+    }
+    
+    // Guardar imagen resultante como JPEG con calidad 90% (buen balance de peso y calidad)
+    $result = imagejpeg($dst_img, $dest_path, 90);
+    imagedestroy($dst_img);
+    return $result;
+}
+
+
 // Obtener Categorías para el modal
 $stmt_cats = $pdo->query("SELECT * FROM catalogo_categorias ORDER BY nombre ASC");
 $categorias = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
@@ -9,6 +143,7 @@ $categorias = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
 // ── FILTROS Y PAGINACIÓN ──────────────────────────────────────────────────────
 $q = trim($_GET['q'] ?? '');
 $tipo = trim($_GET['tipo'] ?? '');
+$filtro = trim($_GET['filtro'] ?? '');
 $pg = max(1, (int)($_GET['pg'] ?? 1));
 $perPage = 15;
 $offset = ($pg - 1) * $perPage;
@@ -22,6 +157,13 @@ if ($q) {
 if ($tipo) {
  $where .= " AND p.tipo = ?";
  $params[] = $tipo;
+}
+if ($filtro === 'sin_precio') {
+  $where .= " AND p.precio_farmacia = 0 AND p.precio_distribuidor = 0";
+} elseif ($filtro === 'sin_stock') {
+  $where .= " AND COALESCE(s.stock_actual, 0) <= 0";
+} elseif ($filtro === 'sin_imagen') {
+  $where .= " AND (p.imagen IS NULL OR p.imagen = 'PENDIENTE' OR p.imagen = '')";
 }
 
 // Datos
@@ -159,15 +301,20 @@ if (isset($_GET['ajax'])) {
  $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
  $tasa_iva = 0.16;
  $foto_base64 = $_POST['foto_base64'] ?? '';
+ $procesar_imagen = isset($_POST['procesar_imagen']) ? 1 : 0;
  
  $nombre_archivo = null;
- if (!empty($foto_base64)) {
- $data = explode(',', $foto_base64);
- $img_content = base64_decode($data[1]);
- $nombre_archivo = 'prod_' . time() . '_' . uniqid() . '.jpg';
- $ruta = '../../img/productos/' . $nombre_archivo;
- file_put_contents($ruta, $img_content);
- }
+  if (!empty($foto_base64)) {
+    $data = explode(',', $foto_base64);
+    $img_content = base64_decode($data[1]);
+    $nombre_archivo = 'prod_' . time() . '_' . uniqid() . '.jpg';
+    $ruta = '../../img/productos/' . $nombre_archivo;
+    if ($procesar_imagen) {
+      procesarImagenProducto($img_content, $ruta);
+    } else {
+      file_put_contents($ruta, $img_content);
+    }
+  }
 
  if ($id > 0) {
  $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?";
@@ -206,9 +353,6 @@ include("../includes/sidebar.php");
  <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
  </div>
  <div class="flex gap-3">
-  <a href="sync_images.php" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
-   <span class="material-symbols-outlined text-[18px]">sync</span> Sincronizar fotos
-  </a>
   <button onclick="abrirModalAjuste()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
    <span class="material-symbols-outlined text-[18px]">price_change</span> Ajuste masivo
   </button>
@@ -243,7 +387,26 @@ include("../includes/sidebar.php");
  <h3 class="text-2xl font-black text-on-surface"><?= number_format($k['v']) ?></h3>
  </div>
  <?php endforeach; ?>
+ </div>
+
+<!-- Filtro Activo Aviso -->
+<?php if ($filtro): ?>
+<div class="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl flex justify-between items-center animate-reveal">
+    <div class="flex items-center gap-2 text-primary font-bold text-sm">
+        <span class="material-symbols-outlined text-[18px]">filter_alt</span>
+        <?php if ($filtro === 'sin_precio'): ?>
+            Mostrando solo productos sin precio
+        <?php elseif ($filtro === 'sin_stock'): ?>
+            Mostrando solo productos sin stock
+        <?php elseif ($filtro === 'sin_imagen'): ?>
+            Mostrando solo productos sin imagen
+        <?php endif; ?>
+    </div>
+    <a href="productos.php" class="text-xs text-primary hover:underline font-bold flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">close</span> Quitar filtro
+    </a>
 </div>
+<?php endif; ?>
 
 <!-- Filtros -->
 <form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8 animate-reveal" style="animation-delay: 0.35s">
@@ -371,6 +534,10 @@ include("../includes/sidebar.php");
  </div>
  </div>
  <input type="file" id="fotoInputProducto" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
+ <label class="flex items-center gap-2 mt-3 bg-surface-container-low px-4 py-2 rounded-xl border border-outline-variant/10 cursor-pointer select-none">
+    <input type="checkbox" name="procesar_imagen" id="procesar_imagen" value="1" checked class="w-4 h-4 rounded border-outline-variant/30 text-primary focus:ring-primary accent-primary cursor-pointer">
+    <span class="text-xs font-semibold text-on-surface-variant">Encuadrar y marca de agua automático</span>
+  </label>
  </div>
 
  <div class="space-y-4">
@@ -567,32 +734,45 @@ window.addEventListener('scroll', () => {
 });
 
 async function loadMore() {
- loading = true; document.getElementById('loading').classList.remove('hidden'); currentPage++;
- try {
- const res = await fetch(`productos.php?ajax=1&pg=${currentPage}&q=<?= urlencode($q) ?>&tipo=<?= urlencode($tipo) ?>`);
- const html = await res.text();
- if (html.trim() === "") { hasMore = false; } else { document.getElementById('tableBody').insertAdjacentHTML('beforeend', html); }
- } catch (e) { console.error(e); } finally { loading = false; document.getElementById('loading').classList.add('hidden'); }
+  loading = true; document.getElementById('loading').classList.remove('hidden'); currentPage++;
+  try {
+  const res = await fetch(`productos.php?ajax=1&pg=${currentPage}&q=<?= urlencode($q) ?>&tipo=<?= urlencode($tipo) ?>&filtro=<?= urlencode($filtro) ?>`);
+  const html = await res.text();
+  if (html.trim() === "") { hasMore = false; } else { document.getElementById('tableBody').insertAdjacentHTML('beforeend', html); }
+  } catch (e) { console.error(e); } finally { loading = false; document.getElementById('loading').classList.add('hidden'); }
 }
 
 // Cropper Logic
 function procesarFoto(input) {
- if (input.files && input.files[0]) {
- const file = input.files[0];
- if (!file.type.match('image/jpeg|image/png|image/webp')) {
- mockAction('Formato no soportado', 'Por favor sube una imagen en formato JPG, PNG o WEBP. Los formatos como HEIC no son compatibles.', 'error');
- input.value = '';
- return;
- }
- const reader = new FileReader();
- reader.onload = (e) => {
- document.getElementById('cropperImage').src = e.target.result;
- document.getElementById('cropperModal').classList.remove('hidden');
- if (cropper) cropper.destroy();
- cropper = new Cropper(document.getElementById('cropperImage'), { aspectRatio: 1, viewMode: 2 });
- };
- reader.readAsDataURL(file);
- }
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (!file.type.match('image/jpeg|image/png|image/webp')) {
+      mockAction('Formato no soportado', 'Por favor sube una imagen en formato JPG, PNG o WEBP. Los formatos como HEIC no son compatibles.', 'error');
+      input.value = '';
+      return;
+    }
+    
+    const autoProcess = document.getElementById('procesar_imagen') && document.getElementById('procesar_imagen').checked;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (autoProcess) {
+        // Bypass Cropper.js! Just set base64 and preview directly.
+        const base64 = e.target.result;
+        document.getElementById('foto_base64').value = base64;
+        document.getElementById('previewModal').src = base64;
+        document.getElementById('previewModal').classList.remove('hidden');
+        document.getElementById('placeholderModal').classList.add('hidden');
+      } else {
+        // Show manual Cropper.js modal
+        document.getElementById('cropperImage').src = e.target.result;
+        document.getElementById('cropperModal').classList.remove('hidden');
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(document.getElementById('cropperImage'), { aspectRatio: 1, viewMode: 2 });
+      }
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 document.getElementById('btnConfirmarRecorte').addEventListener('click', () => {
@@ -613,6 +793,9 @@ function abrirModal() {
   document.getElementById('foto_base64').value = "";
   if (document.getElementById('fotoInputProducto')) {
     document.getElementById('fotoInputProducto').value = "";
+  }
+  if (document.getElementById('procesar_imagen')) {
+    document.getElementById('procesar_imagen').checked = true;
   }
   document.getElementById('previewModal').classList.add('hidden');
   document.getElementById('placeholderModal').classList.remove('hidden');
@@ -638,6 +821,9 @@ function abrirEditar(p) {
   document.getElementById('foto_base64').value = "";
   if (document.getElementById('fotoInputProducto')) {
     document.getElementById('fotoInputProducto').value = "";
+  }
+  if (document.getElementById('procesar_imagen')) {
+    document.getElementById('procesar_imagen').checked = true;
   }
   if (p.imagen) {
   document.getElementById('previewModal').src = "../../img/productos/" + p.imagen;

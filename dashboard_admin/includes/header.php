@@ -1,5 +1,83 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+
+if (!isset($pdo)) {
+    require_once __DIR__ . '/../../includes/db.php';
+    $pdo = getDB();
+}
+
+$notif_admin = [];
+
+try {
+    // 1. Solicitudes de Registro Pendientes
+    $stmt_sol = $pdo->prepare("SELECT id, razon_social, created_at FROM clientes_solicitudes_registro WHERE estatus = 'PENDIENTE' ORDER BY created_at DESC LIMIT 5");
+    $stmt_sol->execute();
+    while ($row = $stmt_sol->fetch(PDO::FETCH_ASSOC)) {
+        $notif_admin[] = [
+            'tipo' => 'SOLICITUD',
+            'mensaje' => 'Nueva solicitud de registro: ' . $row['razon_social'],
+            'link' => '../s_registro/solicitudes.php',
+            'created_at' => $row['created_at'],
+            'icon' => 'person_add',
+            'style' => 'bg-primary/10 text-primary',
+            'icon_class' => 'text-primary'
+        ];
+    }
+
+    // 2. Pedidos Pendientes
+    $stmt_ped = $pdo->prepare("SELECT p.id, p.monto_total, p.created_at, c.razon_social FROM clientes_pedidos p JOIN clientes_usuarios c ON p.cliente_id = c.id WHERE p.estado_envio = 'PENDIENTE' ORDER BY p.created_at DESC LIMIT 5");
+    $stmt_ped->execute();
+    while ($row = $stmt_ped->fetch(PDO::FETCH_ASSOC)) {
+        $notif_admin[] = [
+            'tipo' => 'PEDIDO',
+            'mensaje' => 'Nuevo pedido de ' . $row['razon_social'] . ' (Total: $' . number_format($row['monto_total'], 2) . ')',
+            'link' => '../g_pedidos/pedidos.php',
+            'created_at' => $row['created_at'],
+            'icon' => 'shopping_cart',
+            'style' => 'bg-secondary/10 text-secondary',
+            'icon_class' => 'text-secondary'
+        ];
+    }
+
+    // 3. Mensajes de Soporte No Leídos
+    $stmt_msg = $pdo->prepare("SELECT id, nombre, created_at FROM clientes_contacto_mensajes WHERE leido = 0 ORDER BY created_at DESC LIMIT 5");
+    $stmt_msg->execute();
+    while ($row = $stmt_msg->fetch(PDO::FETCH_ASSOC)) {
+        $notif_admin[] = [
+            'tipo' => 'SOPORTE',
+            'mensaje' => 'Mensaje de soporte de ' . $row['nombre'],
+            'link' => '../g_soporte/mensajes.php',
+            'created_at' => $row['created_at'],
+            'icon' => 'chat',
+            'style' => 'bg-tertiary/10 text-tertiary',
+            'icon_class' => 'text-tertiary'
+        ];
+    }
+
+    // 4. Documentos Pendientes de Validar
+    $stmt_doc = $pdo->prepare("SELECT d.id, d.cliente_id, d.tipo_documento, d.fecha_subida, c.razon_social FROM clientes_documentos d JOIN clientes_usuarios c ON d.cliente_id = c.id WHERE d.estatus_validacion = 'PENDIENTE' ORDER BY d.fecha_subida DESC LIMIT 5");
+    $stmt_doc->execute();
+    while ($row = $stmt_doc->fetch(PDO::FETCH_ASSOC)) {
+        $notif_admin[] = [
+            'tipo' => 'DOCUMENTO',
+            'mensaje' => 'Documento por validar (' . $row['tipo_documento'] . ') de ' . $row['razon_social'],
+            'link' => '../g_clientes/ver_cliente.php?id=' . $row['cliente_id'],
+            'created_at' => $row['fecha_subida'],
+            'icon' => 'description',
+            'style' => 'bg-primary/10 text-primary',
+            'icon_class' => 'text-primary'
+        ];
+    }
+
+    // Ordenar todas por created_at descending
+    usort($notif_admin, function($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
+} catch (Exception $e) {
+    // Tolerancia a fallos si alguna tabla no está disponible o falla
+}
+
+$unread_count = count($notif_admin);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -110,7 +188,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
  overflow-y: scroll !important;
  }
  .glass-card { background: rgba(0,129,81,0.05); backdrop-filter: blur(20px); }
- .card-glow { box-: 0 0 30px rgba(0,129,81,0.08); }
+ .card-glow { box-shadow: 0 0 30px rgba(0,129,81,0.08); }
 
  /* --- ANIMACIONES NATIVAS --- */
  @keyframes revealUp {
@@ -130,25 +208,18 @@ if (session_status() === PHP_SESSION_NONE) session_start();
  .delay-400 { animation-delay: 0.4s; }
  .delay-500 { animation-delay: 0.5s; }
 
- /* ══ ESTANDARIZACIÓN DE SOMBRAS GLOBALES ══ */
- . { box-: 0 2px 8px rgba(0, 0, 0, 0.2) !important; }
- . { box-: 0 4px 12px rgba(0, 0, 0, 0.25) !important; }
- . { box-: 0 6px 16px rgba(0, 0, 0, 0.3) !important; }
- . { box-: 0 10px 25px rgba(0, 0, 0, 0.35) !important; }
- . { box-: 0 15px 35px rgba(0, 0, 0, 0.4) !important; }
- . { box-: 0 20px 50px rgba(0, 0, 0, 0.5) !important; }
-  /* Responsive Panel adjustments */
-  @media (max-width: 1023px) {
-    main.ml-64, main {
-      margin-left: 0 !important;
-      width: 100% !important;
-      padding: 1.5rem 1rem !important;
-    }
-    header {
-      padding-left: 1rem !important;
-      padding-right: 1rem !important;
-    }
-  }
+ /* Responsive Panel adjustments */
+ @media (max-width: 1023px) {
+   main.ml-64, main {
+     margin-left: 0 !important;
+     width: 100% !important;
+     padding: 1.5rem 1rem !important;
+   }
+   header {
+     padding-left: 1rem !important;
+     padding-right: 1rem !important;
+   }
+ }
 </style>
 
 <script>
@@ -183,6 +254,25 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   background: '#05160e', color: '#f1fdf7'
   }).then(r => { if (r.isConfirmed) callback(); });
   }
+
+  function toggleNotificaciones() {
+    const dropdown = document.getElementById('notificaciones-dropdown');
+    if (dropdown) {
+      dropdown.classList.toggle('opacity-0');
+      dropdown.classList.toggle('invisible');
+      dropdown.classList.toggle('translate-y-2');
+    }
+  }
+
+  // Close dropdowns when clicking outside
+  window.onclick = function(event) {
+    if (!event.target.closest('#notif-btn') && !event.target.closest('#notificaciones-dropdown')) {
+      const dropdown = document.getElementById('notificaciones-dropdown');
+      if (dropdown && !dropdown.classList.contains('invisible')) {
+        dropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+      }
+    }
+  }
 </script>
 </head>
 <body class="bg-background text-on-surface">
@@ -198,49 +288,83 @@ if (session_status() === PHP_SESSION_NONE) session_start();
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
-  <div class="flex flex-col leading-none min-w-0">
-  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
-  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal de administrador</span>
-  </div>
+    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal de administrador</span>
   </div>
   </div>
 
-  <div class="flex items-center gap-3 md:gap-5 shrink-0">
-  <!-- Search -->
-  <div class="relative hidden md:block">
-  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
-  <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-outline-variant/50
-  bg-surface-container-low/60 text-on-surface text-sm placeholder:text-outline
-  focus:ring-1 focus:ring-primary focus:outline-none"
-  placeholder="Buscar en el portal..." type="text"/>
-  </div>
+  <div class="flex items-center gap-5">
   
-  <!-- Divider -->
-  <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
+  <!-- Notifications -->
+  <div class="relative">
+  <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all relative group">
+  <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform">notifications</span>
+  <?php if ($unread_count > 0): ?>
+  <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
+  <?php endif; ?>
+  </button>
 
- <!-- User / Perfil Button -->
- <button onclick="abrirPerfil()"
- class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
- <?php
- $foto = $_SESSION['admin_foto'] ?? '';
- $nombre = $_SESSION['admin_nombre'] ?? 'Admin';
- ?>
- <?php if ($foto): ?>
- <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
- class="w-8 h-8 rounded-lg object-cover border-2 border-emerald-500/40"
- alt="Perfil">
- <?php else: ?>
- <div id="headerProfileImg"
- class="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-bold text-sm border-2 border-emerald-500/30 group-hover:border-emerald-500/60 transition-colors"
- style="background:rgba(0,129,81,0.2)">
- <?= strtoupper(substr($nombre, 0, 1)) ?>
- </div>
- <?php endif; ?>
- <div class="hidden lg:flex flex-col items-start leading-none">
- <span class="text-sm font-semibold text-on-surface"><?= htmlspecialchars($nombre) ?></span>
- <span class="text-[10px] text-on-surface-variant">Mi cuenta</span>
- </div>
- <span class="material-symbols-outlined text-outline text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
- </button>
- </div>
+  <!-- Notifications Dropdown -->
+  <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
+  <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
+  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+  <div class="flex flex-col items-end gap-1" id="notif-actions-header">
+  <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> pendientes</span>
+  </div>
+  </div>
+  <div class="max-h-96 overflow-y-auto" id="notif-items-list">
+  <?php if (empty($notif_admin)): ?>
+  <div class="p-8 text-center bg-surface">
+  <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
+  <p class="text-xs text-on-surface-variant">No hay tareas pendientes por ahora.</p>
+  </div>
+  <?php else: ?>
+  <?php foreach($notif_admin as $n): ?>
+  <a href="<?= $n['link'] ?>" class="block p-4 border-b border-outline-variant/10 hover:bg-white/5 bg-surface transition-colors cursor-pointer relative notification-item">
+  <div class="flex items-start justify-between gap-3">
+  <div class="flex gap-3 items-start min-w-0 flex-1">
+  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 <?= $n['style'] ?>">
+  <span class="material-symbols-outlined text-[18px] <?= $n['icon_class'] ?>">
+  <?= $n['icon'] ?>
+  </span>
+  </div>
+  <div class="min-w-0 flex-1">
+  <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
+  <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
+  </div>
+  </div>
+  </div>
+  </a>
+  <?php endforeach; ?>
+  <?php endif; ?>
+  </div>
+  </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="h-6 w-px bg-outline-variant/30 hidden md:block -mr-3"></div>
+
+  <!-- User / Perfil Button -->
+  <button onclick="abrirPerfil()"
+  class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
+  <?php
+  $foto = $_SESSION['admin_foto'] ?? '';
+  $nombre = $_SESSION['admin_nombre'] ?? 'Admin';
+  ?>
+  <?php if ($foto): ?>
+  <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
+  class="w-8 h-8 rounded-lg object-cover border-2 border-emerald-500/40"
+  alt="Perfil">
+  <?php else: ?>
+  <div id="headerProfileImg"
+  class="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-bold text-sm border-2 border-emerald-500/30 group-hover:border-emerald-500/60 transition-colors"
+  style="background:rgba(0,129,81,0.2)">
+  <?= strtoupper(substr($nombre, 0, 1)) ?>
+  </div>
+  <?php endif; ?>
+  <div class="hidden lg:flex flex-col items-start leading-none">
+  <span class="text-sm font-semibold text-on-surface"><?= htmlspecialchars($nombre) ?></span>
+  </div>
+  <span class="material-symbols-outlined text-outline text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
+  </button>
+  </div>
 </header>

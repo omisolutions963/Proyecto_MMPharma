@@ -98,6 +98,41 @@ try {
   }
 } catch (Exception $e) {}
 
+// Detección de imágenes duplicadas para mostrar alerta/error
+$duplicateGroupsCount = 0;
+try {
+    $stmt = $pdo->query("SELECT id, imagen FROM catalogo_productos WHERE imagen IS NOT NULL AND imagen != 'PENDIENTE' AND imagen != ''");
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $img_dir = '../../img/productos';
+    $by_hash = [];
+    foreach ($products as $p) {
+        $file_path = $img_dir . '/' . $p['imagen'];
+        if (is_file($file_path)) {
+            $md5 = md5_file($file_path);
+            if ($md5) {
+                $by_hash[$md5][] = $p;
+            }
+        }
+    }
+    foreach ($by_hash as $hash => $list) {
+        if (count($list) > 1) {
+            $duplicateGroupsCount++;
+        }
+    }
+} catch (Exception $e) {}
+
+// Detección de productos sin stock
+$sinStock = 0;
+try {
+    $sinStock = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos p LEFT JOIN admin_inventario_stock s ON p.id = s.producto_id WHERE COALESCE(s.stock_actual, 0) <= 0")->fetchColumn();
+} catch (Exception $e) {}
+
+// Detección de productos sin imagen
+$sinImagen = 0;
+try {
+    $sinImagen = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos WHERE imagen IS NULL OR imagen = 'PENDIENTE' OR imagen = ''")->fetchColumn();
+} catch (Exception $e) {}
+
 $pageTitle = 'MMPharma Portal - Dashboard';
 $activePage = 'dashboard';
 include('../includes/header.php');
@@ -134,10 +169,10 @@ include('../includes/sidebar.php');
  <div class="flex items-center gap-3">
  <a href="../g_productos/productos.php"
  class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all
- text-white hover:scale-105"
- style="background:rgba(0,129,81,0.25);border:1px solid rgba(0,129,81,0.4)">
+ hover:scale-105"
+ style="background:#008151;color:#fff;border:1px solid #00a669">
  <span class="material-symbols-outlined text-[18px]">inventory_2</span>
- Ver Catálogo
+ Ver catálogo
  </a>
  <a href="../s_registro/solicitudes.php"
  class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all
@@ -153,44 +188,80 @@ include('../includes/sidebar.php');
 </div>
 
 <!-- ══ ALERTAS ══════════════════════════════════════════════════════════════ -->
-<?php if ($sinPrecio > 0 || $solPendientes > 0 || $contactoNuevos > 0): ?>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
- <?php if ($sinPrecio > 0): ?>
- <a href="../g_productos/productos.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
- style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
- <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
- <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">price_check</span>
- </div>
- <div>
- <p class="text-xs font-bold" style="color:#f28b82"><?= $sinPrecio ?> productos sin precio</p>
- <p class="text-[10px]" style="color:rgba(242,139,130,0.6)">Requieren actualización en catálogo</p>
- </div>
- </a>
- <?php endif; ?>
- <?php if ($solPendientes > 0): ?>
- <a href="../s_registro/solicitudes.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
- style="background:#071a10;border-left:3px solid #008151;border-top:1px solid rgba(0,129,81,0.15)">
- <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(0,129,81,0.15)">
- <span class="material-symbols-outlined text-[18px] text-emerald-500">pending</span>
- </div>
- <div>
- <p class="text-xs font-bold text-emerald-500"><?= $solPendientes ?> solicitudes pendientes</p>
- <p class="text-[10px] text-on-surface-variant">Esperan revisión y aprobación</p>
- </div>
- </a>
- <?php endif; ?>
- <?php if ($contactoNuevos > 0): ?>
- <div class="flex items-center gap-3 p-4 rounded-xl"
- style="background:#0a1f14;border-left:3px solid #34c47a;border-top:1px solid rgba(52,196,122,0.15)">
- <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(52,196,122,0.15)">
- <span class="material-symbols-outlined text-[18px] text-tertiary">mark_email_unread</span>
- </div>
- <div>
- <p class="text-xs font-bold text-tertiary"><?= $contactoNuevos ?> mensajes nuevos</p>
- <p class="text-[10px] text-on-surface-variant">En el formulario de contacto</p>
- </div>
- </div>
- <?php endif; ?>
+<?php if ($sinPrecio > 0 || $solPendientes > 0 || $contactoNuevos > 0 || $duplicateGroupsCount > 0 || $sinStock > 0 || $sinImagen > 0): ?>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <?php if ($sinPrecio > 0): ?>
+  <a href="../g_productos/productos.php?filtro=sin_precio" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+  style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
+  <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">price_check</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold" style="color:#f28b82"><?= $sinPrecio ?> productos sin precio</p>
+  <p class="text-[10px]" style="color:rgba(242,139,130,0.6)">Requieren actualización en catálogo</p>
+  </div>
+  </a>
+  <?php endif; ?>
+  <?php if ($sinStock > 0): ?>
+  <a href="../g_productos/productos.php?filtro=sin_stock" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+  style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
+  <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">production_quantity_limits</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold" style="color:#f28b82"><?= $sinStock ?> productos sin stock</p>
+  <p class="text-[10px]" style="color:rgba(242,139,130,0.6)">Existencias agotadas en inventario</p>
+  </div>
+  </a>
+  <?php endif; ?>
+  <?php if ($solPendientes > 0): ?>
+  <a href="../s_registro/solicitudes.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+  style="background:#071a10;border-left:3px solid #008151;border-top:1px solid rgba(0,129,81,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(0,129,81,0.15)">
+  <span class="material-symbols-outlined text-[18px] text-emerald-500">pending</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold text-emerald-500"><?= $solPendientes ?> solicitudes pendientes</p>
+  <p class="text-[10px] text-on-surface-variant">Esperan revisión y aprobación</p>
+  </div>
+  </a>
+  <?php endif; ?>
+  <?php if ($contactoNuevos > 0): ?>
+  <div class="flex items-center gap-3 p-4 rounded-xl"
+  style="background:#0a1f14;border-left:3px solid #34c47a;border-top:1px solid rgba(52,196,122,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(52,196,122,0.15)">
+  <span class="material-symbols-outlined text-[18px] text-tertiary">mark_email_unread</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold text-tertiary"><?= $contactoNuevos ?> mensajes nuevos</p>
+  <p class="text-[10px] text-on-surface-variant">En el formulario de contacto</p>
+  </div>
+  </div>
+  <?php endif; ?>
+  <?php if ($duplicateGroupsCount > 0): ?>
+  <a href="../g_productos/sync_images.php" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+  style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
+  <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">content_copy</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold" style="color:#f28b82"><?= $duplicateGroupsCount ?> grupos duplicados</p>
+  <p class="text-[10px]" style="color:rgba(242,139,130,0.6)">Imágenes repetidas detectadas en catálogo</p>
+  </div>
+  </a>
+  <?php endif; ?>
+  <?php if ($sinImagen > 0): ?>
+  <a href="../g_productos/productos.php?filtro=sin_imagen" class="flex items-center gap-3 p-4 rounded-xl transition-all hover:scale-[1.01]"
+  style="background:#1a0e00;border-left:3px solid #f28b82;border-top:1px solid rgba(242,139,130,0.15)">
+  <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(242,139,130,0.15)">
+  <span class="material-symbols-outlined text-[18px]" style="color:#f28b82">hide_image</span>
+  </div>
+  <div>
+  <p class="text-xs font-bold" style="color:#f28b82"><?= $sinImagen ?> productos sin imagen</p>
+  <p class="text-[10px]" style="color:rgba(242,139,130,0.6)">Falta cargar imagen del producto</p>
+  </div>
+  </a>
+  <?php endif; ?>
 </div>
 <?php endif; ?>
 

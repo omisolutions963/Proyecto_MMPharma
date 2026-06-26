@@ -731,93 +731,81 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
-  <div class="flex flex-col leading-none min-w-0">
-  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/80 mb-1">MMPharma</span>
-  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
-  </div>
+    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
   </div>
   </div>
 
  <div class="flex items-center gap-5">
- <!-- Search -->
- <div class="relative hidden md:block">
- <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm">search</span>
- <input class="w-72 pl-9 pr-4 py-2 rounded-xl border border-white/20
- bg-white/15 text-white text-sm placeholder:text-white/60
- focus:ring-1 focus:ring-white focus:outline-none focus:bg-white/25"
- placeholder="Buscar..." type="text"/>
- </div>
 
- <!-- Notifications -->
- <div class="relative">
- <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 border border-white/10 text-white hover:bg-white/25 transition-all relative group">
- <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform">notifications</span>
- <?php if ($unread_count > 0): ?>
- <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
- <?php endif; ?>
- </button>
+  <!-- Notifications -->
+  <div class="relative">
+  <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 border border-white/10 text-white hover:bg-white/25 transition-all relative group">
+  <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform">notifications</span>
+  <?php if ($unread_count > 0): ?>
+  <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
+  <?php endif; ?>
+  </button>
 
- <!-- Notifications Dropdown -->
- <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
- <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
- <h3 class="text-sm font-bold text-white">Notificaciones</h3>
- <div class="flex flex-col items-end gap-1" id="notif-actions-header">
- <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> sin leer</span>
- <?php if (!empty($notificaciones)): ?>
- <div class="flex items-center gap-1.5">
- <?php if ($unread_count > 0): ?>
- <button id="btn-marcar-todas" onclick="marcarTodasLeidas(); event.stopPropagation();" class="text-[9px] text-secondary hover:underline font-bold uppercase tracking-wider">Marcar leídas</button>
- <span class="text-[9px] text-outline-variant/60" id="notif-header-divider">|</span>
- <?php endif; ?>
- <button onclick="eliminarTodasNotificaciones(event);" class="text-[9px] text-error hover:underline font-bold uppercase tracking-wider">Eliminar todas</button>
- </div>
- <?php endif; ?>
- </div>
- </div>
- <div class="max-h-96 overflow-y-auto" id="notif-items-list">
- <?php if (empty($notificaciones)): ?>
- <div class="p-8 text-center">
- <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
- <p class="text-xs text-on-surface-variant">No tienes notificaciones por ahora.</p>
- </div>
- <?php else: ?>
- <?php foreach($notificaciones as $n): ?>
- <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item" id="notif-item-<?= $n['id'] ?>">
- <?php if(!$n['leida']): ?>
- <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary unread-indicator"></div>
- <?php endif; ?>
- <div class="flex items-start justify-between gap-3">
- <div class="flex gap-3 items-start min-w-0 flex-1">
- <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 
- <?= $n['tipo'] === 'SUCCESS' ? 'bg-tertiary/10 text-tertiary' : 
- ($n['tipo'] === 'WARNING' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary') ?>">
- <span class="material-symbols-outlined text-[18px]">
- <?= $n['tipo'] === 'SUCCESS' ? 'check_circle' : 
- ($n['tipo'] === 'WARNING' ? 'warning' : 'info') ?>
- </span>
- </div>
- <div class="min-w-0 flex-1">
- <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
- <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
- </div>
- </div>
- <button onclick="eliminarNotificacion(event, <?= $n['id'] ?>)" class="text-on-surface-variant hover:text-error transition-colors p-1 rounded-lg hover:bg-white/5 shrink-0" title="Eliminar">
- <span class="material-symbols-outlined text-[18px]">delete</span>
- </button>
- </div>
- </div>
- <?php endforeach; ?>
- <?php endif; ?>
- </div>
- <a href="#" onclick="verTodasNotificaciones(); event.stopPropagation(); event.preventDefault();" class="block p-3 text-center text-[11px] font-bold text-primary hover:bg-primary/5 transition-colors">
- Ver todas las notificaciones
- </a>
- </div>
- </div>
+  <!-- Notifications Dropdown -->
+  <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
+  <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
+  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+  <div class="flex flex-col items-end gap-1" id="notif-actions-header">
+  <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> sin leer</span>
+  <?php if (!empty($notificaciones)): ?>
+  <div class="flex items-center gap-1.5">
+  <?php if ($unread_count > 0): ?>
+  <button id="btn-marcar-todas" onclick="marcarTodasLeidas(); event.stopPropagation();" class="text-[9px] text-secondary hover:underline font-bold uppercase tracking-wider">Marcar leídas</button>
+  <span class="text-[9px] text-outline-variant/60" id="notif-header-divider">|</span>
+  <?php endif; ?>
+  <button onclick="eliminarTodasNotificaciones(event);" class="text-[9px] text-error hover:underline font-bold uppercase tracking-wider">Eliminar todas</button>
+  </div>
+  <?php endif; ?>
+  </div>
+  </div>
+  <div class="max-h-96 overflow-y-auto" id="notif-items-list">
+  <?php if (empty($notificaciones)): ?>
+  <div class="p-8 text-center">
+  <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
+  <p class="text-xs text-on-surface-variant">No tienes notificaciones por ahora.</p>
+  </div>
+  <?php else: ?>
+  <?php foreach($notificaciones as $n): ?>
+  <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item" id="notif-item-<?= $n['id'] ?>">
+  <?php if(!$n['leida']): ?>
+  <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary unread-indicator"></div>
+  <?php endif; ?>
+  <div class="flex items-start justify-between gap-3">
+  <div class="flex gap-3 items-start min-w-0 flex-1">
+  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 
+  <?= $n['tipo'] === 'SUCCESS' ? 'bg-tertiary/10 text-tertiary' : 
+  ($n['tipo'] === 'WARNING' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary') ?>">
+  <span class="material-symbols-outlined text-[18px]">
+  <?= $n['tipo'] === 'SUCCESS' ? 'check_circle' : 
+  ($n['tipo'] === 'WARNING' ? 'warning' : 'info') ?>
+  </span>
+  </div>
+  <div class="min-w-0 flex-1">
+  <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
+  <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
+  </div>
+  </div>
+  <button onclick="eliminarNotificacion(event, <?= $n['id'] ?>)" class="text-on-surface-variant hover:text-error transition-colors p-1 rounded-lg hover:bg-white/5 shrink-0" title="Eliminar">
+  <span class="material-symbols-outlined text-[18px]">delete</span>
+  </button>
+  </div>
+  </div>
+  <?php endforeach; ?>
+  <?php endif; ?>
+  </div>
+  <a href="#" onclick="verTodasNotificaciones(); event.stopPropagation(); event.preventDefault();" class="block p-3 text-center text-[11px] font-bold text-primary hover:bg-primary/5 transition-colors">
+  Ver todas las notificaciones
+  </a>
+  </div>
+  </div>
 
- 
   <!-- Divider -->
-  <div class="h-6 w-px bg-white/20 hidden md:block"></div>
+  <div class="h-6 w-px bg-white/20 hidden md:block -mr-3"></div>
 
  <!-- User / Perfil Button -->
  <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/10 group">
@@ -838,7 +826,6 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  <?php endif; ?>
  <div class="hidden lg:flex flex-col items-start leading-none">
  <span class="text-sm font-semibold text-white"><?= htmlspecialchars($nombre) ?></span>
- <span class="text-[10px] text-white/70">Mi cuenta</span>
  </div>
  <span class="material-symbols-outlined text-white/70 text-[16px] hidden lg:block group-hover:text-white transition-colors">expand_more</span>
  </a>

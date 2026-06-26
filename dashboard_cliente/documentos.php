@@ -225,11 +225,12 @@ include('includes/sidebar.php');
             </div>
         </div>
         <div class="flex gap-2 mt-2">
-            <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface hover:bg-surface-container-high text-primary text-xs font-bold rounded-lg transition-colors text-center flex items-center justify-center gap-1 border border-outline-variant/30"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
+            <a href="../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="flex-1 py-2 bg-surface hover:bg-surface-container-high text-primary text-xs font-bold rounded-lg transition-colors text-center flex items-center justify-center gap-1 border border-outline-variant/30" title="Ver documento"><span class="material-symbols-outlined text-[16px]">visibility</span> Ver</a>
             <div class="flex-1 relative">
-                <button type="button" class="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1 border border-primary/20"><span class="material-symbols-outlined text-[16px]">upload</span> Reemplazar</button>
+                <button type="button" class="w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1 border border-primary/20" title="Reemplazar documento"><span class="material-symbols-outlined text-[16px]">upload</span> Reemplazar</button>
                 <input type="file" id="file_<?= $tipo ?>" name="documento_<?= $tipo ?>" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 file-input" accept=".pdf,.jpg,.jpeg,.png">
             </div>
+            <button type="button" onclick="eliminarDocumento('<?= $tipo ?>')" class="py-2 px-3 bg-error/10 hover:bg-error/20 text-error text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1 border border-error/20" title="Eliminar documento"><span class="material-symbols-outlined text-[16px]">delete</span></button>
         </div>
     </div>
     <?php else: ?>

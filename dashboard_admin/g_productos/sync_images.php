@@ -476,7 +476,7 @@ if (isset($_GET['action'])) {
     }
 }
 
-$pageTitle = "MMPharma Portal - Sincronizar fotos";
+$pageTitle = "MMPharma Portal - Imágenes Duplicadas";
 $activePage = "productos";
 include("../includes/header.php");
 include("../includes/sidebar.php");
@@ -491,10 +491,10 @@ include("../includes/sidebar.php");
                 <span class="material-symbols-outlined text-[12px]">chevron_right</span>
                 <a href="productos.php" class="hover:text-primary transition-colors">Productos</a>
                 <span class="material-symbols-outlined text-[12px]">chevron_right</span>
-                <span class="text-on-surface-variant">Sincronizador de fotos</span>
+                <span class="text-on-surface-variant">Imágenes duplicadas</span>
             </nav>
-            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Sincronizador de fotos</h2>
-            <p class="text-on-surface-variant text-sm mt-1">Vincula imágenes automáticamente de forma local o administra archivos duplicados.</p>
+            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Imágenes duplicadas</h2>
+            <p class="text-on-surface-variant text-sm mt-1">Administra y resuelve asociaciones de imágenes duplicadas en el catálogo.</p>
         </div>
         <div>
             <a href="productos.php" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
@@ -523,13 +523,13 @@ include("../includes/sidebar.php");
         </div>
     </div>
 
-    <!-- Pestañas e Interfaz Principal -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Interfaz Principal (Full Width) -->
+    <div class="w-full">
         <!-- Control Panel -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="space-y-6">
             <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden">
-                <!-- Navigation Tabs -->
-                <div class="flex border-b border-outline-variant/10 bg-surface-container-low">
+                <!-- Navigation Tabs (Hidden) -->
+                <div class="hidden border-b border-outline-variant/10 bg-surface-container-low">
                     <button onclick="switchTab('local')" id="tab-btn-local" class="flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2">
                         <span class="material-symbols-outlined text-lg">folder_open</span> Sincronización local
                     </button>
@@ -540,8 +540,8 @@ include("../includes/sidebar.php");
 
                 <!-- Tab Contents -->
                 <div class="p-8">
-                    <!-- LOCAL TAB -->
-                    <div id="tab-local" class="space-y-6">
+                    <!-- LOCAL TAB (Hidden) -->
+                    <div id="tab-local" class="space-y-6 hidden">
                         <div class="bg-primary/5 rounded-2xl p-5 flex items-start gap-4">
                             <span class="material-symbols-outlined text-primary text-3xl shrink-0 mt-1">info</span>
                             <div>
@@ -609,33 +609,6 @@ include("../includes/sidebar.php");
                 </div>
             </div>
         </div>
-
-        <!-- Terminal Console Logger -->
-        <div class="space-y-4">
-            <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden flex flex-col h-[520px]">
-                <div class="px-6 py-4 bg-surface-container-low border-b border-outline-variant/10 flex justify-between items-center shrink-0">
-                    <span class="text-xs font-black tracking-widest text-on-surface flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Consola de ejecución
-                    </span>
-                    <button onclick="clearConsole()" class="text-[10px] font-bold tracking-wider text-on-surface-variant hover:text-white transition-colors">Limpiar</button>
-                </div>
-                <div id="console-logs" class="p-6 overflow-y-auto font-mono text-[11px] text-emerald-400 bg-surface flex-1 space-y-1 select-text">
-                    <div class="text-on-surface-variant/40">// Esperando acción...</div>
-                </div>
-            </div>
-            
-            <!-- Progress Bar Card -->
-            <div id="progress-card" class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 p-6 hidden">
-                <div class="flex justify-between text-xs font-bold mb-2">
-                    <span id="progress-title">Progreso</span>
-                    <span id="progress-pct">0%</span>
-                </div>
-                <div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-primary h-full w-0 transition-all duration-300"></div>
-                </div>
-                <div id="progress-details" class="text-[10px] text-on-surface-variant mt-2 font-mono text-center">0 / 0 procesados</div>
-            </div>
-        </div>
     </div>
 </main>
 
@@ -671,29 +644,24 @@ include("../includes/sidebar.php");
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadStats();
-        scanLocal(true);
+        switchTab('duplicates');
     });
 
-    let currentTab = 'local';
+    let currentTab = 'duplicates';
     let localFilesCount = 0;
 
     function switchTab(tab) {
         currentTab = tab;
-        document.getElementById('tab-local').classList.toggle('hidden', tab !== 'local');
-        document.getElementById('tab-duplicates').classList.toggle('hidden', tab !== 'duplicates');
+        document.getElementById('tab-local').classList.add('hidden');
+        document.getElementById('tab-duplicates').classList.remove('hidden');
         
         const btnLocal = document.getElementById('tab-btn-local');
         const btnDuplicates = document.getElementById('tab-btn-duplicates');
         
-        btnLocal.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
-        btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
+        if (btnLocal) btnLocal.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
+        if (btnDuplicates) btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
         
-        if (tab === 'local') {
-            btnLocal.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
-        } else if (tab === 'duplicates') {
-            btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
-            loadDuplicates();
-        }
+        loadDuplicates();
     }
 
     async function loadStats() {
