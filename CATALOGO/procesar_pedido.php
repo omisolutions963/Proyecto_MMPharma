@@ -29,12 +29,21 @@ $tipo_cliente    = $_SESSION['cliente_tipo'] ?? 'FARMACIA';
 try {
     $pdo->beginTransaction();
 
-    // ── Calcular subtotal ────────────────────────────────────────────────────
     $subtotal = 0;
+    $total_iva = 0;
     foreach ($carrito as $item) {
-        $subtotal += (float)$item['precio'] * (int)$item['cantidad'];
+        $subtotal_linea = (float)$item['precio'] * (int)$item['cantidad'];
+        $subtotal += $subtotal_linea;
+        
+        $pid = (int)$item['id'];
+        $stmtTasa = $pdo->prepare("SELECT tasa_iva FROM catalogo_productos WHERE id = ?");
+        $stmtTasa->execute([$pid]);
+        $tasa = $stmtTasa->fetchColumn();
+        $tasa = $tasa !== false ? (float)$tasa : 0.16;
+        
+        $total_iva += $subtotal_linea * $tasa;
     }
-    $monto_total = $subtotal;
+    $monto_total = $subtotal + $total_iva;
 
     // ── Generar folio ────────────────────────────────────────────────────────
     $stmt    = $pdo->query("SELECT id FROM clientes_pedidos ORDER BY id DESC LIMIT 1");

@@ -371,17 +371,20 @@ include("../includes/sidebar.php");
                             <tr class="group hover:bg-surface-container-low/30 transition-colors">
                                 <td class="px-6 py-4">
                                     <span class="text-sm font-bold text-on-surface"><?= htmlspecialchars($det['nombre_producto']) ?></span>
-                                    <span class="block text-[10px] text-on-surface-variant font-medium mt-0.5">
-                                        <?= htmlspecialchars($det['sustancia'] ?? '') ?> 
-                                        <?php if (!empty($det['sustancia'])): ?>| <?php endif; ?>
-                                        Precios más IVA | IVA: <?= (isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16) * 100 ?>% (+<?php
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <p class="text-[10px] text-on-surface-variant font-medium max-w-xs truncate" title="<?= htmlspecialchars($det['sustancia'] ?? '') ?>">
+                                            <?= htmlspecialchars($det['sustancia'] ?? '') ?> 
+                                        </p>
+                                        <?php
                                             $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
                                             $subtotal_linea = (float)$det['subtotal'];
-                                            $item_sin_iva = $subtotal_linea / (1 + $tasa);
-                                            $item_iva = $subtotal_linea - $item_sin_iva;
-                                            echo '$' . number_format($item_iva, 2);
-                                        ?>)
-                                    </span>
+                                            $item_sin_iva = $subtotal_linea;
+                                            $item_iva = $subtotal_linea * $tasa;
+                                        ?>
+                                        <span class="inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/20 text-primary whitespace-nowrap">
+                                            IVA: <?= $tasa * 100 ?>%
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-flex px-3 py-1 rounded-lg bg-surface-container-high text-white text-xs font-black">

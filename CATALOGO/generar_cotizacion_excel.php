@@ -78,18 +78,18 @@ foreach ($carrito as $item) {
     $item_total = $cant * $precio;
     $tasa = isset($product_details[$item['id']]['tasa_iva']) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
     
-    $item_sin_iva = $item_total / (1 + $tasa);
-    $item_iva = $item_total - $item_sin_iva;
+    $item_sin_iva = $item_total;
+    $item_iva = $item_total * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
 }
 
-$envio_sin_iva = $costo_envio / 1.16;
-$envio_iva = $costo_envio - $envio_sin_iva;
+$envio_sin_iva = $costo_envio;
+$envio_iva = 0;
 
 $sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
-$total = $subtotal_prod + $costo_envio;
+$total = $subtotal_prod + $total_items_iva + $costo_envio;
 
 // ══════════════════════════════════════════════════════════════════════════
 // XLSX builder (ZipArchive + OOXML)
@@ -199,7 +199,7 @@ $merges = []; // merge refs
 $r = 1; // current row
 
 // Row 1 – Título
-$rows[$r] = cStr($r, 1, 'MMPharma Clinical Systems S.A. de C.V. — COTIZACIÓN DE productos', 1)
+$rows[$r] = cStr($r, 1, 'Distribuidora de medicamentos MM — Cotización de productos', 1)
            . cStr($r, 2, '', 1) . cStr($r, 3, '', 1) . cStr($r, 4, '', 1) . cStr($r, 5, '', 1)
            . cStr($r, 6, '', 1) . cStr($r, 7, '', 1) . cStr($r, 8, '', 1);
 $merges[] = 'A'.$r.':H'.$r;
@@ -222,7 +222,7 @@ $meta = [
     ['Cliente:',  $cliente['razon_social'],        'Folio:',    $folio],
     ['RFC:',      $cliente['rfc'] ?? 'N/A',         'Fecha:',    $hoy->format('d/m/Y')],
     ['Email:',    $cliente['email'] ?? 'N/A',        'Vigencia:', 'Al '.$vigencia->format('d/m/Y').' (10 días hábiles)'],
-    ['Tipo:',     $tipo_cliente,                    'Envío:',    $msg_envio],
+    ['',          '',                               'Envío:',    $msg_envio],
 ];
 foreach ($meta as $m) {
     $rows[$r] = cStr($r, 1, $m[0], 3) . cStr($r, 2, $m[1], 4)
@@ -263,8 +263,8 @@ foreach ($carrito as $item) {
     $tipo  = $details['tipo'] ?? 'SECO';
     $tasa  = isset($details['tasa_iva']) ? (float)$details['tasa_iva'] : 0.16;
     
-    $item_sin_iva = $subtotalLinea / (1 + $tasa);
-    $item_iva = $subtotalLinea - $item_sin_iva;
+    $item_sin_iva = $subtotalLinea;
+    $item_iva = $subtotalLinea * $tasa;
     
     $tasa_percentage = ($tasa * 100) . '% (+$' . number_format($item_iva, 2) . ')';
     $sustancia = $details['sustancia'] ?? 'No registrada';
@@ -309,7 +309,7 @@ $r++;
 $rows[$r] = ''; $r++;
 
 // Nota legal
-$nota = '* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16% o 0%). Este documento es una cotización informativa. '
+$nota = '* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16%). Este documento es una cotización informativa. '
       . 'Los precios y disponibilidad están sujetos a cambios sin previo aviso. '
       . 'Vigencia: 10 días hábiles a partir de la fecha de emisión.';
 $rows[$r] = cStr($r, 1, $nota, 14) . cStr($r, 2, '', 14) . cStr($r, 3, '', 14)

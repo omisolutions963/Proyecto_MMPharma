@@ -514,9 +514,7 @@ if (menuClose && mobileMenu) {
  </div>
  <?php endif; ?>
 
- <p class="text-xs text-white/50 mb-6 leading-relaxed">
- *Los precios mostrados son de lista. Si eres distribuidor o empresa, el precio final se ajustará al generar la cotización formal.
- </p>
+
  <div class="flex flex-col gap-3">
  <button onclick="confirmarPedido()" id="btn-confirmar-pedido" class="w-full h-14 bg-tertiary text-white font-bold rounded-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 text-sm flex items-center justify-center gap-2 relative overflow-hidden group">
  <span class="relative z-10 text-base tracking-wide">Confirmar pedido</span>
@@ -601,14 +599,16 @@ function renderCartItems() {
 
  let html = '';
  let subtotal = 0;
+ let totalIva = 0;
 
  carrito.forEach((item, index) => {
   const totalLinea = item.precio * item.cantidad;
   subtotal += totalLinea;
   
   const tasa = item.tasa_iva !== undefined ? parseFloat(item.tasa_iva) : 0.16;
-  const itemSinIva = totalLinea / (1 + tasa);
-  const itemIva = totalLinea - itemSinIva;
+  const itemSinIva = totalLinea;
+  const itemIva = totalLinea * tasa;
+  totalIva += itemIva;
   
   let imagenHtml = '';
   if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
@@ -642,27 +642,29 @@ function renderCartItems() {
 
  container.innerHTML = html;
  subtotalEl.textContent = formatCurrency(subtotal);
- calcularEnvioDynamic(subtotal);
+ calcularEnvioDynamic(subtotal, totalIva);
 }
 
 let currentShippingCost = 0;
 let currentSubtotal = 0;
+let currentTotalIva = 0;
 
-function calcularEnvioDynamic(subtotal) {
+function calcularEnvioDynamic(subtotal, totalIva = 0) {
   currentSubtotal = subtotal;
+  currentTotalIva = totalIva;
   const dirSelect = document.getElementById('cart-direccion');
   const envioEl = document.getElementById('cart-envio');
   const totalEl = document.getElementById('cart-total');
 
   if (!dirSelect || !envioEl || !totalEl) {
-      if(totalEl) totalEl.textContent = formatCurrency(subtotal);
+      if(totalEl) totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
       return;
   }
 
   const direccion_id = dirSelect.value;
   if (!direccion_id) {
      envioEl.textContent = 'Selecciona dirección';
-     totalEl.textContent = formatCurrency(subtotal);
+     totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
      document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
      document.getElementById('checkbox-recoger-sucursal').checked = false;
      return;
@@ -690,16 +692,16 @@ function calcularEnvioDynamic(subtotal) {
               } else {
                   envioEl.textContent = calc.mensaje;
               }
-              totalEl.textContent = formatCurrency(subtotal);
+              totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
           }
       } else {
           envioEl.textContent = 'Error al calcular';
-          totalEl.textContent = formatCurrency(subtotal);
+          totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
       }
   })
   .catch(err => {
       envioEl.textContent = 'Error';
-      totalEl.textContent = formatCurrency(subtotal);
+      totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
   });
 }
 
@@ -714,13 +716,13 @@ function actualizarTotalConEnvio() {
     
     if (currentSubtotal < 4000.00) {
         envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
-        totalEl.textContent = formatCurrency(currentSubtotal);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva);
     } else if (isRecoger) {
         envioEl.innerHTML = `<span class="line-through text-white/50 text-xs mr-2">${formatCurrency(currentShippingCost)}</span><span class="text-white">Recoger en sucursal</span>`;
-        totalEl.textContent = formatCurrency(currentSubtotal);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva);
     } else {
         envioEl.textContent = formatCurrency(currentShippingCost);
-        totalEl.textContent = formatCurrency(currentSubtotal + currentShippingCost);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva + currentShippingCost);
     }
 }
 

@@ -49,8 +49,8 @@ foreach($detalles as $det) {
     $subtotal_linea = (float)$det['subtotal'];
     $subtotal_productos += $subtotal_linea;
     $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.00;
-    $item_sin_iva = $subtotal_linea / (1 + $tasa);
-    $item_iva = $subtotal_linea - $item_sin_iva;
+    $item_sin_iva = $subtotal_linea;
+    $item_iva = $subtotal_linea * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
 }
@@ -59,14 +59,11 @@ $recoger_sucursal = ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedid
 
 if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO') {
     $costo_envio = 0.00;
-} else {
-    if ($costo_envio == 0 && abs($monto_total - $subtotal_productos) > 0.01) {
-        $costo_envio = $monto_total - $subtotal_productos;
-    }
 }
+$monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
 
-$envio_sin_iva = $costo_envio / 1.16;
-$envio_iva = $costo_envio - $envio_sin_iva;
+$envio_sin_iva = $costo_envio;
+$envio_iva = 0;
 
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
@@ -100,12 +97,12 @@ class PDF extends FPDF {
         $this->SetFont('Arial', 'B', 15);
         $this->SetTextColor(0, 36, 81);
         $this->Cell(80);
-        $this->Cell(110, 10, mb_convert_encoding('COTIZACIÓN DE productos', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
+        $this->Cell(110, 10, mb_convert_encoding('Cotización de productos', 'ISO-8859-1', 'UTF-8'), 0, 1, 'R');
 
         $this->SetFont('Arial', '', 10);
         $this->SetTextColor(100, 100, 100);
         $this->Cell(80);
-        $this->Cell(110, 5, 'MMPharma Clinical Systems S.A. de C.V.', 0, 1, 'R');
+        $this->Cell(110, 5, 'Distribuidora de medicamentos MM', 0, 1, 'R');
         $this->Cell(80);
         $this->Cell(110, 5, 'Venta y Distribucion Nacional', 0, 1, 'R');
         $this->Ln(15);
@@ -143,9 +140,7 @@ $pdf->Cell(75, 5, mb_convert_encoding($pedido['rfc'] ?? 'N/A', 'ISO-8859-1', 'UT
 $pdf->SetXY(10, $y + 10);
 $pdf->Cell(25, 5, 'Email:', 0, 0);
 $pdf->Cell(75, 5, mb_convert_encoding($pedido['email'] ?? 'N/A', 'ISO-8859-1', 'UTF-8'), 0, 1);
-$pdf->SetXY(10, $y + 15);
-$pdf->Cell(25, 5, 'Nivel:', 0, 0);
-$pdf->Cell(75, 5, mb_convert_encoding($tipo_cliente, 'ISO-8859-1', 'UTF-8'), 0, 1);
+
 
 // Columna Derecha – Cotización
 $pdf->SetXY(110, $y);
@@ -204,8 +199,8 @@ foreach ($detalles as $det) {
     $subst = $det['sustancia'] ?? '';
     $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
     $subtotal_linea = (float)$det['subtotal'];
-    $item_sin_iva = $subtotal_linea / (1 + $tasa);
-    $item_iva = $subtotal_linea - $item_sin_iva;
+    $item_sin_iva = $subtotal_linea;
+    $item_iva = $subtotal_linea * $tasa;
     
     // Truncar sustancia si es muy larga para evitar desbordamiento
     $subst_txt = $subst ?: 'No registrada';
@@ -279,7 +274,7 @@ if ($costo_envio > 0 || $recoger_sucursal) {
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding(
-    "* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16% o 0%).\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
+    "* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16%).\nESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.",
     'ISO-8859-1', 'UTF-8'
 ), 0, 'C');
 

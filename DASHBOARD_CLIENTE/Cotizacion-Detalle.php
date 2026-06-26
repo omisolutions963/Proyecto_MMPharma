@@ -53,22 +53,18 @@ $total_items_iva = 0;
 foreach($detalles as $det) {
     $subtotal_linea = (float)$det['subtotal'];
     $subtotal_productos += $subtotal_linea;
-    $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.00;
-    $item_sin_iva = $subtotal_linea / (1 + $tasa);
-    $item_iva = $subtotal_linea - $item_sin_iva;
+    $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+    $item_sin_iva = $subtotal_linea;
+    $item_iva = $subtotal_linea * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
 }
 
 $costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
-$monto_total = (float)$pedido['monto_total'];
+$monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
 
-if ($costo_envio == 0 && abs($monto_total - $subtotal_productos) > 0.01) {
-    $costo_envio = $monto_total - $subtotal_productos;
-}
-
-$envio_sin_iva = $costo_envio / 1.16;
-$envio_iva = $costo_envio - $envio_sin_iva;
+$envio_sin_iva = $costo_envio; // Assuming shipping doesn't add more IVA here, or it's handled separately
+$envio_iva = 0; // If shipping needs IVA, adjust this
 
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
@@ -291,18 +287,20 @@ include('includes/sidebar.php');
  <td class="py-5 px-4 text-xs font-bold text-white"><?= htmlspecialchars($det['codigo'] ?? 'N/A') ?></td>
  <td class="py-5 px-4">
  <p class="text-sm font-bold text-white mb-0.5"><?= htmlspecialchars($det['nombre_producto']) ?></p>
- <p class="text-[10px] text-on-surface-variant max-w-xs truncate">
+ <div class="flex items-center gap-2">
+ <p class="text-[10px] text-on-surface-variant max-w-xs truncate" title="<?= htmlspecialchars($det['sustancia'] ?? '') ?>">
  <?= htmlspecialchars($det['sustancia'] ?? '') ?>
- <span class="ml-2 text-[9px] font-bold text-primary">
- Precios más IVA | IVA: <?= (isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16) * 100 ?>% (+<?php
+ </p>
+ <?php
       $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
       $subtotal_linea = (float)$det['subtotal'];
-      $item_sin_iva = $subtotal_linea / (1 + $tasa);
-      $item_iva = $subtotal_linea - $item_sin_iva;
-      echo '$' . number_format($item_iva, 2);
-  ?>)
+      $item_sin_iva = $subtotal_linea;
+      $item_iva = $subtotal_linea * $tasa;
+ ?>
+ <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/20 text-primary whitespace-nowrap">
+ IVA: <?= $tasa * 100 ?>%
  </span>
- </p>
+ </div>
  </td>
  <td class="py-5 px-4 text-sm font-bold text-white text-center"><?= $det['cantidad'] ?></td>
  <td class="py-5 px-4 text-sm text-on-surface-variant text-right">$<?= number_format($det['precio_unitario'], 2) ?></td>
@@ -323,13 +321,11 @@ include('includes/sidebar.php');
   <div class="flex justify-between items-start mb-3 gap-4">
   <span class="text-sm text-on-surface-variant shrink-0">Envío:</span>
   <?php
-  if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO') {
+  if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
       echo '<div class="text-right">
               <span class="text-sm font-bold text-green-400 block">Recoger en almacén</span>
               <span class="text-[10px] text-green-400/80 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span>
             </div>';
-  } else if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
-      echo '<span class="text-sm font-bold text-green-400">Recoger en sucursal</span>';
   } else {
       $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : 'Envío gratis';
       $color_envio = $costo_envio > 0 ? 'text-white' : 'text-green-400 font-bold';
@@ -349,7 +345,7 @@ include('includes/sidebar.php');
  <span class="text-lg font-black text-white uppercase tracking-widest">Total:</span>
  <span class="text-2xl font-extrabold text-primary">$<?= number_format($monto_total, 2) ?></span>
  </div>
- <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Los precios unitarios y de envío mostrados incluyen el IVA (16%). Moneda: MXN.</p>
+ <p class="text-[9px] text-on-surface-variant/50 text-right mt-4 italic">* Los precios incluyen el IVA aplicable (16%). Moneda: MXN.</p>
  </div>
  </div>
  

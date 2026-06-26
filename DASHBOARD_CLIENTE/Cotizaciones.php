@@ -26,8 +26,8 @@ $aprobadas = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 // 3. Obtener cotizaciones
 $stmt = $pdo->prepare("
  SELECT p.id, p.folio, p.monto_total, p.costo_envio, p.estado_envio, p.created_at, COUNT(pd.id) as total_items,
-        SUM(pd.subtotal / (1 + IFNULL(cp.tasa_iva, 0.00))) as subtotal_productos_sin_iva,
-        SUM(pd.subtotal - (pd.subtotal / (1 + IFNULL(cp.tasa_iva, 0.00)))) as iva_productos
+        SUM(pd.subtotal) as subtotal_productos_sin_iva,
+        SUM(pd.subtotal * IFNULL(cp.tasa_iva, 0.00)) as iva_productos
  FROM clientes_pedidos p
  LEFT JOIN clientes_pedidos_detalle pd ON p.id = pd.pedido_id
  LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id
