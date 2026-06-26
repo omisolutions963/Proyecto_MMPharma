@@ -33,11 +33,11 @@ $activePage = 'perfil';
 include('includes/header.php');
 include('includes/sidebar.php');
 ?>
-<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#071628">
-    
+<main class="ml-64 mt-16 p-8 min-h-screen w-[calc(100%-16rem)]" style="background:#ffffff">
+
     <!-- Header -->
     <div class="mb-6 animate-reveal">
-        <h1 class="text-3xl font-extrabold text-white tracking-tight">Mi perfil</h1>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mi perfil</h1>
     </div>
 
     <!-- Hero Profile Card -->
@@ -173,18 +173,18 @@ include('includes/sidebar.php');
             </div>
             
             <!-- Danger Zone -->
-            <div class="bg-error-container/10 border border-error/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-error/20 text-error flex items-center justify-center shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined">delete</span>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-white mb-0.5">Solicitar baja de cuenta</h4>
-                        <p class="text-xs text-on-surface-variant">Este proceso es irreversible y requiere validación legal.</p>
+                        <h4 class="text-sm font-bold text-slate-900 mb-0.5">Solicitar baja de cuenta</h4>
+                        <p class="text-xs text-slate-500">Este proceso es irreversible y requiere validación legal.</p>
                     </div>
                 </div>
                 <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
-                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#071628', color:'#fff', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='contacto.php'; } })">Solicitar</button>
+                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-white text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#ffffff', color:'#1e293b', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='contacto.php'; } })">Solicitar</button>
                 </div>
             </div>
 
@@ -265,8 +265,8 @@ function actualizarPerfil(e) {
     Swal.fire({
         title: 'Guardando...',
         allowOutsideClick: false,
-        background: '#071628',
-        color: '#fff',
+        background: '#ffffff',
+        color: '#1e293b',
         didOpen: () => { Swal.showLoading(); }
     });
 
@@ -277,14 +277,14 @@ function actualizarPerfil(e) {
     .then(r => r.json())
     .then(data => {
         if(data.status === 'success') {
-            Swal.fire({icon: 'success', title: '¡Éxito!', text: data.message, background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500})
+            Swal.fire({icon: 'success', title: '¡Éxito!', text: data.message, background: '#ffffff', color: '#1e293b', showConfirmButton: false, timer: 1500})
             .then(() => location.reload());
         } else {
-            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#ffffff', color: '#1e293b'});
         }
     })
     .catch(err => {
-        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#ffffff', color: '#1e293b'});
     });
 }
 
@@ -299,8 +299,8 @@ function subirAvatar(input) {
     Swal.fire({
         title: 'Subiendo foto...',
         allowOutsideClick: false,
-        background: '#071628',
-        color: '#fff',
+        background: '#ffffff',
+        color: '#1e293b',
         didOpen: () => { Swal.showLoading(); }
     });
 
@@ -311,15 +311,15 @@ function subirAvatar(input) {
     .then(r => r.json())
     .then(data => {
         if(data.status === 'success') {
-            Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Foto actualizada.', background: '#071628', color: '#fff', showConfirmButton: false, timer: 1500})
+            Swal.fire({icon: 'success', title: '¡Éxito!', text: 'Foto actualizada.', background: '#ffffff', color: '#1e293b', showConfirmButton: false, timer: 1500})
             .then(() => location.reload());
         } else {
-            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+            Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#ffffff', color: '#1e293b'});
         }
         input.value = '';
     })
     .catch(err => {
-        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'Error de conexión', background: '#ffffff', color: '#1e293b'});
         input.value = '';
     });
 }
@@ -330,15 +330,15 @@ function cambiarPassword() {
         html: `
             <div class="flex flex-col gap-4 text-left">
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Contraseña actual</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Contraseña actual</label>
                     <input type="password" id="curr_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Nueva contraseña</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nueva contraseña</label>
                     <input type="password" id="new_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Confirmar nueva contraseña</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Confirmar nueva contraseña</label>
                     <input type="password" id="conf_pass" class="w-full bg-surface-container-low border border-outline-variant/50 text-white rounded-xl px-4 py-3 mt-1 text-sm outline-none focus:border-primary">
                 </div>
             </div>
@@ -347,8 +347,8 @@ function cambiarPassword() {
         confirmButtonText: 'Actualizar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#32b4ca',
-        background: '#071628',
-        color: '#fff',
+        background: '#ffffff',
+        color: '#1e293b',
         preConfirm: () => {
             const curr = document.getElementById('curr_pass').value;
             const newp = document.getElementById('new_pass').value;
@@ -373,8 +373,8 @@ function cambiarPassword() {
             Swal.fire({
                 title: 'Actualizando...',
                 allowOutsideClick: false,
-                background: '#071628',
-                color: '#fff',
+                background: '#ffffff',
+                color: '#1e293b',
                 didOpen: () => { Swal.showLoading(); }
             });
 
@@ -385,13 +385,13 @@ function cambiarPassword() {
             .then(r => r.json())
             .then(data => {
                 if(data.status === 'success') {
-                    Swal.fire({icon: 'success', title: '¡Actualizada!', text: data.message, background: '#071628', color: '#fff'});
+                    Swal.fire({icon: 'success', title: '¡Actualizada!', text: data.message, background: '#ffffff', color: '#1e293b'});
                 } else {
-                    Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#071628', color: '#fff'});
+                    Swal.fire({icon: 'error', title: 'Error', text: data.message, background: '#ffffff', color: '#1e293b'});
                 }
             })
             .catch(err => {
-                Swal.fire({icon: 'error', title: 'Error de conexión', background: '#071628', color: '#fff'});
+                Swal.fire({icon: 'error', title: 'Error de conexión', background: '#ffffff', color: '#1e293b'});
             });
         }
     });

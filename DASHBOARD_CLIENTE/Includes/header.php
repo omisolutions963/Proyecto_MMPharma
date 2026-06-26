@@ -53,7 +53,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  "surface-bright": "#112038",
  "surface-dim": "#061422",
  "surface-variant": "#1a3260",
- "background": "#071628",
+ "background": "#ffffff",
  "on-surface": "#e8f0ff",
  "on-surface-variant": "#8aaad4",
  "on-background": "#e8f0ff",
@@ -99,8 +99,9 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 <style>
  * { font-family: 'Inter', sans-serif; }
  /* ══ ANTI-FOUC: Colores hardcoded antes de que Tailwind CDN procese ══ */
- html, body, main, aside { background-color: #071628 !important; }
- body { color: #e8f0ff; }
+ html, body, main { background-color: #ffffff !important; }
+ aside { background-color: #1e3a5f !important; }
+ body { color: #1e293b; }
  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
  /* ══ SCROLLBAR GLOBAL AGRESIVA ══════════════════════════════════════════ */
  /* Forzamos el estilo en todos los elementos para evitar el comportamiento de Windows 11 */
@@ -198,13 +199,13 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 
   function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
   Swal.fire({ title, text, icon, confirmButtonColor: '#4a90d9', confirmButtonText: 'Aceptar',
-  background: '#102245', color: '#e8f0ff' });
+  background: '#ffffff', color: '#1e293b' });
   }
   function confirmAction(title, text, confirmText, callback) {
   Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
   confirmButtonColor: '#f28b82', cancelButtonColor: '#3a5a8a',
   confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
-  background: '#102245', color: '#e8f0ff'
+  background: '#ffffff', color: '#1e293b'
   }).then(r => { if (r.isConfirmed) callback(); });
   }
   function toggleNotificaciones() {
@@ -415,8 +416,8 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
                       title: 'Notificaciones eliminadas',
                       showConfirmButton: false,
                       timer: 2000,
-                      background: '#102245',
-                      color: '#e8f0ff'
+                      background: '#ffffff',
+                      color: '#1e293b'
                   });
               }
           } catch (error) {
@@ -450,16 +451,16 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
                       const dateFmt = new Date(n.created_at).toLocaleString('es-MX', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
                       const isUnread = !parseInt(n.leida);
                       const borderStyle = isUnread ? 'border-l-4 border-primary pl-3' : 'pl-3';
-                      const bgStyle = isUnread ? 'bg-surface-container-high/40' : '';
-                      
+                      const bgStyle = isUnread ? 'bg-primary/5' : '';
+
                       htmlList += `
                       <div class="p-3 rounded-xl border border-outline-variant/30 ${borderStyle} ${bgStyle} flex justify-between items-start gap-3 transition-all" id="modal-notif-item-${n.id}">
                           <div class="min-w-0 flex-1">
                               <div class="flex justify-between items-start gap-2">
-                                  <h4 class="text-xs font-bold text-white">${n.tipo || 'INFORMACIÓN'}</h4>
+                                  <h4 class="text-xs font-bold text-slate-800">${n.tipo || 'INFORMACIÓN'}</h4>
                                   <span class="text-[9px] text-slate-400 shrink-0">${dateFmt}</span>
                               </div>
-                              <p class="text-xs text-slate-300 mt-1 break-words">${n.mensaje}</p>
+                              <p class="text-xs text-slate-600 mt-1 break-words">${n.mensaje}</p>
                           </div>
                           <button onclick="eliminarNotificacion(event, ${n.id})" class="text-slate-400 hover:text-error transition-colors p-1 rounded-lg hover:bg-white/5 shrink-0" title="Eliminar">
                               <span class="material-symbols-outlined text-[16px]">delete</span>
@@ -475,8 +476,8 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
                   width: '500px',
                   confirmButtonColor: '#4a90d9',
                   confirmButtonText: 'Cerrar',
-                  background: '#102245',
-                  color: '#e8f0ff'
+                  background: '#ffffff',
+                  color: '#1e293b'
               });
 
               marcarTodasLeidas();
@@ -490,19 +491,19 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
-<header style="background:rgba(7,22,40,0.97);border-bottom:1px solid rgba(74,144,217,0.15)"
+<header style="background:rgba(255,255,255,0.97);border-bottom:1px solid rgba(15,23,42,0.08)"
  class="h-16 fixed top-0 z-40 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)]">
  
   <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
   <!-- Hamburger Menu Button -->
-  <button onclick="toggleUserSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+  <button onclick="toggleUserSidebar()" class="lg:hidden text-slate-700 hover:bg-slate-100 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
     <span class="material-symbols-outlined text-2xl">menu</span>
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
   <div class="flex flex-col leading-none min-w-0">
   <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary/70 mb-1">MMPharma</span>
-  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
+  <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
   </div>
   </div>
   </div>
@@ -589,7 +590,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   <div class="h-6 w-px bg-outline-variant/30 hidden md:block"></div>
 
  <!-- User / Perfil Button -->
- <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
+ <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-slate-100 group">
  <?php
  $foto = $_SESSION['cliente_foto'] ?? '';
  $nombre = $_SESSION['cliente_nombre'] ?? 'Cliente';
@@ -606,10 +607,10 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  </div>
  <?php endif; ?>
  <div class="hidden lg:flex flex-col items-start leading-none">
- <span class="text-sm font-semibold text-on-surface"><?= htmlspecialchars($nombre) ?></span>
- <span class="text-[10px] text-on-surface-variant">Mi cuenta</span>
+ <span class="text-sm font-semibold text-slate-800"><?= htmlspecialchars($nombre) ?></span>
+ <span class="text-[10px] text-slate-400">Mi cuenta</span>
  </div>
- <span class="material-symbols-outlined text-outline text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
+ <span class="material-symbols-outlined text-slate-400 text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
  </a>
  </div>
 </header>
