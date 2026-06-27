@@ -54,7 +54,7 @@ $product_ids = array_column($carrito, 'id');
 $product_details = [];
 if (!empty($product_ids)) {
     $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
-    $stmt = $pdo->prepare("SELECT id, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($placeholders)");
+    $stmt = $pdo->prepare("SELECT id, tasa_iva, sustancia, codigo, tipo FROM catalogo_productos WHERE id IN ($placeholders)");
     $stmt->execute($product_ids);
     $product_details = $stmt->fetchAll(PDO::FETCH_UNIQUE);
 }
@@ -63,15 +63,24 @@ if (!empty($product_ids)) {
 $subtotal_productos = 0;
 $total_items_sin_iva = 0;
 $total_items_iva = 0;
+$total_normal_con_iva = 0;
+$tiene_red_fria = false;
 foreach ($carrito as $item) {
     $item_total = (float)$item['precio'] * (int)$item['cantidad'];
     $subtotal_productos += $item_total;
     $tasa = isset($product_details[$item['id']]) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
+    $tipo = isset($product_details[$item['id']]) ? strtoupper($product_details[$item['id']]['tipo']) : 'SECO';
     
     $item_sin_iva = $item_total;
     $item_iva = $item_total * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
+    
+    if ($tipo === 'RED FRIA') {
+        $tiene_red_fria = true;
+    } else {
+        $total_normal_con_iva += ($item_total + $item_iva);
+    }
 }
 
 $costo_envio = 0.00;
@@ -86,10 +95,10 @@ if (!empty($_POST['direccion_id'])) {
     if ($dirInfo) {
         $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
         $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
-        $calc = calcularCostoEnvio($subtotal_productos, $dirInfo['estado'], $lat, $lng);
+        $calc = calcularCostoEnvio($total_normal_con_iva, $dirInfo['estado'], $lat, $lng, $tiene_red_fria);
         $costo_envio_original = $calc['costo'];
         
-        if ($recoger_sucursal) {
+        if ($recoger_sucursal || ($total_normal_con_iva == 0 && $tiene_red_fria)) {
             $costo_envio = 0.00;
             $mensaje_envio = 'Recoger en sucursal';
         } else {
@@ -97,12 +106,11 @@ if (!empty($_POST['direccion_id'])) {
             $mensaje_envio = mb_convert_encoding($calc['mensaje'], 'ISO-8859-1', 'UTF-8');
         }
     }
-}
-
-if ($subtotal_productos < 4000.00) {
-    $costo_envio = 0.00;
-    $mensaje_envio = mb_convert_encoding('Recoger en almacén (Pickup)', 'ISO-8859-1', 'UTF-8');
-    $recoger_sucursal = true;
+} else {
+    if ($tiene_red_fria && $total_normal_con_iva == 0) {
+        $costo_envio = 0.00;
+        $mensaje_envio = 'Recoger en sucursal';
+    }
 }
 
 $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
@@ -275,11 +283,21 @@ $pdf->Cell(50, 8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 
 $pdf->Ln(20);
 
-if ($costo_envio > 0 || $recoger_sucursal) {
+if ($costo_envio > 0 || $recoger_sucursal || ($tiene_red_fria && $total_normal_con_iva == 0)) {
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->SetTextColor(0, 36, 81);
     $pdf->MultiCell(0, 5, mb_convert_encoding(
         "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        'ISO-8859-1', 'UTF-8'
+    ), 0, 'C');
+    $pdf->Ln(2);
+}
+
+if ($tiene_red_fria) {
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->SetTextColor(200, 0, 0); // Rojo para destacar
+    $pdf->MultiCell(0, 5, mb_convert_encoding(
+        "Los productos de Red Fría requieren recolección por parte del cliente o transportista propio. MM Pharma no gestiona ni cobra este envío.",
         'ISO-8859-1', 'UTF-8'
     ), 0, 'C');
     $pdf->Ln(5);

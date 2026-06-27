@@ -28,7 +28,7 @@ if (!$pedido) die("Cotización no encontrada o no autorizada.");
 
 // Obtener detalles del pedido
 $stmt = $pdo->prepare("
-    SELECT pd.*, cp.tasa_iva, cp.codigo, cp.sustancia 
+    SELECT pd.*, cp.tasa_iva, cp.codigo, cp.sustancia, cp.tipo 
     FROM clientes_pedidos_detalle pd 
     LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
     WHERE pd.pedido_id = ?
@@ -45,19 +45,30 @@ $monto_total = (float)$pedido['monto_total'];
 $subtotal_productos = 0;
 $total_items_sin_iva = 0;
 $total_items_iva = 0;
+$total_normal_con_iva = 0;
+$tiene_red_fria = false;
+
 foreach($detalles as $det) {
     $subtotal_linea = (float)$det['subtotal'];
     $subtotal_productos += $subtotal_linea;
     $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.00;
+    $tipo = isset($det['tipo']) ? strtoupper($det['tipo']) : 'SECO';
+    
     $item_sin_iva = $subtotal_linea;
     $item_iva = $subtotal_linea * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
+    
+    if ($tipo === 'RED FRIA') {
+        $tiene_red_fria = true;
+    } else {
+        $total_normal_con_iva += ($subtotal_linea + $item_iva);
+    }
 }
 
-$recoger_sucursal = ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00);
+$recoger_sucursal = ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || ($tiene_red_fria && $total_normal_con_iva == 0));
 
-if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO') {
+if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || ($tiene_red_fria && $total_normal_con_iva == 0)) {
     $costo_envio = 0.00;
 }
 $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
@@ -234,7 +245,7 @@ $pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
 
-if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO') {
+if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || ($tiene_red_fria && $total_normal_con_iva == 0)) {
     $texto_envio = mb_convert_encoding('Recoger en almacén (Pickup)', 'ISO-8859-1', 'UTF-8');
 } else if ($pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
     $texto_envio = mb_convert_encoding('Recoger en sucursal', 'ISO-8859-1', 'UTF-8');
@@ -261,11 +272,21 @@ $pdf->Cell(50,  8, '$' . number_format($monto_total, 2), 1, 1, 'R');
 // ─── Aviso legal ──────────────────────────────────────────────────────────
 $pdf->Ln(20);
 
-if ($costo_envio > 0 || $recoger_sucursal) {
+if ($costo_envio > 0 || $recoger_sucursal || ($tiene_red_fria && $total_normal_con_iva == 0)) {
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->SetTextColor(0, 36, 81);
     $pdf->MultiCell(0, 5, mb_convert_encoding(
         "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        'ISO-8859-1', 'UTF-8'
+    ), 0, 'C');
+    $pdf->Ln(2);
+}
+
+if ($tiene_red_fria) {
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->SetTextColor(200, 0, 0); // Rojo para destacar
+    $pdf->MultiCell(0, 5, mb_convert_encoding(
+        "Los productos de Red Fría requieren recolección por parte del cliente o transportista propio. MM Pharma no gestiona ni cobra este envío.",
         'ISO-8859-1', 'UTF-8'
     ), 0, 'C');
     $pdf->Ln(5);

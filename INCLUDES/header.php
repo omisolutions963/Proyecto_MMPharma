@@ -600,15 +600,24 @@ function renderCartItems() {
  let html = '';
  let subtotal = 0;
  let totalIva = 0;
+ let totalNormalConIva = 0;
+ let tieneRedFria = false;
 
  carrito.forEach((item, index) => {
   const totalLinea = item.precio * item.cantidad;
   subtotal += totalLinea;
   
   const tasa = item.tasa_iva !== undefined ? parseFloat(item.tasa_iva) : 0.16;
+  const tipo = item.tipo !== undefined ? item.tipo.toUpperCase() : 'SECO';
   const itemSinIva = totalLinea;
   const itemIva = totalLinea * tasa;
   totalIva += itemIva;
+  
+  if (tipo === 'RED FRIA') {
+      tieneRedFria = true;
+  } else {
+      totalNormalConIva += (totalLinea + itemIva);
+  }
   
   let imagenHtml = '';
   if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
@@ -642,16 +651,21 @@ function renderCartItems() {
 
  container.innerHTML = html;
  subtotalEl.textContent = formatCurrency(subtotal);
- calcularEnvioDynamic(subtotal, totalIva);
+ calcularEnvioDynamic(subtotal, totalIva, totalNormalConIva, tieneRedFria);
 }
 
 let currentShippingCost = 0;
 let currentSubtotal = 0;
 let currentTotalIva = 0;
+let currentTotalNormalConIva = 0;
+let currentTieneRedFria = false;
+let currentShippingType = 'GRATIS';
 
-function calcularEnvioDynamic(subtotal, totalIva = 0) {
+function calcularEnvioDynamic(subtotal, totalIva = 0, totalNormalConIva = 0, tieneRedFria = false) {
   currentSubtotal = subtotal;
   currentTotalIva = totalIva;
+  currentTotalNormalConIva = totalNormalConIva;
+  currentTieneRedFria = tieneRedFria;
   const dirSelect = document.getElementById('cart-direccion');
   const envioEl = document.getElementById('cart-envio');
   const totalEl = document.getElementById('cart-total');
@@ -673,12 +687,14 @@ function calcularEnvioDynamic(subtotal, totalIva = 0) {
   fetch('<?= $base ?? '' ?>catalogo/api_calcular_envio.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direccion_id: direccion_id, subtotal: subtotal })
+      body: JSON.stringify({ direccion_id: direccion_id, subtotal_normal_con_iva: totalNormalConIva, tiene_red_fria: tieneRedFria })
   })
   .then(res => res.json())
   .then(data => {
       if (data.success) {
           const calc = data.calculo;
+          currentShippingType = calc.tipo;
+          
           if (calc.costo > 0) {
               currentShippingCost = calc.costo;
               document.getElementById('opcion-recoger-sucursal').classList.remove('hidden');
@@ -687,7 +703,7 @@ function calcularEnvioDynamic(subtotal, totalIva = 0) {
               currentShippingCost = 0;
               document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
               document.getElementById('checkbox-recoger-sucursal').checked = false;
-              if (subtotal < 4000.00) {
+              if (calc.tipo === 'SUCURSAL') {
                   envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
               } else {
                   envioEl.textContent = calc.mensaje;
@@ -712,9 +728,9 @@ function toggleRecogerSucursal() {
 function actualizarTotalConEnvio() {
     const envioEl = document.getElementById('cart-envio');
     const totalEl = document.getElementById('cart-total');
-    const isRecoger = document.getElementById('checkbox-recoger-sucursal').checked;
+    const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
     
-    if (currentSubtotal < 4000.00) {
+    if (currentShippingType === 'SUCURSAL') {
         envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
         totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva);
     } else if (isRecoger) {
@@ -795,11 +811,10 @@ function toggleCartDrawer() {
 // Inicializar el badge al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
  actualizarBadge();
- const dirSelect = document.getElementById('cart-direccion');
+         const dirSelect = document.getElementById('cart-direccion');
  if (dirSelect) {
      dirSelect.addEventListener('change', () => {
-         const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-         calcularEnvioDynamic(subtotal);
+         renderCartItems(); // Esto recalcula todo y llama a calcularEnvioDynamic
      });
  }
 });
@@ -810,13 +825,13 @@ function generarCotizacion() {
  return;
  }
 
- const dirSelect = document.getElementById('cart-direccion');
- const direccion_id = dirSelect ? dirSelect.value : null;
+  const dirSelect = document.getElementById('cart-direccion');
+  const direccion_id = dirSelect ? dirSelect.value : null;
 
- if (dirSelect && !direccion_id) {
-    Swal.fire('Atención', 'Debes seleccionar una dirección para cotizar.', 'warning');
-    return;
- }
+  if (!direccion_id) {
+     Swal.fire('Atención', 'Debes registrar y seleccionar una dirección para cotizar.', 'warning');
+     return;
+  }
  
  const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
 
@@ -908,15 +923,15 @@ function confirmarPedido() {
  btn.innerHTML = '<div class="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Procesando...';
  btn.disabled = true;
 
- const dirSelect = document.getElementById('cart-direccion');
- const direccion_id = dirSelect ? dirSelect.value : null;
+  const dirSelect = document.getElementById('cart-direccion');
+  const direccion_id = dirSelect ? dirSelect.value : null;
 
- if (dirSelect && !direccion_id) {
- Swal.fire('Atención', 'Debes seleccionar una dirección de envío o registrar una nueva.', 'warning');
- btn.innerHTML = originalText;
- btn.disabled = false;
- return;
- }
+  if (!direccion_id) {
+  Swal.fire('Atención', 'Debes seleccionar una dirección de envío o registrar una nueva.', 'warning');
+  btn.innerHTML = originalText;
+  btn.disabled = false;
+  return;
+  }
  
  const isRecoger = document.getElementById('checkbox-recoger-sucursal') ? document.getElementById('checkbox-recoger-sucursal').checked : false;
 

@@ -16,22 +16,14 @@ function haversineGreatCircleDistance($latFrom, $lonFrom, $latTo, $lonTo, $earth
 /**
  * Calcula el costo de envío y tipo de entrega
  * 
- * @param float $subtotal Monto total de los productos en el carrito
+ * @param float $total_normal_con_iva Monto total de los productos normales (sin red fría) con IVA incluido
  * @param string $estado Estado de la república (ej: 'JALISCO')
  * @param float|null $lat Latitud
  * @param float|null $lng Longitud
- * @return array [ 'costo' => float, 'mensaje' => string, 'tipo' => string, 'puede_enviarse' => bool ]
+ * @param bool $tiene_red_fria Indica si hay productos de red fría en la cotización/carrito
+ * @return array [ 'costo' => float, 'mensaje' => string, 'tipo' => string, 'puede_enviarse' => bool, 'mensaje_red_fria' => bool ]
  */
-function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
-    if ($subtotal < 4000.00) {
-        return [
-            'costo' => 0.00,
-            'mensaje' => 'Recoger en almacén',
-            'tipo' => 'SUCURSAL',
-            'puede_enviarse' => false
-        ];
-    }
-
+function calcularCostoEnvio($total_normal_con_iva, $estado, $lat, $lng, $tiene_red_fria = false) {
     $estado = strtoupper(trim($estado));
     $origin_lat = 20.639194;
     $origin_lng = -103.403222;
@@ -40,11 +32,21 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
         'costo' => 0.00,
         'mensaje' => 'Envío gratis',
         'tipo' => 'GRATIS',
-        'puede_enviarse' => true
+        'puede_enviarse' => true,
+        'mensaje_red_fria' => $tiene_red_fria
     ];
 
+    if ($total_normal_con_iva == 0 && $tiene_red_fria) {
+        // Solo hay productos de red fría
+        $resultado['costo'] = 0.00;
+        $resultado['mensaje'] = 'Recoger en sucursal';
+        $resultado['tipo'] = 'SUCURSAL';
+        $resultado['puede_enviarse'] = false;
+        return $resultado;
+    }
+
     if ($estado !== 'JALISCO') {
-        if ($subtotal > 8000) {
+        if ($total_normal_con_iva >= 8000) {
             $resultado['costo'] = 0.00;
             $resultado['mensaje'] = 'Envío gratis';
             $resultado['tipo'] = 'GRATIS';
@@ -59,7 +61,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
             $distance = haversineGreatCircleDistance($origin_lat, $origin_lng, $lat, $lng);
             if ($distance <= 10) {
                 // Radio <= 10km
-                if ($subtotal > 4000) {
+                if ($total_normal_con_iva >= 4000) {
                     $resultado['costo'] = 0.00;
                     $resultado['mensaje'] = 'Envío gratis';
                     $resultado['tipo'] = 'GRATIS';
@@ -71,7 +73,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
                 }
             } else {
                 // Radio > 10km
-                if ($subtotal > 7000) {
+                if ($total_normal_con_iva >= 7000) {
                     $resultado['costo'] = 0.00;
                     $resultado['mensaje'] = 'Envío gratis';
                     $resultado['tipo'] = 'GRATIS';
@@ -84,7 +86,7 @@ function calcularCostoEnvio($subtotal, $estado, $lat, $lng) {
             }
         } else {
             // En Jalisco pero sin ubicación exacta, asumimos como fuera del radio de 10km
-            if ($subtotal > 7000) {
+            if ($total_normal_con_iva >= 7000) {
                 $resultado['costo'] = 0.00;
                 $resultado['mensaje'] = 'Envío gratis';
                 $resultado['tipo'] = 'GRATIS';

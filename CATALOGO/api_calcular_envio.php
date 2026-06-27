@@ -20,7 +20,8 @@ if (!$data) {
 }
 
 $direccion_id = $data['direccion_id'] ?? null;
-$subtotal = (float)($data['subtotal'] ?? 0);
+$subtotal_normal_con_iva = (float)($data['subtotal_normal_con_iva'] ?? 0);
+$tiene_red_fria = (bool)($data['tiene_red_fria'] ?? false);
 
 if (!$direccion_id) {
     echo json_encode(['success' => false, 'message' => 'Falta direccion_id']);
@@ -41,7 +42,7 @@ try {
     $lat = $direccion['latitud'] !== null ? (float)$direccion['latitud'] : null;
     $lng = $direccion['longitud'] !== null ? (float)$direccion['longitud'] : null;
 
-    $calculo = calcularCostoEnvio($subtotal, $estado, $lat, $lng);
+    $calculo = calcularCostoEnvio($subtotal_normal_con_iva, $estado, $lat, $lng, $tiene_red_fria);
 
     echo json_encode(['success' => true, 'calculo' => $calculo]);
 

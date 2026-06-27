@@ -50,14 +50,25 @@ $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 $subtotal_productos = 0;
 $total_items_sin_iva = 0;
 $total_items_iva = 0;
+$total_normal_con_iva = 0;
+$tiene_red_fria = false;
+
 foreach($detalles as $det) {
     $subtotal_linea = (float)$det['subtotal'];
     $subtotal_productos += $subtotal_linea;
     $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+    $tipo = isset($det['tipo']) ? strtoupper($det['tipo']) : 'SECO';
+    
     $item_sin_iva = $subtotal_linea;
     $item_iva = $subtotal_linea * $tasa;
     $total_items_sin_iva += $item_sin_iva;
     $total_items_iva += $item_iva;
+    
+    if ($tipo === 'RED FRIA') {
+        $tiene_red_fria = true;
+    } else {
+        $total_normal_con_iva += ($subtotal_linea + $item_iva);
+    }
 }
 
 $costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
@@ -141,8 +152,8 @@ include('includes/sidebar.php');
           $enviado = in_array($estado, ['ENVIADO', 'ENTREGADO']);
           $entregado = ($estado === 'ENTREGADO');
           
-          $recoger_sucursal = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00);
-          $label_paso4 = ($estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $subtotal_productos < 4000.00) ? 'Listo para recolectar' : ($recoger_sucursal ? 'Listo para recoger' : 'Enviado');
+          $recoger_sucursal = ($estado === 'RECOGER EN SUCURSAL' || $estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || ($tiene_red_fria && $total_normal_con_iva == 0));
+          $label_paso4 = ($estado === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || ($tiene_red_fria && $total_normal_con_iva == 0)) ? 'Listo para recolectar' : ($recoger_sucursal ? 'Listo para recoger' : 'Enviado');
           $icon_paso4 = $recoger_sucursal ? 'store' : 'local_shipping';
           
           if ($recoger_sucursal) {
@@ -321,7 +332,7 @@ include('includes/sidebar.php');
   <div class="flex justify-between items-start mb-3 gap-4">
   <span class="text-sm text-on-surface-variant shrink-0">Envío:</span>
   <?php
-  if ($subtotal_productos < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+  if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal']) || ($tiene_red_fria && $total_normal_con_iva == 0)) {
       echo '<div class="text-right">
               <span class="text-sm font-bold text-green-400 block">Recoger en almacén</span>
               <span class="text-[10px] text-green-400/80 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span>
@@ -349,7 +360,7 @@ include('includes/sidebar.php');
  </div>
  </div>
  
- <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00): ?>
+ <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || ($tiene_red_fria && $total_normal_con_iva == 0)): ?>
  <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
      <div class="flex items-center gap-2 text-primary font-bold mb-1">
          <span class="material-symbols-outlined text-[18px]">store</span>
@@ -357,6 +368,17 @@ include('includes/sidebar.php');
      </div>
      <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-white">De 9am a 6pm todos los días de la semana.</strong></p>
      <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
+ </div>
+ <?php endif; ?>
+
+ <?php if ($tiene_red_fria): ?>
+ <div class="mt-4 bg-red-900/30 border border-red-500/50 rounded-xl p-4 text-sm text-white">
+     <div class="flex items-center gap-2 text-red-400 font-bold mb-1">
+         <span class="material-symbols-outlined text-[18px]">severe_cold</span>
+         Productos de Red Fría
+     </div>
+     <p class="text-xs text-red-200/80 mb-1">Tu cotización incluye productos de Red Fría. MM Pharma no gestiona ni cobra el envío de estos productos.</p>
+     <p class="text-[10px] text-red-200/60">Es tu responsabilidad organizar tu propio transporte, ya sea con guía prepagada o transportista propio que llegue al almacén.</p>
  </div>
  <?php endif; ?>
 

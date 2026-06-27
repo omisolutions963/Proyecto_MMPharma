@@ -22,7 +22,7 @@ if (!$pedido) die("Pedido no encontrado");
 
 // Obtener detalles
 $stmt = $pdo->prepare("
-    SELECT pd.*, cp.tasa_iva, cp.codigo, cp.sustancia 
+    SELECT pd.*, cp.tasa_iva, cp.codigo, cp.sustancia, cp.tipo 
     FROM clientes_pedidos_detalle pd 
     LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
     WHERE pd.pedido_id = ?
@@ -168,6 +168,22 @@ $pdf->SetTextColor(0, 36, 81);
 $pdf->Cell(35, 8, '$' . number_format($pedido['monto_total'], 2), 1, 1, 'R');
 
 $pdf->Ln(20);
+
+$tiene_red_fria = false;
+foreach ($detalles as $det) {
+    if (strtoupper($det['tipo'] ?? '') === 'RED FRIA') {
+        $tiene_red_fria = true;
+        break;
+    }
+}
+
+if ($tiene_red_fria) {
+    $pdf->SetFont('Arial', 'B', 8);
+    $pdf->SetTextColor(200, 0, 0); // Rojo
+    $pdf->MultiCell(0, 5, mb_convert_encoding("ESTE PEDIDO INCLUYE PRODUCTOS DE RED FRÍA. ES RESPONSABILIDAD DEL CLIENTE ORGANIZAR SU PROPIO TRANSPORTE, MM PHARMA NO GESTIONA NI COBRA ESTE ENVÍO.", 'ISO-8859-1', 'UTF-8'), 0, 'C');
+    $pdf->Ln(5);
+}
+
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->MultiCell(0, 5, mb_convert_encoding("ESTE DOCUMENTO ES UNA COTIZACIÓN INFORMATIVA. LOS PRECIOS Y DISPONIBILIDAD ESTÁN SUJETOS A CAMBIOS SIN PREVIO AVISO HASTA QUE SE CONFIRME LA DISPONIBILIDAD EN ALMACÉN Y SE REALICE EL PAGO CORRESPONDIENTE.", 'ISO-8859-1', 'UTF-8'), 0, 'C');

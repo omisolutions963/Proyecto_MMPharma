@@ -31,17 +31,29 @@ try {
 
     $subtotal = 0;
     $total_iva = 0;
+    $total_normal_con_iva = 0;
+    $tiene_red_fria = false;
+
     foreach ($carrito as $item) {
         $subtotal_linea = (float)$item['precio'] * (int)$item['cantidad'];
         $subtotal += $subtotal_linea;
         
         $pid = (int)$item['id'];
-        $stmtTasa = $pdo->prepare("SELECT tasa_iva FROM catalogo_productos WHERE id = ?");
-        $stmtTasa->execute([$pid]);
-        $tasa = $stmtTasa->fetchColumn();
-        $tasa = $tasa !== false ? (float)$tasa : 0.16;
+        $stmtProd = $pdo->prepare("SELECT tasa_iva, tipo FROM catalogo_productos WHERE id = ?");
+        $stmtProd->execute([$pid]);
+        $prodInfo = $stmtProd->fetch(PDO::FETCH_ASSOC);
         
-        $total_iva += $subtotal_linea * $tasa;
+        $tasa = $prodInfo && $prodInfo['tasa_iva'] !== null ? (float)$prodInfo['tasa_iva'] : 0.16;
+        $tipo = $prodInfo ? strtoupper($prodInfo['tipo']) : 'SECO';
+        
+        $item_iva = $subtotal_linea * $tasa;
+        $total_iva += $item_iva;
+        
+        if ($tipo === 'RED FRIA') {
+            $tiene_red_fria = true;
+        } else {
+            $total_normal_con_iva += ($subtotal_linea + $item_iva);
+        }
     }
     $monto_total = $subtotal + $total_iva;
 
@@ -54,10 +66,12 @@ try {
     $direccion_id     = $data['direccion_id'] ?? null;
     $costo_envio      = 0.00;
     $recoger_sucursal = isset($data['recoger_sucursal']) && $data['recoger_sucursal'];
-    if ($subtotal < 4000.00) {
+
+    if ($tiene_red_fria && $total_normal_con_iva == 0) {
         $recoger_sucursal = true;
     }
-    $estado_envio     = $recoger_sucursal ? ($subtotal < 4000.00 ? 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' : 'RECOGER EN SUCURSAL') : 'PENDIENTE';
+
+    $estado_envio     = $recoger_sucursal ? 'RECOGER EN SUCURSAL' : 'PENDIENTE';
     $estado_destino   = null;
     $lat = null;
     $lng = null;
@@ -71,36 +85,23 @@ try {
             $estado_destino = strtoupper(trim($dirInfo['estado']));
             $lat = $dirInfo['latitud'] !== null ? (float)$dirInfo['latitud'] : null;
             $lng = $dirInfo['longitud'] !== null ? (float)$dirInfo['longitud'] : null;
-            $calc = calcularCostoEnvio($subtotal, $dirInfo['estado'], $lat, $lng);
-            $costo_envio  = $recoger_sucursal ? 0.00 : $calc['costo'];
-            $monto_total += $costo_envio;
-        }
-    }
-
-    // ── VALIDACIÓN RED FRÍA ──────────────────────────────────────────────────
-    // Si el destino es foráneo (fuera de Jalisco) y NO es recoger en sucursal,
-    // bloqueamos el pedido si contiene productos de Red Fría.
-    if (!$recoger_sucursal && $estado_destino && $estado_destino !== 'JALISCO') {
-        $ids_carrito  = array_column($carrito, 'id');
-        if (!empty($ids_carrito)) {
-            $placeholders = implode(',', array_fill(0, count($ids_carrito), '?'));
-            $stmtRF = $pdo->prepare(
-                "SELECT nombre FROM catalogo_productos WHERE id IN ($placeholders) AND tipo = 'RED FRIA'"
-            );
-            $stmtRF->execute($ids_carrito);
-            $prods_rf = $stmtRF->fetchAll(PDO::FETCH_COLUMN);
-
-            if (!empty($prods_rf)) {
-                $pdo->rollBack();
-                $muestra = implode(', ', array_map(fn($n) => mb_substr($n, 0, 40), array_slice($prods_rf, 0, 3)));
-                $extra   = count($prods_rf) > 3 ? ' y ' . (count($prods_rf) - 3) . ' más' : '';
-                echo json_encode([
-                    'success'  => false,
-                    'red_fria' => true,
-                    'message'  => "Tu pedido contiene producto(s) de Red Fría ($muestra$extra) que no pueden enviarse a un estado foráneo sin coordinación especial de paquetería fría. Por favor comunícate con tu asesor o selecciona \"Recoger en sucursal\".",
-                ]);
-                exit;
+            
+            $calc = calcularCostoEnvio($total_normal_con_iva, $dirInfo['estado'], $lat, $lng, $tiene_red_fria);
+            
+            if ($recoger_sucursal) {
+                $costo_envio = 0.00;
+            } else {
+                $costo_envio  = $calc['costo'];
+                $monto_total += $costo_envio;
+                if ($calc['tipo'] === 'SUCURSAL') {
+                    $estado_envio = 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO';
+                    $recoger_sucursal = true;
+                }
             }
+        }
+    } else {
+        if ($tiene_red_fria && $total_normal_con_iva == 0) {
+            $estado_envio = 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO';
         }
     }
 

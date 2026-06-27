@@ -133,13 +133,28 @@ if (!$pedido) {
 
 // Obtener detalles (productos) del pedido
 $stmtDetalle = $pdo->prepare("
-    SELECT pd.*, cp.codigo, cp.sustancia, cp.tasa_iva 
+    SELECT pd.*, cp.codigo, cp.sustancia, cp.tasa_iva, cp.tipo 
     FROM clientes_pedidos_detalle pd 
     LEFT JOIN catalogo_productos cp ON pd.producto_id = cp.id 
     WHERE pd.pedido_id = ?
 ");
 $stmtDetalle->execute([$id]);
 $detalles = $stmtDetalle->fetchAll();
+
+$total_normal_con_iva = 0;
+$tiene_red_fria = false;
+foreach ($detalles as $det) {
+    $tasa = isset($det['tasa_iva']) ? (float)$det['tasa_iva'] : 0.16;
+    $tipo = isset($det['tipo']) ? strtoupper($det['tipo']) : 'SECO';
+    $subtotal_linea = (float)$det['subtotal'];
+    $item_iva = $subtotal_linea * $tasa;
+    
+    if ($tipo === 'RED FRIA') {
+        $tiene_red_fria = true;
+    } else {
+        $total_normal_con_iva += ($subtotal_linea + $item_iva);
+    }
+}
 
 // Obtener comprobante de pago (si hay)
 $stmtComp = $pdo->prepare("SELECT * FROM clientes_pedidos_comprobantes WHERE pedido_id = ? ORDER BY fecha_subida DESC LIMIT 1");
@@ -409,7 +424,7 @@ include("../includes/sidebar.php");
                         <tr>
                             <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant border-t border-outline-variant/10">Costo de envío:</td>
                             <td class="px-6 py-4 text-right text-sm font-black text-white border-t border-outline-variant/10">
-                                <?php if ($suma_subtotales < 4000.00 || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO'): ?>
+                                <?php if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || ($tiene_red_fria && $total_normal_con_iva == 0)): ?>
                                     <div class="text-right inline-block">
                                         <span class="text-sm font-bold text-green-400 block">Recoger en almacén</span>
                                         <span class="text-[10px] text-green-400/80 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span>
@@ -427,6 +442,16 @@ include("../includes/sidebar.php");
                 </table>
             </div>
         </div>
+
+        <?php if ($tiene_red_fria): ?>
+        <div class="mt-4 bg-red-900/30 border border-red-500/50 rounded-xl p-4 text-sm text-white">
+            <div class="flex items-center gap-2 text-red-400 font-bold mb-1">
+                <span class="material-symbols-outlined text-[18px]">severe_cold</span>
+                Productos de Red Fría
+            </div>
+            <p class="text-xs text-red-200/80 mb-1">Este pedido incluye productos de Red Fría. El cliente debe organizar su propio transporte.</p>
+        </div>
+        <?php endif; ?>
 
     </div>
 </div>

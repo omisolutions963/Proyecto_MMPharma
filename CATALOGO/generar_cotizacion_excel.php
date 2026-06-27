@@ -34,9 +34,43 @@ function diasHabilesXlsx(DateTime $d, int $n): DateTime {
 $hoy     = new DateTime();
 $vigencia = diasHabilesXlsx(clone $hoy, 10);
 
+// ── Tipos de producto, tasas de IVA y otros detalles de la BD ──────────────
+$ids = array_column($carrito, 'id');
+$product_details = [];
+if ($ids) {
+    $ph  = implode(',', array_fill(0, count($ids), '?'));
+    $st  = $pdo->prepare("SELECT id, tipo, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($ph)");
+    $st->execute($ids);
+    $product_details = $st->fetchAll(PDO::FETCH_UNIQUE);
+}
+
 // ── Subtotal / envío ───────────────────────────────────────────────────────
 $subtotal_prod = 0;
-foreach ($carrito as $item) $subtotal_prod += (float)$item['precio'] * (int)$item['cantidad'];
+$total_items_sin_iva = 0;
+$total_items_iva = 0;
+$total_normal_con_iva = 0;
+$tiene_red_fria = false;
+
+foreach ($carrito as $item) {
+    $cant = (int)$item['cantidad'];
+    $precio = (float)$item['precio'];
+    $item_total = $cant * $precio;
+    $subtotal_prod += $item_total;
+    
+    $tasa = isset($product_details[$item['id']]['tasa_iva']) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.16;
+    $tipo = isset($product_details[$item['id']]['tipo']) ? strtoupper($product_details[$item['id']]['tipo']) : 'SECO';
+    
+    $item_sin_iva = $item_total;
+    $item_iva = $item_total * $tasa;
+    $total_items_sin_iva += $item_sin_iva;
+    $total_items_iva += $item_iva;
+    
+    if ($tipo === 'RED FRIA') {
+        $tiene_red_fria = true;
+    } else {
+        $total_normal_con_iva += ($item_total + $item_iva);
+    }
+}
 
 $costo_envio = 0.00; $msg_envio = 'Envío gratis';
 $recoger     = isset($_POST['recoger_sucursal']) && $_POST['recoger_sucursal'] === '1';
@@ -48,40 +82,21 @@ if (!empty($_POST['direccion_id'])) {
     if ($dir) {
         $lat = $dir['latitud']  !== null ? (float)$dir['latitud']  : null;
         $lng = $dir['longitud'] !== null ? (float)$dir['longitud'] : null;
-        $c = calcularCostoEnvio($subtotal_prod, $dir['estado'], $lat, $lng);
-        $costo_envio = $recoger ? 0.00 : $c['costo'];
-        $msg_envio   = $recoger ? 'Recoger en sucursal' : $c['mensaje'];
+        $c = calcularCostoEnvio($total_normal_con_iva, $dir['estado'], $lat, $lng, $tiene_red_fria);
+        
+        if ($recoger || ($total_normal_con_iva == 0 && $tiene_red_fria)) {
+            $costo_envio = 0.00;
+            $msg_envio = 'Recoger en sucursal';
+        } else {
+            $costo_envio = $c['costo'];
+            $msg_envio   = $c['mensaje'];
+        }
     }
-}
-
-if ($subtotal_prod < 4000.00) {
-    $costo_envio = 0.00;
-    $msg_envio = 'Su pedido estará listo para que pase a recolectarlo';
-    $recoger = true;
-}
-
-// ── Tipos de producto, tasas de IVA y otros detalles de la BD ──────────────
-$ids = array_column($carrito, 'id');
-$product_details = [];
-if ($ids) {
-    $ph  = implode(',', array_fill(0, count($ids), '?'));
-    $st  = $pdo->prepare("SELECT id, tipo, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($ph)");
-    $st->execute($ids);
-    $product_details = $st->fetchAll(PDO::FETCH_UNIQUE);
-}
-
-$total_items_sin_iva = 0;
-$total_items_iva = 0;
-foreach ($carrito as $item) {
-    $cant = (int)$item['cantidad'];
-    $precio = (float)$item['precio'];
-    $item_total = $cant * $precio;
-    $tasa = isset($product_details[$item['id']]['tasa_iva']) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.00;
-    
-    $item_sin_iva = $item_total;
-    $item_iva = $item_total * $tasa;
-    $total_items_sin_iva += $item_sin_iva;
-    $total_items_iva += $item_iva;
+} else {
+    if ($tiene_red_fria && $total_normal_con_iva == 0) {
+        $costo_envio = 0.00;
+        $msg_envio = 'Recoger en sucursal';
+    }
 }
 
 $envio_sin_iva = $costo_envio;
@@ -312,6 +327,11 @@ $rows[$r] = ''; $r++;
 $nota = '* Los precios unitarios y de envío mostrados incluyen el IVA correspondiente (16%). Este documento es una cotización informativa. '
       . 'Los precios y disponibilidad están sujetos a cambios sin previo aviso. '
       . 'Vigencia: 10 días hábiles a partir de la fecha de emisión.';
+      
+if ($tiene_red_fria) {
+    $nota .= "\n** IMPORTANTE: Los productos de Red Fría requieren recolección por parte del cliente. MM Pharma no gestiona ni cobra este envío.";
+}
+
 $rows[$r] = cStr($r, 1, $nota, 14) . cStr($r, 2, '', 14) . cStr($r, 3, '', 14)
           . cStr($r, 4, '', 14) . cStr($r, 5, '', 14) . cStr($r, 6, '', 14)
           . cStr($r, 7, '', 14) . cStr($r, 8, '', 14);
