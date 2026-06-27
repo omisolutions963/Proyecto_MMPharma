@@ -105,25 +105,22 @@ include('includes/sidebar.php');
  <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
  Hola, <?= htmlspecialchars($_SESSION['cliente_nombre'] ?? 'Cliente') ?>
  </h1>
- <p class="text-slate-500 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
+ <p class="text-slate-900 mt-1 text-sm font-medium">Aquí tienes un resumen de tu actividad reciente en el portal.</p>
  </div>
  <div class="flex items-center gap-3 mt-4 md:mt-0">
  <a href="cotizaciones.php" class="px-5 py-2.5 bg-surface-container border border-outline-variant/50 hover:bg-surface-container-high text-slate-850 text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">download</span> Estado de cuenta
  </a>
- <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-container text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
  </div>
 
 
- <!-- ROW 1: CARDS -->
- <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8 animate-reveal delay-100">
- 
- <!-- Alerta Documentos (Col-span-2) -->
+ <!-- Alerta Documentos (Full Width Banner) -->
  <?php if ($estatus_cliente === 'DOCS_PENDIENTES' || $tiene_documentos_pendientes): ?>
- <div class="md:col-span-2 bg-[#422c10] border border-[#a66a1d] rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden">
+ <div class="mb-8 bg-[#422c10] border border-[#a66a1d] rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden animate-reveal delay-100">
  <div class="absolute -right-4 -top-4 text-yellow-500/10 rotate-12">
  <span class="material-symbols-outlined" style="font-size: 120px; font-variation-settings: 'FILL' 1;">warning</span>
  </div>
@@ -139,7 +136,7 @@ include('includes/sidebar.php');
  </div>
  </div>
  <?php else: ?>
- <div class="md:col-span-2 bg-tertiary-container/30 border border-tertiary/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden">
+ <div class="mb-8 bg-tertiary-container/30 border border-tertiary/20 rounded-2xl p-6 flex flex-col justify-center relative overflow-hidden animate-reveal delay-100">
  <div class="absolute -right-4 -top-4 text-tertiary/5 rotate-12">
  <span class="material-symbols-outlined" style="font-size: 120px; font-variation-settings: 'FILL' 1;">verified</span>
  </div>
@@ -155,47 +152,6 @@ include('includes/sidebar.php');
  </div>
  </div>
  <?php endif; ?>
-
- <!-- Metric 1: Cotizaciones -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Cotizaciones este mes</span>
- <div class="flex items-end justify-between">
- <span class="text-3xl font-extrabold text-slate-900 leading-none"><?= $cotizaciones_mes ?></span>
- </div>
- </div>
-
- <!-- Metric 2: Última Cotización -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Última cotización</span>
- <div>
- <span class="text-2xl font-extrabold text-slate-900 block mb-1"><?= $ultima_monto ?></span>
- <span class="text-[10px] text-on-surface-variant italic"><?= $ultima_fecha ?></span>
- </div>
- </div>
-
- <!-- Metric 3: Productos Favoritos -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Productos comprados</span>
- <div class="flex items-center gap-2">
- <span class="text-3xl font-extrabold text-slate-900 leading-none"><?= $productos_favoritos ?></span>
- <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">inventory_2</span>
- </div>
- </div>
-
- <!-- Metric 4: Estado de Cuenta -->
- <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-5 flex flex-col justify-between ">
- <span class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-2">Estado de cuenta</span>
- <div>
- <?php if($estatus_cliente === 'ACTIVO'): ?>
- <span class="px-2 py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded-md uppercase tracking-wider mb-2 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ACTIVO</span>
- <span class="block text-[10px] text-on-surface-variant leading-tight">Sin adeudos<br>pendientes</span>
- <?php else: ?>
- <span class="px-2 py-1 bg-error/20 text-error text-[10px] font-bold rounded-md uppercase tracking-wider mb-2 inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-error"></span> INACTIVO</span>
- <span class="block text-[10px] text-on-surface-variant leading-tight">Requiere<br>atención</span>
- <?php endif; ?>
- </div>
- </div>
- </div>
 
  <!-- ROW 2: Estadísticas -->
  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 animate-reveal delay-200">

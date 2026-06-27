@@ -104,10 +104,10 @@ include('includes/sidebar.php');
  <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mis documentos</h1>
  </div>
   <!-- Alert Banner -->
-  <?php if ($aprobados === $total_req): ?>
+  <?php if ($faltantes == 0 && $rechazados == 0 && $pendientes == 0): ?>
   <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-      <span class="material-symbols-outlined text-[24px]">check_circle</span>
+    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[20px]">check_circle</span>
     </div>
     <div>
       <h3 class="text-base font-bold text-slate-900 mb-1">Todos tus documentos están vigentes</h3>
@@ -116,8 +116,8 @@ include('includes/sidebar.php');
   </div>
   <?php elseif ($faltantes > 0 || $rechazados > 0): ?>
   <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-      <span class="material-symbols-outlined text-[24px]">warning</span>
+    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[20px]">warning</span>
     </div>
     <div>
       <h3 class="text-base font-bold text-slate-900 mb-1">Atención requerida</h3>
@@ -126,8 +126,8 @@ include('includes/sidebar.php');
   </div>
   <?php elseif ($pendientes > 0): ?>
   <div class="bg-sky-500/10 border border-sky-500/30 rounded-2xl p-5 md:p-6 mb-8 flex items-center gap-4 animate-reveal delay-100">
-    <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(14,165,233,0.2)]">
-      <span class="material-symbols-outlined text-[24px]">pending</span>
+    <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-600 flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[20px]">pending</span>
     </div>
     <div>
       <h3 class="text-base font-bold text-slate-900 mb-1">Documentos en revisión</h3>
@@ -150,40 +150,40 @@ include('includes/sidebar.php');
     // Colores y badges
     if ($estatus === 'APROBADO') {
       $borderClass = 'border-tertiary/30 hover:border-tertiary/50';
-      $bgIcon = 'bg-tertiary/10 text-tertiary';
-      $badgeBg = 'bg-tertiary/10 border-tertiary/30 text-tertiary';
-      $badgeDot = 'bg-tertiary';
+      $bgIcon = 'bg-emerald-600 text-white';
+      $badgeBg = 'bg-emerald-600 text-white border-transparent';
+      $badgeDot = 'bg-white';
       $badgeText = 'Aprobado';
       $statusText = 'Documento aceptado.';
       $statusIcon = 'check_circle';
-      $statusColor = 'text-tertiary';
+      $statusColor = 'text-emerald-600';
     } elseif ($estatus === 'PENDIENTE') {
       $borderClass = 'border-secondary/30 hover:border-secondary/50';
-      $bgIcon = 'bg-secondary/10 text-secondary';
-      $badgeBg = 'bg-secondary/10 border-secondary/30 text-secondary';
-      $badgeDot = 'bg-secondary';
+      $bgIcon = 'bg-secondary text-white';
+      $badgeBg = 'bg-secondary text-white border-transparent';
+      $badgeDot = 'bg-white';
       $badgeText = 'En revisión';
       $statusText = 'Tu documento está siendo validado.';
       $statusIcon = 'pending';
       $statusColor = 'text-secondary';
     } elseif ($estatus === 'RECHAZADO') {
       $borderClass = 'border-error/30 hover:border-error/50';
-      $bgIcon = 'bg-error/10 text-error';
-      $badgeBg = 'bg-error/10 border-error/30 text-error';
-      $badgeDot = 'bg-error';
+      $bgIcon = 'bg-error/10 text-white';
+      $badgeBg = 'bg-error/10 text-white border-transparent';
+      $badgeDot = 'bg-white';
       $badgeText = 'Rechazado';
       $statusText = 'Tu documento fue rechazado. Sube uno nuevo.';
       $statusIcon = 'error';
-      $statusColor = 'text-error';
+      $statusColor = 'text-[#ef4444]';
     } else {
       $borderClass = 'border-error/30 hover:border-error/50';
-      $bgIcon = 'bg-error/10 text-error';
-      $badgeBg = 'bg-error/10 border-error/30 text-error';
-      $badgeDot = 'bg-error';
+      $bgIcon = 'bg-error/10 text-white';
+      $badgeBg = 'bg-error/10 text-white border-transparent';
+      $badgeDot = 'bg-white';
       $badgeText = 'Faltante';
       $statusText = 'Faltante — este documento es requerido para realizar compras.';
       $statusIcon = 'warning';
-      $statusColor = 'text-error';
+      $statusColor = 'text-[#ef4444]';
     }
   ?>
   <div class="bg-surface-container-lowest border <?= $borderClass ?> rounded-2xl p-6 flex flex-col relative group transition-colors animate-reveal" style="animation-delay: <?= $idx * 0.1 ?>s">
@@ -252,7 +252,7 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-[32px]">upload_file</span>
  </div>
  <h3 class="text-xl font-bold text-slate-900 mb-2">Gestión segura</h3>
- <p class="text-slate-500 text-sm mb-8 max-w-md">Todos los documentos cargados son almacenados en un entorno seguro y validados por nuestro equipo de operaciones.</p>
+ <p class="text-slate-900 text-sm mb-8 max-w-md">Todos los documentos cargados son almacenados en un entorno seguro y validados por nuestro equipo de operaciones.</p>
  </div>
 
  <!-- Input file oculto para cargar archivos -->

@@ -34,9 +34,9 @@ include('includes/sidebar.php');
  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 animate-reveal">
  <div>
  <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-1">Mis direcciones</h1>
- <p class="text-slate-500 text-sm">Gestiona las ubicaciones donde recibirás tus pedidos.</p>
+ <p class="text-slate-900 text-sm">Gestiona las ubicaciones donde recibirás tus pedidos.</p>
  </div>
- <button class="mt-4 md:mt-0 px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
+ <button class="mt-4 md:mt-0 px-5 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
  <span class="material-symbols-outlined text-[18px]">add</span> Agregar nueva dirección
  </button>
  </div>
@@ -71,18 +71,18 @@ include('includes/sidebar.php');
  <div class="space-y-4 mb-8 flex-1">
  <div class="flex items-start gap-3">
  <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">location_on</span>
- <p class="text-sm text-on-surface-variant leading-relaxed"><?= htmlspecialchars($dir_completa) ?></p>
+ <p class="text-sm text-slate-900 leading-relaxed"><?= htmlspecialchars($dir_completa) ?></p>
  </div>
  <?php if(!empty($dir['referencias'])): ?>
  <div class="flex items-start gap-3">
  <span class="material-symbols-outlined text-on-surface-variant text-[18px]">info</span>
- <p class="text-sm text-on-surface-variant leading-relaxed">Ref: <?= htmlspecialchars($dir['referencias']) ?></p>
+ <p class="text-sm text-slate-900 leading-relaxed">Ref: <?= htmlspecialchars($dir['referencias']) ?></p>
  </div>
  <?php endif; ?>
  <?php if(!empty($dir['telefono'])): ?>
  <div class="flex items-start gap-3">
  <span class="material-symbols-outlined text-on-surface-variant text-[18px]">phone</span>
- <p class="text-sm text-on-surface-variant leading-relaxed"><?= htmlspecialchars($dir['telefono']) ?></p>
+ <p class="text-sm text-slate-900 leading-relaxed"><?= htmlspecialchars($dir['telefono']) ?></p>
  </div>
  <?php endif; ?>
  </div>
@@ -107,14 +107,14 @@ include('includes/sidebar.php');
  </div>
  <?php endforeach; ?>
  <?php else: ?>
-  <div class="col-span-1 md:col-span-2 xl:col-span-3 text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col items-center">
-    <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-4">location_off</span>
-    <h3 class="text-xl font-bold text-slate-900 mb-2">No tienes direcciones registradas</h3>
-    <p class="text-sm text-on-surface-variant mb-4">Agrega una dirección principal para poder recibir tus pedidos.</p>
+   <div class="col-span-1 md:col-span-2 xl:col-span-3 text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl flex flex-col items-center">
+     <span class="material-symbols-outlined text-[48px] text-primary mb-4">location_off</span>
+     <h3 class="text-xl font-bold text-slate-900 mb-2">No tienes direcciones registradas</h3>
+    <p class="text-sm text-slate-900 mb-4">Agrega una dirección principal para poder recibir tus pedidos.</p>
     <p class="text-xs font-bold mb-6 flex items-center gap-2 bg-error/10 text-error px-4 py-2.5 rounded-xl border border-error/30 uppercase tracking-wider">
       <span class="material-symbols-outlined text-[18px]">warning</span> Se requiere una dirección para poder cotizar
     </p>
-    <button class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
+    <button class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2" onclick="abrirModalDireccion()">
       <span class="material-symbols-outlined text-[18px]">add</span> Agregar dirección
     </button>
   </div>
@@ -147,7 +147,7 @@ include('includes/sidebar.php');
  <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/30 flex items-center justify-between mb-2">
     <div>
         <p class="text-sm font-bold text-slate-900 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-xl">my_location</span> Usar mi ubicación actual</p>
-        <p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed pr-4">Actívalo si estás en la sucursal o domicilio de entrega en este momento. Esto calculará con exactitud tu tarifa de envío (Envío gratis a 10km a la redonda).</p>
+        <p class="text-xs text-slate-900 mt-1.5 leading-relaxed pr-4">Actívalo si estás en la sucursal o domicilio de entrega en este momento. Esto calculará con exactitud tu tarifa de envío (Envío gratis a 10km a la redonda).</p>
     </div>
     <label class="relative inline-flex items-center cursor-pointer shrink-0">
       <input type="checkbox" id="geoToggle" class="sr-only peer">
@@ -268,7 +268,7 @@ include('includes/sidebar.php');
  
  <div class="pt-6 border-t border-outline-variant/20 flex gap-4">
  <button type="button" class="flex-1 py-3 bg-surface-container hover:bg-surface-container-high text-on-surface font-bold rounded-xl transition-colors" onclick="cerrarModalDireccion()">Cancelar</button>
- <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary-fixed-dim text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+ <button type="submit" class="flex-1 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
  <span class="material-symbols-outlined text-[18px]">save</span> Guardar dirección
  </button>
  </div>

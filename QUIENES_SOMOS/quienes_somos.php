@@ -24,34 +24,34 @@ require_once '../includes/header.php';
 <main class="bg-white py-12 md:py-24">
 
 <!-- ── DISTRIBUIDORES ── -->
-<section class="pb-24 overflow-hidden">
-  <div class="max-w-[1369px] mx-auto px-8 mb-10 text-center" data-aos="fade-up">
+<section class="pb-20 overflow-hidden">
+  <div class="max-w-[1369px] mx-auto px-8 mb-20 text-center" data-aos="fade-up">
     <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Distribuidores <span class="text-tertiary">autorizados</span></h2>
-    <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">Trabajamos con los laboratorios más reconocidos a nivel nacional e internacional.</p>
+    <p class="text-lg text-slate-900 max-w-2xl mx-auto leading-relaxed font-medium">Trabajamos con los laboratorios más reconocidos a nivel nacional e internacional.</p>
   </div>
   <div class="marquee-container">
     <div class="marquee-content">
-      <img src="../Img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
       
-      <img src="../Img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
-      <img src="../Img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
     </div>
   </div>
 </section>
@@ -101,7 +101,7 @@ require_once '../includes/header.php';
  <div class="max-w-[1369px] mx-auto px-8">
  <div class="text-center mb-10" data-aos="fade-up">
   <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Video <span class="text-tertiary">corporativo</span></h2>
-  <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">Conoce más acerca de cómo trabajamos y nuestra infraestructura.</p>
+  <p class="text-lg text-slate-900 max-w-2xl mx-auto leading-relaxed font-medium">Conoce más acerca de cómo trabajamos y nuestra infraestructura.</p>
   </div>
   <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-4xl mx-auto bg-black" data-aos="zoom-in">
   <video controls class="w-full aspect-video object-cover" preload="metadata">
@@ -117,7 +117,7 @@ require_once '../includes/header.php';
  <div class="max-w-[1369px] mx-auto px-8">
  <div class="text-center mb-16" data-aos="fade-up">
   <h2 class="text-3xl font-black tracking-tight text-primary mb-4">Lo que nos <span class="text-tertiary">mueve</span></h2>
-  <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">La base que sustenta cada una de nuestras operaciones.</p>
+  <p class="text-lg text-slate-900 max-w-2xl mx-auto leading-relaxed font-medium">La base que sustenta cada una de nuestras operaciones.</p>
  </div>
  <div class="grid md:grid-cols-2 gap-8 relative z-10">
  <!-- Misión -->

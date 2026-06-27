@@ -80,6 +80,34 @@ $precio_mostrar = $precio_base;
 ?>
 
 <?php
+// Buscar imágenes adicionales (galería / laterales)
+$imagenes_adicionales = [];
+if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE') {
+    $info_img = pathinfo($p['imagen']);
+    $base_name = $info_img['filename'];
+    $extension = $info_img['extension'] ?? 'jpg';
+
+    for ($i = 1; $i <= 5; $i++) {
+        $img_name = $base_name . '_' . $i . '.' . $extension;
+        $file_path = __DIR__ . '/../img/productos/' . $img_name;
+        if (file_exists($file_path)) {
+            $imagenes_adicionales[] = $img_name;
+        } else {
+            // Probar variantes de extensión
+            foreach (['jpg','JPG','png','PNG','webp','WEBP','jpeg','JPEG'] as $ext) {
+                if ($ext === $extension) continue;
+                $alt = $base_name . '_' . $i . '.' . $ext;
+                if (file_exists(__DIR__ . '/../img/productos/' . $alt)) {
+                    $imagenes_adicionales[] = $alt;
+                    break;
+                }
+            }
+        }
+    }
+}
+?>
+
+<?php
 $titulo = htmlspecialchars($p['nombre']); 
 $pagina_actual = 'catalogo'; // marca el link activo en el nav
 $base = '../'; // si estás en subcarpeta como catalogo/
@@ -102,30 +130,49 @@ require_once '../includes/header.php';
  <div class="<?= !$is_logged_in ? 'filter blur-[10px] opacity-40 select-none pointer-events-none' : '' ?>">
  <div class="grid md:grid-cols-2 gap-10 mb-16">
 
- <!-- Imagen del producto -->
- <div class="flex items-center justify-center min-h-[400px] p-4 relative" data-aos="fade-right">
-  <?php if ($p['tipo'] === 'RED FRIA'): ?>
-  <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full">
-  <span class="material-symbols-outlined text-sm">ac_unit</span>
-  Requiere Red Fría
-  </span>
-  <?php elseif (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
-  <span class="absolute top-4 left-4 z-10 px-3 py-1 bg-error text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-error/30">
-  -<?= (float)$p['descuento_porcentaje'] ?>% DESC
-  </span>
-  <?php endif; ?>
+  <!-- Imagen del producto -->
+  <div class="flex flex-col gap-5" data-aos="fade-right">
+    <div class="flex items-center justify-center min-h-[400px] p-4 relative border border-slate-100 rounded-3xl bg-white group overflow-hidden">
+      <?php if ($p['tipo'] === 'RED FRIA'): ?>
+      <span class="absolute top-4 left-4 inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-xs font-bold rounded-full z-10">
+      <span class="material-symbols-outlined text-sm">ac_unit</span>
+      Requiere Red Fría
+      </span>
+      <?php elseif (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)): ?>
+      <span class="absolute top-4 left-4 z-10 px-3 py-1 bg-error text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-error/30">
+      -<?= (float)$p['descuento_porcentaje'] ?>% DESC
+      </span>
+      <?php endif; ?>
 
- <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
- <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=600"
- alt="<?= htmlspecialchars($p['nombre']) ?>"
- class="max-h-[380px] w-auto object-contain mix-blend-multiply rounded-3xl">
- <?php else: ?>
- <div class="text-center">
- <span class="material-symbols-outlined text-8xl text-slate-300">medication</span>
- <p class="text-xs text-slate-400 mt-3">Imagen próximamente</p>
- </div>
- <?php endif; ?>
- </div>
+      <?php if (!empty($p['imagen']) && $p['imagen'] !== 'PENDIENTE'): ?>
+      <div class="relative overflow-hidden w-full h-[380px] flex items-center justify-center cursor-zoom-in" id="zoom-container">
+        <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=600"
+          alt="<?= htmlspecialchars($p['nombre']) ?>"
+          id="main-product-image"
+          class="max-h-[380px] w-auto object-contain mix-blend-multiply rounded-3xl transition-transform duration-250 origin-center">
+      </div>
+      <?php else: ?>
+      <div class="text-center">
+        <span class="material-symbols-outlined text-8xl text-slate-300">medication</span>
+        <p class="text-xs text-slate-400 mt-3">Imagen próximamente</p>
+      </div>
+      <?php endif; ?>
+    </div>
+
+    <!-- Galería de miniaturas (Thumbnails) -->
+    <?php if (!empty($imagenes_adicionales)): ?>
+    <div class="flex gap-3 justify-center">
+      <button type="button" class="w-16 h-16 border-2 border-primary rounded-xl overflow-hidden bg-white p-1 hover:border-primary transition-all thumbnail-btn active-thumbnail" onclick="changeProductImage('<?= htmlspecialchars($p['imagen']) ?>', this)">
+        <img src="../includes/image_cache.php?img=<?= urlencode($p['imagen']) ?>&w=150" class="w-full h-full object-contain mix-blend-multiply">
+      </button>
+      <?php foreach ($imagenes_adicionales as $add_img): ?>
+      <button type="button" class="w-16 h-16 border border-slate-200 rounded-xl overflow-hidden bg-white p-1 hover:border-primary transition-all thumbnail-btn" onclick="changeProductImage('<?= htmlspecialchars($add_img) ?>', this)">
+        <img src="../includes/image_cache.php?img=<?= urlencode($add_img) ?>&w=150" class="w-full h-full object-contain mix-blend-multiply">
+      </button>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+  </div>
 
  <!-- Información del producto -->
  <div class="flex flex-col justify-between" data-aos="fade-left">
@@ -412,6 +459,40 @@ require_once '../includes/header.php';
 
 <!-- ═══ FOOTER ═══ -->
 <?php require_once '../includes/footer.php'; ?>
+
+<script>
+function changeProductImage(imgSrc, btn) {
+    const mainImg = document.getElementById('main-product-image');
+    if (mainImg) {
+        const ts = new Date().getTime();
+        mainImg.src = `../includes/image_cache.php?img=${encodeURIComponent(imgSrc)}&w=600&t=${ts}`;
+    }
+    document.querySelectorAll('.thumbnail-btn').forEach(t => {
+        t.classList.remove('border-primary', 'border-2');
+        t.classList.add('border-slate-200', 'border');
+    });
+    btn.classList.remove('border-slate-200', 'border');
+    btn.classList.add('border-primary', 'border-2');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const zoomContainer = document.getElementById('zoom-container');
+    const mainImage = document.getElementById('main-product-image');
+    if (zoomContainer && mainImage) {
+        zoomContainer.addEventListener('mousemove', function(e) {
+            const rect = zoomContainer.getBoundingClientRect();
+            const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+            const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+            mainImage.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            mainImage.style.transform = 'scale(2)';
+        });
+        zoomContainer.addEventListener('mouseleave', function() {
+            mainImage.style.transform = 'scale(1)';
+            mainImage.style.transformOrigin = 'center';
+        });
+    }
+});
+</script>
 
 </body>
 </html>

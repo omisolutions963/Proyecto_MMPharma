@@ -110,7 +110,7 @@ if (isset($_GET['ajax'])) {
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-sky-600 hover:bg-sky-600 hover:text-white transition-all" title="Descargar cotización Excel">
+ <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all" title="Descargar cotización Excel">
  <span class="material-symbols-outlined text-[18px]">table_view</span>
  </a>
  <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">
@@ -187,9 +187,9 @@ include("../includes/sidebar.php");
 <form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8 animate-reveal" style="animation-delay: 0.35s">
  <div class="flex-1 relative">
  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
- <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por folio o cliente..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none "/>
+ <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por folio o cliente..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none "/>
  </div>
- <select name="estado" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
+ <select name="estado" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
  <option value="">Todos los estados</option>
  <option value="PENDIENTE" <?= $estado==='PENDIENTE'?'selected':'' ?>>Pendiente</option>
  <option value="PROCESANDO" <?= $estado==='PROCESANDO'?'selected':'' ?>>Procesando</option>
@@ -265,7 +265,7 @@ include("../includes/sidebar.php");
  <a href="generar_pdf.php?id=<?= $p['id'] ?>" target="_blank" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-secondary hover:bg-secondary hover:text-white transition-all" title="Descargar cotización PDF">
  <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
  </a>
- <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-sky-600 hover:bg-sky-600 hover:text-white transition-all" title="Descargar cotización Excel">
+ <a href="generar_excel.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all" title="Descargar cotización Excel">
  <span class="material-symbols-outlined text-[18px]">table_view</span>
  </a>
  <a href="ver_pedido.php?id=<?= $p['id'] ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver detalle">

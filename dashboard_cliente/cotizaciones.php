@@ -51,13 +51,13 @@ include('includes/sidebar.php');
  <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
  <a href="dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
  <span class="material-symbols-outlined text-[12px]">chevron_right</span>
- <span class="text-slate-500">Cotizaciones</span>
+ <span class="text-slate-900">Cotizaciones</span>
  </nav>
  <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Historial de cotizaciones</h1>
- <p class="text-slate-500 mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
+ <p class="text-slate-900 mt-1 text-sm">Gestiona y consulta el estatus de tus solicitudes de inventario.</p>
  </div>
  <div class="mt-4 md:mt-0">
- <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
+ <a href="../catalogo/catalogo.php" class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-all flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">add</span> Nueva cotización
  </a>
  </div>
@@ -70,7 +70,7 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-2xl">calendar_month</span>
  </div>
  <div>
- <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Este mes</p>
+ <p class="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Este mes</p>
  <h3 class="text-3xl font-extrabold text-slate-900 leading-none"><?= $cotizaciones_mes ?></h3>
  </div>
  </div>
@@ -79,7 +79,7 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-2xl">payments</span>
  </div>
  <div>
- <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Monto mensual</p>
+ <p class="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Monto mensual</p>
  <h3 class="text-3xl font-extrabold text-slate-900 leading-none">$<?= number_format($monto_mes, 2) ?></h3>
  </div>
  </div>
@@ -88,7 +88,7 @@ include('includes/sidebar.php');
  <span class="material-symbols-outlined text-2xl">verified</span>
  </div>
  <div>
- <p class="text-[11px] font-black text-on-surface-variant uppercase tracking-widest mb-1">Aprobadas</p>
+ <p class="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Aprobadas</p>
  <h3 class="text-3xl font-extrabold text-slate-900 leading-none"><?= $aprobadas ?></h3>
  </div>
  </div>
@@ -97,7 +97,7 @@ include('includes/sidebar.php');
  <!-- Filters -->
  <div class="flex flex-wrap items-center gap-4 mb-6 animate-reveal delay-200">
  <div class="relative flex-1 min-w-[250px]">
- <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+ <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-900">search</span>
  <input type="text" id="searchInput" placeholder="Buscar por folio..." class="w-full bg-surface-container-lowest border border-outline-variant/50 text-slate-900 rounded-xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" onkeyup="filterTable()">
  </div>
  <div class="relative w-48">
@@ -107,7 +107,7 @@ include('includes/sidebar.php');
   <option value="PENDIENTE" class="text-slate-900">Pendientes</option>
   <option value="CANCELADO" class="text-slate-900">Canceladas</option>
   </select>
- <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+ <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-900 pointer-events-none">expand_more</span>
  </div>
  </div>
 
@@ -115,7 +115,7 @@ include('includes/sidebar.php');
  <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden animate-reveal delay-300">
  <div class="overflow-x-auto">
  <table class="w-full text-left whitespace-nowrap" id="cotizacionesTable">
- <thead class="bg-surface-container-low text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+ <thead class="bg-surface-container-low text-[10px] font-black text-slate-900 uppercase tracking-widest">
  <tr>
  <th class="py-4 px-6">Folio</th>
  <th class="py-4 px-6">Fecha</th>
@@ -130,7 +130,7 @@ include('includes/sidebar.php');
  <tbody class="divide-y divide-outline-variant/10">
  <?php if (empty($cotizaciones)): ?>
  <tr>
- <td colspan="8" class="py-12 text-center text-on-surface-variant text-sm">No tienes cotizaciones registradas.</td>
+ <td colspan="8" class="py-12 text-center text-slate-900 text-sm">No tienes cotizaciones registradas.</td>
  </tr>
  <?php else: ?>
   <?php foreach($cotizaciones as $cot): 
@@ -189,9 +189,9 @@ include('includes/sidebar.php');
 
  <!-- Export Actions -->
  <div class="flex justify-end gap-3 mt-6 animate-reveal delay-400">
- <a href="descargar_resumen_pdf.php" target="_blank" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold rounded-xl transition-colors flex items-center gap-2">
- <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> Descargar reporte PDF
- </a>
+  <a href="descargar_resumen_pdf.php" target="_blank" style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%)" class="px-5 py-2.5 text-white text-sm font-bold rounded-xl hover:opacity-95 transition-opacity flex items-center gap-2 shadow-sm">
+  <span class="material-symbols-outlined text-[18px] text-white">picture_as_pdf</span> Descargar reporte PDF
+  </a>
  </div>
 
 </main>

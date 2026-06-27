@@ -49,11 +49,19 @@ include('includes/sidebar.php');
         <div class="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
             <!-- Avatar -->
             <div class="relative group">
-                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-surface flex items-center justify-center bg-surface-container-high">
+                <?php
+                $avatar_bg_class = 'bg-primary';
+                if (($cliente['tipo'] ?? 'FARMACIA') === 'EMPRESA') {
+                    $avatar_bg_class = 'bg-secondary';
+                } elseif (($cliente['tipo'] ?? 'FARMACIA') === 'DISTRIBUIDORA') {
+                    $avatar_bg_class = 'bg-tertiary';
+                }
+                ?>
+                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-surface flex items-center justify-center <?= $avatar_bg_class ?> shadow-sm">
                     <?php if ($foto_perfil): ?>
                         <img src="<?= htmlspecialchars($foto_perfil) ?>" alt="Avatar" class="w-full h-full object-cover">
                     <?php else: ?>
-                        <span class="text-4xl font-black text-primary"><?= strtoupper(substr($nombre, 0, 1)) ?></span>
+                        <span class="text-4xl font-black text-white"><?= strtoupper(substr($nombre, 0, 1)) ?></span>
                     <?php endif; ?>
                 </div>
                 <button type="button" class="absolute -bottom-3 -right-3 w-10 h-10 bg-surface text-primary rounded-xl flex items-center justify-center border border-outline-variant hover:text-white hover:bg-primary transition-colors" onclick="document.getElementById('avatarInput').click()">
@@ -65,18 +73,18 @@ include('includes/sidebar.php');
             <!-- Info -->
             <div class="flex-1 text-center md:text-left mt-2 md:mt-0">
                 <h2 class="text-3xl font-bold text-white mb-1"><?= $nombre ?></h2>
-                <p class="text-on-surface-variant text-sm flex items-center justify-center md:justify-start gap-2 mb-4">
-                    <span class="material-symbols-outlined text-primary text-[16px]">storefront</span>
+                <p class="text-sky-100 text-sm flex items-center justify-center md:justify-start gap-2 mb-4">
+                    <span class="material-symbols-outlined text-sky-300 text-[16px]">storefront</span>
                     <?= $tipo_cliente ?>
                 </p>
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
                     <?php if ($estatus === 'ACTIVO'): ?>
-                        <span class="px-3 py-1.5 bg-tertiary/20 border border-tertiary/30 text-tertiary text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">verified</span> Cuenta activa
+                        <span style="background: linear-gradient(180deg, #10b981 0%, #059669 100%)" class="px-3 py-1.5 text-white text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-[14px] text-white">verified</span> Cuenta activa
                         </span>
                     <?php else: ?>
-                        <span class="px-3 py-1.5 bg-error/20 border border-error/30 text-error text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">warning</span> Docs pendientes
+                        <span style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%)" class="px-3 py-1.5 text-white text-[10px] font-black rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-[14px] text-white">warning</span> Docs pendientes
                         </span>
                     <?php endif; ?>
                 </div>
@@ -101,7 +109,7 @@ include('includes/sidebar.php');
                     <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">person</span> Datos generales
                     </h3>
-                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-fixed-dim text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center gap-2 border-none cursor-pointer"><span class="material-symbols-outlined text-[18px]">save</span> Guardar cambios</button>
+                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-primary/30 flex items-center gap-2 border-none cursor-pointer"><span class="material-symbols-outlined text-[18px]">save</span> Guardar cambios</button>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -132,20 +140,26 @@ include('includes/sidebar.php');
             <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-8 ">
                 <div class="mb-6">
                     <h3 class="text-lg font-bold text-slate-900 mb-1">Preferencias de facturación</h3>
-                    <p class="text-xs text-on-surface-variant">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
+                    <p class="text-xs text-slate-900">Configura tus documentos fiscales por defecto para agilizar tus pedidos.</p>
                 </div>
                 
                 <div class="space-y-6">
                     <div>
                         <label class="block text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3 ml-1">Tipo de documento</label>
                         <div class="flex items-center gap-4">
-                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'FACTURA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border">
-                                <input type="radio" name="documento_tipo" value="FACTURA" <?= $tipo_doc === 'FACTURA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
-                                <span class="text-sm font-semibold <?= $tipo_doc === 'FACTURA' ? 'text-primary font-bold' : 'text-on-surface-variant' ?>">Factura (CFDI 4.0)</span>
+                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'FACTURA' ? 'bg-primary text-white border-transparent' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border transition-all">
+                                <input type="radio" name="documento_tipo" value="FACTURA" <?= $tipo_doc === 'FACTURA' ? 'checked' : '' ?> class="sr-only">
+                                <span class="w-4 h-4 rounded-full border <?= $tipo_doc === 'FACTURA' ? 'border-white' : 'border-outline-variant/50' ?> flex items-center justify-center shrink-0 radio-custom-circle transition-all">
+                                    <span class="w-2 h-2 rounded-full <?= $tipo_doc === 'FACTURA' ? 'bg-white' : 'bg-transparent' ?> radio-custom-dot transition-all"></span>
+                                </span>
+                                <span class="text-sm font-semibold <?= $tipo_doc === 'FACTURA' ? 'text-white font-bold' : 'text-on-surface-variant' ?>">Factura (CFDI 4.0)</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'NOTA' ? 'bg-primary/10 border-primary/30' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border hover:border-outline-variant">
-                                <input type="radio" name="documento_tipo" value="NOTA" <?= $tipo_doc === 'NOTA' ? 'checked' : '' ?> class="text-primary focus:ring-primary bg-surface-container border-outline-variant accent-primary">
-                                <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-primary font-bold' : 'text-on-surface-variant' ?>">Nota de crédito</span>
+                            <label class="flex items-center gap-2 cursor-pointer <?= $tipo_doc === 'NOTA' ? 'bg-primary text-white border-transparent' : 'bg-surface-container-low border-outline-variant/50' ?> px-4 py-2.5 rounded-xl border hover:border-outline-variant transition-all">
+                                <input type="radio" name="documento_tipo" value="NOTA" <?= $tipo_doc === 'NOTA' ? 'checked' : '' ?> class="sr-only">
+                                <span class="w-4 h-4 rounded-full border <?= $tipo_doc === 'NOTA' ? 'border-white' : 'border-outline-variant/50' ?> flex items-center justify-center shrink-0 radio-custom-circle transition-all">
+                                    <span class="w-2 h-2 rounded-full <?= $tipo_doc === 'NOTA' ? 'bg-white' : 'bg-transparent' ?> radio-custom-dot transition-all"></span>
+                                </span>
+                                <span class="text-sm font-semibold <?= $tipo_doc === 'NOTA' ? 'text-white font-bold' : 'text-on-surface-variant' ?>">Nota de crédito</span>
                             </label>
                         </div>
                     </div>
@@ -173,18 +187,18 @@ include('includes/sidebar.php');
             </div>
             
             <!-- Danger Zone -->
-            <div class="bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div style="background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%)" class="rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-md">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined">delete</span>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-0.5">Solicitar baja de cuenta</h4>
-                        <p class="text-xs text-slate-500">Este proceso es irreversible y requiere validación legal.</p>
+                        <h4 class="text-sm font-bold text-white mb-0.5">Solicitar baja de cuenta</h4>
+                        <p class="text-xs text-white/85">Este proceso es irreversible y requiere validación legal.</p>
                     </div>
                 </div>
                 <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
-                    <button type="button" class="px-5 py-2.5 bg-surface-container hover:bg-surface-container-high text-slate-800 text-sm font-semibold rounded-xl transition-all w-full md:w-auto" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#ffffff', color:'#1e293b', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='contacto.php'; } })">Solicitar</button>
+                    <button type="button" class="px-5 py-2.5 bg-white hover:bg-white/90 text-rose-700 text-sm font-bold rounded-xl transition-all w-full md:w-auto shadow-sm" onclick="Swal.fire({icon:'info', title:'Baja de cuenta', text:'Para solicitar la baja de tu cuenta, por favor envíanos un mensaje desde nuestro Centro de Soporte.', background:'#ffffff', color:'#1e293b', confirmButtonColor:'#4a90d9', confirmButtonText:'Ir a soporte'}).then((result) => { if(result.isConfirmed) { location.href='contacto.php'; } })">Solicitar</button>
                 </div>
             </div>
 
@@ -218,12 +232,12 @@ include('includes/sidebar.php');
             </div>
 
             <!-- Soporte Técnico -->
-            <div class="bg-gradient-to-br from-tertiary-container/80 to-surface-container border border-tertiary/20 rounded-2xl p-6 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[100px] text-tertiary/10 rotate-[-15deg] pointer-events-none">support_agent</span>
+            <div style="background: linear-gradient(180deg, #2ca1b5 0%, #1f7584 100%)" class="rounded-2xl p-6 relative overflow-hidden shadow-md">
+                <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[100px] text-white/10 rotate-[-15deg] pointer-events-none">support_agent</span>
                 <div class="relative z-10">
-                    <h3 class="text-sm font-bold text-slate-900 mb-1">¿Necesitas ayuda técnica?</h3>
-                    <p class="text-[10px] text-on-surface-variant mb-4">Tu gestor de cuenta asignado está disponible.</p>
-                    <a href="contacto.php" class="block w-full px-4 py-2.5 bg-tertiary text-white text-center text-sm font-bold rounded-xl hover:bg-tertiary/90 transition-colors ">
+                    <h3 class="text-sm font-bold text-white mb-1">¿Necesitas ayuda técnica?</h3>
+                    <p class="text-[10px] text-white/80 mb-4">Tu gestor de cuenta asignado está disponible.</p>
+                    <a href="contacto.php" class="block w-full px-4 py-2.5 bg-white text-tertiary text-center text-sm font-black rounded-xl hover:bg-white/90 transition-colors shadow-sm">
                         Contactar soporte
                     </a>
                 </div>
@@ -241,17 +255,33 @@ document.querySelectorAll('input[name="documento_tipo"]').forEach(radio => {
     radio.addEventListener('change', function() {
         document.querySelectorAll('input[name="documento_tipo"]').forEach(r => {
             const label = r.closest('label');
-            const span = label.querySelector('span');
+            const spanText = label.querySelector('span.text-sm');
+            const circle = label.querySelector('.radio-custom-circle');
+            const dot = label.querySelector('.radio-custom-dot');
             if(r.checked) {
                 label.classList.remove('bg-surface-container-low', 'border-outline-variant/50');
-                label.classList.add('bg-primary/10', 'border-primary/30');
-                span.classList.remove('text-on-surface-variant');
-                span.classList.add('text-white');
+                label.classList.add('bg-primary', 'text-white', 'border-transparent');
+                
+                spanText.classList.remove('text-on-surface-variant');
+                spanText.classList.add('text-white', 'font-bold');
+                
+                circle.classList.remove('border-outline-variant/50');
+                circle.classList.add('border-white');
+                
+                dot.classList.remove('bg-transparent');
+                dot.classList.add('bg-white');
             } else {
-                label.classList.remove('bg-primary/10', 'border-primary/30');
+                label.classList.remove('bg-primary', 'text-white', 'border-transparent');
                 label.classList.add('bg-surface-container-low', 'border-outline-variant/50');
-                span.classList.remove('text-white');
-                span.classList.add('text-on-surface-variant');
+                
+                spanText.classList.remove('text-white', 'font-bold');
+                spanText.classList.add('text-on-surface-variant');
+                
+                circle.classList.remove('border-white');
+                circle.classList.add('border-outline-variant/50');
+                
+                dot.classList.remove('bg-white');
+                dot.classList.add('bg-transparent');
             }
         });
     });

@@ -29,7 +29,7 @@
   <div class="flex flex-col items-center gap-3 border-t border-white/10 pt-6 w-full max-w-md">
   <p class="normal-case tracking-wide text-white/80 text-sm md:text-base">Sistema realizado por <a href="https://www.atomic.zone/" target="_blank" rel="noopener noreferrer" class="text-white hover:text-tertiary hover:underline transition-colors font-bold decoration-white/20 underline-offset-4">Atomic Advertising</a></p>
   <a href="https://www.atomic.zone/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-  <img src="<?= $base ?? '' ?>Img/atomic%20logo.png" alt="Atomic Advertising" class="h-10 w-auto object-contain">
+  <img src="<?= $base ?? '' ?>Img/atomic%20logo.png" alt="Atomic Advertising" class="h-10 w-auto object-contain" style="filter: brightness(0) invert(1);">
   </a>
   </div>
  <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>

@@ -88,9 +88,17 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
  * { font-family: 'Inter', sans-serif; }
  /* ══ ANTI-FOUC: Colores hardcoded antes de que Tailwind CDN procese ══ */
  html, body, main { background-color: #eef4fc !important; }
-  aside { background: #003e79 !important; }
+   aside { background: linear-gradient(180deg,#002a52 0%,#003e79 60%,#001a33 100%) !important; }
   body { color: #0f172a; }
- .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* ══ DEGRADADO DE AZUL OSCURO GLOBAL ══ */
+  .bg-primary {
+      background: linear-gradient(180deg, #1e60aa 0%, #003e79 100%) !important;
+  }
+  .bg-primary:hover {
+      opacity: 0.95 !important;
+  }
 
   /* Asegurar que el texto blanco de botones o insignias reales con fondo de color permanezca blanco */
   main .bg-primary,
@@ -130,7 +138,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 
   /* Estilos específicos para la tarjeta Hero de Perfil */
   main .bg-gradient-to-r.from-surface-container-highest.to-surface-container {
-      background: linear-gradient(135deg, #003e79 0%, #1e60aa 100%) !important;
+      background: linear-gradient(180deg, #1e60aa 0%, #003e79 100%) !important;
       border: none !important;
   }
   main .bg-gradient-to-r.from-surface-container-highest.to-surface-container .text-white,
@@ -142,145 +150,194 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   }
 
   /* ══ ESTILIZACIÓN DE ALERTAS E ICONOS DE ALTA VISIBILIDAD (FONDO CLARO + ICONO/TEXTO FUERTE) ══ */
-  /* 1. Contenedores de iconos (Badges / Círculos / Recuadros) */
-  main .bg-primary\/10 {
-      background-color: rgba(0, 62, 121, 0.1) !important;
-      color: #003e79 !important;
+  /* 1. Contenedores de iconos dentro de alertas */
+  main .bg-primary\/10 .w-10.h-10,
+  main .bg-primary\/10 .w-12.h-12,
+  main .bg-secondary\/10 .w-10.h-10,
+  main .bg-secondary\/10 .w-12.h-12,
+  main .bg-tertiary\/10 .w-10.h-10,
+  main .bg-tertiary\/10 .w-12.h-12,
+  main .bg-tertiary\/20 .w-10.h-10,
+  main .bg-tertiary\/20 .w-12.h-12,
+  main .bg-tertiary\/30 .w-10.h-10,
+  main .bg-tertiary\/30 .w-12.h-12,
+  main .bg-error\/10 .w-10.h-10,
+  main .bg-error\/10 .w-12.h-12,
+  main .bg-error\/20 .w-10.h-10,
+  main .bg-error\/20 .w-12.h-12,
+  main .bg-error\/30 .w-10.h-10,
+  main .bg-error\/30 .w-12.h-12,
+  main .bg-emerald-500\/10 .w-10.h-10,
+  main .bg-emerald-500\/10 .w-12.h-12,
+  main .bg-emerald-500\/20 .w-10.h-10,
+  main .bg-emerald-500\/20 .w-12.h-12,
+  main .bg-sky-500\/10 .w-10.h-10,
+  main .bg-sky-500\/10 .w-12.h-12,
+  main .bg-sky-500\/20 .w-10.h-10,
+  main .bg-sky-500\/20 .w-12.h-12,
+  main .bg-amber-500\/10 .w-10.h-10,
+  main .bg-amber-500\/10 .w-12.h-12,
+  main .bg-amber-500\/20 .w-10.h-10,
+  main .bg-amber-500\/20 .w-12.h-12,
+  main .bg-\[\#eab308\]\/20 .w-10.h-10,
+  main .bg-\[\#eab308\]\/20 .w-12.h-12,
+  main .bg-\[\#422c10\] .w-10.h-10,
+  main .bg-\[\#422c10\] .w-12.h-12,
+  main .bg-tertiary-container\/30 .w-10.h-10,
+  main .bg-tertiary-container\/30 .w-12.h-12 {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+      color: #ffffff !important;
+      border: none !important;
+      box-shadow: none !important;
   }
-  main .bg-primary\/10 * {
-      color: #003e79 !important;
+  main .bg-primary\/10 .w-10.h-10 *,
+  main .bg-primary\/10 .w-12.h-12 *,
+  main .bg-secondary\/10 .w-10.h-10 *,
+  main .bg-secondary\/10 .w-12.h-12 *,
+  main .bg-tertiary\/10 .w-10.h-10 *,
+  main .bg-tertiary\/10 .w-12.h-12 *,
+  main .bg-tertiary\/20 .w-10.h-10 *,
+  main .bg-tertiary\/20 .w-12.h-12 *,
+  main .bg-tertiary\/30 .w-10.h-10 *,
+  main .bg-tertiary\/30 .w-12.h-12 *,
+  main .bg-error\/10 .w-10.h-10 *,
+  main .bg-error\/10 .w-12.h-12 *,
+  main .bg-error\/20 .w-10.h-10 *,
+  main .bg-error\/20 .w-12.h-12 *,
+  main .bg-error\/30 .w-10.h-10 *,
+  main .bg-error\/30 .w-12.h-12 *,
+  main .bg-emerald-500\/10 .w-10.h-10 *,
+  main .bg-emerald-500\/10 .w-12.h-12 *,
+  main .bg-emerald-500\/20 .w-10.h-10 *,
+  main .bg-emerald-500\/20 .w-12.h-12 *,
+  main .bg-sky-500\/10 .w-10.h-10 *,
+  main .bg-sky-500\/10 .w-12.h-12 *,
+  main .bg-sky-500\/20 .w-10.h-10 *,
+  main .bg-sky-500\/20 .w-12.h-12 *,
+  main .bg-amber-500\/10 .w-10.h-10 *,
+  main .bg-amber-500\/10 .w-12.h-12 *,
+  main .bg-amber-500\/20 .w-10.h-10 *,
+  main .bg-amber-500\/20 .w-12.h-12 *,
+  main .bg-\[\#eab308\]\/20 .w-10.h-10 *,
+  main .bg-\[\#eab308\]\/20 .w-12.h-12 *,
+  main .bg-\[\#422c10\] .w-10.h-10 *,
+  main .bg-\[\#422c10\] .w-12.h-12 *,
+  main .bg-tertiary-container\/30 .w-10.h-10 *,
+  main .bg-tertiary-container\/30 .w-12.h-12 * {
+      color: #ffffff !important;
   }
 
-  main .bg-secondary\/10 {
-      background-color: rgba(30, 96, 170, 0.1) !important;
-      color: #1e60aa !important;
-  }
-  main .bg-secondary\/10 * {
-      color: #1e60aa !important;
-  }
-
-  main .bg-tertiary\/10,
-  main .bg-tertiary\/20,
-  main .bg-tertiary\/30 {
-      background-color: rgba(44, 161, 181, 0.15) !important;
-      color: #0e7490 !important;
-  }
-  main .bg-tertiary\/10 *,
-  main .bg-tertiary\/20 *,
-  main .bg-tertiary\/30 * {
-      color: #0e7490 !important;
-  }
-
-  main .bg-error\/10,
-  main .bg-error\/20,
-  main .bg-error\/30 {
-      background-color: rgba(239, 68, 68, 0.12) !important;
-      color: #b91c1c !important;
-  }
-  main .bg-error\/10 *,
-  main .bg-error\/20 *,
-  main .bg-error\/30 * {
-      color: #b91c1c !important;
-  }
-
-  main .bg-emerald-500\/10,
-  main .bg-emerald-500\/20 {
-      background-color: rgba(16, 185, 129, 0.15) !important;
-      color: #15803d !important;
-  }
-  main .bg-emerald-500\/10 *,
-  main .bg-emerald-500\/20 * {
-      color: #15803d !important;
-  }
-
-  main .bg-sky-500\/10,
-  main .bg-sky-500\/20 {
-      background-color: rgba(14, 165, 233, 0.15) !important;
-      color: #0369a1 !important;
-  }
-  main .bg-sky-500\/10 *,
-  main .bg-sky-500\/20 * {
-      color: #0369a1 !important;
-  }
-
-  main .bg-amber-500\/10,
-  main .bg-amber-500\/20,
-  main .bg-\[\#eab308\]\/20 {
-      background-color: rgba(245, 158, 11, 0.15) !important;
-      color: #b45309 !important;
-  }
-  main .bg-amber-500\/10 *,
-  main .bg-amber-500\/20 *,
-  main .bg-\[\#eab308\]\/20 * {
-      color: #b45309 !important;
+  /* Forzar iconos rellenos de blanco (White Filled) dentro de todas las alertas */
+  main .bg-primary\/10 .material-symbols-outlined,
+  main .bg-secondary\/10 .material-symbols-outlined,
+  main .bg-tertiary\/10 .material-symbols-outlined,
+  main .bg-tertiary\/20 .material-symbols-outlined,
+  main .bg-tertiary\/30 .material-symbols-outlined,
+  main .bg-error\/10 .material-symbols-outlined,
+  main .bg-error\/20 .material-symbols-outlined,
+  main .bg-error\/30 .material-symbols-outlined,
+  main .bg-emerald-500\/10 .material-symbols-outlined,
+  main .bg-emerald-500\/20 .material-symbols-outlined,
+  main .bg-sky-500\/10 .material-symbols-outlined,
+  main .bg-sky-500\/20 .material-symbols-outlined,
+  main .bg-amber-500\/10 .material-symbols-outlined,
+  main .bg-amber-500\/20 .material-symbols-outlined,
+  main .bg-\[\#eab308\]\/20 .material-symbols-outlined,
+  main .bg-\[\#422c10\] .material-symbols-outlined,
+  main .bg-tertiary-container\/30 .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
   }
 
   /* 2. Contenedores de Banners de Alerta Completos */
   /* Alerta Documentos en el Dashboard (bg-[#422c10] en HTML) */
   main .bg-\[\#422c10\] {
-      background-color: #fef8e7 !important;
-      border: 1px solid #fde68a !important;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%) !important;
+      border: none !important;
   }
   main .bg-\[\#422c10\] h3 {
-      color: #854d0e !important;
+      color: #ffffff !important;
   }
   main .bg-\[\#422c10\] p {
-      color: #a16207 !important;
+      color: rgba(255, 255, 255, 0.9) !important;
   }
   main .bg-\[\#422c10\] a {
-      color: #ca8a04 !important;
+      color: #ffffff !important;
+      text-decoration: underline !important;
   }
   
   /* Alerta Documentos Aprobados/Activos (bg-tertiary-container/30 en HTML) */
   main .bg-tertiary-container\/30 {
-      background-color: #f0fdf4 !important;
-      border: 1px solid #dcfce7 !important;
+      background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+      border: none !important;
   }
   main .bg-tertiary-container\/30 h3 {
-      color: #166534 !important;
+      color: #ffffff !important;
   }
   main .bg-tertiary-container\/30 p {
-      color: #15803d !important;
+      color: rgba(255, 255, 255, 0.9) !important;
   }
   main .bg-tertiary-container\/30 a {
-      color: #16a34a !important;
+      color: #ffffff !important;
+      text-decoration: underline !important;
   }
 
-  /* Alertas Estándar de Tailwind (en documentos.php) */
-  /* Aprobados (Verde) */
+  /* Banners de Alerta con bg-error/10 en HTML (p. ej., banner de dirección requerida) */
+  main .bg-error\/10 {
+      background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
+  }
+  main .bg-error\/10 * {
+      color: #ffffff !important;
+  }
+
+  /* Alertas Estándar de documentos.php (Aprobados, Atención requerida, Revisión) */
   main .bg-emerald-500\/10 {
-      background-color: #f0fdf4 !important;
-      border-color: #dcfce7 !important;
+      background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
   }
   main .bg-emerald-500\/10 h3 {
-      color: #166534 !important;
+      color: #ffffff !important;
   }
   main .bg-emerald-500\/10 p {
-      color: #15803d !important;
+      color: rgba(255, 255, 255, 0.9) !important;
   }
-  
-  /* Atención requerida / Warning (Ámbar) */
-  main .bg-amber-500\/10 {
-      background-color: #fffbeb !important;
-      border-color: #fde68a !important;
-  }
-  main .bg-amber-500\/10 h3 {
-      color: #78350f !important;
-  }
-  main .bg-amber-500\/10 p {
-      color: #b45309 !important;
+  main .bg-emerald-500\/10 a {
+      color: #ffffff !important;
+      text-decoration: underline !important;
   }
 
-  /* Revisión (Celeste/Sky) */
+  main .bg-amber-500\/10 {
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
+  }
+  main .bg-amber-500\/10 h3 {
+      color: #ffffff !important;
+  }
+  main .bg-amber-500\/10 p {
+      color: rgba(255, 255, 255, 0.9) !important;
+  }
+  main .bg-amber-500\/10 a {
+      color: #ffffff !important;
+      text-decoration: underline !important;
+  }
+
   main .bg-sky-500\/10 {
-      background-color: #f0f9ff !important;
-      border-color: #bae6fd !important;
+      background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%) !important;
+      color: #ffffff !important;
+      border: none !important;
   }
   main .bg-sky-500\/10 h3 {
-      color: #0c4a6e !important;
+      color: #ffffff !important;
   }
   main .bg-sky-500\/10 p {
-      color: #0369a1 !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+  }
+  main .bg-sky-500\/10 a {
+      color: #ffffff !important;
+      text-decoration: underline !important;
   }
 
   /* Inputs, selects y textareas */
@@ -316,7 +373,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
       color: #0f172a !important;
   }
   main th {
-      background-color: #003e79 !important;
+      background: linear-gradient(180deg, #1e60aa 0%, #003e79 100%) !important;
       color: #ffffff !important;
       font-weight: 700 !important;
       font-size: 11px !important;
@@ -403,7 +460,38 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
        padding-left: 1rem !important;
        padding-right: 1rem !important;
      }
-   }
+    }
+
+  /* ══ ICONOS DENTRO DE TARJETAS DE MÉTRICAS (FONDO FUERTE + ICONO BLANCO) ══ */
+  main .w-12.bg-primary\/10,
+  main .w-14.bg-primary\/10 {
+      background: linear-gradient(180deg, #1e60aa 0%, #003e79 100%) !important;
+      color: #ffffff !important;
+  }
+  main .w-12.bg-primary\/10 *,
+  main .w-14.bg-primary\/10 * {
+      color: #ffffff !important;
+  }
+
+  main .w-12.bg-secondary\/10,
+  main .w-14.bg-secondary\/10 {
+      background: linear-gradient(180deg, #1e60aa 0%, #003e79 100%) !important;
+      color: #ffffff !important;
+  }
+  main .w-12.bg-secondary\/10 *,
+  main .w-14.bg-secondary\/10 * {
+      color: #ffffff !important;
+  }
+
+  main .w-12.bg-tertiary\/10,
+  main .w-14.bg-tertiary\/10 {
+      background: linear-gradient(180deg, #2ca1b5 0%, #1f7584 100%) !important;
+      color: #ffffff !important;
+  }
+  main .w-12.bg-tertiary\/10 *,
+  main .w-14.bg-tertiary\/10 * {
+      color: #ffffff !important;
+  }
 </style>
 
 <script>
@@ -721,17 +809,17 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
-<header style="background:#2ca1b5;border-bottom:1px solid rgba(255,255,255,0.15)"
- class="h-16 fixed top-0 z-40 flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)] shadow-md">
+<header style="background:#ffffff;border-bottom:1px solid rgba(0,62,121,0.15)"
+ class="h-16 fixed top-0 z-40 flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)] shadow-sm">
  
   <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
   <!-- Hamburger Menu Button -->
-  <button onclick="toggleUserSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+  <button onclick="toggleUserSidebar()" class="lg:hidden text-slate-800 hover:bg-slate-100 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
     <span class="material-symbols-outlined text-2xl">menu</span>
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
-    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
+    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal cliente</span>
   </div>
   </div>
 
@@ -739,7 +827,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
 
   <!-- Notifications -->
   <div class="relative">
-  <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/15 border border-white/10 text-white hover:bg-white/25 transition-all relative group">
+  <button id="notif-btn" onclick="toggleNotificaciones()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 transition-all relative group shadow-sm">
   <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform">notifications</span>
   <?php if ($unread_count > 0): ?>
   <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
@@ -749,7 +837,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   <!-- Notifications Dropdown -->
   <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
   <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
-  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+  <h3 class="text-sm font-bold text-on-surface">Notificaciones</h3>
   <div class="flex flex-col items-end gap-1" id="notif-actions-header">
   <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> sin leer</span>
   <?php if (!empty($notificaciones)): ?>
@@ -765,13 +853,13 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   </div>
   <div class="max-h-96 overflow-y-auto" id="notif-items-list">
   <?php if (empty($notificaciones)): ?>
-  <div class="p-8 text-center">
-  <span class="material-symbols-outlined text-outline text-[40px] mb-2">notifications_off</span>
+  <div class="p-8 text-center bg-surface">
+  <span class="material-symbols-outlined text-primary text-[40px] mb-2">notifications_off</span>
   <p class="text-xs text-on-surface-variant">No tienes notificaciones por ahora.</p>
   </div>
   <?php else: ?>
   <?php foreach($notificaciones as $n): ?>
-  <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 transition-colors cursor-pointer relative notification-item" id="notif-item-<?= $n['id'] ?>">
+  <div onclick="marcarNotificacionLeida(this, <?= $n['id'] ?>)" class="p-4 border-b border-outline-variant/10 hover:bg-white/5 bg-surface transition-colors cursor-pointer relative notification-item" id="notif-item-<?= $n['id'] ?>">
   <?php if(!$n['leida']): ?>
   <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary unread-indicator"></div>
   <?php endif; ?>
@@ -786,7 +874,7 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   </span>
   </div>
   <div class="min-w-0 flex-1">
-  <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
+  <p class="text-xs font-bold text-on-surface mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
   <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
   </div>
   </div>
@@ -805,29 +893,35 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   </div>
 
   <!-- Divider -->
-  <div class="h-6 w-px bg-white/20 hidden md:block -mr-3"></div>
+  <div class="h-6 w-px bg-outline-variant/30 hidden md:block -mr-3"></div>
 
  <!-- User / Perfil Button -->
- <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/10 group">
- <?php
- $foto = $_SESSION['cliente_foto'] ?? '';
- $nombre = $_SESSION['cliente_nombre'] ?? 'Cliente';
- ?>
- <?php if ($foto): ?>
- <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
- class="w-8 h-8 rounded-lg object-cover border-2 border-white/50"
- alt="Perfil">
- <?php else: ?>
- <div id="headerProfileImg"
- class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/40 group-hover:border-white/70 transition-colors"
- style="background:rgba(255,255,255,0.2)">
- <?= strtoupper(substr($nombre, 0, 1)) ?>
- </div>
- <?php endif; ?>
+ <a href="perfil.php" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-slate-100 group">
+  <?php
+  $foto = $_SESSION['cliente_foto'] ?? '';
+  $nombre = $_SESSION['cliente_nombre'] ?? 'Cliente';
+  $tipo_cliente_role = $_SESSION['cliente_tipo'] ?? 'FARMACIA';
+  $avatar_bg_class = 'bg-primary';
+  if ($tipo_cliente_role === 'EMPRESA') {
+      $avatar_bg_class = 'bg-secondary';
+  } elseif ($tipo_cliente_role === 'DISTRIBUIDORA') {
+      $avatar_bg_class = 'bg-tertiary';
+  }
+  ?>
+  <?php if ($foto): ?>
+  <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
+  class="w-10 h-10 rounded-xl object-cover border-2 border-sky-500/40"
+  alt="Perfil">
+  <?php else: ?>
+  <div id="headerProfileImg"
+  class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-base <?= $avatar_bg_class ?> border border-transparent shadow-sm">
+  <?= strtoupper(substr($nombre, 0, 1)) ?>
+  </div>
+  <?php endif; ?>
  <div class="hidden lg:flex flex-col items-start leading-none">
- <span class="text-sm font-semibold text-white"><?= htmlspecialchars($nombre) ?></span>
+ <span class="text-sm font-semibold text-slate-800"><?= htmlspecialchars($nombre) ?></span>
  </div>
- <span class="material-symbols-outlined text-white/70 text-[16px] hidden lg:block group-hover:text-white transition-colors">expand_more</span>
+ <span class="material-symbols-outlined text-outline text-[16px] hidden lg:block group-hover:text-primary transition-colors">expand_more</span>
  </a>
  </div>
 </header>

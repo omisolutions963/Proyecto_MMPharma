@@ -54,7 +54,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
 <style>
  body { font-family: 'Inter', sans-serif; }
  .material-symbols-outlined {
- font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+ font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
  vertical-align: middle;
  }
  .clinical- { box-: 0 10px 40px -10px rgba(0, 62, 121, 0.1); }

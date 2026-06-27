@@ -32,7 +32,7 @@ $activePage = "productos";
 include("../includes/header.php");
 include("../includes/sidebar.php");
 ?>
-<main class="ml-64 p-8 min-h-screen" style="background:#eef4fc">
+<main class="ml-64 p-8 min-h-screen" style="background:#051a10">
  <div class="flex justify-between items-end mb-8 animate-reveal">
  <div>
  <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
@@ -83,12 +83,12 @@ include("../includes/sidebar.php");
 </main>
 
 <!-- Modal Categoría -->
-<div id="modalCat" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+<div id="modalCat" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
  <div class="bg-surface w-full max-w-sm rounded-3xl overflow-hidden border border-outline-variant/10">
  <form method="POST" class="p-8 space-y-6">
  <input type="hidden" name="action" value="upsert">
  <input type="hidden" name="id" id="cat_id">
- <h3 id="cat_title" class="text-xl font-black text-on-surface">Nueva categoría</h3>
+ <h3 id="cat_title" class="text-xl font-black text-white">Nueva categoría</h3>
  <div>
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre</label>
  <input type="text" name="nombre" id="cat_nombre" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
@@ -107,15 +107,18 @@ function abrirModalCat() {
  document.getElementById('cat_id').value = "0";
  document.getElementById('cat_nombre').value = "";
  document.getElementById('modalCat').classList.remove('hidden');
+ document.getElementById('modalCat').classList.add('flex');
 }
 function abrirEditarCat(c) {
  document.getElementById('cat_title').textContent = "Editar categoría";
  document.getElementById('cat_id').value = c.id;
  document.getElementById('cat_nombre').value = c.nombre;
  document.getElementById('modalCat').classList.remove('hidden');
+ document.getElementById('modalCat').classList.add('flex');
 }
 function cerrarModalCat() {
  document.getElementById('modalCat').classList.add('hidden');
+ document.getElementById('modalCat').classList.remove('flex');
 }
 </script>
 

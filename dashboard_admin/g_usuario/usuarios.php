@@ -65,7 +65,7 @@ include("../includes/sidebar.php");
 </div>
 
 <?php if ($flash === 'config_ok'): ?>
-<div class="mb-6 bg-sky-500/10 border border-sky-500/20 text-sky-500 px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 animate-fade-in">
+<div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 animate-fade-in">
     <span class="material-symbols-outlined text-[18px]">check_circle</span> Configuración guardada correctamente.
 </div>
 <?php endif; ?>
@@ -85,27 +85,27 @@ include("../includes/sidebar.php");
                 <div class="grid grid-cols-2 gap-6">
                     <div class="col-span-2">
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Nombre del negocio</label>
-                        <input name="empresa_nombre" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_nombre']) ?>"/>
+                        <input name="empresa_nombre" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_nombre']) ?>"/>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">RFC</label>
-                        <input name="empresa_rfc" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_rfc']) ?>"/>
+                        <input name="empresa_rfc" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_rfc']) ?>"/>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Sede principal</label>
-                        <input name="empresa_sede" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_sede']) ?>"/>
+                        <input name="empresa_sede" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_sede']) ?>"/>
                     </div>
                     <div class="col-span-2">
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Dirección fiscal</label>
-                        <input name="empresa_direccion" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_direccion']) ?>"/>
+                        <input name="empresa_direccion" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="text" value="<?= htmlspecialchars($cfg['empresa_direccion']) ?>"/>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Teléfono de contacto</label>
-                        <input name="empresa_telefono" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="tel" value="<?= htmlspecialchars($cfg['empresa_telefono']) ?>"/>
+                        <input name="empresa_telefono" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="tel" value="<?= htmlspecialchars($cfg['empresa_telefono']) ?>"/>
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Correo del sistema</label>
-                        <input name="empresa_email" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-on-surface outline-none" type="email" value="<?= htmlspecialchars($cfg['empresa_email']) ?>"/>
+                        <input name="empresa_email" class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary-fixed text-white outline-none" type="email" value="<?= htmlspecialchars($cfg['empresa_email']) ?>"/>
                     </div>
                 </div>
                 <div class="pt-4 flex justify-end">
@@ -147,7 +147,7 @@ include("../includes/sidebar.php");
         <div class="bg-primary text-white p-8 rounded-xl relative overflow-hidden">
             <div class="relative z-10">
                 <h4 class="text-lg font-bold mb-2">Certificación sanitaria</h4>
-                <p class="text-sky-100/70 text-sm mb-4 leading-relaxed">Su licencia de operación clínica vence en 45 días. Asegúrese de actualizar su documentación.</p>
+                <p class="text-emerald-100/70 text-sm mb-4 leading-relaxed">Su licencia de operación clínica vence en 45 días. Asegúrese de actualizar su documentación.</p>
                 <a href="mailto:contacto@mmpharma.com" class="text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
                     Renovar ahora <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </a>
@@ -214,7 +214,7 @@ include("../includes/sidebar.php");
                             <td class="px-8 py-5 text-sm text-on-surface-variant"><?= htmlspecialchars($u['telefono'] ?: '—') ?></td>
                             <td class="px-8 py-5 text-center text-xs text-on-surface-variant"><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
                             <td class="px-8 py-5 text-center">
-                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider <?= $u['activo'] ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20' : 'bg-error/10 text-error border border-error/20' ?>">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider <?= $u['activo'] ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-error/10 text-error border border-error/20' ?>">
                                     <?= $u['activo'] ? 'Activo' : 'Inactivo' ?>
                                 </span>
                             </td>
@@ -226,7 +226,7 @@ include("../includes/sidebar.php");
                                     </button>
                                     <button onclick="toggleActivo(<?= $u['id'] ?>, <?= $u['activo'] ? 'true' : 'false' ?>)"
                                         <?= $esYo ? 'disabled title="No puedes deshabilitarte a ti mismo"' : 'title="' . ($u['activo'] ? 'Deshabilitar' : 'Habilitar') . '"' ?>
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high <?= $esYo ? 'opacity-30 cursor-not-allowed' : ($u['activo'] ? 'hover:bg-error hover:text-white text-error' : 'hover:bg-sky-600 hover:text-white text-sky-500') ?> transition-all">
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high <?= $esYo ? 'opacity-30 cursor-not-allowed' : ($u['activo'] ? 'hover:bg-error hover:text-white text-error' : 'hover:bg-emerald-600 hover:text-white text-emerald-500') ?> transition-all">
                                         <span class="material-symbols-outlined text-[16px]"><?= $u['activo'] ? 'block' : 'check_circle' ?></span>
                                     </button>
                                     <?php if (!$esYo): ?>
@@ -244,7 +244,7 @@ include("../includes/sidebar.php");
                 </table>
             </div>
             <div class="px-8 py-3 bg-surface-container-low text-[10px] text-on-surface-variant font-black uppercase tracking-widest border-t border-outline-variant/10">
-                Total: <span class="text-on-surface"><?= $total_admins ?></span> administrador<?= $total_admins !== 1 ? 'es' : '' ?> · <span class="text-sky-500"><?= $total_activos ?> activo<?= $total_activos !== 1 ? 's' : '' ?></span>
+                Total: <span class="text-on-surface"><?= $total_admins ?></span> administrador<?= $total_admins !== 1 ? 'es' : '' ?> · <span class="text-emerald-400"><?= $total_activos ?> activo<?= $total_activos !== 1 ? 's' : '' ?></span>
             </div>
         </section>
     </div>
@@ -262,20 +262,20 @@ include("../includes/sidebar.php");
         <form id="formCrear" class="p-6 space-y-4">
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre completo *</label>
-                <input type="text" name="nombre" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Ej. Ana García López">
+                <input type="text" name="nombre" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Ej. Ana García López">
             </div>
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Correo electrónico *</label>
-                <input type="email" name="email" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary" placeholder="correo@mmpharma.com">
+                <input type="email" name="email" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary" placeholder="correo@mmpharma.com">
             </div>
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono</label>
-                <input type="tel" name="telefono" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary" placeholder="+52 33 1234 5678">
+                <input type="tel" name="telefono" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary" placeholder="+52 33 1234 5678">
             </div>
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Contraseña *</label>
                 <div class="relative">
-                    <input type="password" id="crear_password" name="password" required minlength="8" class="w-full bg-surface-container-low rounded-xl px-4 py-3 pr-12 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Mínimo 8 caracteres">
+                    <input type="password" id="crear_password" name="password" required minlength="8" class="w-full bg-surface-container-low rounded-xl px-4 py-3 pr-12 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Mínimo 8 caracteres">
                     <button type="button" onclick="togglePwd('crear_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition-colors">
                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                     </button>
@@ -302,15 +302,15 @@ include("../includes/sidebar.php");
             <input type="hidden" name="id" id="edit_id">
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre completo *</label>
-                <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary">
             </div>
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Correo electrónico *</label>
-                <input type="email" name="email" id="edit_email" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary">
+                <input type="email" name="email" id="edit_email" required class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary">
             </div>
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono</label>
-                <input type="tel" name="telefono" id="edit_telefono" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary">
+                <input type="tel" name="telefono" id="edit_telefono" class="w-full bg-surface-container-low rounded-xl px-4 py-3 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary">
             </div>
             <details class="group">
                 <summary class="cursor-pointer text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1 select-none">
@@ -319,7 +319,7 @@ include("../includes/sidebar.php");
                 </summary>
                 <div class="mt-3">
                     <div class="relative">
-                        <input type="password" id="edit_password" name="password" minlength="8" class="w-full bg-surface-container-low rounded-xl px-4 py-3 pr-12 text-sm text-on-surface border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Nueva contraseña (mínimo 8 caracteres)">
+                        <input type="password" id="edit_password" name="password" minlength="8" class="w-full bg-surface-container-low rounded-xl px-4 py-3 pr-12 text-sm text-white border-none outline-none focus:ring-2 focus:ring-primary" placeholder="Nueva contraseña (mínimo 8 caracteres)">
                         <button type="button" onclick="togglePwd('edit_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-[20px]">visibility</span>
                         </button>
@@ -358,14 +358,14 @@ document.getElementById('formConfig').addEventListener('submit', async function(
                 text: data.msg,
                 icon: 'success',
                 confirmButtonColor: '#003e79',
-                background: '#ffffff',
-                color: '#0f172a',
+                background: '#05160e',
+                color: '#f1fdf7',
             });
         } else {
-            Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#ffffff', color: '#0f172a' });
+            Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#05160e', color: '#f1fdf7' });
         }
     } catch (err) {
-        Swal.fire({ title: 'Error de red', text: 'No se pudo conectar con el servidor.', icon: 'error', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Error de red', text: 'No se pudo conectar con el servidor.', icon: 'error', background: '#05160e', color: '#f1fdf7' });
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span> Guardar cambios';
@@ -412,10 +412,10 @@ document.getElementById('formCrear').addEventListener('submit', async function(e
 
     if (data.ok) {
         cerrarModal('modalCrear');
-        await Swal.fire({ title: '¡Usuario creado!', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#ffffff', color: '#0f172a' });
+        await Swal.fire({ title: '¡Usuario creado!', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#05160e', color: '#f1fdf7' });
         location.reload();
     } else {
-        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#05160e', color: '#f1fdf7' });
     }
 });
 
@@ -438,7 +438,7 @@ document.getElementById('formEditar').addEventListener('submit', async function(
     const pwd = fd.get('password');
     if (pwd && pwd.length > 0) {
         if (pwd.length < 8) {
-            Swal.fire({ title: 'Error', text: 'La contraseña debe tener al menos 8 caracteres.', icon: 'error', background: '#ffffff', color: '#0f172a' });
+            Swal.fire({ title: 'Error', text: 'La contraseña debe tener al menos 8 caracteres.', icon: 'error', background: '#05160e', color: '#f1fdf7' });
             return;
         }
         // Enviar cambio de contraseña
@@ -454,10 +454,10 @@ document.getElementById('formEditar').addEventListener('submit', async function(
 
     if (data.ok) {
         cerrarModal('modalEditar');
-        await Swal.fire({ title: '¡Actualizado!', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#ffffff', color: '#0f172a' });
+        await Swal.fire({ title: '¡Actualizado!', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#05160e', color: '#f1fdf7' });
         location.reload();
     } else {
-        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#05160e', color: '#f1fdf7' });
     }
 });
 
@@ -471,12 +471,12 @@ async function toggleActivo(id, esActivo) {
             : 'Este usuario recuperará el acceso al panel.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: esActivo ? '#ba1a1a' : '#003e79',
+        confirmButtonColor: esActivo ? '#ba1a1a' : '#008151',
         cancelButtonColor: '#555',
         confirmButtonText: `Sí, ${accion}`,
         cancelButtonText: 'Cancelar',
-        background: '#ffffff',
-        color: '#0f172a',
+        background: '#05160e',
+        color: '#f1fdf7',
     });
 
     if (!confirm.isConfirmed) return;
@@ -491,7 +491,7 @@ async function toggleActivo(id, esActivo) {
     if (data.ok) {
         location.reload();
     } else {
-        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#05160e', color: '#f1fdf7' });
     }
 }
 
@@ -506,8 +506,8 @@ async function eliminarAdmin(id, nombre) {
         cancelButtonColor: '#555',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        background: '#ffffff',
-        color: '#0f172a',
+        background: '#05160e',
+        color: '#f1fdf7',
     });
 
     if (!confirm.isConfirmed) return;
@@ -521,9 +521,9 @@ async function eliminarAdmin(id, nombre) {
 
     if (data.ok) {
         document.getElementById(`row-admin-${id}`)?.remove();
-        Swal.fire({ title: 'Eliminado', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Eliminado', text: data.msg, icon: 'success', confirmButtonColor: '#003e79', background: '#05160e', color: '#f1fdf7' });
     } else {
-        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#ffffff', color: '#0f172a' });
+        Swal.fire({ title: 'Error', text: data.error, icon: 'error', background: '#05160e', color: '#f1fdf7' });
     }
 }
 </script>

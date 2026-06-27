@@ -31,9 +31,9 @@ $cols = $pdo->query("DESCRIBE administradores")->fetchAll();
 <meta charset="utf-8">
 <title>MMPharma — Setup Columnas</title>
 <style>
- body{font-family:monospace;background:#eef4fc;color:#0f172a;padding:2rem}
- h1{color:#003e79}
- .ok{color:#2ca1b5} .err{color:#f28b82}
+ body{font-family:monospace;background:#020d08;color:#f1fdf7;padding:2rem}
+ h1{color:#008151}
+ .ok{color:#34c47a} .err{color:#f28b82}
  table{border-collapse:collapse;width:100%;margin-top:1rem}
  th,td{border:1px solid #153d27;padding:.5rem 1rem;text-align:left}
  th{background:#030f09;color:#a3d7bd}

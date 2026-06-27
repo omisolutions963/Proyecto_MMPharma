@@ -182,11 +182,11 @@ require_once '../includes/header.php';
       <!-- Toggle vista -->
       <div class="hidden lg:flex gap-1 h-11 bg-slate-100 rounded-xl p-1 border border-slate-200 shrink-0">
         <button type="button" id="btn-lista" onclick="setVista('lista')"
-          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa" title="Vista lista">
+          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn" title="Vista lista">
           <span class="material-symbols-outlined text-lg">view_list</span>
         </button>
         <button type="button" id="btn-grid" onclick="setVista('grid')"
-          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn" title="Vista cuadrícula">
+          class="w-9 h-full flex items-center justify-center rounded-lg transition-all vista-btn activa" title="Vista cuadrícula">
           <span class="material-symbols-outlined text-lg">grid_view</span>
         </button>
       </div>
@@ -274,15 +274,15 @@ require_once '../includes/header.php';
  <?php if (empty($productos)): ?>
  <div class="text-center py-24 text-slate-400 bg-white border border-slate-200 rounded-2xl " data-aos="zoom-in">
  <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">search_off</span>
- <p class="text-lg font-bold mb-2 text-slate-600">No se encontraron productos</p>
- <p class="text-sm mb-6 text-slate-500">Intenta con otro término de búsqueda</p>
+ <p class="text-lg font-bold mb-2 text-slate-900">No se encontraron productos</p>
+ <p class="text-sm mb-6 text-slate-900">Intenta con otro término de búsqueda</p>
  <a href="catalogo.php" class="text-primary font-bold hover:underline">Ver todos los productos</a>
  </div>
 
  <?php else: ?>
 
  <!-- ─── VISTA LISTA ─── -->
- <div id="vista-lista" class="bg-white rounded-[2rem] overflow-hidden border border-slate-200" data-aos="fade-up">
+ <div id="vista-lista" class="hidden bg-white rounded-[2rem] overflow-hidden border border-slate-200" data-aos="fade-up">
  <table class="w-full">
  <thead>
  <tr class="bg-primary">
@@ -304,7 +304,7 @@ require_once '../includes/header.php';
  </div>
 
  <!-- ─── VISTA GRID ─── -->
- <div id="vista-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" data-aos="fade-up">
+ <div id="vista-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" data-aos="fade-up">
  <?php 
  $vista = 'grid';
  include 'obtener_productos.php'; 
@@ -350,7 +350,7 @@ require_once '../includes/header.php';
 let paginaActual = 1;
 let cargando = false;
 let finDeCatalogo = false;
-let vistaActual = localStorage.getItem('mm_vista') || 'lista';
+let vistaActual = localStorage.getItem('mm_vista') || 'grid';
 if (window.innerWidth < 1024) {
   vistaActual = 'grid';
 }

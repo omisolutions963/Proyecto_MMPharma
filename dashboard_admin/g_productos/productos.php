@@ -178,6 +178,30 @@ $stData = $pdo->prepare($sql);
 $stData->execute($params);
 $productos = $stData->fetchAll();
 
+// ── AJAX: GET ADDITIONAL IMAGES ──────────────────────────────────────────────
+if (isset($_GET['action']) && $_GET['action'] === 'get_additional_images') {
+  header('Content-Type: application/json');
+  $prod_id = (int)($_GET['id'] ?? 0);
+  $result = [];
+  if ($prod_id > 0) {
+    $stmt_img = $pdo->prepare("SELECT imagen FROM catalogo_productos WHERE id = ?");
+    $stmt_img->execute([$prod_id]);
+    $imagen = $stmt_img->fetchColumn();
+    if ($imagen) {
+      $base_sin_ext = pathinfo($imagen, PATHINFO_FILENAME);
+      $img_dir = '../../img/productos/';
+      for ($i = 1; $i <= 4; $i++) {
+        $filename = $base_sin_ext . '_' . $i . '.jpg';
+        if (file_exists($img_dir . $filename)) {
+          $result[$i] = $filename;
+        }
+      }
+    }
+  }
+  echo json_encode($result);
+  exit;
+}
+
 // ── RESPUESTA AJAX PARA INFINITE SCROLL ────────────────────────────────────────
 if (isset($_GET['ajax'])) {
  if (empty($productos)) die(""); 
@@ -207,7 +231,7 @@ if (isset($_GET['ajax'])) {
  </td>
  <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
  <td class="px-8 py-4 text-center">
- <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-sky-500/10 text-sky-500' ?>">
+ <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-emerald-500/10 text-emerald-500' ?>">
  <?= $p['tipo'] ?>
  </span>
  </td>
@@ -329,6 +353,42 @@ if (isset($_GET['ajax'])) {
  }
  $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
  ->execute([$id, $stock, $stock]);
+
+ // ── Guardar fotos adicionales (slots 1-4) ─────────────────────────────────
+ // Necesitamos el nombre de archivo base del producto para construir el sufijo
+ if (!$nombre_archivo) {
+   // Si no se subió nueva foto principal, obtener la existente de la BD
+   $row_img = $pdo->prepare("SELECT imagen FROM catalogo_productos WHERE id = ?");
+   $row_img->execute([$id]);
+   $nombre_archivo_base = $row_img->fetchColumn();
+ } else {
+   $nombre_archivo_base = $nombre_archivo;
+ }
+
+ if ($nombre_archivo_base) {
+   $base_sin_ext = pathinfo($nombre_archivo_base, PATHINFO_FILENAME);
+   for ($slot = 1; $slot <= 4; $slot++) {
+     $adicional_b64 = $_POST['foto_adicional_' . $slot . '_base64'] ?? '';
+     if (empty($adicional_b64) || strpos($adicional_b64, ',') === false) continue;
+
+     $partes    = explode(',', $adicional_b64, 2);
+     $img_data  = base64_decode($partes[1], true); // strict decode
+     if ($img_data === false || strlen($img_data) < 100) continue; // skip if invalid/empty
+
+     $ruta_adicional = '../../img/productos/' . $base_sin_ext . '_' . $slot . '.jpg';
+
+     if ($procesar_imagen) {
+       $ok = procesarImagenProducto($img_data, $ruta_adicional);
+       if (!$ok) {
+         // Fallback: guardar crudo si GD falla
+         file_put_contents($ruta_adicional, $img_data);
+       }
+     } else {
+       file_put_contents($ruta_adicional, $img_data);
+     }
+   }
+ }
+
  header("Location: " . $redirect_url . "msg=saved"); exit;
  }
 }
@@ -412,9 +472,9 @@ include("../includes/sidebar.php");
 <form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8 animate-reveal" style="animation-delay: 0.35s">
  <div class="flex-1 relative">
  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
- <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none "/>
+ <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none "/>
  </div>
- <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
+ <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
  <option value="">Todos los tipos</option>
  <option value="SECO" <?= $tipo==='SECO'?'selected':'' ?>>Cadena seca</option>
  <option value="RED FRIA" <?= $tipo==='RED FRIA'?'selected':'' ?>>Red fría</option>
@@ -467,7 +527,7 @@ include("../includes/sidebar.php");
  </td>
  <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
  <td class="px-8 py-4 text-center">
- <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-sky-500/10 text-sky-500' ?>">
+ <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-emerald-500/10 text-emerald-500' ?>">
  <?= $p['tipo'] ?>
  </span>
  </td>
@@ -530,7 +590,7 @@ include("../includes/sidebar.php");
  <span class="text-[10px] font-bold mt-1 uppercase">Subir foto</span>
  </div>
  <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
- <span class="text-on-surface text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
+ <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
  </div>
  </div>
  <input type="file" id="fotoInputProducto" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
@@ -539,6 +599,28 @@ include("../includes/sidebar.php");
     <span class="text-xs font-semibold text-on-surface-variant">Encuadrar y marca de agua automático</span>
   </label>
  </div>
+
+ <!-- Fotos Adicionales (Laterales/Galería) -->
+  <div class="w-full bg-surface-container-low/30 p-5 rounded-2xl border border-outline-variant/10">
+    <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3 text-center">Imágenes Adicionales (Laterales / Galería)</label>
+    <div class="flex justify-center gap-3">
+      <?php for ($i = 1; $i <= 4; $i++): ?>
+      <div class="relative group cursor-pointer w-16 h-16 rounded-xl overflow-hidden bg-surface-container-lowest border border-dashed border-outline-variant/30 flex items-center justify-center transition-all hover:border-primary/50" 
+           onclick="document.getElementById('fotoInputAdicional_<?= $i ?>').click()">
+        <img id="previewAdicional_<?= $i ?>" class="w-full h-full object-cover hidden">
+        <div id="placeholderAdicional_<?= $i ?>" class="flex flex-col items-center text-on-surface-variant/40">
+          <span class="material-symbols-outlined text-lg">add_a_photo</span>
+          <span class="text-[8px] font-bold mt-0.5 uppercase">Slot <?= $i ?></span>
+        </div>
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="text-white text-[8px] font-bold uppercase tracking-wider">Cambiar</span>
+        </div>
+      </div>
+      <input type="file" id="fotoInputAdicional_<?= $i ?>" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFotoAdicional(this, <?= $i ?>)">
+      <input type="hidden" name="foto_adicional_<?= $i ?>_base64" id="foto_adicional_<?= $i ?>_base64">
+      <?php endfor; ?>
+    </div>
+  </div>
 
  <div class="space-y-4">
  <div class="grid grid-cols-2 gap-4">
@@ -642,7 +724,7 @@ include("../includes/sidebar.php");
    <!-- Categorías -->
    <div>
     <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Categoría a afectar</label>
-    <select name="categoria_id" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
+    <select name="categoria_id" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
      <option value="0">Todas las categorías</option>
      <?php foreach($categorias as $cat): ?>
      <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
@@ -687,7 +769,7 @@ include("../includes/sidebar.php");
    <!-- Valor del Ajuste -->
    <div>
     <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Valor del ajuste (positivo para incremento, negativo para descuento)</label>
-    <input type="number" step="0.01" name="valor" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none font-bold text-on-surface" placeholder="0.00">
+    <input type="number" step="0.01" name="valor" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none font-bold text-white" placeholder="0.00">
    </div>
 
    <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
@@ -701,7 +783,7 @@ include("../includes/sidebar.php");
 </div>
 
 <!-- MODAL CROPPER -->
-<div id="cropperModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+<div id="cropperModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
  <div class="bg-surface w-full max-w-lg rounded-3xl overflow-hidden border border-white/10">
  <div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center">
  <h3 class="text-on-surface font-bold flex items-center gap-2">
@@ -767,6 +849,7 @@ function procesarFoto(input) {
         // Show manual Cropper.js modal
         document.getElementById('cropperImage').src = e.target.result;
         document.getElementById('cropperModal').classList.remove('hidden');
+        document.getElementById('cropperModal').classList.add('flex');
         if (cropper) cropper.destroy();
         cropper = new Cropper(document.getElementById('cropperImage'), { aspectRatio: 1, viewMode: 2 });
       }
@@ -785,7 +868,35 @@ document.getElementById('btnConfirmarRecorte').addEventListener('click', () => {
  cerrarCropper();
 });
 
-function cerrarCropper() { document.getElementById('cropperModal').classList.add('hidden'); if(cropper) cropper.destroy(); }
+function cerrarCropper() { 
+  document.getElementById('cropperModal').classList.add('hidden'); 
+  document.getElementById('cropperModal').classList.remove('flex'); 
+  if(cropper) cropper.destroy(); 
+}
+
+function procesarFotoAdicional(input, index) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (!file.type.match('image/jpeg|image/png|image/webp')) {
+      mockAction('Formato no soportado', 'Por favor sube una imagen en formato JPG, PNG o WEBP.', 'error');
+      input.value = '';
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target.result;
+      document.getElementById('foto_adicional_' + index + '_base64').value = base64;
+      
+      const preview = document.getElementById('previewAdicional_' + index);
+      const placeholder = document.getElementById('placeholderAdicional_' + index);
+      preview.src = base64;
+      preview.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+}
 
 function abrirModal() {
   document.getElementById('modalTitle').textContent = "Nuevo producto";
@@ -799,6 +910,16 @@ function abrirModal() {
   }
   document.getElementById('previewModal').classList.add('hidden');
   document.getElementById('placeholderModal').classList.remove('hidden');
+
+  // Limpiar slots adicionales
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('foto_adicional_' + i + '_base64').value = "";
+    document.getElementById('previewAdicional_' + i).classList.add('hidden');
+    document.getElementById('placeholderAdicional_' + i).classList.remove('hidden');
+    const inputAd = document.getElementById('fotoInputAdicional_' + i);
+    if (inputAd) inputAd.value = "";
+  }
+
   document.getElementById('prod_nombre').value = "";
   document.getElementById('prod_codigo').value = "";
   document.getElementById('prod_tipo').value = "SECO";
@@ -833,6 +954,33 @@ function abrirEditar(p) {
   document.getElementById('previewModal').classList.add('hidden');
   document.getElementById('placeholderModal').classList.remove('hidden');
   }
+
+  // Limpiar slots adicionales antes de cargar
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('foto_adicional_' + i + '_base64').value = "";
+    document.getElementById('previewAdicional_' + i).classList.add('hidden');
+    document.getElementById('placeholderAdicional_' + i).classList.remove('hidden');
+    const inputAd = document.getElementById('fotoInputAdicional_' + i);
+    if (inputAd) inputAd.value = "";
+  }
+
+  // Cargar imágenes adicionales si existen
+  if (p.imagen) {
+    fetch(`productos.php?action=get_additional_images&id=${p.id}`)
+      .then(res => res.json())
+      .then(data => {
+        for (let i = 1; i <= 4; i++) {
+          if (data[i]) {
+            const preview = document.getElementById('previewAdicional_' + i);
+            const placeholder = document.getElementById('placeholderAdicional_' + i);
+            preview.src = "../../img/productos/" + data[i] + "?t=" + new Date().getTime();
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+          }
+        }
+      });
+  }
+
  document.getElementById('prod_nombre').value = p.nombre;
  document.getElementById('prod_codigo').value = p.codigo || '';
  document.getElementById('prod_tipo').value = p.tipo;
@@ -874,9 +1022,9 @@ function confirmarAjusteMasivo(e) {
       title: 'Atención',
       text: 'Debes seleccionar al menos un precio para modificar.',
       icon: 'warning',
-      confirmButtonColor: '#003e79',
-      background: '#ffffff',
-      color: '#0f172a'
+      confirmButtonColor: '#008151',
+      background: '#05160e',
+      color: '#f1fdf7'
     });
     return;
   }
@@ -908,8 +1056,8 @@ function confirmarAjusteMasivo(e) {
     cancelButtonColor: '#284a3c',
     confirmButtonText: 'Sí, aplicar',
     cancelButtonText: 'Cancelar',
-    background: '#ffffff',
-    color: '#0f172a'
+    background: '#05160e',
+    color: '#f1fdf7'
   }).then(result => {
     if (result.isConfirmed) {
       form.submit();
@@ -937,9 +1085,9 @@ function confirmarAjusteMasivo(e) {
       title: '<?= $_GET['msg'] === 'bulk_error' ? 'Error' : '¡Operación Exitosa!' ?>',
       text: msgText,
       icon: '<?= $_GET['msg'] === 'bulk_error' ? 'error' : 'success' ?>',
-      confirmButtonColor: '#003e79',
-      background: '#ffffff',
-      color: '#0f172a'
+      confirmButtonColor: '#008151',
+      background: '#05160e',
+      color: '#f1fdf7'
     });
   }
 </script>

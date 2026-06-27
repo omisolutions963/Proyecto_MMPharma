@@ -18,38 +18,38 @@ $menuLinks = [
 ?>
 
 <!-- SideNavBar -->
-<aside id="userSidebar" style="background:#003e79"
- class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 transition-transform duration-300 -translate-x-full lg:translate-x-0">
+<aside id="userSidebar" style="background:linear-gradient(180deg,#002a52 0%,#003e79 60%,#001a33 100%)"
+ class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 px-4 z-50 border-r border-white/5 transition-transform duration-300 -translate-x-full lg:translate-x-0">
 
  <!-- Logo -->
- <div class="mb-8 px-4">
- <img src="../logos/mmpharma-logotipo-horizontal-blanco.svg"
- alt="MMPharma" class="w-44 object-contain" onerror="this.src='../logos/mmpharma-logotipo-horizontal-blanco.png'"/>
- </div>
+  <div class="mb-8 px-4">
+  <img src="../logos/mmpharma-logotipo-horizontal-blanco.svg"
+  alt="MMPharma" class="w-44 object-contain" onerror="this.src='../logos/mmpharma-logotipo-horizontal-blanco.png'"/>
+  </div>
 
- <!-- Navigation -->
- <nav class="flex-1 space-y-1 overflow-y-auto">
- <?php foreach ($menuItems as $item):
- $isActive = isset($activePage) && $activePage === $item['page'];
- $href = $menuLinks[$item['page']] ?? '#';
- ?>
- <a href="<?= $href ?>"
- class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
- <?= $isActive
- ? 'bg-white/15 text-white '
- : 'text-blue-200/60 hover:text-white hover:bg-white/8' ?>">
- <span class="material-symbols-outlined text-[20px] transition-transform duration-200
- <?= $isActive ? 'text-blue-300' : 'group-hover:scale-110' ?>"
- style="font-variation-settings:'FILL' <?= $isActive ? 1 : 0 ?>,'wght' 400,'GRAD' 0,'opsz' 24">
- <?= $item['icon'] ?>
- </span>
- <span><?= $item['label'] ?></span>
- <?php if ($isActive): ?>
- <span class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400"></span>
- <?php endif; ?>
- </a>
- <?php endforeach; ?>
- </nav>
+  <!-- Navigation -->
+  <nav class="flex-1 space-y-1 overflow-y-auto">
+  <?php foreach ($menuItems as $item):
+  $isActive = isset($activePage) && $activePage === $item['page'];
+  $href = $menuLinks[$item['page']] ?? '#';
+  ?>
+  <a href="<?= $href ?>"
+  class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
+  <?= $isActive
+  ? 'bg-white/15 text-white '
+  : 'text-sky-200/60 hover:text-white hover:bg-white/8' ?>">
+  <span class="material-symbols-outlined text-[20px] transition-transform duration-200
+  <?= $isActive ? 'text-sky-300' : 'group-hover:scale-110' ?>"
+  style="font-variation-settings:'FILL' <?= $isActive ? 1 : 0 ?>,'wght' 400,'GRAD' 0,'opsz' 24">
+  <?= $item['icon'] ?>
+  </span>
+  <span><?= $item['label'] ?></span>
+  <?php if ($isActive): ?>
+  <span class="ml-auto w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+  <?php endif; ?>
+  </a>
+  <?php endforeach; ?>
+  </nav>
 
  <!-- Bottom: Ir al sitio + Cerrar Sesión -->
  <div class="mt-auto pt-4 border-t border-white/10 flex flex-col gap-3 px-2">

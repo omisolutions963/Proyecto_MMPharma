@@ -77,10 +77,10 @@ include('../includes/sidebar.php');
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-sky-500/40 animate-reveal">
+        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-emerald-500/40 animate-reveal">
             <div class="flex justify-between items-center mb-1">
                 <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Mensajes totales</span>
-                <span class="material-symbols-outlined text-sky-500/30 scale-75">chat</span>
+                <span class="material-symbols-outlined text-emerald-500/30 scale-75">chat</span>
             </div>
             <h3 class="text-2xl font-black text-on-surface"><?= $total ?></h3>
         </div>
@@ -148,7 +148,7 @@ include('../includes/sidebar.php');
                             <p class="text-[10px] text-on-surface-variant font-black uppercase mt-0.5"><?= htmlspecialchars($m['empresa'] ?: 'SIN EMPRESA') ?></p>
                         </td>
                         <td class="px-8 py-5 max-w-xs md:max-w-md">
-                            <p class="text-sm truncate <?= $m['leido'] ? 'text-on-surface/90' : 'text-on-surface' ?>"><?= htmlspecialchars($asunto) ?></p>
+                            <p class="text-sm truncate <?= $m['leido'] ? 'text-on-surface/90' : 'text-white' ?>"><?= htmlspecialchars($asunto) ?></p>
                             <p class="text-xs text-on-surface-variant/80 truncate mt-0.5"><?= htmlspecialchars($snippet_short) ?></p>
                         </td>
                         <td class="px-8 py-5 text-center">
@@ -217,46 +217,46 @@ async function verMensaje(id, nombre, email, telefono, empresa, mensaje, fecha, 
     Swal.fire({
         title: 'Detalle de mensaje',
         html: `
-            <div class="text-left space-y-4 font-sans text-slate-800 max-w-full">
+            <div class="text-left space-y-4 font-sans text-slate-300 max-w-full">
                 <div>
-                    <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">Cliente:</strong>
-                    <span class="text-sm font-bold text-on-surface">${nombre}</span>
+                    <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">Cliente:</strong>
+                    <span class="text-sm font-bold text-white">${nombre}</span>
                 </div>
                 ${empresa ? `
                 <div>
-                    <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">Empresa / razón social:</strong>
-                    <span class="text-sm text-on-surface">${empresa}</span>
+                    <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">Empresa / razón social:</strong>
+                    <span class="text-sm text-white">${empresa}</span>
                 </div>` : ''}
-                <div class="grid grid-cols-2 gap-4 border-t border-sky-500/10 pt-3">
+                <div class="grid grid-cols-2 gap-4 border-t border-emerald-500/10 pt-3">
                     <div>
-                        <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">Email:</strong>
-                        <span class="text-xs text-on-surface">${email}</span>
+                        <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">Email:</strong>
+                        <span class="text-xs text-white">${email}</span>
                     </div>
                     <div>
-                        <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">Teléfono:</strong>
-                        <span class="text-xs text-on-surface">${telefono || '—'}</span>
+                        <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">Teléfono:</strong>
+                        <span class="text-xs text-white">${telefono || '—'}</span>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">Enviado el:</strong>
-                        <span class="text-xs text-on-surface">${fecha}</span>
+                        <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">Enviado el:</strong>
+                        <span class="text-xs text-white">${fecha}</span>
                     </div>
                     <div>
-                        <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-0.5">IP origen:</strong>
-                        <span class="text-xs text-on-surface">${ip || '—'}</span>
+                        <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-0.5">IP origen:</strong>
+                        <span class="text-xs text-white">${ip || '—'}</span>
                     </div>
                 </div>
-                <div class="border-t border-sky-500/10 pt-3">
-                    <strong class="text-sky-500 block text-[10px] font-black uppercase tracking-widest mb-1.5">Contenido completo:</strong>
-                    <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 text-xs text-on-surface max-h-60 overflow-y-auto whitespace-pre-wrap leading-relaxed">${mensaje}</div>
+                <div class="border-t border-emerald-500/10 pt-3">
+                    <strong class="text-emerald-400 block text-[10px] font-black uppercase tracking-widest mb-1.5">Contenido completo:</strong>
+                    <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 text-xs text-white max-h-60 overflow-y-auto whitespace-pre-wrap leading-relaxed">${mensaje}</div>
                 </div>
             </div>
         `,
-        background: '#eef4fc',
-        color: '#0f172a',
+        background: '#051a10',
+        color: '#f1fdf7',
         showCancelButton: true,
-        confirmButtonColor: '#003e79',
+        confirmButtonColor: '#008151',
         cancelButtonColor: '#5c1010',
         confirmButtonText: 'Entendido',
         cancelButtonText: 'Eliminar mensaje',
