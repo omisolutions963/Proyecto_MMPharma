@@ -476,7 +476,7 @@ if (isset($_GET['action'])) {
     }
 }
 
-$pageTitle = "MMPharma Portal - Sincronizar fotos";
+$pageTitle = "MMPharma Portal - Imágenes Duplicadas";
 $activePage = "productos";
 include("../includes/header.php");
 include("../includes/sidebar.php");
@@ -491,10 +491,10 @@ include("../includes/sidebar.php");
                 <span class="material-symbols-outlined text-[12px]">chevron_right</span>
                 <a href="productos.php" class="hover:text-primary transition-colors">Productos</a>
                 <span class="material-symbols-outlined text-[12px]">chevron_right</span>
-                <span class="text-on-surface-variant">Sincronizador de fotos</span>
+                <span class="text-on-surface-variant">Imágenes duplicadas</span>
             </nav>
-            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Sincronizador de fotos</h2>
-            <p class="text-on-surface-variant text-sm mt-1">Vincula imágenes automáticamente de forma local o administra archivos duplicados.</p>
+            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Imágenes duplicadas</h2>
+            <p class="text-on-surface-variant text-sm mt-1">Administra y resuelve asociaciones de imágenes duplicadas en el catálogo.</p>
         </div>
         <div>
             <a href="productos.php" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
@@ -509,7 +509,7 @@ include("../includes/sidebar.php");
             <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">Total Productos</span>
             <h3 id="stat-total" class="text-2xl font-black text-on-surface">---</h3>
         </div>
-        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-emerald-500/40">
+        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-sky-500/40">
             <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">Con Imagen</span>
             <h3 id="stat-with-img" class="text-2xl font-black text-on-surface">---</h3>
         </div>
@@ -523,13 +523,13 @@ include("../includes/sidebar.php");
         </div>
     </div>
 
-    <!-- Pestañas e Interfaz Principal -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Interfaz Principal (Full Width) -->
+    <div class="w-full">
         <!-- Control Panel -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="space-y-6">
             <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden">
-                <!-- Navigation Tabs -->
-                <div class="flex border-b border-outline-variant/10 bg-surface-container-low">
+                <!-- Navigation Tabs (Hidden) -->
+                <div class="hidden border-b border-outline-variant/10 bg-surface-container-low">
                     <button onclick="switchTab('local')" id="tab-btn-local" class="flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2">
                         <span class="material-symbols-outlined text-lg">folder_open</span> Sincronización local
                     </button>
@@ -540,8 +540,8 @@ include("../includes/sidebar.php");
 
                 <!-- Tab Contents -->
                 <div class="p-8">
-                    <!-- LOCAL TAB -->
-                    <div id="tab-local" class="space-y-6">
+                    <!-- LOCAL TAB (Hidden) -->
+                    <div id="tab-local" class="space-y-6 hidden">
                         <div class="bg-primary/5 rounded-2xl p-5 flex items-start gap-4">
                             <span class="material-symbols-outlined text-primary text-3xl shrink-0 mt-1">info</span>
                             <div>
@@ -556,7 +556,7 @@ include("../includes/sidebar.php");
                             <div class="flex justify-between items-center">
                                 <div>
                                     <span class="text-[10px] font-black tracking-widest text-on-surface-variant">Carpeta de origen detectada</span>
-                                    <h4 id="local-dir-name" class="text-lg font-black text-white mt-0.5">Escaneando...</h4>
+                                    <h4 id="local-dir-name" class="text-lg font-black text-on-surface mt-0.5">Escaneando...</h4>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-[10px] font-black tracking-widest text-on-surface-variant">Imágenes disponibles</span>
@@ -598,7 +598,7 @@ include("../includes/sidebar.php");
                         
                         <div id="duplicates-empty" class="hidden text-center py-12 bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/30">
                             <span class="material-symbols-outlined text-4xl text-on-surface-variant/40">check_circle</span>
-                            <h4 class="text-sm font-bold text-white mt-2">¡No se encontraron imágenes duplicadas!</h4>
+                            <h4 class="text-sm font-bold text-on-surface mt-2">¡No se encontraron imágenes duplicadas!</h4>
                             <p class="text-xs text-on-surface-variant mt-1">Todas las fotos asignadas a los productos son únicas.</p>
                         </div>
 
@@ -607,33 +607,6 @@ include("../includes/sidebar.php");
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Terminal Console Logger -->
-        <div class="space-y-4">
-            <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden flex flex-col h-[520px]">
-                <div class="px-6 py-4 bg-surface-container-low border-b border-outline-variant/10 flex justify-between items-center shrink-0">
-                    <span class="text-xs font-black tracking-widest text-on-surface flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Consola de ejecución
-                    </span>
-                    <button onclick="clearConsole()" class="text-[10px] font-bold tracking-wider text-on-surface-variant hover:text-white transition-colors">Limpiar</button>
-                </div>
-                <div id="console-logs" class="p-6 overflow-y-auto font-mono text-[11px] text-emerald-400 bg-surface flex-1 space-y-1 select-text">
-                    <div class="text-on-surface-variant/40">// Esperando acción...</div>
-                </div>
-            </div>
-            
-            <!-- Progress Bar Card -->
-            <div id="progress-card" class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 p-6 hidden">
-                <div class="flex justify-between text-xs font-bold mb-2">
-                    <span id="progress-title">Progreso</span>
-                    <span id="progress-pct">0%</span>
-                </div>
-                <div class="w-full bg-surface-container-low h-3 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-primary h-full w-0 transition-all duration-300"></div>
-                </div>
-                <div id="progress-details" class="text-[10px] text-on-surface-variant mt-2 font-mono text-center">0 / 0 procesados</div>
             </div>
         </div>
     </div>
@@ -655,7 +628,7 @@ include("../includes/sidebar.php");
             <input type="hidden" id="custom-search-id">
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Término de búsqueda</label>
-                <input type="text" id="custom-search-query" class="w-full bg-surface-container-low border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-semibold">
+                <input type="text" id="custom-search-query" class="w-full bg-surface-container-low border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-semibold">
             </div>
             
             <div class="flex gap-3 pt-2">
@@ -671,29 +644,24 @@ include("../includes/sidebar.php");
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         loadStats();
-        scanLocal(true);
+        switchTab('duplicates');
     });
 
-    let currentTab = 'local';
+    let currentTab = 'duplicates';
     let localFilesCount = 0;
 
     function switchTab(tab) {
         currentTab = tab;
-        document.getElementById('tab-local').classList.toggle('hidden', tab !== 'local');
-        document.getElementById('tab-duplicates').classList.toggle('hidden', tab !== 'duplicates');
+        document.getElementById('tab-local').classList.add('hidden');
+        document.getElementById('tab-duplicates').classList.remove('hidden');
         
         const btnLocal = document.getElementById('tab-btn-local');
         const btnDuplicates = document.getElementById('tab-btn-duplicates');
         
-        btnLocal.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
-        btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
+        if (btnLocal) btnLocal.className = "flex-1 py-4 text-sm font-bold text-on-surface-variant hover:text-white transition-all flex items-center justify-center gap-2";
+        if (btnDuplicates) btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
         
-        if (tab === 'local') {
-            btnLocal.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
-        } else if (tab === 'duplicates') {
-            btnDuplicates.className = "flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary transition-all flex items-center justify-center gap-2";
-            loadDuplicates();
-        }
+        loadDuplicates();
     }
 
     async function loadStats() {
@@ -793,9 +761,9 @@ include("../includes/sidebar.php");
                 title: 'Importación Completada',
                 text: `Se importaron y vincularon con éxito ${data.copied} imágenes.`,
                 icon: 'success',
-                confirmButtonColor: '#008151',
-                background: '#05160e',
-                color: '#f1fdf7'
+                confirmButtonColor: '#003e79',
+                background: '#ffffff',
+                color: '#0f172a'
             });
             
         } catch (e) {
@@ -841,14 +809,14 @@ include("../includes/sidebar.php");
                     productsHtml += `
                         <div class="bg-surface p-4 rounded-xl border border-outline-variant/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div class="flex-1 min-w-0">
-                                <h5 class="text-sm font-bold text-white leading-snug break-words" title="${escapeHtml(p.nombre)}">${escapeHtml(p.nombre)}</h5>
+                                <h5 class="text-sm font-bold text-on-surface leading-snug break-words" title="${escapeHtml(p.nombre)}">${escapeHtml(p.nombre)}</h5>
                                 <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] text-on-surface-variant font-mono">
                                     <span>Código: <strong class="text-white">${p.codigo || '---'}</strong></span>
                                     <span>Precio: <strong class="text-primary font-bold">$${parseFloat(p.precio_farmacia).toFixed(2)}</strong></span>
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-2 shrink-0 md:justify-end">
-                                <button onclick="chooseCorrect(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-600 hover:text-white text-emerald-400 font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Elegir como correcto y desvincular los demás">
+                                <button onclick="chooseCorrect(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-sky-500/10 hover:bg-sky-600 hover:text-white text-sky-500 font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Elegir como correcto y desvincular los demás">
                                     <span class="material-symbols-outlined text-sm">check_circle</span> Elegir correcto
                                 </button>
                                 <button onclick="unlinkImage(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-error/10 hover:bg-error hover:text-white text-error font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Desvincular imagen">
@@ -904,9 +872,9 @@ include("../includes/sidebar.php");
                         title: 'Duplicados Resueltos',
                         text: `Se resolvió el grupo. El producto conserva su foto y se desvincularon ${data.unlinked_count} productos.`,
                         icon: 'success',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 } else {
                     logToConsole(`  -> [FALLO] ${data.error}`, 'error');
@@ -914,9 +882,9 @@ include("../includes/sidebar.php");
                         title: 'Error',
                         text: data.error,
                         icon: 'error',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 }
             } catch (e) {
@@ -940,9 +908,9 @@ include("../includes/sidebar.php");
                         title: 'Desvinculado',
                         text: 'El producto ha sido restablecido a PENDIENTE de imagen.',
                         icon: 'success',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 } else {
                     logToConsole(`  -> [FALLO] ${data.error}`, 'error');
@@ -975,9 +943,9 @@ include("../includes/sidebar.php");
                 title: 'Credenciales de Google Requeridas',
                 text: 'Por favor, ingresa tu API Key y tu Search Engine ID (CX) en la pestaña de Google Search API para poder realizar búsquedas en la nube.',
                 icon: 'warning',
-                confirmButtonColor: '#008151',
-                background: '#05160e',
-                color: '#f1fdf7'
+                confirmButtonColor: '#003e79',
+                background: '#ffffff',
+                color: '#0f172a'
             });
             closeCustomSearchModal();
             switchTab('cloud');
@@ -1004,9 +972,9 @@ include("../includes/sidebar.php");
                     title: 'Imagen Actualizada',
                     text: 'Se descargó e vinculó la nueva imagen específica.',
                     icon: 'success',
-                    confirmButtonColor: '#008151',
-                    background: '#05160e',
-                    color: '#f1fdf7'
+                    confirmButtonColor: '#003e79',
+                    background: '#ffffff',
+                    color: '#0f172a'
                 });
             } else {
                 logToConsole(`  -> [FALLÓ] ${data.error}`, 'error');
@@ -1014,9 +982,9 @@ include("../includes/sidebar.php");
                     title: 'Sin Resultados',
                     text: data.error,
                     icon: 'error',
-                    confirmButtonColor: '#008151',
-                    background: '#05160e',
-                    color: '#f1fdf7'
+                    confirmButtonColor: '#003e79',
+                    background: '#ffffff',
+                    color: '#0f172a'
                 });
             }
         } catch (e) {
@@ -1032,7 +1000,7 @@ include("../includes/sidebar.php");
         const consoleLogs = document.getElementById('console-logs');
         const line = document.createElement('div');
         
-        let colorClass = 'text-emerald-400';
+        let colorClass = 'text-sky-500';
         if (type === 'error') colorClass = 'text-red-400 font-bold';
         if (type === 'warning') colorClass = 'text-yellow-400';
         

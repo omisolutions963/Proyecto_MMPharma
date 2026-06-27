@@ -45,11 +45,6 @@ if ($cliente_tipo_check === 'EMPRESA') {
     header('Location: catalogo.php');
     exit;
   }
-} else {
-  if ($p['solo_empresa'] === 'SI') {
-    header('Location: catalogo.php');
-    exit;
-  }
 }
 
 // Productos relacionados (misma sustancia, diferente id)
@@ -58,8 +53,6 @@ $params_rel = ['%' . explode(' ', $p['sustancia'])[0] . '%', $id];
 
 if ($cliente_tipo_check === 'EMPRESA') {
   $where_rel[] = "(solo_empresa = 'SI' OR nombre LIKE '%ASPIRINA%' OR sustancia LIKE '%ASPIRINA%' OR nombre LIKE '%LORATADINA%' OR sustancia LIKE '%LORATADINA%' OR nombre LIKE '%LORATIDINA%' OR sustancia LIKE '%LORATIDINA%' OR nombre LIKE '%BUSCAPINA%' OR nombre LIKE '%BUTILHIOSCINA%' OR sustancia LIKE '%BUTILHIOSCINA%')";
-} else {
-  $where_rel[] = "solo_empresa = 'NO'";
 }
 
 $rel_sql = "SELECT * FROM catalogo_productos WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";

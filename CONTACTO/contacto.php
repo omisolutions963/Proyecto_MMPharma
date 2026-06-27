@@ -137,7 +137,7 @@ require_once '../includes/header.php';
  </a>
 
  <!-- Correo -->
- <a href="mailto:atencionclientes@mmpharma.mx"
+ <a href="mailto:atencionclientes@mmpharma.mx" target="_blank" rel="noopener noreferrer"
  class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 p-6 bg-tertiary rounded-2xl transition-all hover:-translate-y-1 group border border-white/5">
  <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0 text-white group-hover:bg-white group-hover:text-tertiary transition-all">
  <span class="material-symbols-outlined text-3xl">mail</span>

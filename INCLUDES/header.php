@@ -88,6 +88,37 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  transform: scale(1.25);
  will-change: transform;
  }
+
+ .marquee-container {
+ overflow: hidden;
+ white-space: nowrap;
+ position: relative;
+ width: 100%;
+ }
+ .marquee-content {
+ display: inline-flex;
+ animation: marquee 30s linear infinite;
+ align-items: center;
+ gap: 4rem;
+ }
+ .marquee-content:hover {
+ animation-play-state: paused;
+ }
+ @keyframes marquee {
+ 0% { transform: translateX(-50%); }
+ 100% { transform: translateX(0); }
+ }
+ .marquee-content img {
+ height: 120px;
+ max-width: 300px;
+ object-fit: contain;
+ filter: grayscale(100%) opacity(0.7);
+ transition: all 0.3s ease;
+ }
+ .marquee-content img:hover {
+ filter: grayscale(0%) opacity(1);
+ transform: scale(1.1);
+ }
 </style>
 </head>
 <style>
@@ -128,7 +159,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
         </a>
       </div>
       <div class="flex items-center gap-4">
-        <a href="mailto:atencionclientes@mmpharma.mx" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
+        <a href="mailto:atencionclientes@mmpharma.mx" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-tertiary-light transition-colors font-medium">
           <span class="material-symbols-outlined text-[16px]">mail</span>
           <span>atencionclientes@mmpharma.mx</span>
         </a>

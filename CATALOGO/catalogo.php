@@ -56,11 +56,8 @@ if ($categoria_id > 0) {
  $params[] = $categoria_id;
 }
 
-// Filtro de visibilidad según tipo de cliente
 if ($cliente_tipo === 'EMPRESA') {
   $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
-} else {
-  $where[] = "p.solo_empresa = 'NO'";
 }
 
 // Excluir productos internos de ajuste (Anticipo y Descuento)
@@ -111,7 +108,12 @@ function queryStr($extra = []) {
 // Obtener Banners Promocionales Activos
 $banners = [];
 try {
- $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 ORDER BY orden ASC");
+ if ($is_logged_in && isset($_SESSION['cliente_id'])) {
+  $stmt_banners = $pdo->prepare("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND (cliente_id = 0 OR cliente_id = ?) ORDER BY orden ASC");
+  $stmt_banners->execute([$_SESSION['cliente_id']]);
+ } else {
+  $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND cliente_id = 0 ORDER BY orden ASC");
+ }
  $banners = $stmt_banners->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
  // Silencioso
@@ -133,7 +135,11 @@ require_once '../includes/header.php';
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-6 md:px-8 py-12 md:py-20 w-full" data-aos="fade-up">
  <h1 class="text-4xl md:text-7xl font-black tracking-tight leading-tight text-white mb-2">Catálogo</h1>
- <p class="text-base md:text-lg text-white font-medium"><?= number_format($total) ?> productos disponibles</p>
+ <?php if ($is_logged_in): ?>
+  <p class="text-base md:text-lg text-white font-medium"><?= number_format($total) ?> productos disponibles</p>
+  <?php else: ?>
+  <p class="text-base md:text-lg text-white font-medium">Conoce nuestro catálogo de productos.</p>
+  <?php endif; ?>
  </div>
 </section>
 

@@ -56,11 +56,8 @@ if ($categoria_id > 0) {
  $params[] = $categoria_id;
 }
 
-// Filtro de visibilidad según tipo de cliente
 if ($cliente_tipo === 'EMPRESA') {
   $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
-} else {
-  $where[] = "p.solo_empresa = 'NO'";
 }
 
 // Excluir productos internos de ajuste (Anticipo y Descuento)

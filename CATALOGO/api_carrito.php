@@ -44,10 +44,6 @@ if ($action === 'save') {
     if ($prod['solo_empresa'] !== 'SI' && !$es_excepcion) {
       continue;
     }
-  } else {
-    if ($prod['solo_empresa'] === 'SI') {
-      continue;
-    }
   }
   $stmt->execute([$cliente_id, $item['id'], $item['cantidad']]);
   }
