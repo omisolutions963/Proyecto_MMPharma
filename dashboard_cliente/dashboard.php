@@ -91,9 +91,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$cliente_id]);
 $cotizaciones_recientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 7. Banners Promocionales
-$stmt = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 ORDER BY orden ASC");
-$banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = 'MMPharma Portal - Dashboard';
 $activePage = 'dashboard';
@@ -120,19 +117,6 @@ include('includes/sidebar.php');
  </div>
  </div>
 
- <!-- BANNERS -->
- <?php if(!empty($banners)): ?>
- <div class="mb-8 animate-reveal grid grid-cols-1 md:grid-cols-<?= min(count($banners), 3) ?> gap-6">
- <?php foreach($banners as $banner): ?>
- <a href="<?= htmlspecialchars($banner['enlace_url'] ?? '#') ?>" class="block rounded-2xl overflow-hidden border border-outline-variant/30 group hover:0_0_20px_rgba(74,144,217,0.3)] transition-all relative">
- <img src="<?= htmlspecialchars($banner['ruta_imagen']) ?>" alt="<?= htmlspecialchars($banner['titulo']) ?>" class="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-500">
- <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5">
- <h3 class="text-white font-bold text-lg"><?= htmlspecialchars($banner['titulo']) ?></h3>
- </div>
- </a>
- <?php endforeach; ?>
- </div>
- <?php endif; ?>
 
  <!-- ROW 1: CARDS -->
  <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8 animate-reveal delay-100">

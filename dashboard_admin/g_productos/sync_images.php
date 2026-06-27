@@ -509,7 +509,7 @@ include("../includes/sidebar.php");
             <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">Total Productos</span>
             <h3 id="stat-total" class="text-2xl font-black text-on-surface">---</h3>
         </div>
-        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-emerald-500/40">
+        <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-sky-500/40">
             <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">Con Imagen</span>
             <h3 id="stat-with-img" class="text-2xl font-black text-on-surface">---</h3>
         </div>
@@ -556,7 +556,7 @@ include("../includes/sidebar.php");
                             <div class="flex justify-between items-center">
                                 <div>
                                     <span class="text-[10px] font-black tracking-widest text-on-surface-variant">Carpeta de origen detectada</span>
-                                    <h4 id="local-dir-name" class="text-lg font-black text-white mt-0.5">Escaneando...</h4>
+                                    <h4 id="local-dir-name" class="text-lg font-black text-on-surface mt-0.5">Escaneando...</h4>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-[10px] font-black tracking-widest text-on-surface-variant">Imágenes disponibles</span>
@@ -598,7 +598,7 @@ include("../includes/sidebar.php");
                         
                         <div id="duplicates-empty" class="hidden text-center py-12 bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/30">
                             <span class="material-symbols-outlined text-4xl text-on-surface-variant/40">check_circle</span>
-                            <h4 class="text-sm font-bold text-white mt-2">¡No se encontraron imágenes duplicadas!</h4>
+                            <h4 class="text-sm font-bold text-on-surface mt-2">¡No se encontraron imágenes duplicadas!</h4>
                             <p class="text-xs text-on-surface-variant mt-1">Todas las fotos asignadas a los productos son únicas.</p>
                         </div>
 
@@ -628,7 +628,7 @@ include("../includes/sidebar.php");
             <input type="hidden" id="custom-search-id">
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Término de búsqueda</label>
-                <input type="text" id="custom-search-query" class="w-full bg-surface-container-low border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-semibold">
+                <input type="text" id="custom-search-query" class="w-full bg-surface-container-low border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-semibold">
             </div>
             
             <div class="flex gap-3 pt-2">
@@ -761,9 +761,9 @@ include("../includes/sidebar.php");
                 title: 'Importación Completada',
                 text: `Se importaron y vincularon con éxito ${data.copied} imágenes.`,
                 icon: 'success',
-                confirmButtonColor: '#008151',
-                background: '#05160e',
-                color: '#f1fdf7'
+                confirmButtonColor: '#003e79',
+                background: '#ffffff',
+                color: '#0f172a'
             });
             
         } catch (e) {
@@ -809,14 +809,14 @@ include("../includes/sidebar.php");
                     productsHtml += `
                         <div class="bg-surface p-4 rounded-xl border border-outline-variant/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div class="flex-1 min-w-0">
-                                <h5 class="text-sm font-bold text-white leading-snug break-words" title="${escapeHtml(p.nombre)}">${escapeHtml(p.nombre)}</h5>
+                                <h5 class="text-sm font-bold text-on-surface leading-snug break-words" title="${escapeHtml(p.nombre)}">${escapeHtml(p.nombre)}</h5>
                                 <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] text-on-surface-variant font-mono">
                                     <span>Código: <strong class="text-white">${p.codigo || '---'}</strong></span>
                                     <span>Precio: <strong class="text-primary font-bold">$${parseFloat(p.precio_farmacia).toFixed(2)}</strong></span>
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-2 shrink-0 md:justify-end">
-                                <button onclick="chooseCorrect(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-600 hover:text-white text-emerald-400 font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Elegir como correcto y desvincular los demás">
+                                <button onclick="chooseCorrect(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-sky-500/10 hover:bg-sky-600 hover:text-white text-sky-500 font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Elegir como correcto y desvincular los demás">
                                     <span class="material-symbols-outlined text-sm">check_circle</span> Elegir correcto
                                 </button>
                                 <button onclick="unlinkImage(${p.id}, '${escapeHtml(p.nombre)}')" class="px-3 py-2 bg-error/10 hover:bg-error hover:text-white text-error font-bold text-xs rounded-lg transition-all flex items-center gap-1.5" title="Desvincular imagen">
@@ -872,9 +872,9 @@ include("../includes/sidebar.php");
                         title: 'Duplicados Resueltos',
                         text: `Se resolvió el grupo. El producto conserva su foto y se desvincularon ${data.unlinked_count} productos.`,
                         icon: 'success',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 } else {
                     logToConsole(`  -> [FALLO] ${data.error}`, 'error');
@@ -882,9 +882,9 @@ include("../includes/sidebar.php");
                         title: 'Error',
                         text: data.error,
                         icon: 'error',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 }
             } catch (e) {
@@ -908,9 +908,9 @@ include("../includes/sidebar.php");
                         title: 'Desvinculado',
                         text: 'El producto ha sido restablecido a PENDIENTE de imagen.',
                         icon: 'success',
-                        confirmButtonColor: '#008151',
-                        background: '#05160e',
-                        color: '#f1fdf7'
+                        confirmButtonColor: '#003e79',
+                        background: '#ffffff',
+                        color: '#0f172a'
                     });
                 } else {
                     logToConsole(`  -> [FALLO] ${data.error}`, 'error');
@@ -943,9 +943,9 @@ include("../includes/sidebar.php");
                 title: 'Credenciales de Google Requeridas',
                 text: 'Por favor, ingresa tu API Key y tu Search Engine ID (CX) en la pestaña de Google Search API para poder realizar búsquedas en la nube.',
                 icon: 'warning',
-                confirmButtonColor: '#008151',
-                background: '#05160e',
-                color: '#f1fdf7'
+                confirmButtonColor: '#003e79',
+                background: '#ffffff',
+                color: '#0f172a'
             });
             closeCustomSearchModal();
             switchTab('cloud');
@@ -972,9 +972,9 @@ include("../includes/sidebar.php");
                     title: 'Imagen Actualizada',
                     text: 'Se descargó e vinculó la nueva imagen específica.',
                     icon: 'success',
-                    confirmButtonColor: '#008151',
-                    background: '#05160e',
-                    color: '#f1fdf7'
+                    confirmButtonColor: '#003e79',
+                    background: '#ffffff',
+                    color: '#0f172a'
                 });
             } else {
                 logToConsole(`  -> [FALLÓ] ${data.error}`, 'error');
@@ -982,9 +982,9 @@ include("../includes/sidebar.php");
                     title: 'Sin Resultados',
                     text: data.error,
                     icon: 'error',
-                    confirmButtonColor: '#008151',
-                    background: '#05160e',
-                    color: '#f1fdf7'
+                    confirmButtonColor: '#003e79',
+                    background: '#ffffff',
+                    color: '#0f172a'
                 });
             }
         } catch (e) {
@@ -1000,7 +1000,7 @@ include("../includes/sidebar.php");
         const consoleLogs = document.getElementById('console-logs');
         const line = document.createElement('div');
         
-        let colorClass = 'text-emerald-400';
+        let colorClass = 'text-sky-500';
         if (type === 'error') colorClass = 'text-red-400 font-bold';
         if (type === 'warning') colorClass = 'text-yellow-400';
         

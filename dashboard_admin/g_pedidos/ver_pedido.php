@@ -179,14 +179,14 @@ include("../includes/sidebar.php");
                 <?= $pedido['estado_envio'] ?>
             </span>
         </h1>
-        <p class="text-on-surface-variant text-sm mt-1">Fecha de creación: <span class="font-bold text-white"><?= date('d/m/Y H:i', strtotime($pedido['created_at'])) ?></span></p>
+        <p class="text-on-surface-variant text-sm mt-1">Fecha de creación: <span class="font-bold text-on-surface"><?= date('d/m/Y H:i', strtotime($pedido['created_at'])) ?></span></p>
     </div>
     <div class="flex gap-3">
         <a href="generar_pdf.php?id=<?= $pedido['id'] ?>" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-secondary/30 text-secondary hover:bg-secondary hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
             <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
             Descargar PDF
         </a>
-        <a href="generar_excel.php?id=<?= $pedido['id'] ?>" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-emerald-600/30 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
+        <a href="generar_excel.php?id=<?= $pedido['id'] ?>" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-sky-600/30 text-sky-600 hover:bg-sky-600 hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
             <span class="material-symbols-outlined text-[18px]">table_view</span>
             Descargar Excel
         </a>
@@ -212,7 +212,7 @@ include("../includes/sidebar.php");
                 <input type="hidden" name="action" value="update_status">
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Estatus actual</label>
-                    <select name="nuevo_estado" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+                    <select name="nuevo_estado" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
                         <option value="PENDIENTE" <?= $pedido['estado_envio'] === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente</option>
                         <option value="PROCESANDO" <?= $pedido['estado_envio'] === 'PROCESANDO' ? 'selected' : '' ?>>Procesando</option>
                         <option value="ENVIADO" <?= $pedido['estado_envio'] === 'ENVIADO' ? 'selected' : '' ?>>Enviado</option>
@@ -239,22 +239,22 @@ include("../includes/sidebar.php");
             <div class="space-y-4">
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Razón social</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($pedido['razon_social']) ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($pedido['razon_social']) ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de contacto</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($pedido['persona_contacto'] ?: 'No asignado') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($pedido['persona_contacto'] ?: 'No asignado') ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email / teléfonos</span>
-                    <p class="text-sm font-medium text-white">
+                    <p class="text-sm font-medium text-on-surface">
                         <?= htmlspecialchars($pedido['email']) ?><br>
                         <?= htmlspecialchars($pedido['telefono_local'] ?: '') ?> <?= $pedido['telefono_celular'] ? ' / ' . htmlspecialchars($pedido['telefono_celular']) : '' ?>
                     </p>
                 </div>
                 <div class="pt-2 border-t border-outline-variant/10">
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notas del pedido</span>
-                    <p class="text-sm font-medium text-white italic text-on-surface-variant"><?= nl2br(htmlspecialchars($pedido['notas'] ?: 'Sin notas.')) ?></p>
+                    <p class="text-sm font-medium text-on-surface italic text-on-surface-variant"><?= nl2br(htmlspecialchars($pedido['notas'] ?: 'Sin notas.')) ?></p>
                 </div>
             </div>
         </div>
@@ -268,11 +268,11 @@ include("../includes/sidebar.php");
             <div class="space-y-4">
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
                     <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Método</span>
-                    <span class="text-sm font-black text-white"><?= str_replace('_', ' ', $pedido['metodo_pago']) ?></span>
+                    <span class="text-sm font-black text-on-surface"><?= str_replace('_', ' ', $pedido['metodo_pago']) ?></span>
                 </div>
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
                     <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Costo envío</span>
-                    <span class="text-sm font-black text-white">$<?= number_format($pedido['costo_envio'], 2) ?></span>
+                    <span class="text-sm font-black text-on-surface">$<?= number_format($pedido['costo_envio'], 2) ?></span>
                 </div>
                 <div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
                     <span class="text-[12px] font-black uppercase tracking-widest text-primary">Monto total</span>
@@ -307,7 +307,7 @@ include("../includes/sidebar.php");
                         <input type="hidden" name="comprobante_id" value="<?= $comprobante['id'] ?>">
                         <div>
                             <label class="block text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Validar pago</label>
-                            <select name="nuevo_estatus_val" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs focus:ring-1 focus:ring-primary outline-none text-white font-semibold">
+                            <select name="nuevo_estatus_val" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs focus:ring-1 focus:ring-primary outline-none text-on-surface font-semibold">
                                 <option value="PENDIENTE" <?= $comprobante['estatus_validacion'] === 'PENDIENTE' ? 'selected' : '' ?>>Pendiente de validar</option>
                                 <option value="APROBADO" <?= $comprobante['estatus_validacion'] === 'APROBADO' ? 'selected' : '' ?>>Aprobado / pago verificado</option>
                                 <option value="RECHAZADO" <?= $comprobante['estatus_validacion'] === 'RECHAZADO' ? 'selected' : '' ?>>Rechazado (sube otro)</option>
@@ -315,7 +315,7 @@ include("../includes/sidebar.php");
                         </div>
                         <div>
                             <label class="block text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notas / motivo de rechazo</label>
-                            <textarea name="notas_admin" rows="2" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs text-white placeholder:text-outline/70 focus:ring-1 focus:ring-primary outline-none resize-none" placeholder="Escribe observaciones o motivo si rechazas el comprobante..."><?= htmlspecialchars($comprobante['notas_admin'] ?? '') ?></textarea>
+                            <textarea name="notas_admin" rows="2" class="w-full bg-surface-container-low border-none rounded-xl p-2.5 text-xs text-on-surface placeholder:text-outline/70 focus:ring-1 focus:ring-primary outline-none resize-none" placeholder="Escribe observaciones o motivo si rechazas el comprobante..."><?= htmlspecialchars($comprobante['notas_admin'] ?? '') ?></textarea>
                         </div>
                         <button type="submit" class="w-full bg-secondary text-white py-2.5 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:opacity-90 transition-all flex justify-center items-center gap-1.5">
                             <span class="material-symbols-outlined text-[14px]">done</span>
@@ -391,7 +391,7 @@ include("../includes/sidebar.php");
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="inline-flex px-3 py-1 rounded-lg bg-surface-container-high text-white text-xs font-black">
+                                    <span class="inline-flex px-3 py-1 rounded-lg bg-surface-container-high text-on-surface text-xs font-black">
                                         <?= $det['cantidad'] ?>
                                     </span>
                                 </td>
@@ -446,18 +446,18 @@ include("../includes/sidebar.php");
             title: '¡Estatus actualizado!',
             text: 'El estado del envío ha sido actualizado exitosamente.',
             icon: 'success',
-            confirmButtonColor: '#008151',
-            background: '#05160e',
-            color: '#f1fdf7'
+            confirmButtonColor: '#003e79',
+            background: '#ffffff',
+            color: '#0f172a'
         });
     } else if (msg === 'payment_updated') {
         Swal.fire({
             title: '¡Pago validado!',
             text: 'La validación del comprobante de pago se guardó exitosamente.',
             icon: 'success',
-            confirmButtonColor: '#008151',
-            background: '#05160e',
-            color: '#f1fdf7'
+            confirmButtonColor: '#003e79',
+            background: '#ffffff',
+            color: '#0f172a'
         });
     }
 </script>

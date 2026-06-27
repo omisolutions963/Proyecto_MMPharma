@@ -175,5 +175,37 @@ function roundStatIndex($num) {
  </div>
 </section>
 
-<?php require_once '../includes/footer.php'; ?>
+<!-- Distribuidores Carousel -->
+<section class="py-16 md:py-24 bg-white overflow-hidden">
+  <div class="max-w-[1369px] mx-auto px-8 mb-10 text-center" data-aos="fade-up">
+    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-primary mb-4">Nuestros <span class="text-tertiary">distribuidores autorizados</span></h2>
+    <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">Las mejores marcas y laboratorios confían en nuestra red de distribución.</p>
+  </div>
+  <div class="marquee-container">
+    <div class="marquee-content">
+      <img src="../Img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
+      
+      <img src="../Img/Laboratorios/1.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/3.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/4.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/5.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/6.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/7.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/8.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/9.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/10.webp" alt="Laboratorio" title="Laboratorio">
+      <img src="../Img/Laboratorios/11.webp" alt="Laboratorio" title="Laboratorio">
+    </div>
+  </div>
+</section>
 
+<?php require_once '../includes/footer.php'; ?>

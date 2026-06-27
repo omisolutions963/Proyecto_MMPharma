@@ -101,7 +101,7 @@ include("../includes/sidebar.php");
                 <?= $cliente['estatus'] ?>
             </span>
         </h1>
-        <p class="text-on-surface-variant text-sm mt-1">RFC: <span class="font-bold text-white"><?= $cliente['rfc'] ?: 'No registrado' ?></span> &bull; Tipo: <span class="text-primary font-bold"><?= $cliente['tipo'] ?></span></p>
+        <p class="text-on-surface-variant text-sm mt-1">RFC: <span class="font-bold text-on-surface"><?= $cliente['rfc'] ?: 'No registrado' ?></span> &bull; Tipo: <span class="text-primary font-bold"><?= $cliente['tipo'] ?></span></p>
     </div>
     <div class="flex gap-3">
         <a href="clientes.php" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container-high hover:text-white transition-all text-xs font-bold uppercase tracking-widest">
@@ -124,15 +124,15 @@ include("../includes/sidebar.php");
             <div class="space-y-4">
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Nombre Comercial</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['nombre_comercial'] ?: 'N/A') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['nombre_comercial'] ?: 'N/A') ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de Contacto</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['persona_contacto'] ?: 'No asignado') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['persona_contacto'] ?: 'No asignado') ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email Profesional</span>
-                    <p class="text-sm font-medium text-white flex items-center gap-2">
+                    <p class="text-sm font-medium text-on-surface flex items-center gap-2">
                         <span class="material-symbols-outlined text-[14px] text-tertiary">mail</span>
                         <a href="mailto:<?= $cliente['email'] ?>" class="hover:text-tertiary transition-colors"><?= htmlspecialchars($cliente['email']) ?></a>
                     </p>
@@ -140,16 +140,16 @@ include("../includes/sidebar.php");
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Teléfono Local</span>
-                        <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['telefono_local'] ?: 'N/A') ?></p>
+                        <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['telefono_local'] ?: 'N/A') ?></p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Celular</span>
-                        <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['telefono_celular'] ?: 'N/A') ?></p>
+                        <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['telefono_celular'] ?: 'N/A') ?></p>
                     </div>
                 </div>
                 <div class="pt-2 border-t border-outline-variant/10">
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Representante Legal</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['representante_legal'] ?: 'N/A') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['representante_legal'] ?: 'N/A') ?></p>
                 </div>
             </div>
         </div>
@@ -163,15 +163,15 @@ include("../includes/sidebar.php");
             <div class="space-y-4">
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Régimen Fiscal</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['regimen_fiscal'] ?: 'No especificado') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['regimen_fiscal'] ?: 'No especificado') ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Uso de CFDI</span>
-                    <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['uso_cfdi'] ?: 'No especificado') ?></p>
+                    <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['uso_cfdi'] ?: 'No especificado') ?></p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Domicilio Fiscal</span>
-                    <p class="text-sm font-medium text-white leading-relaxed">
+                    <p class="text-sm font-medium text-on-surface leading-relaxed">
                         <?= htmlspecialchars($cliente['domicilio_fiscal']) ?> <?= htmlspecialchars($cliente['colonia_fiscal']) ?><br>
                         <?= htmlspecialchars($cliente['ciudad_fiscal']) ?>, <?= htmlspecialchars($cliente['estado_fiscal']) ?> C.P. <?= htmlspecialchars($cliente['cp_fiscal']) ?>
                     </p>
@@ -179,11 +179,11 @@ include("../includes/sidebar.php");
                 <div class="grid grid-cols-2 gap-4 pt-2 border-t border-outline-variant/10">
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Doc. Requerido</span>
-                        <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['documento_tipo']) ?></p>
+                        <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['documento_tipo']) ?></p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Método de Pago</span>
-                        <p class="text-sm font-medium text-white"><?= htmlspecialchars($cliente['metodo_pago']) ?></p>
+                        <p class="text-sm font-medium text-on-surface"><?= htmlspecialchars($cliente['metodo_pago']) ?></p>
                     </div>
                 </div>
             </div>
@@ -253,13 +253,13 @@ include("../includes/sidebar.php");
                                 <td class="px-6 py-4">
                                     <div class="flex justify-center gap-2">
                                         <!-- Botón Ver Archivo -->
-                                        <a href="../../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-primary transition-all" title="Ver documento">
+                                        <a href="../../<?= htmlspecialchars($doc['ruta_archivo']) ?>" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-white transition-all" title="Ver documento">
                                             <span class="material-symbols-outlined text-[16px]">visibility</span>
                                         </a>
                                         
                                         <?php if (empty($doc['is_registro'])): ?>
                                         <!-- Botón Validar (Abre Modal) -->
-                                        <button onclick='abrirValidacion(<?= json_encode($doc) ?>)' class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-white hover:bg-tertiary transition-all" title="Validar documento">
+                                        <button onclick='abrirValidacion(<?= json_encode($doc) ?>)' class="w-8 h-8 flex items-center justify-center rounded-lg bg-surface-container-high text-tertiary hover:bg-tertiary hover:text-white transition-all" title="Validar documento">
                                             <span class="material-symbols-outlined text-[16px]">verified</span>
                                         </button>
                                         <?php endif; ?>
@@ -282,14 +282,14 @@ include("../includes/sidebar.php");
             <div class="grid grid-cols-2 gap-6">
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Domicilio de Entrega</span>
-                    <p class="text-sm font-medium text-white leading-relaxed">
+                    <p class="text-sm font-medium text-on-surface leading-relaxed">
                         <?= htmlspecialchars($cliente['domicilio_entrega'] ?: 'N/A') ?> <?= htmlspecialchars($cliente['colonia_entrega'] ?: '') ?><br>
                         <?= htmlspecialchars($cliente['ciudad_entrega'] ?: '') ?>, <?= htmlspecialchars($cliente['estado_entrega'] ?: '') ?> C.P. <?= htmlspecialchars($cliente['cp_entrega'] ?: '') ?>
                     </p>
                 </div>
                 <div>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Detalles Logísticos</span>
-                    <ul class="text-sm font-medium text-white space-y-1">
+                    <ul class="text-sm font-medium text-slate-800 space-y-1">
                         <li><span class="text-on-surface-variant">Receptor:</span> <?= htmlspecialchars($cliente['receptor_entrega'] ?: 'N/A') ?></li>
                         <li><span class="text-on-surface-variant">Horario:</span> <?= htmlspecialchars($cliente['horario_entrega'] ?: 'N/A') ?></li>
                     </ul>
@@ -327,7 +327,7 @@ include("../includes/sidebar.php");
             
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Notas / Motivo (Opcional)</label>
-                <textarea name="notas_admin" id="valNotas" rows="3" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white transition-all resize-none" placeholder="Escriba el motivo de rechazo o una nota de aprobación..."></textarea>
+                <textarea name="notas_admin" id="valNotas" rows="3" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface transition-all resize-none" placeholder="Escriba el motivo de rechazo o una nota de aprobación..."></textarea>
             </div>
 
             <div class="flex gap-3 pt-2">
@@ -345,9 +345,9 @@ include("../includes/sidebar.php");
         title: '¡Actualizado!',
         text: '<?= $_GET['msg'] === 'approved' ? 'El documento ha sido APROBADO exitosamente.' : 'El documento ha sido RECHAZADO.' ?>',
         icon: 'success',
-        confirmButtonColor: '#008151',
-        background: '#05160e',
-        color: '#f1fdf7'
+        confirmButtonColor: '#003e79',
+        background: '#ffffff',
+        color: '#0f172a'
     });
 </script>
 <?php endif; ?>

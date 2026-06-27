@@ -24,7 +24,8 @@ if ($action === 'send_notif') {
  exit;
 }
 
-if ($action === 'add_banner') {
+ if ($action === 'add_banner') {
+ $cliente_id = (int)($_POST['cliente_id'] ?? 0);
  $titulo = $_POST['titulo'] ?? '';
  $url = $_POST['url'] ?? '';
  
@@ -38,8 +39,8 @@ if ($action === 'add_banner') {
  if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
 
  if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
- $stmt = $pdo->prepare("INSERT INTO admin_banners_promocionales (titulo, ruta_imagen, enlace_url, activo) VALUES (?, ?, ?, 1)");
- $stmt->execute([$titulo, $relative_path, $url]);
+ $stmt = $pdo->prepare("INSERT INTO admin_banners_promocionales (cliente_id, titulo, ruta_imagen, enlace_url, activo) VALUES (?, ?, ?, ?, 1)");
+ $stmt->execute([$cliente_id, $titulo, $relative_path, $url]);
  echo json_encode(['status' => 'success']);
  } else {
  echo json_encode(['status' => 'error', 'message' => 'Error al subir imagen']);

@@ -207,7 +207,7 @@ if (isset($_GET['ajax'])) {
  </td>
  <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
  <td class="px-8 py-4 text-center">
- <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-emerald-500/10 text-emerald-500' ?>">
+ <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-sky-500/10 text-sky-500' ?>">
  <?= $p['tipo'] ?>
  </span>
  </td>
@@ -412,9 +412,9 @@ include("../includes/sidebar.php");
 <form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8 animate-reveal" style="animation-delay: 0.35s">
  <div class="flex-1 relative">
  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
- <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none "/>
+ <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar por nombre o código..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none "/>
  </div>
- <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
+ <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
  <option value="">Todos los tipos</option>
  <option value="SECO" <?= $tipo==='SECO'?'selected':'' ?>>Cadena seca</option>
  <option value="RED FRIA" <?= $tipo==='RED FRIA'?'selected':'' ?>>Red fría</option>
@@ -467,7 +467,7 @@ include("../includes/sidebar.php");
  </td>
  <td class="px-8 py-4 text-sm font-mono text-on-surface-variant text-center"><?= $p['codigo'] ?: '---' ?></td>
  <td class="px-8 py-4 text-center">
- <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-emerald-500/10 text-emerald-500' ?>">
+ <span class="inline-flex px-2 py-1 rounded text-[10px] font-black uppercase <?= $p['tipo']==='RED FRIA' ? 'bg-sky-500/10 text-sky-500' : 'bg-sky-500/10 text-sky-500' ?>">
  <?= $p['tipo'] ?>
  </span>
  </td>
@@ -530,7 +530,7 @@ include("../includes/sidebar.php");
  <span class="text-[10px] font-bold mt-1 uppercase">Subir foto</span>
  </div>
  <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
- <span class="text-white text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
+ <span class="text-on-surface text-[10px] font-bold uppercase tracking-widest">Cambiar</span>
  </div>
  </div>
  <input type="file" id="fotoInputProducto" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="procesarFoto(this)">
@@ -642,7 +642,7 @@ include("../includes/sidebar.php");
    <!-- Categorías -->
    <div>
     <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Categoría a afectar</label>
-    <select name="categoria_id" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+    <select name="categoria_id" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
      <option value="0">Todas las categorías</option>
      <?php foreach($categorias as $cat): ?>
      <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
@@ -687,7 +687,7 @@ include("../includes/sidebar.php");
    <!-- Valor del Ajuste -->
    <div>
     <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Valor del ajuste (positivo para incremento, negativo para descuento)</label>
-    <input type="number" step="0.01" name="valor" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none font-bold text-white" placeholder="0.00">
+    <input type="number" step="0.01" name="valor" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none font-bold text-on-surface" placeholder="0.00">
    </div>
 
    <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
@@ -874,9 +874,9 @@ function confirmarAjusteMasivo(e) {
       title: 'Atención',
       text: 'Debes seleccionar al menos un precio para modificar.',
       icon: 'warning',
-      confirmButtonColor: '#008151',
-      background: '#05160e',
-      color: '#f1fdf7'
+      confirmButtonColor: '#003e79',
+      background: '#ffffff',
+      color: '#0f172a'
     });
     return;
   }
@@ -908,8 +908,8 @@ function confirmarAjusteMasivo(e) {
     cancelButtonColor: '#284a3c',
     confirmButtonText: 'Sí, aplicar',
     cancelButtonText: 'Cancelar',
-    background: '#05160e',
-    color: '#f1fdf7'
+    background: '#ffffff',
+    color: '#0f172a'
   }).then(result => {
     if (result.isConfirmed) {
       form.submit();
@@ -937,9 +937,9 @@ function confirmarAjusteMasivo(e) {
       title: '<?= $_GET['msg'] === 'bulk_error' ? 'Error' : '¡Operación Exitosa!' ?>',
       text: msgText,
       icon: '<?= $_GET['msg'] === 'bulk_error' ? 'error' : 'success' ?>',
-      confirmButtonColor: '#008151',
-      background: '#05160e',
-      color: '#f1fdf7'
+      confirmButtonColor: '#003e79',
+      background: '#ffffff',
+      color: '#0f172a'
     });
   }
 </script>

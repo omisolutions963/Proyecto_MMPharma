@@ -450,27 +450,27 @@ function openDetailsModal(data) {
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Razón Social</span>
-                        <p class="text-sm font-medium text-white">${v(data.razon_social)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.razon_social)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Nombre Comercial</span>
-                        <p class="text-sm font-medium text-white">${v(data.nombre_comercial)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.nombre_comercial)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">RFC</span>
-                        <p class="text-sm font-medium text-white">${v(data.rfc)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.rfc)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Régimen Fiscal</span>
-                        <p class="text-sm font-medium text-white">${v(data.regimen_fiscal)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.regimen_fiscal)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Representante Legal</span>
-                        <p class="text-sm font-medium text-white">${v(data.representante)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.representante)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Giro</span>
-                        <p class="text-sm font-medium text-white">${v(data.giro)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.giro)}</p>
                     </div>
                 </div>
             </div>
@@ -483,19 +483,19 @@ function openDetailsModal(data) {
                 <div class="space-y-4">
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Persona de Contacto</span>
-                        <p class="text-sm font-medium text-white">${v(data.persona_contacto)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.persona_contacto)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email</span>
-                        <p class="text-sm font-medium text-white">${v(data.email)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.email)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Teléfono Local</span>
-                        <p class="text-sm font-medium text-white">${v(data.telefono_local)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.telefono_local)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Celular</span>
-                        <p class="text-sm font-medium text-white">${v(data.telefono_celular)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.telefono_celular)}</p>
                     </div>
                 </div>
             </div>
@@ -508,18 +508,18 @@ function openDetailsModal(data) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2">
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Domicilio Fiscal</span>
-                        <p class="text-sm font-medium text-white leading-relaxed">
+                        <p class="text-sm font-medium text-on-surface leading-relaxed">
                             ${v(data.domicilio_fiscal)} ${v(data.colonia)}<br>
                             ${v(data.ciudad)}, ${v(data.estado)} C.P. ${v(data.cp)}
                         </p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Método de Pago Preferente</span>
-                        <p class="text-sm font-medium text-white">${v(data.metodo_pago)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.metodo_pago)}</p>
                     </div>
                     <div>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Uso de CFDI</span>
-                        <p class="text-sm font-medium text-white">${v(data.uso_cfdi)}</p>
+                        <p class="text-sm font-medium text-on-surface">${v(data.uso_cfdi)}</p>
                     </div>
                 </div>
             </div>

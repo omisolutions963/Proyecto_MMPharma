@@ -108,7 +108,12 @@ function queryStr($extra = []) {
 // Obtener Banners Promocionales Activos
 $banners = [];
 try {
- $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 ORDER BY orden ASC");
+ if ($is_logged_in && isset($_SESSION['cliente_id'])) {
+  $stmt_banners = $pdo->prepare("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND (cliente_id = 0 OR cliente_id = ?) ORDER BY orden ASC");
+  $stmt_banners->execute([$_SESSION['cliente_id']]);
+ } else {
+  $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND cliente_id = 0 ORDER BY orden ASC");
+ }
  $banners = $stmt_banners->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
  // Silencioso

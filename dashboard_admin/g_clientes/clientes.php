@@ -300,9 +300,9 @@ include("../includes/sidebar.php");
 <form method="GET" class="bg-surface-container-low p-4 rounded-2xl flex items-center gap-4 mb-8 animate-reveal" style="animation-delay: 0.35s">
  <div class="flex-1 relative">
  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
- <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar cliente, RFC o email..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none "/>
+ <input name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Buscar cliente, RFC o email..." class="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none "/>
  </div>
- <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-surface focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
+ <select name="tipo" class="bg-white border-none rounded-xl py-3 px-4 text-sm text-slate-800 focus:ring-2 focus:ring-primary outline-none w-48 font-bold">
  <option value="">Todos los tipos</option>
  <option value="FARMACIA" <?= $tipo==='FARMACIA'?'selected':'' ?>>Farmacia</option>
  <option value="DISTRIBUIDORA" <?= $tipo==='DISTRIBUIDORA'?'selected':'' ?>>Distribuidora</option>
@@ -395,9 +395,9 @@ include("../includes/sidebar.php");
     title: '¡Operación Exitosa!',
     text: '<?= $_GET['msg'] === 'deleted' ? 'El cliente ha sido eliminado.' : 'El cliente ha sido guardado correctamente.' ?>',
     icon: 'success',
-    confirmButtonColor: '#008151',
-    background: '#05160e',
-    color: '#f1fdf7'
+    confirmButtonColor: '#003e79',
+    background: '#ffffff',
+    color: '#0f172a'
   });
 </script>
 <?php endif; ?>
@@ -407,9 +407,9 @@ include("../includes/sidebar.php");
     title: 'Error',
     text: '<?= $_GET['err'] === 'fk' ? 'No se puede eliminar el cliente porque tiene registros relacionados.' : 'Ocurrió un error inesperado.' ?>',
     icon: 'error',
-    confirmButtonColor: '#008151',
-    background: '#05160e',
-    color: '#f1fdf7'
+    confirmButtonColor: '#003e79',
+    background: '#ffffff',
+    color: '#0f172a'
   });
 </script>
 <?php endif; ?>
@@ -438,19 +438,19 @@ include("../includes/sidebar.php");
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Razón social *</label>
-            <input type="text" name="razon_social" id="cli_razon_social" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="razon_social" id="cli_razon_social" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre comercial</label>
-            <input type="text" name="nombre_comercial" id="cli_nombre_comercial" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="nombre_comercial" id="cli_nombre_comercial" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">RFC</label>
-            <input type="text" name="rfc" id="cli_rfc" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="rfc" id="cli_rfc" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de cliente *</label>
-            <select name="tipo" id="cli_tipo" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+            <select name="tipo" id="cli_tipo" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
               <option value="FARMACIA">Farmacia</option>
               <option value="DISTRIBUIDORA">Distribuidora</option>
               <option value="EMPRESA">Empresa</option>
@@ -458,7 +458,7 @@ include("../includes/sidebar.php");
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estatus *</label>
-            <select name="estatus" id="cli_estatus" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+            <select name="estatus" id="cli_estatus" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
               <option value="ACTIVO">Activo</option>
               <option value="INACTIVO">Inactivo</option>
               <option value="DOCS_PENDIENTES">Docs Pendientes</option>
@@ -466,36 +466,36 @@ include("../includes/sidebar.php");
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Volumen mensual ($)</label>
-            <input type="number" step="0.01" name="volumen_mensual" id="cli_volumen_mensual" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+            <input type="number" step="0.01" name="volumen_mensual" id="cli_volumen_mensual" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Giro comercial</label>
-            <input type="text" name="giro" id="cli_giro" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="giro" id="cli_giro" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Representante legal</label>
-            <input type="text" name="representante_legal" id="cli_representante_legal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="representante_legal" id="cli_representante_legal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona de contacto</label>
-            <input type="text" name="persona_contacto" id="cli_persona_contacto" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="persona_contacto" id="cli_persona_contacto" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Email profesional *</label>
-            <input type="email" name="email" id="cli_email" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="email" name="email" id="cli_email" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono local</label>
-            <input type="text" name="telefono_local" id="cli_telefono_local" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="telefono_local" id="cli_telefono_local" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Teléfono celular</label>
-            <input type="text" name="telefono_celular" id="cli_telefono_celular" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="telefono_celular" id="cli_telefono_celular" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div class="col-span-2 bg-primary/10 border border-primary/20 p-4 rounded-2xl">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Contraseña de acceso</label>
             <span class="text-[9px] text-on-surface-variant/60 block mb-2 font-medium">Para clientes nuevos, si se deja en blanco se asignará 'cliente123'. Para clientes existentes, se actualiza solo si digita un nuevo valor.</span>
-            <input type="password" name="password" id="cli_password" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="password" name="password" id="cli_password" class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
         </div>
       </div>
@@ -505,38 +505,38 @@ include("../includes/sidebar.php");
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Régimen fiscal</label>
-            <input type="text" name="regimen_fiscal" id="cli_regimen_fiscal" placeholder="Ej. 601 - General de Ley Personas Morales" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="regimen_fiscal" id="cli_regimen_fiscal" placeholder="Ej. 601 - General de Ley Personas Morales" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio fiscal</label>
-            <input type="text" name="domicilio_fiscal" id="cli_domicilio_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="domicilio_fiscal" id="cli_domicilio_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia fiscal</label>
-            <input type="text" name="colonia_fiscal" id="cli_colonia_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="colonia_fiscal" id="cli_colonia_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP fiscal</label>
-            <input type="text" name="cp_fiscal" id="cli_cp_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="cp_fiscal" id="cli_cp_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad fiscal</label>
-            <input type="text" name="ciudad_fiscal" id="cli_ciudad_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="ciudad_fiscal" id="cli_ciudad_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado fiscal</label>
-            <input type="text" name="estado_fiscal" id="cli_estado_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="estado_fiscal" id="cli_estado_fiscal" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tipo de documento</label>
-            <select name="documento_tipo" id="cli_documento_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+            <select name="documento_tipo" id="cli_documento_tipo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
               <option value="FACTURA">Factura</option>
               <option value="NOTA">Nota</option>
             </select>
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Método de pago</label>
-            <select name="metodo_pago" id="cli_metodo_pago" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white font-bold">
+            <select name="metodo_pago" id="cli_metodo_pago" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface font-bold">
               <option value="TRANSFERENCIA">Transferencia</option>
               <option value="CHEQUE">Cheque</option>
               <option value="EFECTIVO">Efectivo</option>
@@ -544,7 +544,7 @@ include("../includes/sidebar.php");
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Uso de CFDI</label>
-            <input type="text" name="uso_cfdi" id="cli_uso_cfdi" placeholder="Ej. G03 - Gastos en general" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="uso_cfdi" id="cli_uso_cfdi" placeholder="Ej. G03 - Gastos en general" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
         </div>
       </div>
@@ -554,39 +554,39 @@ include("../includes/sidebar.php");
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Domicilio de entrega</label>
-            <input type="text" name="domicilio_entrega" id="cli_domicilio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="domicilio_entrega" id="cli_domicilio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Colonia de entrega</label>
-            <input type="text" name="colonia_entrega" id="cli_colonia_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="colonia_entrega" id="cli_colonia_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">CP de entrega</label>
-            <input type="text" name="cp_entrega" id="cli_cp_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="cp_entrega" id="cli_cp_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Ciudad de entrega</label>
-            <input type="text" name="ciudad_entrega" id="cli_ciudad_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="ciudad_entrega" id="cli_ciudad_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Municipio de entrega</label>
-            <input type="text" name="municipio_entrega" id="cli_municipio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="municipio_entrega" id="cli_municipio_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Estado de entrega</label>
-            <input type="text" name="estado_entrega" id="cli_estado_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="estado_entrega" id="cli_estado_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div>
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Persona que recibe</label>
-            <input type="text" name="receptor_entrega" id="cli_receptor_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="receptor_entrega" id="cli_receptor_entrega" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Horario de entrega</label>
-            <input type="text" name="horario_entrega" id="cli_horario_entrega" placeholder="Ej. Lunes a Viernes 09:00 - 18:00" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+            <input type="text" name="horario_entrega" id="cli_horario_entrega" placeholder="Ej. Lunes a Viernes 09:00 - 18:00" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Notas internas</label>
-            <textarea name="notas" id="cli_notas" rows="3" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-white"></textarea>
+            <textarea name="notas" id="cli_notas" rows="3" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface"></textarea>
           </div>
         </div>
       </div>

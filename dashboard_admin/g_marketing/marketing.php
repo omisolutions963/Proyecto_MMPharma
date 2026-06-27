@@ -12,7 +12,7 @@ $activePage = 'marketing';
 $pageTitle = "Marketing | MMPharma Admin";
 
 // 1. Fetch Banners
-$stmt = $pdo->query("SELECT * FROM admin_banners_promocionales ORDER BY orden ASC");
+$stmt = $pdo->query("SELECT b.*, c.razon_social FROM admin_banners_promocionales b LEFT JOIN clientes_usuarios c ON b.cliente_id = c.id ORDER BY b.orden ASC");
 $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 2. Fetch Clientes for notifications
@@ -61,7 +61,7 @@ include("../includes/sidebar.php");
 
  <div class="space-y-4">
  <?php if(empty($banners)): ?>
- <p class="text-center py-10 text-white/20 italic">No hay banners activos.</p>
+ <p class="text-center py-10 text-on-surface/20 italic">No hay banners activos.</p>
  <?php else: ?>
  <?php foreach($banners as $b): ?>
  <div class="flex items-center gap-4 p-4 bg-surface-container-high/20 border border-outline-variant/10 rounded-2xl group hover:bg-surface-container-high/40 transition-all animate-scale-in">
@@ -69,8 +69,13 @@ include("../includes/sidebar.php");
  <img src="../../<?= htmlspecialchars($b['ruta_imagen']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
  </div>
  <div class="flex-1">
- <h3 class="text-sm font-bold text-on-surface"><?= htmlspecialchars($b['titulo']) ?></h3>
- <p class="text-[10px] text-on-surface-variant truncate w-40"><?= htmlspecialchars($b['enlace_url'] ?: 'Sin link') ?></p>
+  <h3 class="text-sm font-bold text-slate-900"><?= htmlspecialchars($b['titulo']) ?></h3>
+  <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mt-1">
+   <?= $b['cliente_id'] == 0 ? 'Global (Todos)' : 'Para: ' . htmlspecialchars($b['razon_social'] ?? 'Cliente desconocido') ?>
+  </p>
+  <?php if ($b['enlace_url']): ?>
+  <p class="text-xs text-on-surface-variant mt-1"><?= htmlspecialchars($b['enlace_url']) ?></p>
+  <?php else: endif; ?>
  </div>
  <div class="flex items-center gap-2">
  <button onclick="eliminarBanner(<?= $b['id'] ?>)" class="w-9 h-9 flex items-center justify-center text-error hover:bg-error/20 rounded-xl transition-colors">
@@ -93,7 +98,7 @@ include("../includes/sidebar.php");
  <form id="formNotif" class="space-y-6">
  <div>
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Seleccionar cliente</label>
- <select name="cliente_id" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none text-white">
+ <select name="cliente_id" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface">
  <option value="0">--- Seleccionar cliente ---</option>
  <?php foreach($clientes as $c): ?>
  <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['razon_social']) ?></option>
@@ -121,7 +126,7 @@ include("../includes/sidebar.php");
 
  <div>
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Mensaje</label>
- <textarea name="mensaje" rows="3" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none text-white placeholder:text-white/20" placeholder="Escribe el mensaje para el cliente..."></textarea>
+ <textarea name="mensaje" rows="3" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none text-on-surface placeholder:text-slate-400" placeholder="Escribe el mensaje para el cliente..."></textarea>
  </div>
 
  <button type="button" onclick="enviarNotificacion()" class="w-full py-4 bg-primary hover:opacity-90 text-white font-bold rounded-xl transition-all active:scale-[0.98]">
@@ -150,7 +155,7 @@ include("../includes/sidebar.php");
  <tbody class="text-sm divide-y divide-outline-variant/10">
  <?php foreach($notif_recientes as $nr): ?>
  <tr class="group hover:bg-white/5 transition-colors">
- <td class="px-6 py-4 font-bold text-white"><?= htmlspecialchars($nr['razon_social']) ?></td>
+ <td class="px-6 py-4 font-bold text-on-surface"><?= htmlspecialchars($nr['razon_social']) ?></td>
  <td class="px-6 py-4 text-on-surface-variant"><?= htmlspecialchars($nr['mensaje']) ?></td>
  <td class="px-6 py-4 text-center">
  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider <?= $nr['tipo'] === 'SUCCESS' ? 'bg-tertiary/20 text-tertiary' : ($nr['tipo'] === 'WARNING' ? 'bg-error/20 text-error' : 'bg-primary/20 text-primary') ?>">
@@ -183,16 +188,16 @@ include("../includes/sidebar.php");
  data.append('action', 'send_notif');
 
  if (data.get('cliente_id') == '0' || !data.get('mensaje')) {
- return Swal.fire({title:'Error', text:'Completa los campos', icon:'error', background: '#102245', color: '#fff'});
+ return Swal.fire({title:'Error', text:'Completa los campos', icon:'error', background: '#ffffff', color: '#0f172a'});
  }
 
  const res = await fetch('procesar_marketing.php', { method: 'POST', body: data });
  const json = await res.json();
 
  if (json.status === 'success') {
- Swal.fire({title:'¡Enviado!', text:'La notificación llegará al dashboard del cliente.', icon:'success', background: '#102245', color: '#fff'}).then(() => location.reload());
+ Swal.fire({title:'¡Enviado!', text:'La notificación llegará al dashboard del cliente.', icon:'success', background: '#ffffff', color: '#0f172a'}).then(() => location.reload());
  } else {
- Swal.fire({title:'Error', text:json.message, icon:'error', background: '#102245', color: '#fff'});
+ Swal.fire({title:'Error', text:json.message, icon:'error', background: '#ffffff', color: '#0f172a'});
  }
  }
 
@@ -202,16 +207,25 @@ include("../includes/sidebar.php");
  html: `
  <div class="space-y-4 text-left p-2">
  <div>
- <label class="text-[10px] font-bold text-primary uppercase">Título</label>
- <input type="text" id="b_titulo" class="w-full bg-surface border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-white outline-none focus:ring-2 focus:ring-primary" placeholder="Ej: Oferta de Verano">
+ <label class="text-[10px] font-bold text-sky-300 uppercase">Cliente Destino</label>
+ <select id="b_cliente" class="w-full bg-white border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-slate-800 outline-none focus:ring-2 focus:ring-primary">
+ <option value="0">Global (Todos los clientes)</option>
+ <?php foreach ($clientes as $c): ?>
+ <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['razon_social'], ENT_QUOTES) ?></option>
+ <?php endforeach; ?>
+ </select>
  </div>
  <div>
- <label class="text-[10px] font-bold text-primary uppercase">URL (Opcional)</label>
- <input type="text" id="b_url" class="w-full bg-surface border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-white outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
+ <label class="text-[10px] font-bold text-sky-300 uppercase">Título</label>
+ <input type="text" id="b_titulo" class="w-full bg-white border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-slate-800 outline-none focus:ring-2 focus:ring-primary" placeholder="Ej: Oferta de Verano">
  </div>
  <div>
- <label class="text-[10px] font-bold text-primary uppercase">Imagen del banner</label>
- <input type="file" id="b_file" class="w-full mt-2 text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/20 file:text-primary hover:file:bg-primary/30" accept="image/*">
+ <label class="text-[10px] font-bold text-sky-300 uppercase">URL (Opcional)</label>
+ <input type="text" id="b_url" class="w-full bg-white border border-outline-variant/30 rounded-xl px-4 py-3 mt-1 text-slate-800 outline-none focus:ring-2 focus:ring-primary" placeholder="https://...">
+ </div>
+ <div>
+ <label class="text-[10px] font-bold text-sky-300 uppercase">Imagen del banner</label>
+ <input type="file" id="b_file" class="w-full mt-2 text-sm text-sky-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/30 file:text-sky-200 hover:file:bg-primary/50" accept="image/*">
  </div>
  <div id="crop_container" class="hidden mt-4 border border-outline-variant/30 rounded-xl overflow-hidden max-w-full bg-slate-950" style="max-height: 250px;">
  <img id="crop_image" class="max-w-full block" style="height: auto; max-height: 240px; margin: 0 auto;">
@@ -268,6 +282,7 @@ include("../includes/sidebar.php");
     }
   },
   preConfirm: async () => {
+    const cliente_id = document.getElementById('b_cliente').value;
     const titulo = document.getElementById('b_titulo').value;
     const url = document.getElementById('b_url').value;
     const fileInput = document.getElementById('b_file');
@@ -285,17 +300,18 @@ include("../includes/sidebar.php");
           height: 300,
         }).toBlob((blob) => {
           const croppedFile = new File([blob], file.name, { type: file.type });
-          resolve({ titulo, url, file: croppedFile });
+          resolve({ cliente_id, titulo, url, file: croppedFile });
         }, file.type);
       });
     }
     
-    return { titulo, url, file };
+    return { cliente_id, titulo, url, file };
   }
  }).then(async (result) => {
  if (result.isConfirmed) {
  const data = new FormData();
  data.append('action', 'add_banner');
+ data.append('cliente_id', result.value.cliente_id);
  data.append('titulo', result.value.titulo);
  data.append('url', result.value.url);
  data.append('banner_img', result.value.file);
@@ -303,9 +319,9 @@ include("../includes/sidebar.php");
  const res = await fetch('procesar_marketing.php', { method: 'POST', body: data });
  const json = await res.json();
  if (json.status === 'success') {
- Swal.fire({title:'¡Éxito!', text:'Banner publicado correctamente.', icon:'success', background: '#0d1f3c', color: '#fff'}).then(() => location.reload());
+ Swal.fire({title:'¡Éxito!', text:'Banner publicado correctamente.', icon:'success', background: '#ffffff', color: '#0f172a'}).then(() => location.reload());
  } else {
- Swal.fire({title:'Error', text:json.message, icon:'error', background: '#0d1f3c', color: '#fff'});
+ Swal.fire({title:'Error', text:json.message, icon:'error', background: '#ffffff', color: '#0f172a'});
  }
  }
  });

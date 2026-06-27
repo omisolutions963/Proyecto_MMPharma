@@ -100,53 +100,53 @@ $unread_count = count($notif_admin);
  darkMode: "class",
  theme: { extend: {
  colors: {
- "surface-container-lowest": "#03100a",
- "surface-container-low": "#072115",
- "surface-container": "#0b2d1e",
- "surface-container-high": "#11422c",
- "surface-container-highest":"#185c3e",
- "surface": "#051a10",
- "surface-bright": "#0d3a26",
- "surface-dim": "#020c07",
- "surface-variant": "#11422c",
- "background": "#051a10",
- "on-surface": "#f1fdf7",
- "on-surface-variant": "#c4f0d5",
- "on-background": "#f1fdf7",
- "primary": "#008151",
- "primary-container": "#003822",
+ "surface-container-lowest": "#ffffff",
+ "surface-container-low": "#f8fafc",
+ "surface-container": "#f1f5f9",
+ "surface-container-high": "#e2e8f0",
+ "surface-container-highest":"#cbd5e1",
+ "surface": "#ffffff",
+ "surface-bright": "#ffffff",
+ "surface-dim": "#eef4fc",
+ "surface-variant": "#f1f5f9",
+ "background": "#eef4fc",
+ "on-surface": "#0f172a",
+ "on-surface-variant": "#475569",
+ "on-background": "#0f172a",
+ "primary": "#003e79",
+ "primary-container": "#e0f2fe",
  "on-primary": "#ffffff",
- "on-primary-container": "#c4f0d5",
+ "on-primary-container": "#0369a1",
  "on-primary-fixed": "#002111",
- "on-primary-fixed-variant": "#005132",
- "primary-fixed": "#008151",
- "primary-fixed-dim": "#00a669",
- "secondary": "#00a669",
- "secondary-container": "#00311d",
+ "on-primary-fixed-variant": "#002a52",
+ "primary-fixed": "#003e79",
+ "primary-fixed-dim": "#1e60aa",
+ "secondary": "#1e60aa",
+ "secondary-container": "#dbeafe",
  "on-secondary": "#ffffff",
- "on-secondary-container": "#92f5c0",
+ "on-secondary-container": "#1d4ed8",
  "secondary-fixed": "#005234",
- "secondary-fixed-dim": "#00a669",
+ "secondary-fixed-dim": "#1e60aa",
  "on-secondary-fixed": "#e1ffe7",
  "on-secondary-fixed-variant":"#006d48",
- "tertiary": "#34c47a",
- "tertiary-container": "#0a3d20",
+ "tertiary": "#2ca1b5",
+ "tertiary-container": "#ecfeff",
  "on-tertiary": "#ffffff",
- "on-tertiary-container": "#52e098",
+ "on-tertiary-container": "#0e7490",
  "tertiary-fixed": "#7efba4",
  "tertiary-fixed-dim": "#61de8a",
  "on-tertiary-fixed": "#00210c",
  "on-tertiary-fixed-variant":"#005228",
- "error": "#f28b82",
- "error-container": "#5c1010",
+ "error": "#ef4444",
+ "error-container": "#fee2e2",
  "on-error": "#ffffff",
- "on-error-container": "#ffb4ab",
- "outline": "#284a3c",
- "outline-variant": "#153d27",
- "inverse-surface": "#f1fdf7",
- "inverse-on-surface": "#020d08",
- "inverse-primary": "#005132",
- "surface-tint": "#008151",
+ "on-error-container": "#b91c1c",
+ "outline": "#cbd5e1",
+ "outline-variant": "#cbd5e1",
+ "inverse-surface": "#0f172a",
+ "inverse-on-surface": "#f8fafc",
+ "inverse-primary": "#e0f2fe",
+ "surface-tint": "#003e79",
  },
  fontFamily: { headline: ["Inter"], body: ["Inter"], label: ["Inter"] },
  }}
@@ -154,7 +154,7 @@ $unread_count = count($notif_admin);
 </script>
 <style>
  * { font-family: 'Inter', sans-serif; }
- body { background: #051a10; }
+ body { background: #eef4fc; }
  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
  /* ══ SCROLLBAR GLOBAL AGRESIVA ══════════════════════════════════════════ */
  /* Forzamos el estilo en todos los elementos para evitar el comportamiento de Windows 11 */
@@ -166,13 +166,13 @@ $unread_count = count($notif_admin);
  background: rgba(0,0,0,0.05) !important;
  }
  *::-webkit-scrollbar-thumb {
- background: rgba(0,129,81,0.3) !important;
+ background: rgba(0,62,121,0.3) !important;
  border-radius: 10px !important;
  border: 2px solid transparent !important;
  background-clip: content-box !important;
  }
  *::-webkit-scrollbar-thumb:hover {
- background: rgba(0,129,81,0.6) !important;
+ background: rgba(0,62,121,0.6) !important;
  background-clip: content-box !important;
  }
 
@@ -187,8 +187,8 @@ $unread_count = count($notif_admin);
  html.swal2-shown, body.swal2-shown {
  overflow-y: scroll !important;
  }
- .glass-card { background: rgba(0,129,81,0.05); backdrop-filter: blur(20px); }
- .card-glow { box-shadow: 0 0 30px rgba(0,129,81,0.08); }
+ .glass-card { background: rgba(0,62,121,0.05); backdrop-filter: blur(20px); }
+ .card-glow { box-shadow: 0 0 30px rgba(0,62,121,0.08); }
 
  /* --- ANIMACIONES NATIVAS --- */
  @keyframes revealUp {
@@ -244,14 +244,14 @@ $unread_count = count($notif_admin);
   }
 
   function mockAction(title, text = 'Acción procesada correctamente', icon = 'success') {
-  Swal.fire({ title, text, icon, confirmButtonColor: '#008151', confirmButtonText: 'Aceptar',
-  background: '#05160e', color: '#f1fdf7' });
+  Swal.fire({ title, text, icon, confirmButtonColor: '#003e79', confirmButtonText: 'Aceptar',
+  background: '#ffffff', color: '#0f172a' });
   }
   function confirmAction(title, text, confirmText, callback) {
   Swal.fire({ title, text, icon: 'warning', showCancelButton: true,
   confirmButtonColor: '#f28b82', cancelButtonColor: '#284a3c',
   confirmButtonText: confirmText, cancelButtonText: 'Cancelar',
-  background: '#05160e', color: '#f1fdf7'
+  background: '#ffffff', color: '#0f172a'
   }).then(r => { if (r.isConfirmed) callback(); });
   }
 
@@ -278,17 +278,17 @@ $unread_count = count($notif_admin);
 <body class="bg-background text-on-surface">
 
 <!-- TopNavBar -->
-<header style="background:rgba(2,13,8,0.97);border-bottom:1px solid rgba(0,129,81,0.15)"
- class="h-16 sticky top-0 z-40 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)]">
+<header style="background:#ffffff;border-bottom:1px solid rgba(0,62,121,0.15)"
+ class="h-16 sticky top-0 z-40 flex items-center justify-between px-4 md:px-8 lg:ml-64 w-full lg:w-[calc(100%-16rem)] shadow-sm">
  
   <div class="flex items-center gap-2 md:gap-5 flex-1 min-w-0">
   <!-- Hamburger Menu Button -->
-  <button onclick="toggleAdminSidebar()" class="lg:hidden text-white hover:bg-white/10 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
+  <button onclick="toggleAdminSidebar()" class="lg:hidden text-slate-800 hover:bg-slate-100 rounded-xl p-2 flex items-center justify-center transition-colors mr-1 shrink-0">
     <span class="material-symbols-outlined text-2xl">menu</span>
   </button>
   <!-- Portal Label -->
   <div class="flex items-center gap-1.5 md:gap-3 min-w-0">
-    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal de administrador</span>
+    <span class="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-slate-800 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">Portal de administrador</span>
   </div>
   </div>
 
@@ -306,7 +306,7 @@ $unread_count = count($notif_admin);
   <!-- Notifications Dropdown -->
   <div id="notificaciones-dropdown" class="absolute right-0 top-[calc(100%+0.75rem)] w-80 bg-surface-container-low border border-outline-variant/50 rounded-2xl opacity-0 invisible translate-y-2 transition-all duration-200 z-50 overflow-hidden">
   <div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container/50">
-  <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+  <h3 class="text-sm font-bold text-on-surface">Notificaciones</h3>
   <div class="flex flex-col items-end gap-1" id="notif-actions-header">
   <span class="text-[10px] font-black text-primary uppercase tracking-widest unread-count-text"><?= $unread_count ?> pendientes</span>
   </div>
@@ -328,7 +328,7 @@ $unread_count = count($notif_admin);
   </span>
   </div>
   <div class="min-w-0 flex-1">
-  <p class="text-xs font-bold text-white mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
+  <p class="text-xs font-bold text-on-surface mb-0.5 break-words leading-tight"><?= htmlspecialchars($n['mensaje']) ?></p>
   <p class="text-[10px] text-on-surface-variant"><?= date('d M, H:i', strtotime($n['created_at'])) ?></p>
   </div>
   </div>
@@ -345,19 +345,19 @@ $unread_count = count($notif_admin);
 
   <!-- User / Perfil Button -->
   <button onclick="abrirPerfil()"
-  class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-white/5 group">
+  class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all hover:bg-slate-100 group">
   <?php
   $foto = $_SESSION['admin_foto'] ?? '';
   $nombre = $_SESSION['admin_nombre'] ?? 'Admin';
   ?>
   <?php if ($foto): ?>
   <img src="<?= htmlspecialchars($foto) ?>" id="headerProfileImg"
-  class="w-8 h-8 rounded-lg object-cover border-2 border-emerald-500/40"
+  class="w-8 h-8 rounded-lg object-cover border-2 border-sky-500/40"
   alt="Perfil">
   <?php else: ?>
   <div id="headerProfileImg"
-  class="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-500 font-bold text-sm border-2 border-emerald-500/30 group-hover:border-emerald-500/60 transition-colors"
-  style="background:rgba(0,129,81,0.2)">
+  class="w-8 h-8 rounded-lg flex items-center justify-center text-sky-600 font-bold text-sm border-2 border-sky-500/30 group-hover:border-sky-500/60 transition-colors"
+  style="background:rgba(0,62,121,0.1)">
   <?= strtoupper(substr($nombre, 0, 1)) ?>
   </div>
   <?php endif; ?>

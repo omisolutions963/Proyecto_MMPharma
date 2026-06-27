@@ -32,7 +32,7 @@ $activePage = "productos";
 include("../includes/header.php");
 include("../includes/sidebar.php");
 ?>
-<main class="ml-64 p-8 min-h-screen" style="background:#051a10">
+<main class="ml-64 p-8 min-h-screen" style="background:#eef4fc">
  <div class="flex justify-between items-end mb-8 animate-reveal">
  <div>
  <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
@@ -88,7 +88,7 @@ include("../includes/sidebar.php");
  <form method="POST" class="p-8 space-y-6">
  <input type="hidden" name="action" value="upsert">
  <input type="hidden" name="id" id="cat_id">
- <h3 id="cat_title" class="text-xl font-black text-white">Nueva categoría</h3>
+ <h3 id="cat_title" class="text-xl font-black text-on-surface">Nueva categoría</h3>
  <div>
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre</label>
  <input type="text" name="nombre" id="cat_nombre" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
