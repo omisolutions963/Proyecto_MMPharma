@@ -323,7 +323,7 @@ if (isset($_GET['ajax'])) {
  $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
  $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
  $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
- $tasa_iva = 0.16;
+ $tasa_iva = (float)($_POST['tasa_iva'] ?? 0.16);
  $foto_base64 = $_POST['foto_base64'] ?? '';
  $procesar_imagen = isset($_POST['procesar_imagen']) ? 1 : 0;
  
@@ -651,8 +651,8 @@ include("../includes/sidebar.php");
   </div>
    <div>
    <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Tasa IVA</label>
-   <input type="hidden" name="tasa_iva" value="0.16">
-   <select id="prod_tasa_iva" disabled class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none opacity-60 cursor-not-allowed">
+   <select name="tasa_iva" id="prod_tasa_iva" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+   <option value="0.00">0%</option>
    <option value="0.16">16%</option>
    </select>
    </div>
