@@ -47,15 +47,58 @@ if ($cliente_tipo_check === 'EMPRESA') {
   }
 }
 
-// Productos relacionados (misma sustancia, diferente id)
-$where_rel = ["sustancia LIKE ?", "id != ?", "codigo NOT IN ('99999999999', 'DESCUENTO')"];
-$params_rel = ['%' . explode(' ', $p['sustancia'])[0] . '%', $id];
-
-if ($cliente_tipo_check === 'EMPRESA') {
-  $where_rel[] = "(solo_empresa = 'SI' OR nombre LIKE '%ASPIRINA%' OR sustancia LIKE '%ASPIRINA%' OR nombre LIKE '%LORATADINA%' OR sustancia LIKE '%LORATADINA%' OR nombre LIKE '%LORATIDINA%' OR sustancia LIKE '%LORATIDINA%' OR nombre LIKE '%BUSCAPINA%' OR nombre LIKE '%BUTILHIOSCINA%' OR sustancia LIKE '%BUTILHIOSCINA%')";
+// Función para extraer palabras clave de los ingredientes activos, evitando números, dosis y términos comunes
+function getIngredientWords($substance) {
+    if (empty($substance)) return [];
+    $cleaned = strtoupper($substance);
+    // Eliminar acentos
+    $cleaned = strtr($cleaned, "áéíóúÁÉÍÓÚñÑ", "aeiouAEIOUnN");
+    // Reemplazar caracteres no alfanuméricos con espacio
+    $cleaned = preg_replace('/[^A-Z0-9\s]/', ' ', $cleaned);
+    $words = preg_split('/\s+/', $cleaned, -1, PREG_SPLIT_NO_EMPTY);
+    
+    $filtered = [];
+    $ignore = ['MG', 'G', 'ML', 'GR', 'CON', 'DE', 'EL', 'LA', 'Y', 'O', 'PARA', 'SOL', 'INY', 'TAB', 'TABLETA', 'TABLETAS', 'CAPSULA', 'CAPSULAS', 'COMPRIMIDO', 'COMPRIMIDOS', 'SUSPENSION', 'FCO', 'GOTAS', 'AMP', 'AMPULA', 'PZS', 'PIEZAS'];
+    foreach ($words as $word) {
+        if (is_numeric($word)) continue;
+        if (strlen($word) < 3) continue;
+        if (in_array($word, $ignore)) continue;
+        // Quitar números del inicio (ej. 129MG -> MG, 129MG-CAOLIN -> CAOLIN)
+        $cleanWord = preg_replace('/^[0-9]+/', '', $word);
+        // Quitar unidades de medida del final
+        $cleanWord = preg_replace('/(MG|G|ML|GR|UI)$/i', '', $cleanWord);
+        if (strlen($cleanWord) >= 3 && !in_array($cleanWord, $ignore)) {
+            $filtered[] = $cleanWord;
+        }
+    }
+    return array_unique($filtered);
 }
 
-$rel_sql = "SELECT * FROM catalogo_productos WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
+// Productos relacionados (misma sustancia, diferente id)
+$where_rel = ["id != ?", "codigo NOT IN ('99999999999', 'DESCUENTO')"];
+$params_rel = [$id];
+
+$ingredients = getIngredientWords($p['sustancia'] ?? '');
+if (!empty($ingredients)) {
+    $or_clauses = [];
+    foreach ($ingredients as $ing) {
+        $or_clauses[] = "p.sustancia LIKE ?";
+        $params_rel[] = '%' . $ing . '%';
+    }
+    $where_rel[] = '(' . implode(' OR ', $or_clauses) . ')';
+} else {
+    // Fallback: productos de la misma categoría
+    if ($p['categoria_id']) {
+        $where_rel[] = "p.categoria_id = ?";
+        $params_rel[] = $p['categoria_id'];
+    }
+}
+
+if ($cliente_tipo_check === 'EMPRESA') {
+  $where_rel[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+}
+
+$rel_sql = "SELECT p.* FROM catalogo_productos p WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
 $rel = $pdo->prepare($rel_sql);
 $rel->execute($params_rel);
 $relacionados = $rel->fetchAll(PDO::FETCH_ASSOC);

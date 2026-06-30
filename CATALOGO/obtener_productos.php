@@ -39,7 +39,8 @@ $where = [];
 $params = [];
 
 if ($busqueda) {
- $where[] = "(p.nombre LIKE ? OR p.sustancia LIKE ? OR c.nombre LIKE ?)";
+ $where[] = "(p.nombre LIKE ? OR p.sustancia LIKE ? OR c.nombre LIKE ? OR p.codigo LIKE ?)";
+ $params[] = "%$busqueda%";
  $params[] = "%$busqueda%";
  $params[] = "%$busqueda%";
  $params[] = "%$busqueda%";
