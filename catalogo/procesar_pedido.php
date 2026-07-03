@@ -33,29 +33,32 @@ try {
     $total_iva = 0;
     $total_normal_con_iva = 0;
     $tiene_red_fria = false;
+    $embalaje_red_fria = 0.00;
 
     foreach ($carrito as $item) {
         $subtotal_linea = (float)$item['precio'] * (int)$item['cantidad'];
         $subtotal += $subtotal_linea;
         
         $pid = (int)$item['id'];
-        $stmtProd = $pdo->prepare("SELECT tasa_iva, tipo FROM catalogo_productos WHERE id = ?");
+        $stmtProd = $pdo->prepare("SELECT tasa_iva, tipo, precio_red_fria FROM catalogo_productos WHERE id = ?");
         $stmtProd->execute([$pid]);
         $prodInfo = $stmtProd->fetch(PDO::FETCH_ASSOC);
         
         $tasa = $prodInfo && $prodInfo['tasa_iva'] !== null ? (float)$prodInfo['tasa_iva'] : 0.16;
         $tipo = $prodInfo ? strtoupper($prodInfo['tipo']) : 'SECO';
+        $precio_rf = $prodInfo && $prodInfo['precio_red_fria'] !== null ? (float)$prodInfo['precio_red_fria'] : 0.00;
         
         $item_iva = $subtotal_linea * $tasa;
         $total_iva += $item_iva;
         
         if ($tipo === 'RED FRIA') {
             $tiene_red_fria = true;
+            $embalaje_red_fria += $precio_rf * (int)$item['cantidad'];
         } else {
             $total_normal_con_iva += ($subtotal_linea + $item_iva);
         }
     }
-    $monto_total = $subtotal + $total_iva;
+    $monto_total = $subtotal + $total_iva + $embalaje_red_fria;
 
     // ── Generar folio ────────────────────────────────────────────────────────
     $stmt    = $pdo->query("SELECT id FROM clientes_pedidos ORDER BY id DESC LIMIT 1");
@@ -109,12 +112,12 @@ try {
     $stmt = $pdo->prepare(
         "INSERT INTO clientes_pedidos
             (folio, cliente_id, tipo_cliente, direccion_id, fecha_pedido,
-             monto_total, costo_envio, estado_envio, recoger_sucursal)
-         VALUES (?, ?, ?, ?, CURDATE(), ?, ?, ?, ?)"
+             monto_total, costo_envio, embalaje_red_fria, estado_envio, recoger_sucursal)
+         VALUES (?, ?, ?, ?, CURDATE(), ?, ?, ?, ?, ?)"
     );
     $stmt->execute([
         $folio, $cliente_id, $tipo_cliente, $direccion_id,
-        $monto_total, $costo_envio, $estado_envio,
+        $monto_total, $costo_envio, $embalaje_red_fria, $estado_envio,
         $recoger_sucursal ? 1 : 0
     ]);
     $pedido_id = $pdo->lastInsertId();

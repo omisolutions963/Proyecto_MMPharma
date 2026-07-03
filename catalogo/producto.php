@@ -263,19 +263,25 @@ require_once '../includes/header.php';
  <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-2">
  <span class="material-symbols-outlined text-sm">visibility</span> Vista de Administrador (Todos los niveles)
  </p>
- <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
- <div class="bg-primary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
- <p class="text-[10px] font-black text-primary uppercase tracking-widest mb-1 opacity-80">Farmacia</p>
- <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
- </div>
- <div class="bg-secondary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
- <p class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 opacity-80">Distribuidor</p>
- <p class="text-2xl font-black text-secondary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
- </div>
- <div class="bg-tertiary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
- <p class="text-[10px] font-black text-tertiary uppercase tracking-widest mb-1 opacity-80">Empresa</p>
- <p class="text-2xl font-black text-tertiary">$<?= number_format($p['precio_empresa'], 2) ?></p>
- </div>
+ <div class="grid grid-cols-1 <?= $p['tipo'] === 'RED FRIA' ? 'sm:grid-cols-4' : 'sm:grid-cols-3' ?> gap-4">
+  <div class="bg-primary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-primary uppercase tracking-widest mb-1 opacity-80">Farmacia</p>
+  <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
+  </div>
+  <div class="bg-secondary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 opacity-80">Distribuidor</p>
+  <p class="text-2xl font-black text-secondary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
+  </div>
+  <div class="bg-tertiary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-tertiary uppercase tracking-widest mb-1 opacity-80">Empresa</p>
+  <p class="text-2xl font-black text-tertiary">$<?= number_format($p['precio_empresa'], 2) ?></p>
+  </div>
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  <div class="bg-sky-500/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-sky-500 uppercase tracking-widest mb-1 opacity-80">Red Fría</p>
+  <p class="text-2xl font-black text-sky-500">$<?= number_format($p['precio_red_fria'], 2) ?></p>
+  </div>
+  <?php endif; ?>
  </div>
  </div>
  <?php else: ?>
@@ -342,7 +348,7 @@ require_once '../includes/header.php';
  try {
  const qty = parseInt(document.getElementById('qty').value) || 1;
  for(let i=0; i<qty; i++) {
- agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= (float)$precio_mostrar ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>');
+  agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= (float)$precio_mostrar ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>', <?= (float)($p['tasa_iva'] ?? 0.16) ?>, '<?= $p['tipo'] ?>', <?= (float)($p['precio_red_fria'] ?? 0) ?>);
  }
  } catch(e) {
  console.error("Error al añadir:", e);
@@ -431,7 +437,8 @@ require_once '../includes/header.php';
  <!-- Precio y Carrito -->
   <div class="flex items-center justify-between">
   <?php
-  $r_precio_base = (float)($r[$precio_campo] ?? $r['precio_farmacia']);
+  $r_precio_campo = ($r['tipo'] === 'RED FRIA') ? 'precio_red_fria' : $precio_campo;
+  $r_precio_base = (float)($r[$r_precio_campo] ?? $r['precio_farmacia']);
   $r_precio_final = $r_precio_base;
   if (($r['en_promocion'] ?? 0) && ($r['descuento_porcentaje'] ?? 0) > 0) {
   $r_precio_final = $r_precio_base * (1 - ($r['descuento_porcentaje'] / 100));

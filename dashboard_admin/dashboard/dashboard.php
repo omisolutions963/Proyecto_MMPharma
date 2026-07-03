@@ -34,7 +34,7 @@ $topProductos = []; $ultimasSolicitudes = [];
 try { $totalProd = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos")->fetchColumn(); } catch(Exception $e){}
 try { $totalRedFria = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos WHERE tipo='RED FRIA'")->fetchColumn(); } catch(Exception $e){}
 $totalSeco = $totalProd - $totalRedFria;
-try { $sinPrecio = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos WHERE precio_farmacia=0 AND precio_distribuidor=0")->fetchColumn(); } catch(Exception $e){}
+try { $sinPrecio = (int)$pdo->query("SELECT COUNT(*) FROM catalogo_productos WHERE precio_farmacia=0 AND precio_distribuidor=0 AND precio_red_fria=0")->fetchColumn(); } catch(Exception $e){}
 try { $totalClientes = (int)$pdo->query("SELECT COUNT(*) FROM clientes_usuarios")->fetchColumn(); } catch(Exception $e){}
 try { $clientesActivos=(int)$pdo->query("SELECT COUNT(*) FROM clientes_usuarios WHERE estatus='ACTIVO'")->fetchColumn(); } catch(Exception $e){}
 try { $solPendientes = (int)$pdo->query("SELECT COUNT(*) FROM clientes_solicitudes_registro WHERE estatus='PENDIENTE'")->fetchColumn(); } catch(Exception $e){}

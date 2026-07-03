@@ -55,37 +55,39 @@ if ($action === 'save') {
  echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
  }
 } elseif ($action === 'get') {
- $stmt = $pdo->prepare("
-  SELECT c.cantidad, p.id, p.nombre, p.imagen, 
-  p.precio_farmacia, p.precio_distribuidor, p.precio_empresa,
-  p.en_promocion, p.descuento_porcentaje, p.tasa_iva
-  FROM clientes_carrito c
-  JOIN catalogo_productos p ON c.producto_id = p.id
- WHERE c.cliente_id = ?
- ");
- $stmt->execute([$cliente_id]);
- $db_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
- 
- $precio_campo = 'precio_farmacia';
- if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
- elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
- 
- $items = [];
- foreach ($db_items as $db_item) {
-  $precio_base = (float)$db_item[$precio_campo];
-  $precio_final = $precio_base;
-  if ($db_item['en_promocion'] && $db_item['descuento_porcentaje'] > 0) {
-  $precio_final = $precio_base * (1 - ($db_item['descuento_porcentaje'] / 100));
-  }
+  $stmt = $pdo->prepare("
+   SELECT c.cantidad, p.id, p.nombre, p.imagen, 
+   p.precio_farmacia, p.precio_distribuidor, p.precio_empresa, p.precio_red_fria, p.tipo,
+   p.en_promocion, p.descuento_porcentaje, p.tasa_iva
+   FROM clientes_carrito c
+   JOIN catalogo_productos p ON c.producto_id = p.id
+  WHERE c.cliente_id = ?
+  ");
+  $stmt->execute([$cliente_id]);
+  $db_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
+  $items = [];
+  foreach ($db_items as $db_item) {
+   $precio_campo = 'precio_farmacia';
+   if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
+   elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
+   
+   $precio_base = (float)$db_item[$precio_campo];
+   $precio_final = $precio_base;
+   if ($db_item['en_promocion'] && $db_item['descuento_porcentaje'] > 0) {
+   $precio_final = $precio_base * (1 - ($db_item['descuento_porcentaje'] / 100));
+   }
 
-  $items[] = [
-  'id' => $db_item['id'],
-  'nombre' => $db_item['nombre'],
-  'precio' => $precio_final,
-  'imagen' => $db_item['imagen'],
-  'cantidad' => (int)$db_item['cantidad'],
-  'tasa_iva' => (float)$db_item['tasa_iva']
-  ];
+   $items[] = [
+   'id' => $db_item['id'],
+   'nombre' => $db_item['nombre'],
+   'precio' => $precio_final,
+   'imagen' => $db_item['imagen'],
+   'cantidad' => (int)$db_item['cantidad'],
+   'tasa_iva' => (float)$db_item['tasa_iva'],
+   'tipo' => $db_item['tipo'],
+   'precio_red_fria' => (float)$db_item['precio_red_fria']
+   ];
  }
  
  echo json_encode(['status' => 'success', 'items' => $items]);

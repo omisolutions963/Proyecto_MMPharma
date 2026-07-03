@@ -6,7 +6,7 @@ $pdo = getDB();
 $stmt = $pdo->query(
  "SELECT codigo, nombre, sustancia, tipo, precio_farmacia, precio_distribuidor, precio_empresa
  FROM catalogo_productos
- WHERE precio_farmacia = 0 AND precio_distribuidor = 0
+  WHERE precio_farmacia = 0 AND precio_distribuidor = 0 AND precio_red_fria = 0
  ORDER BY nombre ASC"
 );
 $faltantes = $stmt->fetchAll();

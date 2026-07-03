@@ -105,7 +105,7 @@ require_once '../includes/header.php';
   </div>
   <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-4xl mx-auto bg-black" data-aos="zoom-in">
   <video controls class="w-full aspect-video object-cover" preload="metadata">
- <source src="../Videos/coorporativo (1).mp4" type="video/mp4">
+ <source src="../videos/coorporativo (1).mp4" type="video/mp4">
  Tu navegador no soporta la etiqueta de video.
  </video>
  </div>

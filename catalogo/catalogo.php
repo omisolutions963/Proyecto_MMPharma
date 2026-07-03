@@ -10,6 +10,14 @@ require_once '../includes/db.php';
 
 try {
  $pdo = getDB();
+ if ($is_cliente && isset($_SESSION['cliente_id'])) {
+     $stmtUser = $pdo->prepare("SELECT tipo FROM clientes_usuarios WHERE id = ?");
+     $stmtUser->execute([$_SESSION['cliente_id']]);
+     $db_tipo = $stmtUser->fetchColumn();
+     if ($db_tipo) {
+         $_SESSION['cliente_tipo'] = $db_tipo;
+     }
+ }
 } catch (Exception $e) {
  die('Error de conexión: ' . $e->getMessage());
 }
@@ -73,8 +81,8 @@ elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
 // Orden
 $orden_sql = match($orden) {
  'nombre_desc' => 'ORDER BY nombre DESC',
- 'precio_asc' => "ORDER BY $precio_campo ASC",
- 'precio_desc' => "ORDER BY $precio_campo DESC",
+ 'precio_asc' => "ORDER BY CASE WHEN p.tipo = 'RED FRIA' THEN p.precio_red_fria ELSE p.$precio_campo END ASC",
+ 'precio_desc' => "ORDER BY CASE WHEN p.tipo = 'RED FRIA' THEN p.precio_red_fria ELSE p.$precio_campo END DESC",
  default => 'ORDER BY nombre ASC',
 };
 

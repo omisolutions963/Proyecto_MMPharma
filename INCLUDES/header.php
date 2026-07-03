@@ -3,6 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true) {
+    require_once __DIR__ . '/db.php';
+    try {
+        $pdo = getDB();
+        $stmtUser = $pdo->prepare("SELECT tipo FROM clientes_usuarios WHERE id = ?");
+        $stmtUser->execute([$_SESSION['cliente_id']]);
+        $db_tipo = $stmtUser->fetchColumn();
+        if ($db_tipo) {
+            $_SESSION['cliente_tipo'] = $db_tipo;
+        }
+    } catch(Exception $e) {}
+
     if (isset($_SESSION['debe_cambiar_password']) && $_SESSION['debe_cambiar_password'] == 1) {
         $current_script = basename($_SERVER['PHP_SELF']);
         $current_dir = basename(dirname($_SERVER['PHP_SELF']));
@@ -499,6 +510,11 @@ if (menuClose && mobileMenu) {
  <p id="cart-envio" class="text-sm font-bold text-tertiary">Selecciona dirección</p>
  </div>
  
+ <div id="row-embalaje-red-fria" class="hidden flex justify-between items-end mb-2 animate-reveal">
+ <p class="text-xs font-black text-white/50 uppercase tracking-widest">Embalaje Red Fría</p>
+ <p id="cart-embalaje-red-fria" class="text-sm font-bold text-white">$0.00</p>
+ </div>
+
  <div id="opcion-recoger-sucursal" class="hidden flex items-center justify-between bg-white/10 p-3 rounded-xl mb-4 border border-white/5 transition-all duration-300">
  <div>
  <p class="text-sm font-bold text-white">¿Recoger en sucursal?</p>
@@ -628,27 +644,30 @@ function renderCartItems() {
  return;
  }
 
- let html = '';
- let subtotal = 0;
- let totalIva = 0;
- let totalNormalConIva = 0;
- let tieneRedFria = false;
+  let html = '';
+  let subtotal = 0;
+  let totalIva = 0;
+  let totalNormalConIva = 0;
+  let tieneRedFria = false;
+  let totalEmbalajeRedFria = 0;
 
- carrito.forEach((item, index) => {
-  const totalLinea = item.precio * item.cantidad;
-  subtotal += totalLinea;
-  
-  const tasa = item.tasa_iva !== undefined ? parseFloat(item.tasa_iva) : 0.16;
-  const tipo = item.tipo !== undefined ? item.tipo.toUpperCase() : 'SECO';
-  const itemSinIva = totalLinea;
-  const itemIva = totalLinea * tasa;
-  totalIva += itemIva;
-  
-  if (tipo === 'RED FRIA') {
-      tieneRedFria = true;
-  } else {
-      totalNormalConIva += (totalLinea + itemIva);
-  }
+  carrito.forEach((item, index) => {
+   const totalLinea = item.precio * item.cantidad;
+   subtotal += totalLinea;
+   
+   const tasa = item.tasa_iva !== undefined ? parseFloat(item.tasa_iva) : 0.16;
+   const tipo = item.tipo !== undefined ? item.tipo.toUpperCase() : 'SECO';
+   const itemSinIva = totalLinea;
+   const itemIva = totalLinea * tasa;
+   totalIva += itemIva;
+   
+   if (tipo === 'RED FRIA') {
+       tieneRedFria = true;
+       const costRF = item.precio_red_fria !== undefined ? parseFloat(item.precio_red_fria) : 0;
+       totalEmbalajeRedFria += costRF * item.cantidad;
+   } else {
+       totalNormalConIva += (totalLinea + itemIva);
+   }
   
   let imagenHtml = '';
   if (item.imagen && item.imagen !== 'PENDIENTE' && item.imagen !== '') {
@@ -680,9 +699,22 @@ function renderCartItems() {
  `;
  });
 
- container.innerHTML = html;
- subtotalEl.textContent = formatCurrency(subtotal);
- calcularEnvioDynamic(subtotal, totalIva, totalNormalConIva, tieneRedFria);
+  container.innerHTML = html;
+  subtotalEl.textContent = formatCurrency(subtotal);
+  currentTotalEmbalajeRedFria = totalEmbalajeRedFria;
+  
+  const rowRF = document.getElementById('row-embalaje-red-fria');
+  const costRFEl = document.getElementById('cart-embalaje-red-fria');
+  if (rowRF && costRFEl) {
+    if (totalEmbalajeRedFria > 0) {
+      costRFEl.textContent = formatCurrency(totalEmbalajeRedFria);
+      rowRF.classList.remove('hidden');
+    } else {
+      rowRF.classList.add('hidden');
+    }
+  }
+
+  calcularEnvioDynamic(subtotal, totalIva, totalNormalConIva, tieneRedFria);
 }
 
 let currentShippingCost = 0;
@@ -690,6 +722,7 @@ let currentSubtotal = 0;
 let currentTotalIva = 0;
 let currentTotalNormalConIva = 0;
 let currentTieneRedFria = false;
+let currentTotalEmbalajeRedFria = 0;
 let currentShippingType = 'GRATIS';
 
 function calcularEnvioDynamic(subtotal, totalIva = 0, totalNormalConIva = 0, tieneRedFria = false) {
@@ -702,14 +735,14 @@ function calcularEnvioDynamic(subtotal, totalIva = 0, totalNormalConIva = 0, tie
   const totalEl = document.getElementById('cart-total');
 
   if (!dirSelect || !envioEl || !totalEl) {
-      if(totalEl) totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
+      if(totalEl) totalEl.textContent = formatCurrency(subtotal + currentTotalIva + currentTotalEmbalajeRedFria);
       return;
   }
 
   const direccion_id = dirSelect.value;
   if (!direccion_id) {
      envioEl.textContent = 'Selecciona dirección';
-     totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
+     totalEl.textContent = formatCurrency(subtotal + currentTotalIva + currentTotalEmbalajeRedFria);
      document.getElementById('opcion-recoger-sucursal').classList.add('hidden');
      document.getElementById('checkbox-recoger-sucursal').checked = false;
      return;
@@ -739,16 +772,16 @@ function calcularEnvioDynamic(subtotal, totalIva = 0, totalNormalConIva = 0, tie
               } else {
                   envioEl.textContent = calc.mensaje;
               }
-              totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
+              totalEl.textContent = formatCurrency(subtotal + currentTotalIva + currentTotalEmbalajeRedFria);
           }
       } else {
           envioEl.textContent = 'Error al calcular';
-          totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
+          totalEl.textContent = formatCurrency(subtotal + currentTotalIva + currentTotalEmbalajeRedFria);
       }
   })
   .catch(err => {
       envioEl.textContent = 'Error';
-      totalEl.textContent = formatCurrency(subtotal + currentTotalIva);
+      totalEl.textContent = formatCurrency(subtotal + currentTotalIva + currentTotalEmbalajeRedFria);
   });
 }
 
@@ -763,18 +796,18 @@ function actualizarTotalConEnvio() {
     
     if (currentShippingType === 'SUCURSAL') {
         envioEl.innerHTML = `<div class="text-right"><span class="text-white font-bold block">Recoger en almacén</span><span class="text-[10px] text-white/50 block leading-tight mt-0.5 max-w-[200px] ml-auto">Su pedido estará listo para que pase a recolectarlo</span></div>`;
-        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva + currentTotalEmbalajeRedFria);
     } else if (isRecoger) {
         envioEl.innerHTML = `<span class="line-through text-white/50 text-xs mr-2">${formatCurrency(currentShippingCost)}</span><span class="text-white">Recoger en sucursal</span>`;
-        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva + currentTotalEmbalajeRedFria);
     } else {
         envioEl.textContent = formatCurrency(currentShippingCost);
-        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva + currentShippingCost);
+        totalEl.textContent = formatCurrency(currentSubtotal + currentTotalIva + currentShippingCost + currentTotalEmbalajeRedFria);
     }
 }
 
-function agregarAlCarrito(id, nombre, precio, imagen) {
- console.log("agregarAlCarrito llamado con:", {id, nombre, precio, imagen});
+function agregarAlCarrito(id, nombre, precio, imagen, tasa_iva = 0.16, tipo = 'SECO', precio_red_fria = 0) {
+ console.log("agregarAlCarrito llamado con:", {id, nombre, precio, imagen, tasa_iva, tipo, precio_red_fria});
  const itemIndex = carrito.findIndex(item => item.id == id);
  
  if (itemIndex > -1) {
@@ -785,7 +818,10 @@ function agregarAlCarrito(id, nombre, precio, imagen) {
  nombre: nombre,
  precio: parseFloat(precio),
  imagen: imagen,
- cantidad: 1
+ cantidad: 1,
+ tasa_iva: parseFloat(tasa_iva),
+ tipo: tipo,
+ precio_red_fria: parseFloat(precio_red_fria || 0)
  });
  }
  

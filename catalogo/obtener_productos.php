@@ -17,6 +17,14 @@ if (session_status() === PHP_SESSION_NONE) {
  session_start();
 }
 $is_cliente = isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === true;
+if ($is_cliente && isset($_SESSION['cliente_id'])) {
+    $stmtUser = $pdo->prepare("SELECT tipo FROM clientes_usuarios WHERE id = ?");
+    $stmtUser->execute([$_SESSION['cliente_id']]);
+    $db_tipo = $stmtUser->fetchColumn();
+    if ($db_tipo) {
+        $_SESSION['cliente_tipo'] = $db_tipo;
+    }
+}
 $is_admin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 $cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
@@ -67,9 +75,9 @@ $where[] = "p.codigo NOT IN ('99999999999', 'DESCUENTO')";
 $where_sql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 $orden_sql = match($orden) {
  'nombre_desc' => 'ORDER BY nombre DESC',
- 'precio_asc' => "ORDER BY $precio_campo ASC",
- 'precio_desc' => "ORDER BY $precio_campo DESC",
- default => 'ORDER BY nombre ASC',
+  'precio_asc' => "ORDER BY p.$precio_campo ASC",
+  'precio_desc' => "ORDER BY p.$precio_campo DESC",
+  default => 'ORDER BY p.nombre ASC',
 };
 
 $stmt = $pdo->prepare("
@@ -110,13 +118,13 @@ foreach ($productos as $p) {
  </td>
   <td class="px-8 py-5 text-center">
   <?php if ($is_cliente || $is_admin): ?>
-  <?php 
-  $precio_base = (float)$p[$precio_campo];
-  $precio_final = $precio_base;
-  if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
-  $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
-  }
-  ?>
+   <?php 
+   $precio_base = (float)$p[$precio_campo];
+   $precio_final = $precio_base;
+   if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0 && (!isset($p['promocion_perfil']) || $p['promocion_perfil'] === 'TODOS' || $p['promocion_perfil'] === $cliente_tipo)) {
+   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
+   }
+   ?>
   <?php if ($precio_final < $precio_base): ?>
   <div class="flex flex-col items-center">
   <span class="text-[10px] text-slate-400 line-through font-bold leading-none mb-0.5">$<?= number_format($precio_base, 2) ?></span>
@@ -139,18 +147,18 @@ foreach ($productos as $p) {
  <span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase rounded-full">Seco</span>
  <?php endif; ?>
  </td>
- <td class="px-8 py-5 text-right">
-  <?php if ($is_cliente): ?>
-  <?php 
-  $precio_base = (float)$p[$precio_campo];
-  $precio_final = $precio_base;
+  <td class="px-8 py-5 text-right">
+   <?php if ($is_cliente): ?>
+   <?php 
+   $precio_base = (float)$p[$precio_campo];
+   $precio_final = $precio_base;
   if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0) {
   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
   }
   ?>
-  <button type="button" onclick="event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= $precio_final ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>')" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all" title="Añadir al carrito">
-  <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-  </button>
+   <button type="button" onclick="event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= $precio_final ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>', <?= (float)($p['tasa_iva'] ?? 0.16) ?>, '<?= $p['tipo'] ?>', <?= (float)($p['precio_red_fria'] ?? 0) ?>)" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all" title="Añadir al carrito">
+   <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+   </button>
  <?php elseif ($is_admin): ?>
  <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 text-slate-400" title="Modo Administrador">
  <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
@@ -191,10 +199,10 @@ foreach ($productos as $p) {
  <?= htmlspecialchars($p['sustancia'] ?? '') ?>
  </p>
   <div class="flex items-center justify-between mt-auto">
-  <?php if ($is_cliente || $is_admin): ?>
-  <?php 
-  $precio_base = (float)$p[$precio_campo];
-  $precio_final = $precio_base;
+   <?php if ($is_cliente || $is_admin): ?>
+   <?php 
+   $precio_base = (float)$p[$precio_campo];
+   $precio_final = $precio_base;
   if (($p['en_promocion'] ?? 0) && ($p['descuento_porcentaje'] ?? 0) > 0) {
   $precio_final = $precio_base * (1 - ($p['descuento_porcentaje'] / 100));
   }
@@ -212,9 +220,9 @@ foreach ($productos as $p) {
   <p class="text-[10px] font-bold text-slate-400">Inicia sesión<br>para ver precio</p>
   <?php endif; ?>
   <?php if ($is_cliente): ?>
-  <button type="button" onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= $precio_final ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>')" class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all" title="Añadir al carrito">
-  <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
-  </button>
+   <button type="button" onclick="event.preventDefault(); event.stopPropagation(); agregarAlCarrito(<?= $p['id'] ?>, '<?= htmlspecialchars(addslashes($p['nombre'])) ?>', <?= $precio_final ?>, '<?= htmlspecialchars(addslashes($p['imagen'] ?? '')) ?>', <?= (float)($p['tasa_iva'] ?? 0.16) ?>, '<?= $p['tipo'] ?>', <?= (float)($p['precio_red_fria'] ?? 0) ?>)" class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/5 text-primary hover:bg-primary hover:text-white transition-all" title="Añadir al carrito">
+   <span class="material-symbols-outlined text-xl">add_shopping_cart</span>
+   </button>
  <?php elseif ($is_admin): ?>
  <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-400" title="Modo Administrador">
  <span class="material-symbols-outlined text-xl">admin_panel_settings</span>

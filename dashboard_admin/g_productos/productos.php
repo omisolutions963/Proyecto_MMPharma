@@ -159,7 +159,7 @@ if ($tipo) {
  $params[] = $tipo;
 }
 if ($filtro === 'sin_precio') {
-  $where .= " AND p.precio_farmacia = 0 AND p.precio_distribuidor = 0";
+  $where .= " AND p.precio_farmacia = 0 AND p.precio_distribuidor = 0 AND p.precio_red_fria = 0";
 } elseif ($filtro === 'sin_stock') {
   $where .= " AND COALESCE(s.stock_actual, 0) <= 0";
 } elseif ($filtro === 'sin_imagen') {
@@ -241,7 +241,11 @@ if (isset($_GET['ajax'])) {
  </span>
  </td>
  <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
- $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?> / $<?= number_format($p['precio_red_fria'],0) ?>
+  <?php else: ?>
+  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+  <?php endif; ?>
  </td>
  <td class="px-8 py-4 text-center text-sm text-on-surface-variant">
  <?= ($p['tasa_iva'] * 100) ?>%
@@ -289,7 +293,7 @@ if (isset($_GET['ajax'])) {
       $params = [];
       $i = 0;
       foreach ($precios_seleccionados as $col) {
-        if (in_array($col, ['precio_farmacia', 'precio_distribuidor', 'precio_empresa'])) {
+        if (in_array($col, ['precio_farmacia', 'precio_distribuidor', 'precio_empresa', 'precio_red_fria'])) {
           $param_name = ":valor_" . $i;
           if ($tipo_ajuste === 'porcentaje') {
             $updates[] = "$col = ROUND($col * (1 + ($param_name / 100)), 2)";
@@ -316,9 +320,11 @@ if (isset($_GET['ajax'])) {
 
  if ($action === 'upsert') {
  $nombre = $_POST['nombre'] ?? ''; $codigo = $_POST['codigo'] ?? ''; $tipo = $_POST['tipo'] ?? 'SECO';
+ $sustancia = $_POST['sustancia'] ?? '';
  $cat_id = (int)($_POST['categoria_id'] ?? 0);
  if ($cat_id === 0) $cat_id = null;
  $p_f = (float)$_POST['precio_farmacia']; $p_d = (float)$_POST['precio_distribuidor']; $p_e = (float)$_POST['precio_empresa'];
+ $p_rf = (float)($_POST['precio_red_fria'] ?? 0);
  $stock = (int)$_POST['stock'];
  $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
  $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
@@ -341,14 +347,14 @@ if (isset($_GET['ajax'])) {
   }
 
  if ($id > 0) {
- $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?";
- $params = [$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva];
+ $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, sustancia=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, precio_red_fria=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?";
+ $params = [$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva];
  if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
  $sql .= " WHERE id=?"; $params[] = $id;
  $pdo->prepare($sql)->execute($params);
  } else {
- $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, en_promocion, descuento_porcentaje, promocion_perfil, tasa_iva, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
- $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $cat_id, $p_f, $p_d, $p_e, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $nombre_archivo]);
+ $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, sustancia, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, precio_red_fria, en_promocion, descuento_porcentaje, promocion_perfil, tasa_iva, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+ $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $nombre_archivo]);
  $id = $pdo->lastInsertId();
  }
  $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
@@ -412,7 +418,10 @@ include("../includes/sidebar.php");
  <h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Gestión de inventario</h2>
  <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
  </div>
- <div class="flex gap-3">
+ <div class="flex gap-3 flex-wrap sm:flex-nowrap">
+  <button onclick="abrirModalImportar()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
+   <span class="material-symbols-outlined text-[18px]">upload_file</span> Importar CSV
+  </button>
   <button onclick="abrirModalAjuste()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
    <span class="material-symbols-outlined text-[18px]">price_change</span> Ajuste masivo
   </button>
@@ -492,7 +501,7 @@ include("../includes/sidebar.php");
  <th class="px-8 py-4 text-center">Código</th>
  <th class="px-8 py-4 text-center">Tipo</th>
  <th class="px-8 py-4 text-center">Existencias</th>
- <th class="px-8 py-4 text-center">Precios (F/D/E)</th>
+ <th class="px-8 py-4 text-center">Precios (F/D/E/RF)</th>
  <th class="px-8 py-4 text-center">IVA</th>
  <th class="px-8 py-4 text-center">Acciones</th>
  </tr>
@@ -537,7 +546,11 @@ include("../includes/sidebar.php");
  </span>
  </td>
  <td class="px-8 py-4 text-center text-xs font-bold text-on-surface">
- $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?> / $<?= number_format($p['precio_red_fria'],0) ?>
+  <?php else: ?>
+  $<?= number_format($p['precio_farmacia'],0) ?> / $<?= number_format($p['precio_distribuidor'],0) ?> / $<?= number_format($p['precio_empresa'],0) ?>
+  <?php endif; ?>
  </td>
  <td class="px-8 py-4 text-center text-sm text-on-surface-variant"><?= ($p['tasa_iva'] * 100) ?>%</td>
  <td class="px-8 py-4">
@@ -628,10 +641,14 @@ include("../includes/sidebar.php");
  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Nombre del producto</label>
  <input type="text" name="nombre" id="prod_nombre" required class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
  </div>
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Código</label>
- <input type="text" name="codigo" id="prod_codigo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
- </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Código</label>
+  <input type="text" name="codigo" id="prod_codigo" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Sustancia activa</label>
+  <input type="text" name="sustancia" id="prod_sustancia" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary outline-none">
+  </div>
   <div class="col-span-2 grid grid-cols-3 gap-4">
   <div>
   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Categoría</label>
@@ -658,20 +675,24 @@ include("../includes/sidebar.php");
    </div>
   </div>
   </div>
-  <div class="grid grid-cols-3 gap-4 p-4 bg-surface-container-low rounded-2xl">
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Farmacia</label>
- <input type="number" step="0.01" name="precio_farmacia" id="prod_pf" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
- </div>
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Distrib.</label>
- <input type="number" step="0.01" name="precio_distribuidor" id="prod_pd" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
- </div>
- <div>
- <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Empresa</label>
- <input type="number" step="0.01" name="precio_empresa" id="prod_pe" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
- </div>
- </div>
+  <div class="grid grid-cols-4 gap-3 p-4 bg-surface-container-low rounded-2xl">
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Farmacia</label>
+  <input type="number" step="0.01" name="precio_farmacia" id="prod_pf" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Distrib.</label>
+  <input type="number" step="0.01" name="precio_distribuidor" id="prod_pd" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Empresa</label>
+  <input type="number" step="0.01" name="precio_empresa" id="prod_pe" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">P. Red Fría</label>
+  <input type="number" step="0.01" name="precio_red_fria" id="prod_prf" class="w-full bg-surface-container-lowest border-none rounded-lg p-2.5 text-xs font-bold focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  </div>
  <div class="grid grid-cols-2 gap-4">
   <div>
   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en inventario</label>
@@ -748,6 +769,10 @@ include("../includes/sidebar.php");
       <input type="checkbox" name="precios[]" value="precio_empresa" checked class="rounded border-primary/50 text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
       <span>Precio empresa</span>
      </label>
+     <label class="flex items-center gap-3 text-sm text-on-surface cursor-pointer">
+      <input type="checkbox" name="precios[]" value="precio_red_fria" checked class="rounded border-primary/50 text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
+      <span>Precio red fría</span>
+     </label>
     </div>
    </div>
 
@@ -782,6 +807,53 @@ include("../includes/sidebar.php");
  </div>
 </div>
 
+<!-- MODAL IMPORTAR CSV -->
+<div id="modalImportarCSV" class="fixed inset-0 z-[100] hidden">
+ <div onclick="cerrarModalImportar()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+ <div id="panelImportarCSV" class="absolute right-0 top-0 h-full w-full max-w-md bg-surface transition-transform duration-300 translate-x-full flex flex-col border-l border-outline-variant/30 shadow-2xl">
+  <div class="px-8 py-6 border-b border-outline-variant/10 bg-primary/5">
+   <h3 class="text-xl font-black text-on-surface tracking-tight">Importación masiva (CSV)</h3>
+   <p class="text-on-surface-variant text-xs mt-1">Sube un archivo CSV de productos tipo WooCommerce o personalizado.</p>
+  </div>
+  <form id="formImportarCSV" class="flex-1 overflow-y-auto p-8 space-y-6" onsubmit="enviarCSV(event)">
+   
+   <div class="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/10 space-y-3">
+    <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Formatos soportados</h4>
+    <p class="text-xs text-on-surface-variant leading-relaxed">
+     Puedes subir un archivo CSV. El sistema detecta y mapea automáticamente las columnas:
+    </p>
+    <ul class="text-[11px] text-on-surface-variant list-disc pl-5 space-y-1">
+     <li><strong>Código / SKU</strong> (obligatorio)</li>
+     <li><strong>Nombre</strong> (obligatorio)</li>
+     <li><strong>Sustancia activa</strong> (descripción)</li>
+     <li><strong>Precio Farmacia</strong> (precio base)</li>
+     <li><strong>Precio Distribuidor / Empresa / Red Fría</strong></li>
+     <li><strong>Stock / Cantidad</strong></li>
+     <li><strong>Categoría</strong> (se creará si no existe)</li>
+     <li><strong>Tipo</strong> (SECO o RED FRIA)</li>
+    </ul>
+    <div class="pt-3 border-t border-outline-variant/10 mt-3 flex justify-center">
+      <a href="importar_csv.php?action=download_template" download class="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary-light font-black transition-colors">
+       <span class="material-symbols-outlined text-[16px]">download</span> Descargar plantilla CSV de ejemplo
+      </a>
+     </div>
+   </div>
+
+   <div>
+    <label class="block text-[10px] font-black tracking-widest text-on-surface-variant mb-2">Seleccionar archivo CSV</label>
+    <input type="file" name="csv_file" id="csvFile" accept=".csv" required class="w-full bg-surface-container-low border border-dashed border-outline-variant/30 hover:border-primary/50 transition-colors rounded-xl p-6 text-sm text-on-surface-variant focus:ring-2 focus:ring-primary outline-none cursor-pointer">
+   </div>
+
+   <div class="flex gap-4 pt-4 sticky bottom-0 bg-surface">
+    <button type="button" onclick="cerrarModalImportar()" class="flex-1 py-4 text-xs font-bold text-on-surface-variant hover:bg-surface-container-low rounded-xl transition-all font-bold">Cancelar</button>
+    <button type="submit" class="flex-1 py-4 bg-primary text-white text-xs font-bold rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2">
+     <span class="material-symbols-outlined text-[18px]">upload</span> Procesar archivo
+    </button>
+   </div>
+  </form>
+ </div>
+</div>
+
 <!-- MODAL CROPPER -->
 <div id="cropperModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
  <div class="bg-surface w-full max-w-lg rounded-3xl overflow-hidden border border-white/10">
@@ -800,7 +872,6 @@ include("../includes/sidebar.php");
  <button id="btnConfirmarRecorte" class="flex-1 py-3 rounded-xl font-bold text-white bg-primary">Aplicar recorte</button>
  </div>
  </div>
- </div>
 </div>
 
 <script>
@@ -808,6 +879,27 @@ let currentPage = 1;
 let loading = false;
 let hasMore = true;
 let cropper = null;
+
+function actualizarEstadoPrecioRedFria() {
+  const tipo = document.getElementById('prod_tipo').value;
+  const prfInput = document.getElementById('prod_prf');
+  if (!prfInput) return;
+  if (tipo === 'RED FRIA') {
+    prfInput.removeAttribute('disabled');
+    prfInput.classList.remove('opacity-50', 'cursor-not-allowed');
+  } else {
+    prfInput.setAttribute('disabled', 'true');
+    prfInput.classList.add('opacity-50', 'cursor-not-allowed');
+    prfInput.value = '';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const selectTipo = document.getElementById('prod_tipo');
+  if (selectTipo) {
+    selectTipo.addEventListener('change', actualizarEstadoPrecioRedFria);
+  }
+});
 
 // Infinite Scroll
 window.addEventListener('scroll', () => {
@@ -922,12 +1014,15 @@ function abrirModal() {
 
   document.getElementById('prod_nombre').value = "";
   document.getElementById('prod_codigo').value = "";
+  document.getElementById('prod_sustancia').value = "";
   document.getElementById('prod_tipo').value = "SECO";
   document.getElementById('prod_cat').value = "0";
   document.getElementById('prod_tasa_iva').value = "0.00";
   document.getElementById('prod_pf').value = "0";
   document.getElementById('prod_pd').value = "0";
   document.getElementById('prod_pe').value = "0";
+  document.getElementById('prod_prf').value = "";
+  actualizarEstadoPrecioRedFria();
   document.getElementById('prod_stock').value = "0";
   document.getElementById('prod_promo').checked = false;
   document.getElementById('prod_desc').value = "0";
@@ -983,12 +1078,15 @@ function abrirEditar(p) {
 
  document.getElementById('prod_nombre').value = p.nombre;
  document.getElementById('prod_codigo').value = p.codigo || '';
+ document.getElementById('prod_sustancia').value = p.sustancia || '';
  document.getElementById('prod_tipo').value = p.tipo;
  document.getElementById('prod_cat').value = p.categoria_id || "0";
  document.getElementById('prod_tasa_iva').value = parseFloat(p.tasa_iva || 0).toFixed(2);
  document.getElementById('prod_pf').value = p.precio_farmacia;
  document.getElementById('prod_pd').value = p.precio_distribuidor;
  document.getElementById('prod_pe').value = p.precio_empresa;
+ document.getElementById('prod_prf').value = (p.precio_red_fria && parseFloat(p.precio_red_fria) > 0) ? p.precio_red_fria : '';
+ actualizarEstadoPrecioRedFria();
  document.getElementById('prod_stock').value = p.stock || 0;
  document.getElementById('prod_promo').checked = p.en_promocion == 1;
  document.getElementById('prod_desc').value = p.descuento_porcentaje || 0;
@@ -1010,6 +1108,88 @@ function abrirModalAjuste() {
 function cerrarModalAjuste() {
   document.getElementById('panelAjusteMasivo').classList.add('translate-x-full');
   setTimeout(() => document.getElementById('modalAjusteMasivo').classList.add('hidden'), 300);
+}
+
+function abrirModalImportar() {
+  document.getElementById('modalImportarCSV').classList.remove('hidden');
+  setTimeout(() => document.getElementById('panelImportarCSV').classList.remove('translate-x-full'), 10);
+}
+
+function cerrarModalImportar() {
+  document.getElementById('panelImportarCSV').classList.add('translate-x-full');
+  setTimeout(() => document.getElementById('modalImportarCSV').classList.add('hidden'), 300);
+  document.getElementById('csvFile').value = '';
+}
+
+async function enviarCSV(e) {
+  e.preventDefault();
+  const fileInput = document.getElementById('csvFile');
+  if (!fileInput.files || fileInput.files.length === 0) return;
+
+  Swal.fire({
+    title: 'Procesando archivo...',
+    text: 'Por favor espera mientras importamos los productos.',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    background: '#05160e',
+    color: '#f1fdf7'
+  });
+
+  const formData = new FormData();
+  formData.append('csv_file', fileInput.files[0]);
+
+  try {
+    const response = await fetch('importar_csv.php', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      let msg = `Se importaron ${result.imported} productos correctamente.\n`;
+      msg += `- Creados: ${result.created}\n`;
+      msg += `- Actualizados: ${result.updated}`;
+      
+      if (result.errors && result.errors.length > 0) {
+        msg += `\n\nAdvertencias:\n` + result.errors.slice(0, 5).join('\n');
+        if (result.errors.length > 5) {
+          msg += `\n... y ${result.errors.length - 5} errores más.`;
+        }
+      }
+
+      Swal.fire({
+        title: '¡Importación Completa!',
+        text: msg,
+        icon: 'success',
+        confirmButtonColor: '#008151',
+        background: '#05160e',
+        color: '#f1fdf7'
+      }).then(() => {
+        window.location.reload();
+      });
+    } else {
+      Swal.fire({
+        title: 'Error de importación',
+        text: result.message || 'Ocurrió un error inesperado al procesar el archivo.',
+        icon: 'error',
+        confirmButtonColor: '#ba1a1a',
+        background: '#05160e',
+        color: '#f1fdf7'
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      title: 'Error',
+      text: 'Error de red o conexión al servidor.',
+      icon: 'error',
+      confirmButtonColor: '#ba1a1a',
+      background: '#05160e',
+      color: '#f1fdf7'
+    });
+  }
 }
 
 function confirmarAjusteMasivo(e) {
@@ -1045,6 +1225,7 @@ function confirmarAjusteMasivo(e) {
     if (cb.value === 'precio_farmacia') return 'precio farmacia';
     if (cb.value === 'precio_distribuidor') return 'precio distribuidor';
     if (cb.value === 'precio_empresa') return 'precio empresa';
+    if (cb.value === 'precio_red_fria') return 'precio red fría';
   }).join(', ');
 
   Swal.fire({
