@@ -242,6 +242,12 @@ $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
+if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0) {
+    $pdf->Cell(90, 6, '', 0, 0);
+    $pdf->Cell(50, 6, mb_convert_encoding('Embalaje Red Fría:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+    $pdf->Cell(50, 6, '$' . number_format($pedido['embalaje_red_fria'], 2), 0, 1, 'R');
+}
+
 $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
 

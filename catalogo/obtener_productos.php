@@ -29,8 +29,14 @@ $is_admin = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] 
 $cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
 $precio_campo = 'precio_farmacia';
-if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
-elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
+$color_rol = 'text-primary';
+if ($cliente_tipo === 'DISTRIBUIDORA') {
+    $precio_campo = 'precio_distribuidor';
+    $color_rol = 'text-tertiary';
+} elseif ($cliente_tipo === 'EMPRESA') {
+    $precio_campo = 'precio_empresa';
+    $color_rol = 'text-secondary';
+}
 
 // Si $por_pagina no viene definida desde catalogo.php, la definimos
 if (!isset($por_pagina)) {
@@ -65,8 +71,14 @@ if ($categoria_id > 0) {
  $params[] = $categoria_id;
 }
 
-if ($cliente_tipo === 'EMPRESA') {
-  $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+// Filtro de Visibilidad por Rol
+if ($cliente_tipo === 'FARMACIA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'FARMACIA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo === 'DISTRIBUIDORA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'DISTRIBUIDORA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo === 'EMPRESA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'EMPRESA')";
+    $where[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
 }
 
 // Excluir productos internos de ajuste (Anticipo y Descuento)
@@ -131,7 +143,7 @@ foreach ($productos as $p) {
   <span class="text-sm font-black text-error leading-none">$<?= number_format($precio_final, 2) ?></span>
   </div>
   <?php else: ?>
-  <p class="text-sm font-black text-primary">$<?= number_format($precio_base, 2) ?></p>
+  <p class="text-sm font-black <?= $color_rol ?>">$<?= number_format($precio_base, 2) ?></p>
   <?php endif; ?>
 
   <?php else: ?>
@@ -213,7 +225,7 @@ foreach ($productos as $p) {
   <span class="text-base font-black text-error leading-none">$<?= number_format($precio_final, 2) ?></span>
   </div>
   <?php else: ?>
-  <p class="text-base font-black text-primary">$<?= number_format($precio_base, 2) ?></p>
+  <p class="text-base font-black <?= $color_rol ?>">$<?= number_format($precio_base, 2) ?></p>
   <?php endif; ?>
 
   <?php else: ?>

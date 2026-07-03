@@ -39,7 +39,7 @@ $ids = array_column($carrito, 'id');
 $product_details = [];
 if ($ids) {
     $ph  = implode(',', array_fill(0, count($ids), '?'));
-    $st  = $pdo->prepare("SELECT id, tipo, tasa_iva, sustancia, codigo FROM catalogo_productos WHERE id IN ($ph)");
+    $st  = $pdo->prepare("SELECT id, tipo, tasa_iva, sustancia, codigo, precio_red_fria FROM catalogo_productos WHERE id IN ($ph)");
     $st->execute($ids);
     $product_details = $st->fetchAll(PDO::FETCH_UNIQUE);
 }
@@ -50,6 +50,7 @@ $total_items_sin_iva = 0;
 $total_items_iva = 0;
 $total_normal_con_iva = 0;
 $tiene_red_fria = false;
+$total_embalaje_red_fria = 0.00;
 
 foreach ($carrito as $item) {
     $cant = (int)$item['cantidad'];
@@ -59,6 +60,7 @@ foreach ($carrito as $item) {
     
     $tasa = isset($product_details[$item['id']]['tasa_iva']) ? (float)$product_details[$item['id']]['tasa_iva'] : 0.16;
     $tipo = isset($product_details[$item['id']]['tipo']) ? strtoupper($product_details[$item['id']]['tipo']) : 'SECO';
+    $precio_rf = isset($product_details[$item['id']]['precio_red_fria']) ? (float)$product_details[$item['id']]['precio_red_fria'] : 0.00;
     
     $item_sin_iva = $item_total;
     $item_iva = $item_total * $tasa;
@@ -67,6 +69,7 @@ foreach ($carrito as $item) {
     
     if ($tipo === 'RED FRIA') {
         $tiene_red_fria = true;
+        $total_embalaje_red_fria += $precio_rf * $cant;
     } else {
         $total_normal_con_iva += ($item_total + $item_iva);
     }
@@ -104,7 +107,7 @@ $envio_iva = 0;
 
 $sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
-$total = $subtotal_prod + $total_items_iva + $costo_envio;
+$total = $subtotal_prod + $total_items_iva + $costo_envio + $total_embalaje_red_fria;
 
 // ══════════════════════════════════════════════════════════════════════════
 // XLSX builder (ZipArchive + OOXML)
@@ -304,10 +307,13 @@ $rows[$r] = ''; $r++;
 // Totales
 $totales = [
     ['Subtotal productos:', $subtotal_prod],
-    [($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio), $costo_envio],
-    ['Subtotal (sin IVA):', $sin_iva],
-    ['IVA:', $iva],
 ];
+if ($total_embalaje_red_fria > 0) {
+    $totales[] = ['Embalaje Red Fría:', $total_embalaje_red_fria];
+}
+$totales[] = [($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio), $costo_envio];
+$totales[] = ['Subtotal (sin IVA):', $sin_iva];
+$totales[] = ['IVA:', $iva];
 foreach ($totales as $t) {
     $rows[$r] = cStr($r, 1, '', 0) . cStr($r, 2, '', 0) . cStr($r, 3, '', 0)
               . cStr($r, 4, '', 0) . cStr($r, 5, '', 0) . cStr($r, 6, '', 0)

@@ -65,8 +65,14 @@ if ($categoria_id > 0) {
  $params[] = $categoria_id;
 }
 
-if ($cliente_tipo === 'EMPRESA') {
-  $where[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+// Filtro de Visibilidad por Rol
+if ($cliente_tipo === 'FARMACIA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'FARMACIA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo === 'DISTRIBUIDORA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'DISTRIBUIDORA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo === 'EMPRESA') {
+    $where[] = "p.visibilidad IN ('TODOS', 'EMPRESA')";
+    $where[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
 }
 
 // Excluir productos internos de ajuste (Anticipo y Descuento)

@@ -94,8 +94,14 @@ if (!empty($ingredients)) {
     }
 }
 
-if ($cliente_tipo_check === 'EMPRESA') {
-  $where_rel[] = "(p.solo_empresa = 'SI' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%')";
+// Filtro de Visibilidad por Rol para productos relacionados
+if ($cliente_tipo_check === 'FARMACIA') {
+    $where_rel[] = "p.visibilidad IN ('TODOS', 'FARMACIA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo_check === 'DISTRIBUIDORA') {
+    $where_rel[] = "p.visibilidad IN ('TODOS', 'DISTRIBUIDORA', 'FARMACIA_DISTRIBUIDORA')";
+} elseif ($cliente_tipo_check === 'EMPRESA') {
+    $where_rel[] = "p.visibilidad IN ('TODOS', 'EMPRESA')";
+    $where_rel[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
 }
 
 $rel_sql = "SELECT p.* FROM catalogo_productos p WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
@@ -112,8 +118,14 @@ $is_logged_in = $is_cliente || $is_admin;
 $cliente_tipo = $is_cliente ? $_SESSION['cliente_tipo'] : 'FARMACIA';
 
 $precio_campo = 'precio_farmacia';
-if ($cliente_tipo === 'DISTRIBUIDORA') $precio_campo = 'precio_distribuidor';
-elseif ($cliente_tipo === 'EMPRESA') $precio_campo = 'precio_empresa';
+$color_rol = 'text-primary';
+if ($cliente_tipo === 'DISTRIBUIDORA') {
+    $precio_campo = 'precio_distribuidor';
+    $color_rol = 'text-tertiary';
+} elseif ($cliente_tipo === 'EMPRESA') {
+    $precio_campo = 'precio_empresa';
+    $color_rol = 'text-secondary';
+}
 
 $precio_base = (float)$p[$precio_campo];
 $precio_mostrar = $precio_base;
@@ -157,16 +169,15 @@ $base = '../'; // si estás en subcarpeta como catalogo/
 require_once '../includes/header.php';
 ?>
 
-<!-- ═══ BREADCRUMB ═══ -->
-<div class="max-w-[1600px] mx-auto px-12 py-8" data-aos="fade-down">
- <div class="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-500">
- <a href="../index/index.php" class="hover:text-primary-light transition-colors">Inicio</a>
- <span class="material-symbols-outlined text-sm">chevron_right</span>
- <a href="catalogo.php" class="hover:text-primary-light transition-colors">Catálogo</a>
- <span class="material-symbols-outlined text-sm">chevron_right</span>
- <span class="text-tertiary font-bold"><?= htmlspecialchars($p['nombre']) ?></span>
+ <div class="max-w-[1600px] mx-auto px-12 py-8" data-aos="fade-down">
+  <div class="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-slate-500">
+  <a href="../index/index.php" class="hover:text-primary-light transition-colors">Inicio</a>
+  <span class="material-symbols-outlined text-sm">chevron_right</span>
+  <a href="catalogo.php" class="hover:text-primary-light transition-colors">Catálogo</a>
+  <span class="material-symbols-outlined text-sm">chevron_right</span>
+  <span class="<?= $color_rol ?> font-bold"><?= htmlspecialchars($p['nombre']) ?></span>
+  </div>
  </div>
-</div>
 
 <!-- ═══ CONTENIDO PRINCIPAL ═══ -->
 <main class="max-w-[1600px] mx-auto px-12 pb-24 relative">
@@ -242,18 +253,18 @@ require_once '../includes/header.php';
  </div>
  </div>
 
- <!-- Aviso Red Fría -->
- <?php if ($p['tipo'] === 'RED FRIA'): ?>
- <div class="bg-tertiary/10 rounded-xl p-4 mb-6 flex gap-3">
- <span class="material-symbols-outlined text-tertiary-light text-xl flex-shrink-0">ac_unit</span>
- <div>
- <p class="text-sm font-bold text-tertiary-light mb-1">Producto de Red Fría</p>
- <p class="text-xs text-slate-400 leading-relaxed">
- Este producto requiere refrigeración. El cliente debe gestionar su propio transporte — ya sea enviando guía prepagada o mandando su transportista al almacén de MM Pharma.
- </p>
- </div>
- </div>
- <?php endif; ?>
+  <!-- Aviso Red Fría -->
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  <div class="bg-sky-50 border border-sky-200/60 rounded-2xl p-5 mb-6 flex gap-3 animate-reveal">
+  <span class="material-symbols-outlined text-sky-600 text-2xl flex-shrink-0">severe_cold</span>
+  <div>
+  <p class="text-sm font-extrabold text-sky-900 mb-1">Producto de Red Fría</p>
+  <p class="text-xs text-sky-800 leading-relaxed font-medium">
+  Este producto requiere refrigeración. El cliente debe gestionar su propio transporte — ya sea enviando guía prepagada o mandando su transportista al almacén de MM Pharma.
+  </p>
+  </div>
+  </div>
+  <?php endif; ?>
  </div>
 
  <!-- Precios por nivel de cliente y Controles -->
@@ -268,18 +279,18 @@ require_once '../includes/header.php';
   <p class="text-[10px] font-black text-primary uppercase tracking-widest mb-1 opacity-80">Farmacia</p>
   <p class="text-2xl font-black text-primary">$<?= number_format($p['precio_farmacia'], 2) ?></p>
   </div>
-  <div class="bg-secondary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
-  <p class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 opacity-80">Distribuidor</p>
-  <p class="text-2xl font-black text-secondary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
-  </div>
   <div class="bg-tertiary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
-  <p class="text-[10px] font-black text-tertiary uppercase tracking-widest mb-1 opacity-80">Empresa</p>
-  <p class="text-2xl font-black text-tertiary">$<?= number_format($p['precio_empresa'], 2) ?></p>
+  <p class="text-[10px] font-black text-tertiary uppercase tracking-widest mb-1 opacity-80">Distribuidor</p>
+  <p class="text-2xl font-black text-tertiary">$<?= number_format($p['precio_distribuidor'], 2) ?></p>
+  </div>
+  <div class="bg-secondary/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-secondary uppercase tracking-widest mb-1 opacity-80">Empresa</p>
+  <p class="text-2xl font-black text-secondary">$<?= number_format($p['precio_empresa'], 2) ?></p>
   </div>
   <?php if ($p['tipo'] === 'RED FRIA'): ?>
-  <div class="bg-sky-500/10 p-5 rounded-2xl transition-transform hover:-translate-y-1">
-  <p class="text-[10px] font-black text-sky-500 uppercase tracking-widest mb-1 opacity-80">Red Fría</p>
-  <p class="text-2xl font-black text-sky-500">$<?= number_format($p['precio_red_fria'], 2) ?></p>
+  <div class="bg-sky-500/10 border border-sky-500/20 p-5 rounded-2xl transition-transform hover:-translate-y-1">
+  <p class="text-[10px] font-black text-sky-700 uppercase tracking-widest mb-1">Embalaje Red Fría</p>
+  <p class="text-2xl font-black text-sky-700">+$<?= number_format($p['precio_red_fria'], 2) ?></p>
   </div>
   <?php endif; ?>
  </div>
@@ -288,8 +299,8 @@ require_once '../includes/header.php';
  <div class="mb-10 animate-reveal">
  <?php 
  $box_class = 'bg-primary/10 text-primary';
- if ($cliente_tipo === 'DISTRIBUIDORA') $box_class = 'bg-secondary/10 text-secondary';
- elseif ($cliente_tipo === 'EMPRESA') $box_class = 'bg-tertiary/10 text-tertiary';
+ if ($cliente_tipo === 'DISTRIBUIDORA') $box_class = 'bg-tertiary/10 text-tertiary';
+ elseif ($cliente_tipo === 'EMPRESA') $box_class = 'bg-secondary/10 text-secondary';
  ?>
  <div class="<?= $box_class ?> p-6 rounded-2xl flex items-center justify-between transition-transform hover:-translate-y-1">
   <div>
@@ -306,6 +317,14 @@ require_once '../includes/header.php';
   </div>
   <span class="material-symbols-outlined text-4xl opacity-30">verified</span>
   </div>
+  <?php if ($p['tipo'] === 'RED FRIA'): ?>
+  <div class="mt-3 bg-sky-50 border border-sky-200/50 rounded-xl p-3 flex items-center gap-2">
+    <span class="material-symbols-outlined text-[18px] text-sky-600 flex-shrink-0">info</span>
+    <span class="text-xs font-bold text-sky-800 leading-normal">
+      * Cargo adicional por embalaje de red fría: <strong>+$<?= number_format($p['precio_red_fria'], 2) ?></strong> por unidad (se desglosará al finalizar el pedido).
+    </span>
+  </div>
+  <?php endif; ?>
  </div>
  <?php endif; ?>
 
@@ -450,7 +469,7 @@ require_once '../includes/header.php';
   <span class="text-xl font-black text-error leading-none">$<?= number_format($r_precio_final, 2) ?></span>
   </div>
   <?php else: ?>
-  <p class="text-xl font-black text-primary">$<?= number_format($r_precio_base, 2) ?></p>
+  <p class="text-xl font-black <?= $color_rol ?>">$<?= number_format($r_precio_base, 2) ?></p>
   <?php endif; ?>
   
   <?php if ($is_cliente): ?>

@@ -329,6 +329,12 @@ include('includes/sidebar.php');
  <span class="text-sm text-on-surface-variant">Subtotal productos:</span>
   <span class="text-sm font-bold text-slate-900">$<?= number_format($subtotal_productos, 2) ?></span>
  </div>
+ <?php if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0): ?>
+ <div class="flex justify-between items-center mb-3">
+ <span class="text-sm text-on-surface-variant">Embalaje Red Fría:</span>
+  <span class="text-sm font-bold text-slate-900">$<?= number_format($pedido['embalaje_red_fria'], 2) ?></span>
+ </div>
+ <?php endif; ?>
   <div class="flex justify-between items-start mb-3 gap-4">
   <span class="text-sm text-on-surface-variant shrink-0">Envío:</span>
   <?php
@@ -360,15 +366,6 @@ include('includes/sidebar.php');
  </div>
  </div>
  
-<<<<<<< HEAD:DASHBOARD_CLIENTE/Cotizacion-Detalle.php
- <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || ($tiene_red_fria && $total_normal_con_iva == 0)): ?>
- <div class="mt-8 bg-surface-container-high border border-outline-variant/30 rounded-xl p-4 text-sm text-white">
-     <div class="flex items-center gap-2 text-primary font-bold mb-1">
-         <span class="material-symbols-outlined text-[18px]">store</span>
-         Información de entrega en sucursal
-     </div>
-     <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-white">De 9am a 6pm todos los días de la semana.</strong></p>
-=======
  <?php if ($costo_envio > 0 || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || $pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || !empty($pedido['recoger_sucursal']) || $subtotal_productos < 4000.00): ?>
   <div class="mt-8 bg-surface-container border border-outline-variant/30 rounded-xl p-4 text-sm text-slate-900">
       <div class="flex items-center gap-2 text-primary font-bold mb-1">
@@ -376,8 +373,7 @@ include('includes/sidebar.php');
           Información de entrega en sucursal
       </div>
       <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-slate-900">De 9am a 6pm todos los días de la semana.</strong></p>
->>>>>>> 56f56a579a78a0f75e7ed9f936c9f34980ade16e:dashboard_cliente/cotizacion-detalle.php
-     <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
+      <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
  </div>
  <?php endif; ?>
 

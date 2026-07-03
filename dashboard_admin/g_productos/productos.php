@@ -319,21 +319,33 @@ if (isset($_GET['ajax'])) {
   }
 
  if ($action === 'upsert') {
- $nombre = $_POST['nombre'] ?? ''; $codigo = $_POST['codigo'] ?? ''; $tipo = $_POST['tipo'] ?? 'SECO';
- $sustancia = $_POST['sustancia'] ?? '';
- $cat_id = (int)($_POST['categoria_id'] ?? 0);
- if ($cat_id === 0) $cat_id = null;
- $p_f = (float)$_POST['precio_farmacia']; $p_d = (float)$_POST['precio_distribuidor']; $p_e = (float)$_POST['precio_empresa'];
- $p_rf = (float)($_POST['precio_red_fria'] ?? 0);
- $stock = (int)$_POST['stock'];
- $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
- $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
- $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
- $tasa_iva = (float)($_POST['tasa_iva'] ?? 0.16);
- $foto_base64 = $_POST['foto_base64'] ?? '';
- $procesar_imagen = isset($_POST['procesar_imagen']) ? 1 : 0;
+  $nombre = $_POST['nombre'] ?? ''; $codigo = $_POST['codigo'] ?? ''; $tipo = $_POST['tipo'] ?? 'SECO';
+  $sustancia = $_POST['sustancia'] ?? '';
+  $cat_id = (int)($_POST['categoria_id'] ?? 0);
+  if ($cat_id === 0) $cat_id = null;
+  $p_f = (float)$_POST['precio_farmacia']; $p_d = (float)$_POST['precio_distribuidor']; $p_e = (float)$_POST['precio_empresa'];
+  $p_rf = (float)($_POST['precio_red_fria'] ?? 0);
+  $stock = (int)$_POST['stock'];
+  $vis_todos = isset($_POST['vis_todos']) ? 1 : 0;
+  if ($vis_todos) {
+      $visibilidad = 'TODOS';
+  } else {
+      $roles_selected = $_POST['vis_roles'] ?? [];
+      if (empty($roles_selected)) {
+          $visibilidad = 'TODOS';
+      } else {
+          $visibilidad = implode(',', $roles_selected);
+      }
+  }
+  $solo_empresa = (strpos($visibilidad, 'EMPRESA') !== false) ? 'SI' : 'NO';
+  $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
+  $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
+  $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
+  $tasa_iva = (float)($_POST['tasa_iva'] ?? 0.16);
+  $foto_base64 = $_POST['foto_base64'] ?? '';
+  $procesar_imagen = isset($_POST['procesar_imagen']) ? 1 : 0;
  
- $nombre_archivo = null;
+  $nombre_archivo = null;
   if (!empty($foto_base64)) {
     $data = explode(',', $foto_base64);
     $img_content = base64_decode($data[1]);
@@ -346,24 +358,22 @@ if (isset($_GET['ajax'])) {
     }
   }
 
- if ($id > 0) {
- $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, sustancia=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, precio_red_fria=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?";
- $params = [$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva];
- if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
- $sql .= " WHERE id=?"; $params[] = $id;
- $pdo->prepare($sql)->execute($params);
- } else {
- $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, sustancia, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, precio_red_fria, en_promocion, descuento_porcentaje, promocion_perfil, tasa_iva, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
- $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $nombre_archivo]);
- $id = $pdo->lastInsertId();
- }
- $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
- ->execute([$id, $stock, $stock]);
+  if ($id > 0) {
+    $sql = "UPDATE catalogo_productos SET nombre=?, codigo=?, tipo=?, sustancia=?, categoria_id=?, precio_farmacia=?, precio_distribuidor=?, precio_empresa=?, precio_red_fria=?, en_promocion=?, descuento_porcentaje=?, promocion_perfil=?, tasa_iva=?, solo_empresa=?, visibilidad=?";
+    $params = [$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $solo_empresa, $visibilidad];
+    if ($nombre_archivo) { $sql .= ", imagen=?"; $params[] = $nombre_archivo; }
+    $sql .= " WHERE id=?"; $params[] = $id;
+    $pdo->prepare($sql)->execute($params);
+  } else {
+    $sql = "INSERT INTO catalogo_productos (nombre, codigo, tipo, sustancia, categoria_id, precio_farmacia, precio_distribuidor, precio_empresa, precio_red_fria, en_promocion, descuento_porcentaje, promocion_perfil, tasa_iva, solo_empresa, visibilidad, imagen) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    $pdo->prepare($sql)->execute([$nombre, $codigo, $tipo, $sustancia, $cat_id, $p_f, $p_d, $p_e, $p_rf, $en_promocion, $descuento_porcentaje, $promocion_perfil, $tasa_iva, $solo_empresa, $visibilidad, $nombre_archivo]);
+    $id = $pdo->lastInsertId();
+  }
+  $pdo->prepare("INSERT INTO admin_inventario_stock (producto_id, stock_actual) VALUES (?, ?) ON DUPLICATE KEY UPDATE stock_actual = ?")
+  ->execute([$id, $stock, $stock]);
 
  // ── Guardar fotos adicionales (slots 1-4) ─────────────────────────────────
- // Necesitamos el nombre de archivo base del producto para construir el sufijo
  if (!$nombre_archivo) {
-   // Si no se subió nueva foto principal, obtener la existente de la BD
    $row_img = $pdo->prepare("SELECT imagen FROM catalogo_productos WHERE id = ?");
    $row_img->execute([$id]);
    $nombre_archivo_base = $row_img->fetchColumn();
@@ -378,15 +388,14 @@ if (isset($_GET['ajax'])) {
      if (empty($adicional_b64) || strpos($adicional_b64, ',') === false) continue;
 
      $partes    = explode(',', $adicional_b64, 2);
-     $img_data  = base64_decode($partes[1], true); // strict decode
-     if ($img_data === false || strlen($img_data) < 100) continue; // skip if invalid/empty
+     $img_data  = base64_decode($partes[1], true);
+     if ($img_data === false || strlen($img_data) < 100) continue;
 
      $ruta_adicional = '../../img/productos/' . $base_sin_ext . '_' . $slot . '.jpg';
 
      if ($procesar_imagen) {
        $ok = procesarImagenProducto($img_data, $ruta_adicional);
        if (!$ok) {
-         // Fallback: guardar crudo si GD falla
          file_put_contents($ruta_adicional, $img_data);
        }
      } else {
@@ -694,9 +703,34 @@ include("../includes/sidebar.php");
   </div>
   </div>
  <div class="grid grid-cols-2 gap-4">
+  <div class="space-y-3">
   <div>
   <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Existencias en inventario</label>
   <input type="number" name="stock" id="prod_stock" class="w-full bg-surface-container-low border-none rounded-xl p-3 text-sm font-bold text-primary focus:ring-2 focus:ring-primary outline-none">
+  </div>
+  <div>
+  <label class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">Visibilidad / Filtro de Rol</label>
+  <div class="flex flex-col gap-2 bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/10">
+    <label class="flex items-center gap-2 text-xs font-bold text-on-surface-variant cursor-pointer">
+      <input type="checkbox" id="vis_todos" name="vis_todos" value="1" onchange="toggleVisibilidadTodos()" class="rounded border-outline-variant text-primary focus:ring-primary w-4.5 h-4.5 bg-transparent cursor-pointer">
+      Todos (Público)
+    </label>
+    <div class="flex flex-col gap-1.5 pl-6 border-l border-outline-variant/20">
+      <label class="flex items-center gap-2 text-xs font-bold text-on-surface-variant cursor-pointer">
+        <input type="checkbox" id="vis_farmacia" name="vis_roles[]" value="FARMACIA" class="role-vis-cb rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 bg-transparent cursor-pointer">
+        Farmacia
+      </label>
+      <label class="flex items-center gap-2 text-xs font-bold text-on-surface-variant cursor-pointer">
+        <input type="checkbox" id="vis_distribuidora" name="vis_roles[]" value="DISTRIBUIDORA" class="role-vis-cb rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 bg-transparent cursor-pointer">
+        Distribuidora
+      </label>
+      <label class="flex items-center gap-2 text-xs font-bold text-on-surface-variant cursor-pointer">
+        <input type="checkbox" id="vis_empresa" name="vis_roles[]" value="EMPRESA" class="role-vis-cb rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 bg-transparent cursor-pointer">
+        Empresa
+      </label>
+    </div>
+  </div>
+  </div>
   </div>
   <div class="bg-error/5 border border-error/20 p-3 rounded-xl">
   <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-error mb-2 cursor-pointer">
@@ -1024,6 +1058,8 @@ function abrirModal() {
   document.getElementById('prod_prf').value = "";
   actualizarEstadoPrecioRedFria();
   document.getElementById('prod_stock').value = "0";
+  document.getElementById('vis_todos').checked = true;
+  toggleVisibilidadTodos();
   document.getElementById('prod_promo').checked = false;
   document.getElementById('prod_desc').value = "0";
   document.getElementById('prod_promo_perfil').value = "TODOS";
@@ -1087,8 +1123,22 @@ function abrirEditar(p) {
  document.getElementById('prod_pe').value = p.precio_empresa;
  document.getElementById('prod_prf').value = (p.precio_red_fria && parseFloat(p.precio_red_fria) > 0) ? p.precio_red_fria : '';
  actualizarEstadoPrecioRedFria();
- document.getElementById('prod_stock').value = p.stock || 0;
- document.getElementById('prod_promo').checked = p.en_promocion == 1;
+  document.getElementById('prod_stock').value = p.stock || 0;
+  
+  const vis = p.visibilidad || 'TODOS';
+  if (vis === 'TODOS') {
+      document.getElementById('vis_todos').checked = true;
+      toggleVisibilidadTodos();
+  } else {
+      document.getElementById('vis_todos').checked = false;
+      toggleVisibilidadTodos();
+      const roles = vis.split(',');
+      document.getElementById('vis_farmacia').checked = roles.includes('FARMACIA');
+      document.getElementById('vis_distribuidora').checked = roles.includes('DISTRIBUIDORA');
+      document.getElementById('vis_empresa').checked = roles.includes('EMPRESA');
+  }
+  
+  document.getElementById('prod_promo').checked = p.en_promocion == 1;
  document.getElementById('prod_desc').value = p.descuento_porcentaje || 0;
  document.getElementById('prod_promo_perfil').value = p.promocion_perfil || "TODOS";
  document.getElementById('modalProducto').classList.remove('hidden');
@@ -1096,8 +1146,17 @@ function abrirEditar(p) {
 }
 
 function cerrarModal() {
- document.getElementById('modalPanel').classList.add('translate-x-full');
- setTimeout(() => document.getElementById('modalProducto').classList.add('hidden'), 300);
+  document.getElementById('modalPanel').classList.add('translate-x-full');
+  setTimeout(() => document.getElementById('modalProducto').classList.add('hidden'), 300);
+}
+
+function toggleVisibilidadTodos() {
+  const todos = document.getElementById('vis_todos').checked;
+  const cbs = document.querySelectorAll('.role-vis-cb');
+  cbs.forEach(cb => {
+    cb.checked = todos;
+    cb.disabled = todos;
+  });
 }
 
 function abrirModalAjuste() {

@@ -531,6 +531,14 @@ if (menuClose && mobileMenu) {
  <p id="cart-total" class="text-3xl font-black text-white">$0.00</p>
  </div>
  
+ <div id="cart-red-fria-note" class="hidden mb-4 bg-sky-950/40 border border-sky-500/30 rounded-xl p-3 text-[11px] text-sky-200">
+   <div class="flex items-center gap-1.5 font-bold mb-1">
+     <span class="material-symbols-outlined text-[15px] text-sky-400">info</span>
+     Embalaje de Red Fría
+   </div>
+   * El cargo de Red Fría es un costo de embalaje adicional por unidad refrigerada, agregado al precio de venta normal del producto.
+ </div>
+ 
  <?php if(isset($_SESSION['cliente_id'])): 
  try {
  if(!isset($pdo)) {
@@ -705,12 +713,15 @@ function renderCartItems() {
   
   const rowRF = document.getElementById('row-embalaje-red-fria');
   const costRFEl = document.getElementById('cart-embalaje-red-fria');
+  const noteRF = document.getElementById('cart-red-fria-note');
   if (rowRF && costRFEl) {
     if (totalEmbalajeRedFria > 0) {
       costRFEl.textContent = formatCurrency(totalEmbalajeRedFria);
       rowRF.classList.remove('hidden');
+      if (noteRF) noteRF.classList.remove('hidden');
     } else {
       rowRF.classList.add('hidden');
+      if (noteRF) noteRF.classList.add('hidden');
     }
   }
 

@@ -438,6 +438,12 @@ include("../includes/sidebar.php");
                                 <?php endif; ?>
                             </td>
                         </tr>
+                        <?php if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0): ?>
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-right text-[11px] font-black uppercase tracking-widest text-on-surface-variant border-t border-outline-variant/10">Embalaje Red Fría:</td>
+                            <td class="px-6 py-4 text-right text-sm font-black text-white border-t border-outline-variant/10">$<?= number_format($pedido['embalaje_red_fria'], 2) ?></td>
+                        </tr>
+                        <?php endif; ?>
                         <tr>
                             <td colspan="3" class="px-6 py-4 text-right text-[13px] font-black uppercase tracking-widest text-primary border-t border-outline-variant/20">Total:</td>
                             <td class="px-6 py-4 text-right text-lg font-black text-primary border-t border-outline-variant/20">$<?= number_format($pedido['monto_total'], 2) ?></td>

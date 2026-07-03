@@ -161,6 +161,31 @@ foreach ($detalles as $det) {
 }
 
 // Totales
+$pdf->SetFont('Arial', 'B', 9);
+$pdf->SetTextColor(50, 50, 50);
+
+$subtotal_prod = 0;
+foreach ($detalles as $det) {
+    $subtotal_prod += (float)$det['subtotal'];
+}
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, mb_convert_encoding('SUBTOTAL PROD:', 'ISO-8859-1', 'UTF-8'), 1, 0, 'R');
+$pdf->Cell(35, 6, '$' . number_format($subtotal_prod, 2), 1, 1, 'R');
+
+$pdf->Cell(120, 6, '', 0, 0);
+$pdf->Cell(35, 6, mb_convert_encoding('ENVIO:', 'ISO-8859-1', 'UTF-8'), 1, 0, 'R');
+if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || $pedido['estado_envio'] === 'RECOGER EN SUCURSAL' || !empty($pedido['recoger_sucursal'])) {
+    $pdf->Cell(35, 6, 'RECOGE ALMACEN', 1, 1, 'R');
+} else {
+    $pdf->Cell(35, 6, '$' . number_format($pedido['costo_envio'], 2), 1, 1, 'R');
+}
+
+if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0) {
+    $pdf->Cell(120, 6, '', 0, 0);
+    $pdf->Cell(35, 6, mb_convert_encoding('EMB. RED FRIA:', 'ISO-8859-1', 'UTF-8'), 1, 0, 'R');
+    $pdf->Cell(35, 6, '$' . number_format($pedido['embalaje_red_fria'], 2), 1, 1, 'R');
+}
+
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(120, 8, '', 0, 0);
 $pdf->Cell(35, 8, 'TOTAL:', 1, 0, 'R');
