@@ -77,6 +77,22 @@ try {
 
     $file_path = $file['tmp_name'];
     
+    // Validar si es un archivo binario de Excel (.xlsx o .xls)
+    $handle_check = fopen($file_path, 'rb');
+    if ($handle_check) {
+        $first_bytes = fread($handle_check, 8);
+        fclose($handle_check);
+        
+        // Firma ZIP (Office Open XML / xlsx)
+        if (substr($first_bytes, 0, 4) === "PK\x03\x04") {
+            throw new Exception("El archivo subido parece ser un archivo de Excel (.xlsx). Por favor, guárdalo como 'CSV (delimitado por comas)' en Excel antes de importarlo.");
+        }
+        // Firma XLS (Excel 97-2003)
+        if ($first_bytes === "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1") {
+            throw new Exception("El archivo subido parece ser un archivo de Excel (.xls). Por favor, guárdalo como 'CSV (delimitado por comas)' en Excel antes de importarlo.");
+        }
+    }
+
     // Detectar codificación
     $test_content = file_get_contents($file_path, false, null, 0, 4096);
     $encoding = mb_detect_encoding($test_content, ['UTF-8', 'ISO-8859-1', 'ASCII', 'Windows-1252'], true) ?: 'UTF-8';
@@ -85,18 +101,52 @@ try {
     $first_line = fgets(fopen($file_path, 'r'));
     $separator = (strpos($first_line, ';') !== false) ? ';' : ',';
 
-    // Mapeo de columnas con sinónimos
+    // Mapeo de columnas con sinónimos (expandido para máxima compatibilidad)
     $headers_map = [
-        'codigo' => ['codigo', 'sku', 'código', 'barras', 'upc', 'ean', 'cod', 'id'],
-        'nombre' => ['nombre', 'name', 'producto', 'product', 'título', 'titulo'],
-        'sustancia' => ['sustancia', 'description', 'descripción', 'sustancia_activa', 'sustancia activa', 'detalle', 'sustancia_quimica'],
-        'precio_farmacia' => ['precio_farmacia', 'regular_price', 'regular price', 'precio farmacia', 'p. farmacia', 'farmacia', 'pf', 'precio'],
-        'precio_distribuidor' => ['precio_distribuidor', 'precio distribuidor', 'p. distribuidor', 'distribuidor', 'pd', 'precio_distribuidora'],
-        'precio_empresa' => ['precio_empresa', 'precio empresa', 'p. empresa', 'empresa', 'pe'],
-        'precio_red_fria' => ['precio_red_fria', 'precio red fria', 'precio red fría', 'p. red fria', 'p. red fría', 'red fria', 'red fría', 'prf'],
-        'stock' => ['stock', 'cantidad', 'existencias', 'existencia', 'qty', 'quantity', 'inventario', 'orden'],
-        'categoria' => ['categoria', 'categoría', 'categories', 'category', 'categorías', 'categoria_nombre'],
-        'tipo' => ['tipo', 'type', 'conservacion', 'conservación']
+        'codigo' => [
+            'codigo', 'sku', 'código', 'barras', 'upc', 'ean', 'cod', 'id',
+            'código de barras', 'código de barra', 'codigo de barras', 'codigo de barra',
+            'clave', 'id_producto', 'cod_producto', 'cod_prod', 'código o sku'
+        ],
+        'nombre' => [
+            'nombre', 'name', 'producto', 'product', 'título', 'titulo',
+            'nombre del producto', 'nombre producto', 'artículo', 'articulo',
+            'descripción producto', 'descripcion producto'
+        ],
+        'sustancia' => [
+            'sustancia', 'description', 'descripción', 'descripcion',
+            'sustancia_activa', 'sustancia activa', 'detalle', 'sustancia_quimica',
+            'principio activo', 'principio_activo'
+        ],
+        'precio_farmacia' => [
+            'precio_farmacia', 'regular_price', 'regular price', 'precio farmacia',
+            'p. farmacia', 'farmacia', 'pf', 'precio', 'precio público', 'precio publico',
+            'precio de lista', 'precio_lista', 'precio regular'
+        ],
+        'precio_distribuidor' => [
+            'precio_distribuidor', 'precio distribuidor', 'p. distribuidor', 'distribuidor',
+            'pd', 'precio_distribuidora', 'distribuidora', 'precio_dist'
+        ],
+        'precio_empresa' => [
+            'precio_empresa', 'precio empresa', 'p. empresa', 'empresa',
+            'pe', 'precio_emp', 'empresa_precio'
+        ],
+        'precio_red_fria' => [
+            'precio_red_fria', 'precio red fria', 'precio red fría', 'p. red fria',
+            'p. red fría', 'red fria', 'red fría', 'prf', 'red_fria_precio'
+        ],
+        'stock' => [
+            'stock', 'cantidad', 'existencias', 'existencia', 'qty', 'quantity',
+            'inventario', 'orden', 'piezas', 'piezas_stock', 'stock actual', 'stock_actual'
+        ],
+        'categoria' => [
+            'categoria', 'categoría', 'categories', 'category', 'categorías',
+            'categoria_nombre', 'línea', 'linea', 'grupo', 'rubro'
+        ],
+        'tipo' => [
+            'tipo', 'type', 'conservacion', 'conservación', 'temperatura',
+            'tipo_conservación', 'tipo_conservacion', 'conservar'
+        ]
     ];
 
     $handle = fopen($file_path, "r");
@@ -112,9 +162,21 @@ try {
     }
 
     $headers = [];
+    $is_first = true;
     foreach ($header_row as $col) {
         if ($encoding !== 'UTF-8') {
             $col = mb_convert_encoding($col, 'UTF-8', $encoding);
+        }
+        if ($is_first) {
+            // Eliminar BOM UTF-8 si está presente
+            if (strpos($col, "\xEF\xBB\xBF") === 0) {
+                $col = substr($col, 3);
+            }
+            // Eliminar BOM UTF-8 si fue convertido erróneamente desde ISO-8859-1 (como ï»¿)
+            if (strpos($col, "ï»¿") === 0) {
+                $col = substr($col, 6);
+            }
+            $is_first = false;
         }
         $headers[] = mb_strtolower(trim($col), 'UTF-8');
     }

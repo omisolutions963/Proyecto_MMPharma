@@ -851,22 +851,33 @@ include("../includes/sidebar.php");
   </div>
   <form id="formImportarCSV" class="flex-1 overflow-y-auto p-8 space-y-6" onsubmit="enviarCSV(event)">
    
-   <div class="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/10 space-y-3">
-    <h4 class="text-xs font-bold text-primary uppercase tracking-wider">Formatos soportados</h4>
-    <p class="text-xs text-on-surface-variant leading-relaxed">
-     Puedes subir un archivo CSV. El sistema detecta y mapea automáticamente las columnas:
-    </p>
-    <ul class="text-[11px] text-on-surface-variant list-disc pl-5 space-y-1">
-     <li><strong>Código / SKU</strong> (obligatorio)</li>
-     <li><strong>Nombre</strong> (obligatorio)</li>
-     <li><strong>Sustancia activa</strong> (descripción)</li>
-     <li><strong>Precio Farmacia</strong> (precio base)</li>
-     <li><strong>Precio Distribuidor / Empresa / Red Fría</strong></li>
-     <li><strong>Stock / Cantidad</strong></li>
-     <li><strong>Categoría</strong> (se creará si no existe)</li>
-     <li><strong>Tipo</strong> (SECO o RED FRIA)</li>
-    </ul>
-    <div class="pt-3 border-t border-outline-variant/10 mt-3 flex justify-center">
+   <div class="bg-surface-container-low p-5 rounded-2xl border border-outline-variant/10 space-y-4">
+    <h4 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+     <span class="material-symbols-outlined text-[16px]">info</span> Guía rápida para importar
+    </h4>
+    
+    <div class="space-y-3 text-xs text-on-surface-variant leading-relaxed">
+     <div class="border-l-2 border-primary/40 pl-3">
+      <strong class="text-on-surface block mb-0.5">1. Guarda tu Excel como CSV:</strong>
+      <span>En Excel, ve a <strong>Archivo > Guardar como</strong> y en Tipo selecciona <strong>CSV (delimitado por comas) (*.csv)</strong>. No subas el archivo de Excel normal (.xlsx).</span>
+     </div>
+
+     <div class="border-l-2 border-primary/40 pl-3">
+      <strong class="text-on-surface block mb-0.5">2. Columnas necesarias:</strong>
+      <span>Tu archivo debe tener al menos las columnas de:</span>
+      <ul class="text-[11px] list-disc pl-4 mt-1 space-y-0.5">
+       <li><strong>Nombre</strong> (Nombre del producto)</li>
+       <li><strong>Código o SKU</strong> (Clave, código de barras o ID)</li>
+      </ul>
+     </div>
+
+     <div class="border-l-2 border-primary/40 pl-3">
+      <strong class="text-on-surface block mb-0.5">3. Columnas opcionales:</strong>
+      <span class="text-[11px]">Sustancia (descripción), Categoría, Stock (existencia), Tipo (SECO o RED FRIA), Precio Farmacia, Precio Distribuidor, Precio Empresa, Precio Red Fría.</span>
+     </div>
+    </div>
+
+    <div class="pt-3 border-t border-outline-variant/10 flex justify-center">
       <a href="importar_csv.php?action=download_template" download class="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary-light font-black transition-colors">
        <span class="material-symbols-outlined text-[16px]">download</span> Descargar plantilla CSV de ejemplo
       </a>
@@ -1184,6 +1195,21 @@ async function enviarCSV(e) {
   e.preventDefault();
   const fileInput = document.getElementById('csvFile');
   if (!fileInput.files || fileInput.files.length === 0) return;
+
+  const file = fileInput.files[0];
+  const fileExt = file.name.split('.').pop().toLowerCase();
+  if (fileExt !== 'csv') {
+    Swal.fire({
+      title: 'Formato incorrecto',
+      text: 'Por favor, selecciona un archivo en formato CSV (.csv). Si tienes un archivo de Excel (.xlsx o .xls), debes guardarlo como "CSV (delimitado por comas)" antes de importarlo.',
+      icon: 'error',
+      confirmButtonColor: '#008151',
+      background: '#05160e',
+      color: '#f1fdf7'
+    });
+    fileInput.value = '';
+    return;
+  }
 
   Swal.fire({
     title: 'Procesando archivo...',
