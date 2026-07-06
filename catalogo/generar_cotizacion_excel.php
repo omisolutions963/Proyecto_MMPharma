@@ -105,6 +105,11 @@ if (!empty($_POST['direccion_id'])) {
 $envio_sin_iva = $costo_envio;
 $envio_iva = 0;
 
+if ($costo_envio == 290) {
+    $envio_sin_iva = 250.00;
+    $envio_iva = 40.00;
+}
+
 $sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
 $total = $subtotal_prod + $total_items_iva + $costo_envio + $total_embalaje_red_fria;
@@ -307,6 +312,12 @@ $rows[$r] = ''; $r++;
 // Totales
 $totales = [
     ['Subtotal productos:', $subtotal_prod],
+<<<<<<< Updated upstream:catalogo/generar_cotizacion_excel.php
+=======
+    [($costo_envio == 290 ? 'Costo de envio: 250 pesos + 40 pesos de IVA (16%):' : ($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio)), $costo_envio],
+    ['Subtotal (sin IVA):', $sin_iva],
+    ['IVA:', $iva],
+>>>>>>> Stashed changes:CATALOGO/generar_cotizacion_excel.php
 ];
 if ($total_embalaje_red_fria > 0) {
     $totales[] = ['Embalaje Red Fría:', $total_embalaje_red_fria];

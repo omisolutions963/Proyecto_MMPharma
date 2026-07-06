@@ -117,6 +117,11 @@ $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
 $envio_sin_iva = $costo_envio;
 $envio_iva = 0;
 
+if ($costo_envio == 290) {
+    $envio_sin_iva = 250.00;
+    $envio_iva = 40.00;
+}
+
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
 
@@ -262,8 +267,13 @@ $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
-$pdf->Cell(90, 6, '', 0, 0);
-$pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+if ($costo_envio == 290) {
+    $pdf->Cell(40, 6, '', 0, 0);
+    $pdf->Cell(100, 6, mb_convert_encoding('Costo de envio: 250 pesos + 40 pesos de IVA (16%):', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+} else {
+    $pdf->Cell(90, 6, '', 0, 0);
+    $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+}
 $texto_envio = $costo_envio > 0 ? '$' . number_format($costo_envio, 2) : ($mensaje_envio !== '' ? $mensaje_envio : mb_convert_encoding('Envío gratis', 'ISO-8859-1', 'UTF-8'));
 $pdf->Cell(50, 6, $texto_envio, 0, 1, 'R');
 
@@ -287,7 +297,7 @@ if ($costo_envio > 0 || $recoger_sucursal || ($tiene_red_fria && $total_normal_c
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->SetTextColor(0, 36, 81);
     $pdf->MultiCell(0, 5, mb_convert_encoding(
-        "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        "Horario de entrega en sucursal: De 9am a 6pm de lunes a viernes.",
         'ISO-8859-1', 'UTF-8'
     ), 0, 'C');
     $pdf->Ln(2);

@@ -76,6 +76,11 @@ $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
 $envio_sin_iva = $costo_envio;
 $envio_iva = 0;
 
+if ($costo_envio == 290) {
+    $envio_sin_iva = 250.00;
+    $envio_iva = 40.00;
+}
+
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
 
@@ -242,6 +247,7 @@ $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
+<<<<<<< Updated upstream
 if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0) {
     $pdf->Cell(90, 6, '', 0, 0);
     $pdf->Cell(50, 6, mb_convert_encoding('Embalaje Red Fría:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
@@ -250,6 +256,15 @@ if ((float)($pedido['embalaje_red_fria'] ?? 0) > 0) {
 
 $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+=======
+if ($costo_envio == 290) {
+    $pdf->Cell(40, 6, '', 0, 0);
+    $pdf->Cell(100, 6, mb_convert_encoding('Costo de envio: 250 pesos + 40 pesos de IVA (16%):', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+} else {
+    $pdf->Cell(90, 6, '', 0, 0);
+    $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+}
+>>>>>>> Stashed changes
 
 if ($pedido['estado_envio'] === 'SU PEDIDO ESTARÁ LISTO PARA QUE PASE A RECOLECTARLO' || ($tiene_red_fria && $total_normal_con_iva == 0)) {
     $texto_envio = mb_convert_encoding('Recoger en almacén (Pickup)', 'ISO-8859-1', 'UTF-8');
@@ -282,7 +297,7 @@ if ($costo_envio > 0 || $recoger_sucursal || ($tiene_red_fria && $total_normal_c
     $pdf->SetFont('Arial', 'B', 8);
     $pdf->SetTextColor(0, 36, 81);
     $pdf->MultiCell(0, 5, mb_convert_encoding(
-        "Horario de entrega en sucursal: De 9am a 6pm todos los días de la semana.\nEl lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).",
+        "Horario de entrega en sucursal: De 9am a 6pm de lunes a viernes.",
         'ISO-8859-1', 'UTF-8'
     ), 0, 'C');
     $pdf->Ln(2);
