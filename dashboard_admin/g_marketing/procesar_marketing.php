@@ -8,17 +8,30 @@ $pdo = getDB();
 $action = $_POST['action'] ?? '';
 
 if ($action === 'send_notif') {
- $cliente_id = (int)$_POST['cliente_id'];
+ $cliente_post = $_POST['cliente_id'] ?? '0';
  $tipo = $_POST['tipo'] ?? 'INFO';
  $mensaje = $_POST['mensaje'] ?? '';
 
- if ($cliente_id === 0 || empty($mensaje)) {
- echo json_encode(['status' => 'error', 'message' => 'Faltan datos']);
- exit;
+ if (empty($mensaje) || $cliente_post === '0') {
+     echo json_encode(['status' => 'error', 'message' => 'Faltan datos']);
+     exit;
  }
 
- $stmt = $pdo->prepare("INSERT INTO admin_alertas_notificaciones (cliente_id, tipo, mensaje) VALUES (?, ?, ?)");
- $stmt->execute([$cliente_id, $tipo, $mensaje]);
+ if ($cliente_post === 'todos') {
+     $stmt = $pdo->query("SELECT id FROM clientes_usuarios WHERE estatus = 'ACTIVO'");
+     $client_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+     
+     if (!empty($client_ids)) {
+         $stmtInsert = $pdo->prepare("INSERT INTO admin_alertas_notificaciones (cliente_id, tipo, mensaje) VALUES (?, ?, ?)");
+         foreach ($client_ids as $cid) {
+             $stmtInsert->execute([$cid, $tipo, $mensaje]);
+         }
+     }
+ } else {
+     $cliente_id = (int)$cliente_post;
+     $stmt = $pdo->prepare("INSERT INTO admin_alertas_notificaciones (cliente_id, tipo, mensaje) VALUES (?, ?, ?)");
+     $stmt->execute([$cliente_id, $tipo, $mensaje]);
+ }
 
  echo json_encode(['status' => 'success']);
  exit;

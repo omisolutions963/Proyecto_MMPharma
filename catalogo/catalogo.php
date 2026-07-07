@@ -67,12 +67,12 @@ if ($categoria_id > 0) {
 
 // Filtro de Visibilidad por Rol
 if ($cliente_tipo === 'FARMACIA') {
-    $where[] = "p.visibilidad IN ('TODOS', 'FARMACIA', 'FARMACIA_DISTRIBUIDORA')";
+    $where[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('FARMACIA', REPLACE(p.visibilidad, '_', ',')) > 0)";
 } elseif ($cliente_tipo === 'DISTRIBUIDORA') {
-    $where[] = "p.visibilidad IN ('TODOS', 'DISTRIBUIDORA', 'FARMACIA_DISTRIBUIDORA')";
+    $where[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('DISTRIBUIDORA', REPLACE(p.visibilidad, '_', ',')) > 0)";
 } elseif ($cliente_tipo === 'EMPRESA') {
-    $where[] = "p.visibilidad IN ('TODOS', 'EMPRESA')";
-    $where[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
+    $where[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('EMPRESA', REPLACE(p.visibilidad, '_', ',')) > 0)";
+    $where[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR FIND_IN_SET('EMPRESA', REPLACE(p.visibilidad, '_', ',')) > 0 OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
 }
 
 // Excluir productos internos de ajuste (Anticipo y Descuento)
@@ -123,15 +123,10 @@ function queryStr($extra = []) {
 // Obtener Banners Promocionales Activos
 $banners = [];
 try {
- if ($is_logged_in && isset($_SESSION['cliente_id'])) {
-  $stmt_banners = $pdo->prepare("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND (cliente_id = 0 OR cliente_id = ?) ORDER BY orden ASC");
-  $stmt_banners->execute([$_SESSION['cliente_id']]);
- } else {
-  $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 AND cliente_id = 0 ORDER BY orden ASC");
- }
- $banners = $stmt_banners->fetchAll(PDO::FETCH_ASSOC);
+  $stmt_banners = $pdo->query("SELECT * FROM admin_banners_promocionales WHERE activo = 1 ORDER BY orden ASC");
+  $banners = $stmt_banners->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
- // Silencioso
+  // Silencioso
 }
 ?>
 
@@ -276,7 +271,15 @@ require_once '../includes/header.php';
   <?php if(!empty($banners)): ?>
   <div class="mb-8 grid grid-cols-1 md:grid-cols-<?= min(count($banners), 3) ?> gap-6" data-aos="fade-up">
     <?php foreach($banners as $banner): ?>
-      <a href="<?= htmlspecialchars($banner['enlace_url'] ?? '#') ?>" class="block rounded-2xl overflow-hidden border border-slate-200/60 group hover:shadow-[0_0_20px_rgba(74,144,217,0.15)] hover:border-primary/30 transition-all relative">
+      <?php
+      $enlace_url = $banner['enlace_url'] ?? '#';
+      if ($enlace_url && $enlace_url !== '#') {
+          if (strpos($enlace_url, 'http://') !== 0 && strpos($enlace_url, 'https://') !== 0) {
+              $enlace_url = ($base ?? '') . ltrim($enlace_url, '/');
+          }
+      }
+      ?>
+      <a href="<?= htmlspecialchars($enlace_url) ?>" class="block rounded-2xl overflow-hidden border border-slate-200/60 group hover:shadow-[0_0_20px_rgba(74,144,217,0.15)] hover:border-primary/30 transition-all relative">
         <img src="<?= $base ?? '' ?><?= htmlspecialchars($banner['ruta_imagen']) ?>" alt="<?= htmlspecialchars($banner['titulo']) ?>" class="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-500">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5">
           <h3 class="text-white font-bold text-lg"><?= htmlspecialchars($banner['titulo']) ?></h3>

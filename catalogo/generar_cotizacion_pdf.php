@@ -114,13 +114,8 @@ if (!empty($_POST['direccion_id'])) {
 }
 
 $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
-$envio_sin_iva = $costo_envio;
-$envio_iva = 0;
-
-if ($costo_envio == 290) {
-    $envio_sin_iva = 250.00;
-    $envio_iva = 40.00;
-}
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
 
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
@@ -267,9 +262,11 @@ $pdf->Cell(90, 6, '', 0, 0);
 $pdf->Cell(50, 6, 'Subtotal productos:', 0, 0, 'R');
 $pdf->Cell(50, 6, '$' . number_format($subtotal_productos, 2), 0, 1, 'R');
 
-if ($costo_envio == 290) {
+if ($costo_envio > 0) {
     $pdf->Cell(40, 6, '', 0, 0);
-    $pdf->Cell(100, 6, mb_convert_encoding('Costo de envio: 250 pesos + 40 pesos de IVA (16%):', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
+    $neto_envio = number_format($envio_sin_iva, 2);
+    $iva_envio = number_format($envio_iva, 2);
+    $pdf->Cell(100, 6, mb_convert_encoding("Costo de envio: $neto_envio pesos + $iva_envio pesos de IVA (16%):", 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');
 } else {
     $pdf->Cell(90, 6, '', 0, 0);
     $pdf->Cell(50, 6, mb_convert_encoding('Envío:', 'ISO-8859-1', 'UTF-8'), 0, 0, 'R');

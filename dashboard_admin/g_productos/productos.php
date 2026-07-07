@@ -337,7 +337,7 @@ if (isset($_GET['ajax'])) {
           $visibilidad = implode(',', $roles_selected);
       }
   }
-  $solo_empresa = (strpos($visibilidad, 'EMPRESA') !== false) ? 'SI' : 'NO';
+  $solo_empresa = ($visibilidad === 'TODOS' || strpos($visibilidad, 'EMPRESA') !== false) ? 'SI' : 'NO';
   $en_promocion = isset($_POST['en_promocion']) ? 1 : 0;
   $descuento_porcentaje = (float)($_POST['descuento_porcentaje'] ?? 0);
   $promocion_perfil = $_POST['promocion_perfil'] ?? 'TODOS';
@@ -1143,7 +1143,7 @@ function abrirEditar(p) {
   } else {
       document.getElementById('vis_todos').checked = false;
       toggleVisibilidadTodos();
-      const roles = vis.split(',');
+      const roles = vis.replace(/_/g, ',').split(',');
       document.getElementById('vis_farmacia').checked = roles.includes('FARMACIA');
       document.getElementById('vis_distribuidora').checked = roles.includes('DISTRIBUIDORA');
       document.getElementById('vis_empresa').checked = roles.includes('EMPRESA');

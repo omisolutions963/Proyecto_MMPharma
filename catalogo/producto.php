@@ -39,9 +39,12 @@ if ($cliente_tipo_check === 'EMPRESA') {
     strpos($nombre_lower, 'loratadina') !== false || strpos($sustancia_lower, 'loratadina') !== false ||
     strpos($nombre_lower, 'loratidina') !== false || strpos($sustancia_lower, 'loratidina') !== false ||
     strpos($nombre_lower, 'buscapina') !== false ||
-    strpos($nombre_lower, 'butilhioscina') !== false || strpos($sustancia_lower, 'butilhioscina') !== false
+    strpos($nombre_lower, 'butilhioscina') !== false || strpos($sustancia_lower, 'butilhioscina') !== false ||
+    strpos($nombre_lower, 'jeringa') !== false || strpos($sustancia_lower, 'jeringa') !== false
   );
-  if ($p['solo_empresa'] !== 'SI' && !$es_excepcion) {
+  $vis_roles = explode(',', str_replace('_', ',', $p['visibilidad'] ?? ''));
+  $es_visible_empresa = ($p['visibilidad'] === 'TODOS' || in_array('EMPRESA', $vis_roles));
+  if (!$es_visible_empresa || ($p['solo_empresa'] !== 'SI' && !$es_excepcion && !in_array('EMPRESA', $vis_roles))) {
     header('Location: catalogo.php');
     exit;
   }
@@ -79,13 +82,20 @@ $where_rel = ["id != ?", "codigo NOT IN ('99999999999', 'DESCUENTO')"];
 $params_rel = [$id];
 
 $ingredients = getIngredientWords($p['sustancia'] ?? '');
+$order_sql = "";
+$order_params = [];
 if (!empty($ingredients)) {
     $or_clauses = [];
+    $order_elements = [];
     foreach ($ingredients as $ing) {
         $or_clauses[] = "p.sustancia LIKE ?";
         $params_rel[] = '%' . $ing . '%';
+        
+        $order_elements[] = "CASE WHEN p.sustancia LIKE ? THEN 1 ELSE 0 END";
+        $order_params[] = '%' . $ing . '%';
     }
     $where_rel[] = '(' . implode(' OR ', $or_clauses) . ')';
+    $order_sql = "ORDER BY (" . implode(' + ', $order_elements) . ") DESC, p.nombre ASC";
 } else {
     // Fallback: productos de la misma categoría
     if ($p['categoria_id']) {
@@ -96,15 +106,19 @@ if (!empty($ingredients)) {
 
 // Filtro de Visibilidad por Rol para productos relacionados
 if ($cliente_tipo_check === 'FARMACIA') {
-    $where_rel[] = "p.visibilidad IN ('TODOS', 'FARMACIA', 'FARMACIA_DISTRIBUIDORA')";
+    $where_rel[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('FARMACIA', REPLACE(p.visibilidad, '_', ',')) > 0)";
 } elseif ($cliente_tipo_check === 'DISTRIBUIDORA') {
-    $where_rel[] = "p.visibilidad IN ('TODOS', 'DISTRIBUIDORA', 'FARMACIA_DISTRIBUIDORA')";
+    $where_rel[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('DISTRIBUIDORA', REPLACE(p.visibilidad, '_', ',')) > 0)";
 } elseif ($cliente_tipo_check === 'EMPRESA') {
-    $where_rel[] = "p.visibilidad IN ('TODOS', 'EMPRESA')";
-    $where_rel[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
+    $where_rel[] = "(p.visibilidad = 'TODOS' OR FIND_IN_SET('EMPRESA', REPLACE(p.visibilidad, '_', ',')) > 0)";
+    $where_rel[] = "(p.solo_empresa = 'SI' OR p.visibilidad = 'EMPRESA' OR FIND_IN_SET('EMPRESA', REPLACE(p.visibilidad, '_', ',')) > 0 OR p.nombre LIKE '%ASPIRINA%' OR p.sustancia LIKE '%ASPIRINA%' OR p.nombre LIKE '%LORATADINA%' OR p.sustancia LIKE '%LORATADINA%' OR p.nombre LIKE '%LORATIDINA%' OR p.sustancia LIKE '%LORATIDINA%' OR p.nombre LIKE '%BUSCAPINA%' OR p.nombre LIKE '%BUTILHIOSCINA%' OR p.sustancia LIKE '%BUTILHIOSCINA%' OR p.nombre LIKE '%JERINGA%' OR p.sustancia LIKE '%JERINGA%')";
 }
 
-$rel_sql = "SELECT p.* FROM catalogo_productos p WHERE " . implode(' AND ', $where_rel) . " LIMIT 4";
+if (!empty($order_params)) {
+    $params_rel = array_merge($params_rel, $order_params);
+}
+
+$rel_sql = "SELECT p.* FROM catalogo_productos p WHERE " . implode(' AND ', $where_rel) . " $order_sql LIMIT 4";
 $rel = $pdo->prepare($rel_sql);
 $rel->execute($params_rel);
 $relacionados = $rel->fetchAll(PDO::FETCH_ASSOC);

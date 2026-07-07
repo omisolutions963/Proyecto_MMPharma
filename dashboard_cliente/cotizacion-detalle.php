@@ -74,8 +74,8 @@ foreach($detalles as $det) {
 $costo_envio = isset($pedido['costo_envio']) ? (float)$pedido['costo_envio'] : 0.00;
 $monto_total = $subtotal_productos + $total_items_iva + $costo_envio;
 
-$envio_sin_iva = $costo_envio; // Assuming shipping doesn't add more IVA here, or it's handled separately
-$envio_iva = 0; // If shipping needs IVA, adjust this
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
 
 $subtotal_sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
@@ -372,7 +372,7 @@ include('includes/sidebar.php');
           <span class="material-symbols-outlined text-[18px]">store</span>
           Información de entrega en sucursal
       </div>
-      <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-slate-900">De 9am a 6pm todos los días de la semana.</strong></p>
+      <p class="text-xs text-on-surface-variant mb-1">Horario de entrega: <strong class="text-slate-900">De 9am a 6pm de lunes a viernes.</strong></p>
       <p class="text-[10px] text-on-surface-variant/80">El lugar donde pasará a recoger será proporcionado por un asesor de nosotros (para mantener la confidencialidad del lugar).</p>
  </div>
  <?php endif; ?>

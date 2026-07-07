@@ -8,7 +8,7 @@ require_once '../includes/header.php';
 <!-- ── HERO ── -->
 <section class="relative min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../img/22.webp" class="w-full h-full object-cover object-center parallax-bg scale-125 origin-top opacity-50" data-speed="0.2">
+ <img src="../img/quienes_somos_hero_upscaled.png" class="w-full h-full object-cover object-center parallax-bg scale-125 origin-top opacity-50" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-8 py-24 w-full text-center md:text-left" data-aos="fade-up">

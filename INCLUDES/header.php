@@ -239,7 +239,7 @@ if (isset($_SESSION['cliente_logged_in']) && $_SESSION['cliente_logged_in'] === 
  $foto_cliente_raw = $_SESSION['cliente_foto'] ?? ''; 
  $foto_cliente = '';
  if ($foto_cliente_raw && $foto_cliente_raw !== 'PENDIENTE') {
- $foto_cliente = $base . 'dashboard_cliente/' . ltrim(str_replace('../', '', $foto_cliente_raw), '/');
+ $foto_cliente = $base . 'uploads/perfiles/' . basename($foto_cliente_raw);
  }
  ?>
  <!-- Botón Ingresar al Portal -->

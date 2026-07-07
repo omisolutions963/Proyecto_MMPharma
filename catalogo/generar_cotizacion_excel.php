@@ -102,13 +102,8 @@ if (!empty($_POST['direccion_id'])) {
     }
 }
 
-$envio_sin_iva = $costo_envio;
-$envio_iva = 0;
-
-if ($costo_envio == 290) {
-    $envio_sin_iva = 250.00;
-    $envio_iva = 40.00;
-}
+$envio_sin_iva = $costo_envio / 1.16;
+$envio_iva = $costo_envio - $envio_sin_iva;
 
 $sin_iva = $total_items_sin_iva + $envio_sin_iva;
 $iva = $total_items_iva + $envio_iva;
@@ -309,20 +304,19 @@ foreach ($carrito as $item) {
 // Blanco
 $rows[$r] = ''; $r++;
 
-// Totales
 $totales = [
-    ['Subtotal productos:', $subtotal_prod],
-<<<<<<< Updated upstream:catalogo/generar_cotizacion_excel.php
-=======
-    [($costo_envio == 290 ? 'Costo de envio: 250 pesos + 40 pesos de IVA (16%):' : ($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio)), $costo_envio],
-    ['Subtotal (sin IVA):', $sin_iva],
-    ['IVA:', $iva],
->>>>>>> Stashed changes:CATALOGO/generar_cotizacion_excel.php
+    ['Subtotal productos:', $subtotal_prod]
 ];
 if ($total_embalaje_red_fria > 0) {
     $totales[] = ['Embalaje Red Fría:', $total_embalaje_red_fria];
 }
-$totales[] = [($costo_envio > 0 ? 'Costo de envío:' : 'Envío: ' . $msg_envio), $costo_envio];
+if ($costo_envio > 0) {
+    $neto_envio = number_format($envio_sin_iva, 2);
+    $iva_envio = number_format($envio_iva, 2);
+    $totales[] = ["Costo de envio: $neto_envio pesos + $iva_envio pesos de IVA (16%):", $costo_envio];
+} else {
+    $totales[] = ['Envío: ' . ($msg_envio ?: 'Envío gratis'), $costo_envio];
+}
 $totales[] = ['Subtotal (sin IVA):', $sin_iva];
 $totales[] = ['IVA:', $iva];
 foreach ($totales as $t) {

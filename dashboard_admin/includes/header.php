@@ -219,7 +219,11 @@ $unread_count = count($notif_admin);
      padding-left: 1rem !important;
      padding-right: 1rem !important;
    }
- }
+  }
+  html.swal2-shown, body.swal2-shown {
+    overflow-y: scroll !important;
+    padding-right: 0 !important;
+  }
 </style>
 
 <script>

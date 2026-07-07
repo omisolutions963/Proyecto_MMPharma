@@ -492,6 +492,10 @@ if (isset($pdo) && isset($_SESSION['cliente_id'])) {
   main .w-14.bg-tertiary\/10 * {
       color: #ffffff !important;
   }
+  html.swal2-shown, body.swal2-shown {
+    overflow-y: scroll !important;
+    padding-right: 0 !important;
+  }
 </style>
 
 <script>
