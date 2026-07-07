@@ -52,7 +52,7 @@ require_once '../includes/header.php';
 <!-- ── HERO ── -->
 <section class="relative min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../img/60.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
+ <img src="../img/18.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-8 py-20 w-full text-center md:text-left" data-aos="fade-up">
@@ -137,7 +137,7 @@ require_once '../includes/header.php';
  </a>
 
  <!-- Correo -->
- <a href="mailto:atencionclientes@mmpharma.mx" target="_blank" rel="noopener noreferrer"
+ <a href="mailto:atencionclientes@mmpharma.mx"
  class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-5 p-6 bg-tertiary rounded-2xl transition-all hover:-translate-y-1 group border border-white/5">
  <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0 text-white group-hover:bg-white group-hover:text-tertiary transition-all">
  <span class="material-symbols-outlined text-3xl">mail</span>
@@ -247,5 +247,41 @@ require_once '../includes/header.php';
 </section>
 
 </main>
+
+<!-- ── EQUIPO ── -->
+<section class="py-16 md:py-24 bg-white overflow-hidden">
+ <div class="max-w-[1369px] mx-auto px-8">
+
+  <div class="text-center mb-12" data-aos="fade-up">
+   <h2 class="text-4xl md:text-5xl font-black text-primary mb-4 tracking-tight leading-tight">
+    Detrás de cada entrega,<br>
+    <span class="text-tertiary">un equipo que te respalda</span>
+   </h2>
+   <p class="text-lg text-slate-900 max-w-2xl mx-auto leading-relaxed font-medium">
+    Nuestros asesores están disponibles de lunes a viernes de <strong>9:00 a.m. a 6:00 p.m.</strong> para atender cada requerimiento de tu negocio con rapidez y profesionalismo.
+   </p>
+  </div>
+
+  <div class="relative rounded-[48px] overflow-hidden" data-aos="fade-up" data-aos-delay="150">
+   <img
+    src="../img/17.webp"
+    alt="Equipo de asesores MMPharma"
+    class="w-full h-[420px] md:h-[580px] object-cover object-center"
+   >
+   <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent pointer-events-none"></div>
+   <div class="absolute bottom-0 left-0 right-0 p-10 md:p-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <p class="text-white font-black text-2xl md:text-3xl tracking-tight max-w-lg leading-snug">
+     Expertos listos para resolver cada consulta y acompañar el crecimiento de tu negocio.
+    </p>
+    <a href="tel:3343480581"
+     class="flex-shrink-0 inline-flex items-center gap-2 px-8 py-4 bg-tertiary text-white font-bold rounded-2xl hover:bg-tertiary/90 hover:-translate-y-1 active:scale-95 transition-all group">
+     Llámanos ahora
+     <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">call</span>
+    </a>
+   </div>
+  </div>
+
+ </div>
+</section>
 
 <?php require_once '../includes/footer.php'; ?>

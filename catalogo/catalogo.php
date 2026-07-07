@@ -145,7 +145,7 @@ require_once '../includes/header.php';
 <!-- ── HERO ── -->
 <section class="relative min-h-[250px] md:min-h-[369px] flex items-center overflow-hidden bg-slate-900">
  <div class="absolute inset-0 z-0 overflow-hidden">
- <img src="../img/23.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
+ <img src="../img/16.webp" class="w-full h-full object-cover opacity-50 parallax-bg scale-125 origin-top" data-speed="0.2">
  <div class="absolute inset-0 bg-primary/70"></div>
  </div>
  <div class="relative z-10 max-w-[1369px] mx-auto px-6 md:px-8 py-12 md:py-20 w-full" data-aos="fade-up">

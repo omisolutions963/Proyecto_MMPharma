@@ -64,7 +64,7 @@ function roundStatIndex($num) {
  <div class="w-full lg:w-1/2 relative" data-aos="fade-left">
  <!-- Blob shape / Mask for image (Isolated Group for Hover) -->
  <div class="relative w-full aspect-[4/3] max-w-[800px] mx-auto overflow-hidden rounded-[40px] md:rounded-[80px] lg:rounded-bl-[120px] group">
- <img src="../img/33.webp" alt="Equipo MMPharma" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
+ <img src="../img/19.webp" alt="Equipo MMPharma" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
  </div>
 
  <!-- Floating Badge -->
@@ -152,7 +152,7 @@ function roundStatIndex($num) {
  <div class="bg-tertiary rounded-[48px] py-24 px-10 md:px-20 relative overflow-hidden flex items-center justify-center text-center" data-aos="fade-up">
  <!-- Background Image Overlay -->
  <div class="absolute inset-0 pointer-events-none">
- <img src="../img/15.webp" alt="" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+ <img src="../img/20.webp" alt="" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
  <div class="absolute inset-0 bg-tertiary/70"></div>
  </div>
 
