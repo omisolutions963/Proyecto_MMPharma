@@ -417,7 +417,7 @@ include("../includes/sidebar.php");
 <main class="ml-64 p-8 min-h-screen bg-background text-on-surface">
 
 <!-- Header -->
-<div class="flex justify-between items-end mb-8 animate-reveal">
+<div class="flex justify-between items-end mb-8 animate-reveal relative z-30">
  <div>
  <nav class="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">
  <a href="../dashboard/dashboard.php" class="hover:text-primary transition-colors">Dashboard</a>
@@ -428,9 +428,26 @@ include("../includes/sidebar.php");
  <p class="text-on-surface-variant text-sm mt-1">Catálogo unificado y control de existencias en tiempo real.</p>
  </div>
  <div class="flex gap-3 flex-wrap sm:flex-nowrap">
-  <button onclick="abrirModalImportar()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
-   <span class="material-symbols-outlined text-[18px]">upload_file</span> Importar CSV
-  </button>
+  <!-- Dropdown Excel / CSV -->
+  <div class="relative" id="dropdownCsvContainer">
+   <button onclick="toggleDropdownCsv(event)" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
+    <span class="material-symbols-outlined text-[18px]">import_export</span> 
+    <span>Excel / CSV</span> 
+    <span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="dropdownCsvArrow">keyboard_arrow_down</span>
+   </button>
+   <div id="dropdownCsvMenu" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-surface-container-high border border-outline-variant/20 shadow-2xl z-[120] overflow-hidden animate-reveal origin-top-right">
+    <div class="py-1">
+     <button type="button" onclick="abrirModalImportar(); closeDropdownCsv();" class="w-full text-left px-5 py-3 text-xs font-bold text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-2.5">
+      <span class="material-symbols-outlined text-[18px] text-primary">upload_file</span> 
+      <span>Importar CSV</span>
+     </button>
+     <a href="exportar_csv.php" onclick="closeDropdownCsv();" class="w-full text-left px-5 py-3 text-xs font-bold text-on-surface hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-2.5 border-t border-outline-variant/10">
+      <span class="material-symbols-outlined text-[18px] text-primary">download</span> 
+      <span>Exportar Excel (CSV)</span>
+     </a>
+    </div>
+   </div>
+  </div>
   <button onclick="abrirModalAjuste()" class="bg-surface-container-high text-primary border border-primary/20 px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-primary hover:text-white transition-all">
    <span class="material-symbols-outlined text-[18px]">price_change</span> Ajuste masivo
   </button>
@@ -1330,6 +1347,34 @@ function confirmarAjusteMasivo(e) {
     }
   });
 }
+
+function toggleDropdownCsv(event) {
+  event.stopPropagation();
+  const menu = document.getElementById('dropdownCsvMenu');
+  const arrow = document.getElementById('dropdownCsvArrow');
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+    arrow.classList.add('rotate-180');
+  } else {
+    menu.classList.add('hidden');
+    arrow.classList.remove('rotate-180');
+  }
+}
+
+function closeDropdownCsv() {
+  const menu = document.getElementById('dropdownCsvMenu');
+  const arrow = document.getElementById('dropdownCsvArrow');
+  if (menu) menu.classList.add('hidden');
+  if (arrow) arrow.classList.remove('rotate-180');
+}
+
+// Cerrar dropdown al hacer clic fuera del mismo
+document.addEventListener('click', function(event) {
+  const container = document.getElementById('dropdownCsvContainer');
+  if (container && !container.contains(event.target)) {
+    closeDropdownCsv();
+  }
+});
 </script>
 
 <!-- SweetAlert Notificaciones -->
